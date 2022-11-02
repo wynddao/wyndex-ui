@@ -1,7 +1,7 @@
 "use client";
 
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider as DefaultChakraProvider } from "@chakra-ui/react";
 
-export default function ClientChakraProvider({ children }: React.ComponentProps<typeof ChakraProvider>) {
-  return <ChakraProvider>{children}</ChakraProvider>;
+export default function ChakraProvider({ children }: React.ComponentProps<typeof DefaultChakraProvider>) {
+  return <DefaultChakraProvider>{children}</DefaultChakraProvider>;
 }
