@@ -1,14 +1,11 @@
-import ChakraProvider from "../providers/Chakra";
-import RecoilProvider from "../providers/Recoil";
+import Providers from "./providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html>
       <head></head>
       <body>
-        <ChakraProvider>
-          <RecoilProvider>{children}</RecoilProvider>
-        </ChakraProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
