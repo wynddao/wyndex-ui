@@ -12,7 +12,7 @@ export default function GreetingMsg() {
       <Stack as={Box} textAlign={"center"} spacing={{ base: 8, md: 14 }} py={{ base: 20, md: 36 }}>
         <Heading fontWeight={600} fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }} lineHeight={"110%"}>
           Test page for <br />
-          <Text as={"span"} color={"green.400"}>
+          <Text as={"span"} color={"brand.700"}>
             WynDex UI
           </Text>
         </Heading>
@@ -25,7 +25,7 @@ export default function GreetingMsg() {
             <Button onClick={() => setMyAddress(null)}>Clear my address</Button>
           </ButtonGroup>
         </Center>
-        <Text color={"gray.500"}>
+        <Text color={"gray.500"} fontFamily={"brand"}>
           {myAddress ? `Your address is ${myAddress}` : "You don't have an address yet"}
         </Text>
       </Stack>
