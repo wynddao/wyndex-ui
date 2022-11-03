@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const myAddressAtom = atom<string | null>({
+export const myAddressAtom = atom<number | null>({
   key: "myAddress",
   default: null,
 });

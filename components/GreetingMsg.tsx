@@ -21,7 +21,9 @@ export default function GreetingMsg() {
         </Text>
         <Center>
           <ButtonGroup gap="4">
-            <Button onClick={() => setMyAddress(Math.random().toString().slice(-8))}>Get an address</Button>
+            <Button onClick={() => setMyAddress(Number(Math.random().toString().slice(-8)))}>
+              Get an address
+            </Button>
             <Button onClick={() => setMyAddress(null)}>Clear my address</Button>
           </ButtonGroup>
         </Center>
