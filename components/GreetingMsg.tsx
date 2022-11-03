@@ -9,7 +9,7 @@ export default function GreetingMsg() {
 
   return (
     <Container maxW={"3xl"}>
-      <Stack as={Box} textAlign={"center"} spacing={{ base: 8, md: 14 }} py={{ base: 20, md: 36 }}>
+      <Stack as={Box} textAlign={"center"} spacing={{ base: 8, md: 14 }} pt={{ base: 10, md: 18 }}>
         <Heading fontWeight={600} fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }} lineHeight={"110%"}>
           Test page for <br />
           <Text as={"span"} color={"brand.700"}>
