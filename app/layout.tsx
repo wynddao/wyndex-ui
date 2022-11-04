@@ -1,3 +1,4 @@
+import Sidebar from "../components/Sidebar";
 import Providers from "./providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -5,7 +6,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html>
       <head></head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Sidebar>{children}</Sidebar>
+        </Providers>
       </body>
     </html>
   );
