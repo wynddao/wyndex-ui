@@ -7,49 +7,30 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
 import {
+  PairType,
+  InstantiateMsg,
+  PairConfig,
+  ExecuteMsg,
   AssetInfo,
   Binary,
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  Decimal,
-  Cw20ReceiveMsg,
-  Asset,
   QueryMsg,
+  ArrayOfPairType,
   Addr,
   ConfigResponse,
+  FeeInfoResponse,
   AssetInfoValidated,
-  CumulativePricesResponse,
-  AssetValidated,
-  PairType,
   PairInfo,
-  PoolResponse,
-  ReverseSimulationResponse,
-  ArrayOfAssetValidated,
-  SimulationResponse,
+  PairsResponse,
+  ArrayOfAddr,
 } from "./types/WyndexFactory.types";
 export interface WyndexFactoryReadOnlyInterface {
   contractAddress: string;
-  pair: () => Promise<PairInfo>;
-  pool: () => Promise<PoolResponse>;
   config: () => Promise<ConfigResponse>;
-  share: ({ amount }: { amount: Uint128 }) => Promise<ArrayOfAssetValidated>;
-  simulation: ({
-    askAssetInfo,
-    offerAsset,
-  }: {
-    askAssetInfo?: AssetInfo;
-    offerAsset: Asset;
-  }) => Promise<SimulationResponse>;
-  reverseSimulation: ({
-    askAsset,
-    offerAssetInfo,
-  }: {
-    askAsset: Asset;
-    offerAssetInfo?: AssetInfo;
-  }) => Promise<ReverseSimulationResponse>;
-  cumulativePrices: () => Promise<CumulativePricesResponse>;
-  queryComputeD: () => Promise<Uint128>;
+  pair: ({ assetInfos }: { assetInfos: AssetInfo[] }) => Promise<PairInfo>;
+  pairs: ({ limit, startAfter }: { limit?: number; startAfter?: AssetInfo[] }) => Promise<PairsResponse>;
+  feeInfo: ({ pairType }: { pairType: PairType }) => Promise<FeeInfoResponse>;
+  blacklistedPairTypes: () => Promise<ArrayOfPairType>;
+  pairsToMigrate: () => Promise<ArrayOfAddr>;
 }
 export class WyndexFactoryQueryClient implements WyndexFactoryReadOnlyInterface {
   client: CosmWasmClient;
@@ -58,131 +39,102 @@ export class WyndexFactoryQueryClient implements WyndexFactoryReadOnlyInterface 
   constructor(client: CosmWasmClient, contractAddress: string) {
     this.client = client;
     this.contractAddress = contractAddress;
-    this.pair = this.pair.bind(this);
-    this.pool = this.pool.bind(this);
     this.config = this.config.bind(this);
-    this.share = this.share.bind(this);
-    this.simulation = this.simulation.bind(this);
-    this.reverseSimulation = this.reverseSimulation.bind(this);
-    this.cumulativePrices = this.cumulativePrices.bind(this);
-    this.queryComputeD = this.queryComputeD.bind(this);
+    this.pair = this.pair.bind(this);
+    this.pairs = this.pairs.bind(this);
+    this.feeInfo = this.feeInfo.bind(this);
+    this.blacklistedPairTypes = this.blacklistedPairTypes.bind(this);
+    this.pairsToMigrate = this.pairsToMigrate.bind(this);
   }
 
-  pair = async (): Promise<PairInfo> => {
-    return this.client.queryContractSmart(this.contractAddress, {
-      pair: {},
-    });
-  };
-  pool = async (): Promise<PoolResponse> => {
-    return this.client.queryContractSmart(this.contractAddress, {
-      pool: {},
-    });
-  };
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       config: {},
     });
   };
-  share = async ({ amount }: { amount: Uint128 }): Promise<ArrayOfAssetValidated> => {
+  pair = async ({ assetInfos }: { assetInfos: AssetInfo[] }): Promise<PairInfo> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      share: {
-        amount,
+      pair: {
+        asset_infos: assetInfos,
       },
     });
   };
-  simulation = async ({
-    askAssetInfo,
-    offerAsset,
+  pairs = async ({
+    limit,
+    startAfter,
   }: {
-    askAssetInfo?: AssetInfo;
-    offerAsset: Asset;
-  }): Promise<SimulationResponse> => {
+    limit?: number;
+    startAfter?: AssetInfo[];
+  }): Promise<PairsResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      simulation: {
-        ask_asset_info: askAssetInfo,
-        offer_asset: offerAsset,
+      pairs: {
+        limit,
+        start_after: startAfter,
       },
     });
   };
-  reverseSimulation = async ({
-    askAsset,
-    offerAssetInfo,
-  }: {
-    askAsset: Asset;
-    offerAssetInfo?: AssetInfo;
-  }): Promise<ReverseSimulationResponse> => {
+  feeInfo = async ({ pairType }: { pairType: PairType }): Promise<FeeInfoResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      reverse_simulation: {
-        ask_asset: askAsset,
-        offer_asset_info: offerAssetInfo,
+      fee_info: {
+        pair_type: pairType,
       },
     });
   };
-  cumulativePrices = async (): Promise<CumulativePricesResponse> => {
+  blacklistedPairTypes = async (): Promise<ArrayOfPairType> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      cumulative_prices: {},
+      blacklisted_pair_types: {},
     });
   };
-  queryComputeD = async (): Promise<Uint128> => {
+  pairsToMigrate = async (): Promise<ArrayOfAddr> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      query_compute_d: {},
+      pairs_to_migrate: {},
     });
   };
 }
 export interface WyndexFactoryInterface extends WyndexFactoryReadOnlyInterface {
   contractAddress: string;
   sender: string;
-  receive: (
-    {
-      amount,
-      msg,
-      sender,
-    }: {
-      amount: Uint128;
-      msg: Binary;
-      sender: string;
-    },
-    fee?: number | StdFee | "auto",
-    memo?: string,
-    funds?: Coin[],
-  ) => Promise<ExecuteResult>;
-  provideLiquidity: (
-    {
-      assets,
-      receiver,
-      slippageTolerance,
-    }: {
-      assets: Asset[];
-      receiver?: string;
-      slippageTolerance?: Decimal;
-    },
-    fee?: number | StdFee | "auto",
-    memo?: string,
-    funds?: Coin[],
-  ) => Promise<ExecuteResult>;
-  swap: (
-    {
-      askAssetInfo,
-      beliefPrice,
-      maxSpread,
-      offerAsset,
-      to,
-    }: {
-      askAssetInfo?: AssetInfo;
-      beliefPrice?: Decimal;
-      maxSpread?: Decimal;
-      offerAsset: Asset;
-      to?: string;
-    },
-    fee?: number | StdFee | "auto",
-    memo?: string,
-    funds?: Coin[],
-  ) => Promise<ExecuteResult>;
   updateConfig: (
     {
-      params,
+      feeAddress,
+      tokenCodeId,
     }: {
-      params: Binary;
+      feeAddress?: string;
+      tokenCodeId?: number;
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
+  updatePairConfig: (
+    {
+      config,
+    }: {
+      config: PairConfig;
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
+  createPair: (
+    {
+      assetInfos,
+      initParams,
+      pairType,
+    }: {
+      assetInfos: AssetInfo[];
+      initParams?: Binary;
+      pairType: PairType;
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
+  deregister: (
+    {
+      assetInfos,
+    }: {
+      assetInfos: AssetInfo[];
     },
     fee?: number | StdFee | "auto",
     memo?: string,
@@ -206,6 +158,16 @@ export interface WyndexFactoryInterface extends WyndexFactoryReadOnlyInterface {
     funds?: Coin[],
   ) => Promise<ExecuteResult>;
   claimOwnership: (fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
+  markAsMigrated: (
+    {
+      pairs,
+    }: {
+      pairs: string[];
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
 }
 export class WyndexFactoryClient extends WyndexFactoryQueryClient implements WyndexFactoryInterface {
   client: SigningCosmWasmClient;
@@ -217,113 +179,23 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
     this.client = client;
     this.sender = sender;
     this.contractAddress = contractAddress;
-    this.receive = this.receive.bind(this);
-    this.provideLiquidity = this.provideLiquidity.bind(this);
-    this.swap = this.swap.bind(this);
     this.updateConfig = this.updateConfig.bind(this);
+    this.updatePairConfig = this.updatePairConfig.bind(this);
+    this.createPair = this.createPair.bind(this);
+    this.deregister = this.deregister.bind(this);
     this.proposeNewOwner = this.proposeNewOwner.bind(this);
     this.dropOwnershipProposal = this.dropOwnershipProposal.bind(this);
     this.claimOwnership = this.claimOwnership.bind(this);
+    this.markAsMigrated = this.markAsMigrated.bind(this);
   }
 
-  receive = async (
-    {
-      amount,
-      msg,
-      sender,
-    }: {
-      amount: Uint128;
-      msg: Binary;
-      sender: string;
-    },
-    fee: number | StdFee | "auto" = "auto",
-    memo?: string,
-    funds?: Coin[],
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        receive: {
-          amount,
-          msg,
-          sender,
-        },
-      },
-      fee,
-      memo,
-      funds,
-    );
-  };
-  provideLiquidity = async (
-    {
-      assets,
-      receiver,
-      slippageTolerance,
-    }: {
-      assets: Asset[];
-      receiver?: string;
-      slippageTolerance?: Decimal;
-    },
-    fee: number | StdFee | "auto" = "auto",
-    memo?: string,
-    funds?: Coin[],
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        provide_liquidity: {
-          assets,
-          receiver,
-          slippage_tolerance: slippageTolerance,
-        },
-      },
-      fee,
-      memo,
-      funds,
-    );
-  };
-  swap = async (
-    {
-      askAssetInfo,
-      beliefPrice,
-      maxSpread,
-      offerAsset,
-      to,
-    }: {
-      askAssetInfo?: AssetInfo;
-      beliefPrice?: Decimal;
-      maxSpread?: Decimal;
-      offerAsset: Asset;
-      to?: string;
-    },
-    fee: number | StdFee | "auto" = "auto",
-    memo?: string,
-    funds?: Coin[],
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        swap: {
-          ask_asset_info: askAssetInfo,
-          belief_price: beliefPrice,
-          max_spread: maxSpread,
-          offer_asset: offerAsset,
-          to,
-        },
-      },
-      fee,
-      memo,
-      funds,
-    );
-  };
   updateConfig = async (
     {
-      params,
+      feeAddress,
+      tokenCodeId,
     }: {
-      params: Binary;
+      feeAddress?: string;
+      tokenCodeId?: number;
     },
     fee: number | StdFee | "auto" = "auto",
     memo?: string,
@@ -334,7 +206,83 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
       this.contractAddress,
       {
         update_config: {
-          params,
+          fee_address: feeAddress,
+          token_code_id: tokenCodeId,
+        },
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  updatePairConfig = async (
+    {
+      config,
+    }: {
+      config: PairConfig;
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_pair_config: {
+          config,
+        },
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  createPair = async (
+    {
+      assetInfos,
+      initParams,
+      pairType,
+    }: {
+      assetInfos: AssetInfo[];
+      initParams?: Binary;
+      pairType: PairType;
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        create_pair: {
+          asset_infos: assetInfos,
+          init_params: initParams,
+          pair_type: pairType,
+        },
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  deregister = async (
+    {
+      assetInfos,
+    }: {
+      assetInfos: AssetInfo[];
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        deregister: {
+          asset_infos: assetInfos,
         },
       },
       fee,
@@ -394,6 +342,29 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
       this.contractAddress,
       {
         claim_ownership: {},
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  markAsMigrated = async (
+    {
+      pairs,
+    }: {
+      pairs: string[];
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        mark_as_migrated: {
+          pairs,
+        },
       },
       fee,
       memo,

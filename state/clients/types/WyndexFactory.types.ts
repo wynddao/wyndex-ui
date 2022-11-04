@@ -4,43 +4,51 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-export type AssetInfo =
+export type PairType =
   | {
-      token: string;
+      xyk: {};
     }
   | {
-      native_token: string;
+      stable: {};
+    }
+  | {
+      custom: string;
     };
-export type Binary = string;
 export interface InstantiateMsg {
-  asset_infos: AssetInfo[];
-  factory_addr: string;
-  init_params?: Binary | null;
+  fee_address?: string | null;
+  owner: string;
+  pair_configs: PairConfig[];
   token_code_id: number;
+}
+export interface PairConfig {
+  code_id: number;
+  is_disabled: boolean;
+  maker_fee_bps: number;
+  pair_type: PairType;
+  total_fee_bps: number;
 }
 export type ExecuteMsg =
   | {
-      receive: Cw20ReceiveMsg;
-    }
-  | {
-      provide_liquidity: {
-        assets: Asset[];
-        receiver?: string | null;
-        slippage_tolerance?: Decimal | null;
-      };
-    }
-  | {
-      swap: {
-        ask_asset_info?: AssetInfo | null;
-        belief_price?: Decimal | null;
-        max_spread?: Decimal | null;
-        offer_asset: Asset;
-        to?: string | null;
-      };
-    }
-  | {
       update_config: {
-        params: Binary;
+        fee_address?: string | null;
+        token_code_id?: number | null;
+      };
+    }
+  | {
+      update_pair_config: {
+        config: PairConfig;
+      };
+    }
+  | {
+      create_pair: {
+        asset_infos: AssetInfo[];
+        init_params?: Binary | null;
+        pair_type: PairType;
+      };
+    }
+  | {
+      deregister: {
+        asset_infos: AssetInfo[];
       };
     }
   | {
@@ -54,56 +62,58 @@ export type ExecuteMsg =
     }
   | {
       claim_ownership: {};
+    }
+  | {
+      mark_as_migrated: {
+        pairs: string[];
+      };
     };
-export type Uint128 = string;
-export type Decimal = string;
-export interface Cw20ReceiveMsg {
-  amount: Uint128;
-  msg: Binary;
-  sender: string;
-}
-export interface Asset {
-  amount: Uint128;
-  info: AssetInfo;
-}
+export type AssetInfo =
+  | {
+      token: string;
+    }
+  | {
+      native_token: string;
+    };
+export type Binary = string;
 export type QueryMsg =
-  | {
-      pair: {};
-    }
-  | {
-      pool: {};
-    }
   | {
       config: {};
     }
   | {
-      share: {
-        amount: Uint128;
+      pair: {
+        asset_infos: AssetInfo[];
       };
     }
   | {
-      simulation: {
-        ask_asset_info?: AssetInfo | null;
-        offer_asset: Asset;
+      pairs: {
+        limit?: number | null;
+        start_after?: AssetInfo[] | null;
       };
     }
   | {
-      reverse_simulation: {
-        ask_asset: Asset;
-        offer_asset_info?: AssetInfo | null;
+      fee_info: {
+        pair_type: PairType;
       };
     }
   | {
-      cumulative_prices: {};
+      blacklisted_pair_types: {};
     }
   | {
-      query_compute_d: {};
+      pairs_to_migrate: {};
     };
+export type ArrayOfPairType = PairType[];
 export type Addr = string;
 export interface ConfigResponse {
-  block_time_last: number;
-  owner?: Addr | null;
-  params?: Binary | null;
+  fee_address?: Addr | null;
+  owner: Addr;
+  pair_configs: PairConfig[];
+  token_code_id: number;
+}
+export interface FeeInfoResponse {
+  fee_address?: Addr | null;
+  maker_fee_bps: number;
+  total_fee_bps: number;
 }
 export type AssetInfoValidated =
   | {
@@ -112,43 +122,13 @@ export type AssetInfoValidated =
   | {
       native_token: string;
     };
-export interface CumulativePricesResponse {
-  assets: AssetValidated[];
-  cumulative_prices: [AssetInfoValidated, AssetInfoValidated, Uint128][];
-  total_share: Uint128;
-}
-export interface AssetValidated {
-  amount: Uint128;
-  info: AssetInfoValidated;
-}
-export type PairType =
-  | {
-      xyk: {};
-    }
-  | {
-      stable: {};
-    }
-  | {
-      custom: string;
-    };
 export interface PairInfo {
   asset_infos: AssetInfoValidated[];
   contract_addr: Addr;
   liquidity_token: Addr;
   pair_type: PairType;
 }
-export interface PoolResponse {
-  assets: AssetValidated[];
-  total_share: Uint128;
+export interface PairsResponse {
+  pairs: PairInfo[];
 }
-export interface ReverseSimulationResponse {
-  commission_amount: Uint128;
-  offer_amount: Uint128;
-  spread_amount: Uint128;
-}
-export type ArrayOfAssetValidated = AssetValidated[];
-export interface SimulationResponse {
-  commission_amount: Uint128;
-  return_amount: Uint128;
-  spread_amount: Uint128;
-}
+export type ArrayOfAddr = Addr[];
