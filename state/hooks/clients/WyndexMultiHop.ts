@@ -27,4 +27,4 @@ const wrapExecuteHook =
     );
   };
 
-export const useExecuteSwapOperation = wrapExecuteHook("executeSwapOperation");
+export const useExecuteSwapOperations = wrapExecuteHook("executeSwapOperations");
