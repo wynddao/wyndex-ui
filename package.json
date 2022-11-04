@@ -16,6 +16,7 @@
     "@types/node": "18.11.9",
     "@types/react": "18.0.24",
     "@types/react-dom": "18.0.8",
+    "cosmwasm": "^1.1.1",
     "framer-motion": "^6",
     "next": "13.0.1",
     "react": "18.2.0",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "eslint-config-prettier": "^8.5.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "dotenv": "^16.0.3"
   }
 }

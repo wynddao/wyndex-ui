@@ -2,7 +2,7 @@
 
 import { Box, Button, ButtonGroup, Center, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { myAddressAtom } from "../atoms";
+import { myAddressAtom } from "../state/recoil/atoms";
 
 export default function GreetingMsg() {
   const [myAddress, setMyAddress] = useRecoilState(myAddressAtom);

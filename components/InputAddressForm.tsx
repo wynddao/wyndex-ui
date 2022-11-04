@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import * as zod from "zod";
-import { myAddressAtom } from "../atoms";
+import { myAddressAtom } from "../state/recoil/atoms";
 
 const schema = zod.object({
   address: zod.number(),
