@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Providers from "./providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -5,6 +6,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html>
       <head></head>
       <body>
+        <Link href="/test">Test</Link>
         <Providers>{children}</Providers>
       </body>
     </html>
