@@ -1,8 +1,11 @@
 import { constSelector, useRecoilValue } from "recoil";
 import { FACTORY_CONTRACT_ADDRESS } from "../../utils";
-import { AssetInfo } from "../clients/types/WyndexFactory.types";
+import { AssetInfo, PairInfo } from "../clients/types/WyndexFactory.types";
 import { WyndexFactorySelectors } from "../recoil";
 
+interface UsePairInfosResponse {
+  pair: PairInfo;
+}
 
 export const usePairInfos = (assetInfo: AssetInfo[]): UsePairInfosResponse => {
   const pair = useRecoilValue(
@@ -13,7 +16,6 @@ export const usePairInfos = (assetInfo: AssetInfo[]): UsePairInfosResponse => {
   );
 
   return {
-   pair,
-
+    pair,
   };
 };
