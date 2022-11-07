@@ -1,4 +1,4 @@
-import { constSelector, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { FACTORY_CONTRACT_ADDRESS } from "../../utils";
 import { AssetInfo, PairInfo } from "../clients/types/WyndexFactory.types";
 import { WyndexFactorySelectors } from "../recoil";
