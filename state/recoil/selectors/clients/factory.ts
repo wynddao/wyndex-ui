@@ -1,14 +1,15 @@
 import { selectorFamily } from "recoil";
 import { cosmWasmClientSelector } from "../chain";
+import { signingCosmWasmClientAtom } from "../../atoms";
 import {
-  Uint128,
+  ArrayOfPairType,
   ConfigResponse,
-  CumulativePricesResponse,
+  FeeInfoResponse,
   PairInfo,
-  PoolResponse,
-  ArrayOfAssetValidated,
+  PairsResponse,
+  ArrayOfAddr,
 } from "../../../clients/types/WyndexFactory.types";
-import { WyndexFactoryQueryClient } from "../../../clients/WyndexFactory.client";
+import { WyndexFactoryClient, WyndexFactoryQueryClient } from "../../../clients";
 type QueryClientParams = {
   contractAddress: string;
 };
@@ -19,6 +20,38 @@ export const queryClient = selectorFamily<WyndexFactoryQueryClient, QueryClientP
     ({ get }) => {
       const client = get(cosmWasmClientSelector);
       return new WyndexFactoryQueryClient(client, contractAddress);
+    },
+});
+
+export type ExecuteClientParams = {
+  contractAddress: string;
+  sender: string;
+};
+
+export const executeClient = selectorFamily<WyndexFactoryClient | undefined, ExecuteClientParams>({
+  key: "wyndexFactoryExecuteClient",
+  get:
+    ({ contractAddress, sender }) =>
+    ({ get }) => {
+      const client = get(signingCosmWasmClientAtom);
+      if (!client) return;
+      return new WyndexFactoryClient(client, sender, contractAddress);
+    },
+  dangerouslyAllowMutability: true,
+});
+
+export const configSelector = selectorFamily<
+  ConfigResponse,
+  QueryClientParams & {
+    params: Parameters<WyndexFactoryQueryClient["config"]>;
+  }
+>({
+  key: "wyndexFactoryConfig",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.config(...params);
     },
 });
 export const pairSelector = selectorFamily<
@@ -35,73 +68,59 @@ export const pairSelector = selectorFamily<
       return await client.pair(...params);
     },
 });
-export const poolSelector = selectorFamily<
-  PoolResponse,
+export const pairsSelector = selectorFamily<
+  PairsResponse,
   QueryClientParams & {
-    params: Parameters<WyndexFactoryQueryClient["pool"]>;
+    params: Parameters<WyndexFactoryQueryClient["pairs"]>;
   }
 >({
-  key: "wyndexFactoryPool",
+  key: "wyndexFactoryPairs",
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-      return await client.pool(...params);
+      return await client.pairs(...params);
     },
 });
-export const configSelector = selectorFamily<
-  ConfigResponse,
+export const feeInfoSelector = selectorFamily<
+  FeeInfoResponse,
   QueryClientParams & {
-    params: Parameters<WyndexFactoryQueryClient["config"]>;
+    params: Parameters<WyndexFactoryQueryClient["feeInfo"]>;
   }
 >({
-  key: "wyndexFactoryConfig",
+  key: "wyndexFactoryFeeInfo",
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-      return await client.config(...params);
+      return await client.feeInfo(...params);
     },
 });
-export const shareSelector = selectorFamily<
-  ArrayOfAssetValidated,
+export const blacklistedPairTypesSelector = selectorFamily<
+  ArrayOfPairType,
   QueryClientParams & {
-    params: Parameters<WyndexFactoryQueryClient["share"]>;
+    params: Parameters<WyndexFactoryQueryClient["blacklistedPairTypes"]>;
   }
 >({
-  key: "wyndexFactoryShare",
+  key: "wyndexFactoryBlacklistedPairTypes",
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-      return await client.share(...params);
+      return await client.blacklistedPairTypes(...params);
     },
 });
-export const cumulativePricesSelector = selectorFamily<
-  CumulativePricesResponse,
+export const pairsToMigrateSelector = selectorFamily<
+  ArrayOfAddr,
   QueryClientParams & {
-    params: Parameters<WyndexFactoryQueryClient["cumulativePrices"]>;
+    params: Parameters<WyndexFactoryQueryClient["pairsToMigrate"]>;
   }
 >({
-  key: "wyndexFactoryCumulativePrices",
+  key: "wyndexFactoryPairsToMigrate",
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-      return await client.cumulativePrices(...params);
-    },
-});
-export const queryComputeDSelector = selectorFamily<
-  Uint128,
-  QueryClientParams & {
-    params: Parameters<WyndexFactoryQueryClient["queryComputeD"]>;
-  }
->({
-  key: "wyndexFactoryQueryComputeD",
-  get:
-    ({ params, ...queryClientParams }) =>
-    async ({ get }) => {
-      const client = get(queryClient(queryClientParams));
-      return await client.queryComputeD(...params);
+      return await client.pairsToMigrate(...params);
     },
 });

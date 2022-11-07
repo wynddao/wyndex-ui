@@ -1,5 +1,6 @@
 import { selectorFamily } from "recoil";
 import { cosmWasmClientSelector } from "../chain";
+import { signingCosmWasmClientAtom } from "../../atoms";
 import {
   Uint128,
   ConfigResponse,
@@ -8,7 +9,7 @@ import {
   PoolResponse,
   ArrayOfAssetValidated,
 } from "../../../clients/types/WyndexPair.types";
-import { WyndexPairQueryClient } from "../../../clients/WyndexPair.client";
+import { WyndexPairClient, WyndexPairQueryClient } from "../../../clients/WyndexPair.client";
 type QueryClientParams = {
   contractAddress: string;
 };
@@ -21,6 +22,24 @@ export const queryClient = selectorFamily<WyndexPairQueryClient, QueryClientPara
       return new WyndexPairQueryClient(client, contractAddress);
     },
 });
+
+export type ExecuteClientParams = {
+  contractAddress: string;
+  sender: string;
+};
+
+export const executeClient = selectorFamily<WyndexPairClient | undefined, ExecuteClientParams>({
+  key: "wyndexPairExecuteClient",
+  get:
+    ({ contractAddress, sender }) =>
+    ({ get }) => {
+      const client = get(signingCosmWasmClientAtom);
+      if (!client) return;
+      return new WyndexPairClient(client, sender, contractAddress);
+    },
+  dangerouslyAllowMutability: true,
+});
+
 export const pairSelector = selectorFamily<
   PairInfo,
   QueryClientParams & {
