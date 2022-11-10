@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, FlexProps, Icon, useColorModeValue, Link } from "@chakra-ui/react";
+import { Flex, FlexProps, Icon, Link, useColorModeValue } from "@chakra-ui/react";
 import { usePathname } from "next/navigation";
 import { LinkItemProps } from ".";
 
@@ -45,16 +45,7 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
         }}
         {...restProps}
       >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="0.8em"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
+        {icon && <Icon mr="4" fontSize="0.8em" as={icon} />}
         {name}
       </Flex>
     </Link>
