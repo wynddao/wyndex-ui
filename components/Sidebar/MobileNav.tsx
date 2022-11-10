@@ -1,3 +1,5 @@
+"use client";
+
 import { Flex, FlexProps, IconButton, useColorModeValue } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiMenu } from "react-icons/fi";
