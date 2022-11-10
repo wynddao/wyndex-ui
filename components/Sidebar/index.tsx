@@ -4,6 +4,7 @@ import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from "@c
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
 import { IconType } from "react-icons";
+import { CHAIN_NAME } from "../../utils";
 import MobileNav from "./MobileNav";
 import SidebarContent from "./SidebarContent";
 
@@ -22,7 +23,7 @@ export default function Sidebar({ children }: SidebarProps) {
   const { setCurrentChain } = useWallet();
 
   useEffect(() => {
-    setCurrentChain("junotestnet");
+    setCurrentChain(CHAIN_NAME);
   }, [setCurrentChain]);
 
   return (
