@@ -11,6 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { WalletModalProps } from "@cosmos-kit/core";
 import { useWallet } from "@cosmos-kit/react";
+import Image from "next/image";
+import keplrLogo from "../public/keplr-logo.png";
+import walletConnectLogo from "../public/walletconnect-logo.png";
 
 export default function ConnectWalletModal({ isOpen, setOpen }: WalletModalProps) {
   const walletManager = useWallet();
@@ -28,7 +31,7 @@ export default function ConnectWalletModal({ isOpen, setOpen }: WalletModalProps
       <ModalContent>
         <ModalHeader>Select a wallet</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody px={6} pt={0} pb={6}>
           {walletManager.wallets.map(({ walletName, walletPrettyName }) => (
             <Button
               key={walletName}
@@ -36,7 +39,16 @@ export default function ConnectWalletModal({ isOpen, setOpen }: WalletModalProps
               variant="ghost"
               onClick={() => selectWallet(walletName)}
               w="full"
+              h="auto"
+              p={4}
+              justifyContent="flex-start"
+              gap={4}
             >
+              <Image
+                alt={`${walletPrettyName} logo`}
+                src={walletName === "keplr-extension" ? keplrLogo : walletConnectLogo}
+                style={{ width: "100%", height: "auto", maxWidth: "64px", maxHeight: "64px" }}
+              />
               <Text>{walletPrettyName}</Text>
             </Button>
           ))}
