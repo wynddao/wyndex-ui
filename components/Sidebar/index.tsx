@@ -1,6 +1,8 @@
 "use client";
 
 import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
+import { useEffect } from "react";
 import { IconType } from "react-icons";
 import MobileNav from "./MobileNav";
 import SidebarContent from "./SidebarContent";
@@ -17,6 +19,11 @@ interface SidebarProps {
 
 export default function Sidebar({ children }: SidebarProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { setCurrentChain } = useWallet();
+
+  useEffect(() => {
+    setCurrentChain("junotestnet");
+  }, []);
 
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
