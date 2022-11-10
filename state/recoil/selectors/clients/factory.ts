@@ -19,7 +19,7 @@ export const queryClient = selectorFamily<WyndexFactoryQueryClient, QueryClientP
     ({ contractAddress }) =>
     ({ get }) => {
       const client = get(cosmWasmClientSelector);
-      return new WyndexFactoryQueryClient(client, contractAddress);
+      return new WyndexFactoryQueryClient(client, contractAddress); // TODO fix this line that prevents building
     },
 });
 
