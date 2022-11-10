@@ -1,10 +1,15 @@
 import { Coin } from "cosmwasm";
 import { selector, selectorFamily } from "recoil";
-import { CHAIN_RPC_ENDPOINT, cosmWasmClientRouter } from "../../../utils";
+import { CHAIN_RPC_ENDPOINT, cosmWasmClientRouter, cosmWasmStargateClientRouter } from "../../../utils";
 
 export const cosmWasmClientSelector = selector({
   key: "cosmWasmClient",
   get: () => cosmWasmClientRouter.connect(CHAIN_RPC_ENDPOINT),
+});
+
+export const cosmWasmStargateClientSelector = selector({
+  key: "cosmWasmStargateClient",
+  get: () => cosmWasmStargateClientRouter.connect(CHAIN_RPC_ENDPOINT),
 });
 
 export const coinByDenomSelector = selectorFamily<

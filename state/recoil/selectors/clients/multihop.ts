@@ -1,8 +1,8 @@
 import { selectorFamily } from "recoil";
-import { cosmWasmClientSelector } from "../chain";
-import { signingCosmWasmClientAtom } from "../../atoms";
 import { ConfigResponse, SimulateSwapOperationsResponse } from "../../../clients/types/WyndexMultiHop.types";
 import { WyndexMultiHopClient, WyndexMultiHopQueryClient } from "../../../clients/WyndexMultiHop.client";
+import { signingCosmWasmStargateClientAtom } from "../../atoms";
+import { cosmWasmStargateClientSelector } from "../chain";
 
 type QueryClientParams = {
   contractAddress: string;
@@ -12,7 +12,7 @@ export const queryClient = selectorFamily<WyndexMultiHopQueryClient, QueryClient
   get:
     ({ contractAddress }) =>
     ({ get }) => {
-      const client = get(cosmWasmClientSelector);
+      const client = get(cosmWasmStargateClientSelector);
       return new WyndexMultiHopQueryClient(client, contractAddress);
     },
 });
@@ -27,7 +27,7 @@ export const executeClient = selectorFamily<WyndexMultiHopClient | undefined, Ex
   get:
     ({ contractAddress, sender }) =>
     ({ get }) => {
-      const client = get(signingCosmWasmClientAtom);
+      const client = get(signingCosmWasmStargateClientAtom);
       if (!client) return;
       return new WyndexMultiHopClient(client, sender, contractAddress);
     },
