@@ -26,7 +26,7 @@ export default function ConnectWalletButton() {
 
   useEffect(() => {
     setValue(address || "");
-  }, [address]);
+  }, [address, setValue]);
 
   return isWalletConnected && balance ? (
     <Button as={Box} pr={0} w="full" h="auto">

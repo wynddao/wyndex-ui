@@ -23,7 +23,7 @@ export default function Sidebar({ children }: SidebarProps) {
 
   useEffect(() => {
     setCurrentChain("junotestnet");
-  }, []);
+  }, [setCurrentChain]);
 
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
