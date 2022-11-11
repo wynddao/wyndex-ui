@@ -1,4 +1,5 @@
 import { CosmWasmClient } from "cosmwasm";
+import { CosmWasmClient as CosmWasmStargateClient } from "@cosmjs/cosmwasm-stargate";
 
 type ChainClientRoutes<T> = {
   [rpcEndpoint: string]: T;
@@ -41,4 +42,11 @@ class ChainClientRouter<T> {
  *  */
 export const cosmWasmClientRouter = new ChainClientRouter({
   handleConnect: (rpcEndpoint: string) => CosmWasmClient.connect(rpcEndpoint),
+});
+
+/*
+ * Router for connecting to `CosmWasmStargateClient`.
+ *  */
+export const cosmWasmStargateClientRouter = new ChainClientRouter({
+  handleConnect: (rpcEndpoint: string) => CosmWasmStargateClient.connect(rpcEndpoint),
 });

@@ -1,15 +1,15 @@
 import { selectorFamily } from "recoil";
-import { cosmWasmClientSelector } from "../chain";
-import { signingCosmWasmClientAtom } from "../../atoms";
 import {
-  Uint128,
+  ArrayOfAssetValidated,
   ConfigResponse,
   CumulativePricesResponse,
   PairInfo,
   PoolResponse,
-  ArrayOfAssetValidated,
+  Uint128,
 } from "../../../clients/types/WyndexPair.types";
 import { WyndexPairClient, WyndexPairQueryClient } from "../../../clients/WyndexPair.client";
+import { signingCosmWasmClientAtom } from "../../atoms";
+import { cosmWasmClientSelector } from "../chain";
 type QueryClientParams = {
   contractAddress: string;
 };

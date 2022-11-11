@@ -1,15 +1,15 @@
 import { selectorFamily } from "recoil";
-import { cosmWasmClientSelector } from "../chain";
-import { signingCosmWasmClientAtom } from "../../atoms";
+import { WyndexFactoryClient, WyndexFactoryQueryClient } from "../../../clients";
 import {
+  ArrayOfAddr,
   ArrayOfPairType,
   ConfigResponse,
   FeeInfoResponse,
   PairInfo,
   PairsResponse,
-  ArrayOfAddr,
 } from "../../../clients/types/WyndexFactory.types";
-import { WyndexFactoryClient, WyndexFactoryQueryClient } from "../../../clients";
+import { signingCosmWasmStargateClientAtom } from "../../atoms";
+import { cosmWasmStargateClientSelector } from "../chain";
 type QueryClientParams = {
   contractAddress: string;
 };
@@ -18,7 +18,7 @@ export const queryClient = selectorFamily<WyndexFactoryQueryClient, QueryClientP
   get:
     ({ contractAddress }) =>
     ({ get }) => {
-      const client = get(cosmWasmClientSelector);
+      const client = get(cosmWasmStargateClientSelector);
       return new WyndexFactoryQueryClient(client, contractAddress);
     },
 });
@@ -33,7 +33,7 @@ export const executeClient = selectorFamily<WyndexFactoryClient | undefined, Exe
   get:
     ({ contractAddress, sender }) =>
     ({ get }) => {
-      const client = get(signingCosmWasmClientAtom);
+      const client = get(signingCosmWasmStargateClientAtom);
       if (!client) return;
       return new WyndexFactoryClient(client, sender, contractAddress);
     },

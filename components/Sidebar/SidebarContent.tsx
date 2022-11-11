@@ -1,28 +1,14 @@
-import {
-  Box,
-  BoxProps,
-  CloseButton,
-  Flex,
-  Icon,
-  Switch,
-  useColorMode,
-  useColorModeValue,
-} from "@chakra-ui/react";
+"use client";
+
+import { Box, BoxProps, CloseButton, Flex, Icon, useColorModeValue } from "@chakra-ui/react";
 import Image from "next/image";
-import {
-  FiActivity,
-  FiBarChart,
-  FiMoon,
-  FiPackage,
-  FiPieChart,
-  FiRefreshCw,
-  FiSun,
-  FiUsers,
-} from "react-icons/fi";
+import { FiActivity, FiBarChart, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { LinkItemProps } from ".";
 import wyndLogoBlack from "../../public/logo-black.svg";
 import wyndLogoWhite from "../../public/logo-white.svg";
+import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem from "./NavItem";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
@@ -37,8 +23,6 @@ interface SidebarContentProps extends BoxProps {
 }
 
 export default function SidebarContent({ onClose, ...restProps }: SidebarContentProps) {
-  const { colorMode, toggleColorMode } = useColorMode();
-
   return (
     <Flex
       flexDirection="column"
@@ -78,33 +62,19 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
           }}
           {...restProps}
         >
-          <Icon
-            mr="4"
-            fontSize="0.8em"
-            _groupHover={{
-              color: "white",
-            }}
-            as={FiPackage}
-          />
+          <Icon mr="4" fontSize="0.8em" as={FiPackage} />
           Mistery Box
         </Flex>
       </Box>
-      <Flex alignItems="center" justifyContent="center" gap={4} m={{ base: "4", lg: "8" }}>
-        <Icon
-          fontSize={{ base: "md", lg: "lg" }}
-          as={FiMoon}
-          sx={{ color: useColorModeValue("inherit", "yellow.400") }}
-        />
-        <Switch
-          isChecked={colorMode === "light"}
-          onChange={() => toggleColorMode()}
-          size={{ base: "md", lg: "lg" }}
-        />
-        <Icon
-          fontSize={{ base: "md", lg: "lg" }}
-          as={FiSun}
-          sx={{ color: useColorModeValue("orange.500", "inherit") }}
-        />
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        gap={{ base: 1, lg: 2 }}
+        m={{ base: "4", lg: "8" }}
+      >
+        <ThemeSwitcher />
+        <ConnectWalletButton />
       </Flex>
     </Flex>
   );
