@@ -10,7 +10,7 @@ import { extendedTheme } from "../theme";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ChakraProvider theme={extendedTheme}>
+    <ChakraProvider theme={extendedTheme} cssVarsRoot="body">
       <RecoilRoot>
         <WalletProvider
           chains={chains}
