@@ -1,7 +1,9 @@
 "use client";
 
-import { Flex, FlexProps, Icon, Link, useColorModeValue } from "@chakra-ui/react";
+import { Flex, FlexProps, Icon, useColorModeValue } from "@chakra-ui/react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+
 import { LinkItemProps } from ".";
 
 type NavItemProps = LinkItemProps & FlexProps;
@@ -22,8 +24,6 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
     <Link
       href={to}
       style={{ textDecoration: "none" }}
-      isExternal={!to.startsWith("/")}
-      _focus={{ boxShadow: "none" }}
     >
       <Flex
         align="center"
