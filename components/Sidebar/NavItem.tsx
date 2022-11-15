@@ -1,8 +1,8 @@
 "use client";
 
 import { Flex, FlexProps, Icon, useColorModeValue } from "@chakra-ui/react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { LinkItemProps } from ".";
 
@@ -21,10 +21,7 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
   const activeLinkBg = useColorModeValue("brand.blue.100", "brand.blue.900");
 
   return (
-    <Link
-      href={to}
-      style={{ textDecoration: "none" }}
-    >
+    <Link href={to} style={{ textDecoration: "none" }}>
       <Flex
         align="center"
         p={{ base: "2", lg: "4" }}
