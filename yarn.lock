@@ -82,6 +82,14 @@
     "@keplr-wallet/crypto" "0.11.16-rc.0"
     semver "^7.3.8"
 
+"@chain-registry/osmosis@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@chain-registry/osmosis/-/osmosis-1.5.0.tgz#db89765acf9ea5f3dd9845fbb4af362d958a4779"
+  integrity sha512-ZtH4g1IkAW/K19gsqptrTONvYG+O6xj8FrJ3fLZr+andj7njleStO4CzNewpraaMm/IzOVXDmS4RhLkb6Co69w==
+  dependencies:
+    "@babel/runtime" "^7.19.4"
+    "@chain-registry/types" "^0.13.1"
+
 "@chain-registry/types@^0.13.0", "@chain-registry/types@^0.13.1":
   version "0.13.1"
   resolved "https://registry.yarnpkg.com/@chain-registry/types/-/types-0.13.1.tgz#be30130005448d6462d73a284e1fd26d080a06e8"
