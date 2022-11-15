@@ -1,10 +1,5 @@
-import Link from "next/link";
+import Pools from "../../components/Pools";
 
 export default function Page() {
-  return (
-    <>
-      <h1>Pools page</h1>
-      <Link href={`/pools/${Math.random().toString().slice(-8)}`}>Take me to a random pool</Link>
-    </>
-  );
+  return <Pools />;
 }
