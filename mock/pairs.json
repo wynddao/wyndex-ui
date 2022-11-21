@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "apr": 0.5,
+    "liquidity": "100000",
+    "fee": 0.002,
+    "tokens": [
+      {
+        "name": "JUNOX",
+        "tokenType": "native",
+        "img": "https://app.osmosis.zone/_next/image?url=%2Ftokens%2Fjuno.svg&w=64&q=75",
+        "denom": "ujunox",
+        "decimals": 6,
+        "chain": "junotestnet"
+      },
+      {
+        "name": "WYND",
+        "tokenType": "cw20",
+        "contractAddress": "juno1q56cfjewxp2f0pqtrpyx78j55zfxnz4z27y6fayew0wqw9m2t87sjfgf54",
+        "img": "https://app.wynddao.com/image.png",
+        "denom": "uwynd",
+        "decimals": 6,
+        "chain": "junotestnet"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "apr": 0.5,
+    "liquidity": "100000",
+    "fee": 0.002,
+    "tokens": [
+      {
+        "name": "JUNOX",
+        "tokenType": "native",
+        "img": "https://app.osmosis.zone/_next/image?url=%2Ftokens%2Fjuno.svg&w=64&q=75",
+        "denom": "ujunox",
+        "decimals": 6,
+        "chain": "junotestnet"
+      },
+      {
+        "name": "WYND",
+        "tokenType": "cw20",
+        "contractAddress": "juno1q56cfjewxp2f0pqtrpyx78j55zfxnz4z27y6fayew0wqw9m2t87sjfgf54",
+        "img": "https://app.wynddao.com/image.png",
+        "denom": "uwynd",
+        "decimals": 6,
+        "chain": "junotestnet"
+      }
+    ]
+  }
+]

@@ -1,6 +1,8 @@
+import { ChainRecord } from "@cosmos-kit/core";
 import { Coin } from "cosmwasm";
 import { selector, selectorFamily } from "recoil";
 import { CHAIN_RPC_ENDPOINT, cosmWasmClientRouter, cosmWasmStargateClientRouter } from "../../../utils";
+import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 
 export const cosmWasmClientSelector = selector({
   key: "cosmWasmClient",
@@ -14,19 +16,30 @@ export const cosmWasmStargateClientSelector = selector({
 
 export const coinByDenomSelector = selectorFamily<
   Coin,
-  {
-    readonly address?: string | undefined;
-    readonly denom?: string | undefined;
-  }
+  { readonly address: string | undefined; readonly serializedChainRecord: string }
 >({
   key: "coinByDenom",
   get:
-    ({ address, denom }) =>
+    ({ address, serializedChainRecord }) =>
     async ({ get }) => {
-      if (!address || !denom) return { denom: "", amount: "0" };
+      try {
+        const chainRecord: ChainRecord = JSON.parse(serializedChainRecord || "");
+        const microdenom = chainRecord?.assetList?.assets[0]?.base;
+        const chainUnits = chainRecord?.assetList?.assets[0]?.denom_units;
 
-      const client = get(cosmWasmClientSelector);
-      const coin = await client.getBalance(address, denom);
-      return coin;
+        if (!address || !microdenom) return { denom: "", amount: "0" };
+
+        const denom = microdenomToDenom(microdenom ?? "");
+        const denomUnit = chainUnits?.find((unit) => unit.denom.toLowerCase() === denom.toLowerCase());
+        const decimals = denomUnit?.exponent || 0;
+
+        const client = get(cosmWasmClientSelector);
+        const microBalance = await client.getBalance(address, microdenom);
+
+        const balance: Coin = { denom, amount: microamountToAmount(microBalance.amount, decimals) };
+        return balance;
+      } catch {
+        return { denom: "", amount: "0" };
+      }
     },
 });
