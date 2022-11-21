@@ -1,0 +1,96 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "apr": {
+        "type": "number"
+      },
+      "liquidity": {
+        "type": "string"
+      },
+      "fee": {
+        "type": "number"
+      },
+      "tokens": {
+        "type": "array",
+        "items": [
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "tokenType": {
+                "type": "string"
+              },
+              "img": {
+                "type": "string"
+              },
+              "denom": {
+                "type": "string"
+              },
+              "decimals": {
+                "type": "integer"
+              },
+              "chain": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "tokenType",
+              "img",
+              "denom",
+              "decimals",
+              "chain"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "tokenType": {
+                "type": "string"
+              },
+              "contractAddress": {
+                "type": "string"
+              },
+              "img": {
+                "type": "string"
+              },
+              "denom": {
+                "type": "string"
+              },
+              "decimals": {
+                "type": "integer"
+              },
+              "chain": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "tokenType",
+              "contractAddress",
+              "img",
+              "denom",
+              "decimals",
+              "chain"
+            ]
+          }
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "apr",
+      "liquidity",
+      "fee",
+      "tokens"
+    ]
+  }
