@@ -49,13 +49,25 @@ export default function Home() {
 
   useEffect(() => {
     if (fromItem && toItem) {
+      const getAssetInfo = (item: TokenInfo) => {
+        // If there is a contract address, token is cw20
+        if (item.contractAddress) {
+          return {
+            token: item.contractAddress,
+          };
+        }
+        // If there is no contract address, token is native
+        else {
+          return {
+            native_token: item.denom,
+          };
+        }
+      };
       const operation: SwapOperation[] = [
         {
           astro_swap: {
-            ask_asset_info: {
-              token: fromItem.denom,
-            },
-            offer_asset_info: { native_token: "" },
+            ask_asset_info: getAssetInfo(toItem),
+            offer_asset_info: getAssetInfo(fromItem),
           },
         },
       ];
@@ -88,7 +100,15 @@ export default function Home() {
         setTokenInputValue={setTokenInputValue}
       />
       <ToToken data={data} toItem={toItem} setToItem={setToItem} />
-      <Rate amount={tokenInputValue} fromItem={fromItem} toItem={toItem} tokenInputValue={tokenInputValue} operations={operations} />
+      {operations.length > 0 && (
+        <Rate
+          amount={tokenInputValue}
+          fromItem={fromItem}
+          toItem={toItem}
+          tokenInputValue={tokenInputValue}
+          operations={operations}
+        />
+      )}
       <Button h={{ base: 12, md: 16 }} w="full" colorScheme="primary" onClick={() => onSwap()}>
         Swap
       </Button>

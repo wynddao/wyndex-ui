@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil";
-import { FACTORY_CONTRACT_ADDRESS } from "../../utils";
+import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
 import { SwapOperation } from "../clients/types/WyndexMultiHop.types";
 import { WyndexMultiHopSelectors } from "../recoil";
 
@@ -11,9 +11,10 @@ export const useSimulateOperationInfos = (
   offerAmount: string,
   operations: SwapOperation[],
 ): UseSimulateOperationInfosResponse => {
+  console.log(MULTI_HOP_CONTRACT_ADDRESS);
   const simulatedOperation = useRecoilValue(
     WyndexMultiHopSelectors.simulateSwapOperationsSelector({
-      contractAddress: FACTORY_CONTRACT_ADDRESS,
+      contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
       params: [{ offerAmount, operations }],
     }),
   ).amount;

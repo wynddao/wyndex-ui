@@ -18,10 +18,8 @@ export default function Rate({
   amount: string;
 }) {
   const { colorMode } = useColorMode();
-  // TODO: const { simulatedOperation } = useSimulateOperationInfos(1, operations);
-
+  // const { simulatedOperation } = useSimulateOperationInfos("1", operations);
   const simulatedOperation = 0.5;
-
   return (
     <Box
       bg={handleChangeColorModeValue(colorMode, "gray.50", "whiteAlpha.200")}
@@ -47,7 +45,7 @@ export default function Rate({
             </Text>
             <Text>=</Text>
             <Text>
-              {Number(tokenInputValue) * simulatedOperation} &ensp;{toItem.name}
+              {Number(tokenInputValue) * Number(simulatedOperation)} &ensp;{toItem.name}
             </Text>
           </Stack>
         ) : (

@@ -13,8 +13,8 @@ export const useAllPairsInfos = ({ limit = undefined, startAfter = undefined }):
       contractAddress: FACTORY_CONTRACT_ADDRESS,
       params: [
         {
-          limit: limit,
-          startAfter: startAfter,
+          limit,
+          startAfter,
         },
       ],
     }),
