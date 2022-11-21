@@ -1,14 +1,16 @@
 "use client";
 
-import { Flex, FlexProps, Icon, useColorModeValue } from "@chakra-ui/react";
+import { Flex, FlexProps, Icon, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { LinkItemProps } from ".";
+import { handleChangeColorModeValue } from "../../utils/theme";
 
 type NavItemProps = LinkItemProps & FlexProps;
 
 export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) {
+  const { colorMode } = useColorMode();
   const pathname = usePathname();
 
   // Set styles for active link and children routes, but avoid Dashboard being always styled
@@ -17,8 +19,6 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
   const pathnameNoSlash = pathname?.slice(1);
   const isCurrentLinkPathname = toNoSlash && pathnameNoSlash && pathnameNoSlash.startsWith(toNoSlash);
   const isLinkActive = isExactlyDashboard || isCurrentLinkPathname;
-
-  const activeLinkBg = useColorModeValue("brand.blue.100", "brand.blue.900");
 
   return (
     <Link href={to} style={{ textDecoration: "none" }}>
@@ -30,7 +30,14 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
         role="group"
         fontSize={{ base: "14", lg: "16" }}
         cursor="pointer"
-        sx={isLinkActive ? { bg: activeLinkBg, color: "white" } : undefined}
+        sx={
+          isLinkActive
+            ? {
+                bg: handleChangeColorModeValue(colorMode, "brand.blue.100", "brand.blue.900"),
+                color: "white",
+              }
+            : undefined
+        }
         _hover={{ bg: useColorModeValue("brand.cyan.100", "brand.blue.800"), color: "white" }}
         {...restProps}
       >
