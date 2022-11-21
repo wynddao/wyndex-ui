@@ -27,8 +27,11 @@ export default function InputAddressForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack>
           <FormControl isInvalid={!formState.isValid && formState.isDirty}>
-            <FormLabel>Enter numeric address</FormLabel>
+            <FormLabel id="address-label" htmlFor="address">
+              Enter numeric address
+            </FormLabel>
             <Input
+              id="address"
               {...register("address", {
                 valueAsNumber: true,
               })}
