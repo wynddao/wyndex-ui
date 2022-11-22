@@ -2,8 +2,11 @@
 
 import { Box, Button, Flex, Heading, Text, useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import dynamic from "next/dynamic";
 import PoolsCard from "./PoolsCard";
 import { getDefaultData } from "./__mocks__/pools";
+
+const CreatePoolModal = dynamic(() => import("../CreatePoolModal"));
 
 export default function Pools() {
   const { address, openView: openConnectWallet } = useWallet();
