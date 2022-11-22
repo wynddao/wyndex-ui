@@ -9,7 +9,7 @@ import { getDefaultData } from "./__mocks__/pools";
 const CreatePoolModal = dynamic(() => import("../CreatePoolModal"));
 
 export default function Pools() {
-  const { address, openView: openConnectWallet } = useWallet();
+  const { isWalletConnected, openView: openConnectWallet } = useWallet();
   const { isOpen, onOpen: openCreatePool, onClose } = useDisclosure();
 
   return (
@@ -20,7 +20,7 @@ export default function Pools() {
             Active Pools
           </Heading>
           <Button
-            onClick={address ? openCreatePool : openConnectWallet}
+            onClick={isWalletConnected ? openCreatePool : openConnectWallet}
             display={{ base: "none", sm: "block" }}
           >
             Create New Pool
