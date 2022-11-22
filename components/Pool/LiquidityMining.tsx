@@ -2,13 +2,11 @@
 
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useMemo } from "react";
+import { Pair } from "../../utils/types";
 import BoundingsTable from "./BoundingsTable";
 import UnboundingsGrid from "./UnboundingsGrid";
-import { defaultUnbondingList } from "./__mocks__/pool";
 
-export default function LiquidityMining() {
-  const unbondingPeriodList = useMemo(() => defaultUnbondingList, []);
-
+export default function LiquidityMining({ poolData }: { poolData: Pair }) {
   return (
     <Box>
       <Box p={4} pt={8}>
@@ -42,8 +40,8 @@ export default function LiquidityMining() {
           </Flex>
         </Flex>
       </Box>
-      <UnboundingsGrid unbondingPeriodList={unbondingPeriodList} />
-      <BoundingsTable unbondingPeriodList={unbondingPeriodList} />
+      <UnboundingsGrid unbondingPeriodList={poolData.unbondingPeriods} />
+      <BoundingsTable unbondingPeriodList={poolData.unbondingPeriods} />
     </Box>
   );
 }

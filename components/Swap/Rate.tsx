@@ -2,7 +2,7 @@ import { Box, Divider, Flex, Skeleton, Stack, Text, useColorMode } from "@chakra
 import { SwapOperation } from "../../state/clients/types/WyndexMultiHop.types";
 import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { TokenInfo } from "../../utils/experimentalTokenList";
+import { Asset } from "../../utils";
 
 export default function Rate({
   fromItem,
@@ -11,15 +11,15 @@ export default function Rate({
   operations,
   amount,
 }: {
-  fromItem: TokenInfo | undefined;
-  toItem: TokenInfo | undefined;
+  fromItem: Asset | undefined;
+  toItem: Asset | undefined;
   tokenInputValue: string;
   operations: SwapOperation[];
   amount: string;
 }) {
   const { colorMode } = useColorMode();
-  // const { simulatedOperation } = useSimulateOperationInfos("1", operations);
-  const simulatedOperation = 0.5;
+
+  const { simulatedOperation } = useSimulateOperationInfos("1000000", operations);
   return (
     <Box
       bg={handleChangeColorModeValue(colorMode, "gray.50", "whiteAlpha.200")}
@@ -45,7 +45,7 @@ export default function Rate({
             </Text>
             <Text>=</Text>
             <Text>
-              {Number(tokenInputValue) * Number(simulatedOperation)} &ensp;{toItem.name}
+              {Number(tokenInputValue) * Number(simulatedOperation) / 1000} &ensp;{toItem.name}
             </Text>
           </Stack>
         ) : (

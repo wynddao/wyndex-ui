@@ -12,10 +12,10 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { UnbondingPeriodListData } from ".";
+import { UnbondingPeriod } from "../../utils/types";
 
 interface BoundingsTableProps {
-  readonly unbondingPeriodList: readonly UnbondingPeriodListData[];
+  readonly unbondingPeriodList: readonly UnbondingPeriod[];
 }
 
 export default function BoundingsTable({ unbondingPeriodList }: BoundingsTableProps) {
@@ -38,14 +38,14 @@ export default function BoundingsTable({ unbondingPeriodList }: BoundingsTablePr
             </Tr>
           </Thead>
           <Tbody>
-            {unbondingPeriodList.map(({ days, apr, amount }, i) => {
+            {unbondingPeriodList.map(({ duration, apr }, i) => {
               return (
                 <Tr key={i}>
-                  <Td fontWeight="semibold">{days === "1" ? "a day" : `${days} days`}</Td>
+                  <Td fontWeight="semibold">{duration} ms</Td>
                   <Td fontWeight="semibold">{apr}%</Td>
-                  <Td fontWeight="semibold">{amount} GAMM/2</Td>
+                  <Td fontWeight="semibold">@TODO</Td>
                   <Td>
-                    <Button variant="unstyled" color="orange.300" isDisabled={amount === 0}>
+                    <Button variant="unstyled" color="orange.300" isDisabled={true}>
                       Unbonding All
                     </Button>
                   </Td>

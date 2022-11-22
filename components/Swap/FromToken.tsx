@@ -30,7 +30,7 @@ import { BsHexagon, BsHexagonFill } from "react-icons/bs";
 import { CgArrowsExchangeV } from "react-icons/cg";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { TokenInfo } from "../../utils/experimentalTokenList";
+import { Asset } from "../../utils";
 
 export default function FromToken({
   data,
@@ -41,11 +41,11 @@ export default function FromToken({
   tokenInputValue,
   setTokenInputValue,
 }: {
-  data: TokenInfo[];
-  fromItem: TokenInfo | undefined;
-  setFromItem: (value: TokenInfo) => void;
-  toItem: TokenInfo | undefined;
-  setToItem: (value: TokenInfo) => void;
+  data: Asset[];
+  fromItem: Asset | undefined;
+  setFromItem: (value: Asset) => void;
+  toItem: Asset | undefined;
+  setToItem: (value: Asset) => void;
   tokenInputValue: string;
   setTokenInputValue: (value: string) => void;
 }) {
@@ -127,7 +127,7 @@ export default function FromToken({
   const DropdownIndicator = () => {
     return null;
   };
-  const CustomOption = ({ children, ...props }: OptionProps<TokenInfo, true, GroupBase<TokenInfo>>) => {
+  const CustomOption = ({ children, ...props }: OptionProps<Asset, true, GroupBase<Asset>>) => {
     return (
       <chakraComponents.Option {...props}>
         <Flex id={props.data.name} align="center" w="full">
@@ -141,7 +141,7 @@ export default function FromToken({
               h="full"
               mr={{ base: 3, sm: 4 }}
             >
-              <Image src={props.data.imgSrc} />
+              <Image src={props.data.img} />
             </Box>
             <Box>
               <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="bold" textAlign="start">
@@ -167,7 +167,7 @@ export default function FromToken({
       </chakraComponents.Option>
     );
   };
-  const CustomControl = ({ children, ...props }: ControlProps<TokenInfo, true>) => {
+  const CustomControl = ({ children, ...props }: ControlProps<Asset, true>) => {
     return (
       <chakraComponents.Control {...props}>
         <Flex align="center" pl={4}>
@@ -299,7 +299,7 @@ export default function FromToken({
                 borderColor="orange.300"
                 mr={{ base: 2, sm: 4 }}
               >
-                <Image src={fromItem.imgSrc} />
+                <Image src={fromItem.img} />
               </Box>
               <Text fontSize={{ base: "xl", sm: "3xl" }} fontWeight="bold" textAlign="start">
                 {fromItem.name}&nbsp;
@@ -408,7 +408,7 @@ export default function FromToken({
                 onChange={(selectedOption) => {
                   let value = {};
                   value = { ...selectedOption };
-                  setFromItem(value as TokenInfo);
+                  setFromItem(value as Asset);
                   onClose();
                 }}
                 components={{
@@ -433,8 +433,8 @@ export default function FromToken({
             bottom={{ base: -8, sm: -10 }}
             color={handleChangeColorModeValue(colorMode, "blackAlpha.300", "whiteAlpha.600")}
             onClick={() => {
-              setFromItem(toItem as TokenInfo);
-              setToItem(fromItem as TokenInfo);
+              setFromItem(toItem as Asset);
+              setToItem(fromItem as Asset);
             }}
           >
             <Icon

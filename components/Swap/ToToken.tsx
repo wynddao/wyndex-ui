@@ -18,16 +18,16 @@ import { RiSearch2Fill } from "react-icons/ri";
 import SkeletonOptions from "./SkeletonOptions";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { TokenInfo } from "../../utils/experimentalTokenList";
+import { Asset } from "../../utils";
 
 export default function ToToken({
   data,
   toItem,
   setToItem,
 }: {
-  data: TokenInfo[];
-  toItem: TokenInfo | undefined;
-  setToItem: (value: TokenInfo) => void;
+  data: Asset[];
+  toItem: Asset | undefined;
+  setToItem: (value: Asset) => void;
 }) {
   const toMenuRef = useRef<HTMLDivElement | null>(null);
   const { isOpen, onToggle, onClose } = useDisclosure();
@@ -92,7 +92,7 @@ export default function ToToken({
   const DropdownIndicator = () => {
     return null;
   };
-  const CustomOption = ({ children, ...props }: OptionProps<TokenInfo, true, GroupBase<TokenInfo>>) => {
+  const CustomOption = ({ children, ...props }: OptionProps<Asset, true, GroupBase<Asset>>) => {
     return (
       <chakraComponents.Option {...props}>
         <Flex id={props.data.name} align="center" w="full">
@@ -106,7 +106,7 @@ export default function ToToken({
               h="full"
               mr={{ base: 3, sm: 4 }}
             >
-              <Image src={props.data.imgSrc} />
+              <Image src={props.data.img} />
             </Box>
             <Box>
               <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="bold" textAlign="start">
@@ -133,7 +133,7 @@ export default function ToToken({
       </chakraComponents.Option>
     );
   };
-  const CustomControl = ({ children, ...props }: ControlProps<TokenInfo, true>) => {
+  const CustomControl = ({ children, ...props }: ControlProps<Asset, true>) => {
     return (
       <chakraComponents.Control {...props}>
         <Flex align="center" pl={4}>
@@ -186,7 +186,7 @@ export default function ToToken({
                 borderColor="orange.200"
                 mr={{ base: 2, sm: 4 }}
               >
-                <Image src={toItem.imgSrc} />
+                <Image src={toItem.img} />
               </Box>
               <Text fontSize={{ base: "xl", sm: "3xl" }} fontWeight="bold" textAlign="start">
                 {toItem.name}&nbsp;
@@ -256,7 +256,7 @@ export default function ToToken({
                 onChange={(selectedOption) => {
                   let value = {};
                   value = { ...selectedOption };
-                  setToItem(value as TokenInfo);
+                  setToItem(value as Asset);
                   onClose();
                 }}
                 loadOptions={(inputValue, callback) => {

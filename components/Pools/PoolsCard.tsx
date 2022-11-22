@@ -2,12 +2,12 @@
 
 import { Box, Divider, Flex, Grid, GridItem, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import Link from "next/link";
-import { PairInfo } from "../../state/clients/types/WyndexPair.types";
 
 import { handleChangeColorModeValue } from "../../utils/theme";
+import { Pair } from "../../utils/types";
 
 interface PoolsCardProps {
-  readonly poolsData: readonly PairInfo[];
+  readonly poolsData: readonly Pair[];
 }
 
 export default function PoolsCard({ poolsData }: PoolsCardProps) {
@@ -15,7 +15,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
 
   return (
     <SimpleGrid columns={{ sm: 2, lg: 4 }} gap={4} mb={8}>
-      {poolsData.map(({ asset_infos, contract_addr, liquidity_token, pair_type }, index) => {
+      {poolsData.map(({ id, apr, fee, tokens }, index) => {
         return (
           <Link key={index} href={`/pools/${index}`}>
             <Box
@@ -41,7 +41,9 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     borderColor={handleChangeColorModeValue(colorMode, "primary.100", "primary.900")}
                     overflow="hidden"
                     p={0.5}
-                  ></Box>
+                  >
+                    <Image src={tokens[0].img} alt={tokens[0].name} />
+                  </Box>
                   <Box
                     position="absolute"
                     left={{ base: 8, sm: 10 }}
@@ -53,7 +55,9 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     borderColor={handleChangeColorModeValue(colorMode, "primary.100", "primary.900")}
                     overflow="hidden"
                     p={0.5}
-                  ></Box>
+                  >
+                    <Image src={tokens[1].img} alt={tokens[1].name} />
+                  </Box>
                 </Flex>
                 <Flex flexDirection="column" justify="center">
                   <Text fontSize="xl" fontWeight="extrabold">
@@ -72,10 +76,10 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     fontWeight="semibold"
                     color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                   >
-                    Pool Liquidity Token
+                    APR
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
-                    {liquidity_token}
+                    {apr * 100} %
                   </Text>
                 </GridItem>
                 <GridItem>
@@ -83,10 +87,10 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     fontWeight="semibold"
                     color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                   >
-                    Contract:
+                    Fee
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
-                    {contract_addr}
+                    {fee * 100} %
                   </Text>
                 </GridItem>
                 <GridItem colSpan={{ lg: 2 }}>
@@ -99,18 +103,26 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     fontWeight="semibold"
                     color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                   >
-                    My Liquidity
+                    Liquidity
                   </Text>
-                  <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold"></Text>
+                  <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
+                    {tokens[0].liquidity?.amount} {tokens[0].denom} <br />
+                    {tokens[1].liquidity?.amount} {tokens[1].denom}
+                  </Text>
                 </GridItem>
                 <GridItem>
                   <Text
                     fontWeight="semibold"
                     color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                   >
-                    My Bounded Amount
+                    Shares
                   </Text>
-                  <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold"></Text>
+                  {tokens[0].liquidity && tokens[1].liquidity && (
+                    <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
+                      {tokens[0].liquidity?.shares * 100} %<br />
+                      {tokens[1].liquidity?.shares * 100} %
+                    </Text>
+                  )}
                 </GridItem>
               </Grid>
             </Box>

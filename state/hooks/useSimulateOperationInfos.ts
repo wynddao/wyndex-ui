@@ -11,7 +11,6 @@ export const useSimulateOperationInfos = (
   offerAmount: string,
   operations: SwapOperation[],
 ): UseSimulateOperationInfosResponse => {
-  console.log(MULTI_HOP_CONTRACT_ADDRESS);
   const simulatedOperation = useRecoilValue(
     WyndexMultiHopSelectors.simulateSwapOperationsSelector({
       contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
