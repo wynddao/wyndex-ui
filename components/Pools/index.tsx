@@ -1,12 +1,16 @@
 "use client";
 
 import { Box, Button, Flex, Heading, Text, useColorModeValue, useDisclosure } from "@chakra-ui/react";
-import CreatePoolModal from "../CreatePoolModal";
+import { useWallet } from "@cosmos-kit/react";
+import dynamic from "next/dynamic";
 import PoolsCard from "./PoolsCard";
 import { getDefaultData } from "./__mocks__/pools";
 
+const CreatePoolModal = dynamic(() => import("../CreatePoolModal"));
+
 export default function Pools() {
-  const { onOpen, isOpen, onClose } = useDisclosure();
+  const { isWalletConnected, openView: openConnectWallet } = useWallet();
+  const { isOpen, onOpen: openCreatePool, onClose } = useDisclosure();
 
   return (
     <>
@@ -15,7 +19,10 @@ export default function Pools() {
           <Heading as="h2" fontSize="2xl" mr={4}>
             Active Pools
           </Heading>
-          <Button onClick={onOpen} display={{ base: "none", sm: "block" }}>
+          <Button
+            onClick={isWalletConnected ? openCreatePool : openConnectWallet}
+            display={{ base: "none", sm: "block" }}
+          >
             Create New Pool
           </Button>
         </Flex>
