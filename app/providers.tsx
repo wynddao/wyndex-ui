@@ -1,11 +1,12 @@
 "use client";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import { wallets } from "@cosmos-kit/keplr";
+import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
+import { wallets as keplrWallet } from "@cosmos-kit/keplr";
+import { wallets as leapwallets } from "@cosmos-kit/leap";
 import { useWallet, WalletProvider } from "@cosmos-kit/react";
 import { chains, assets } from "chain-registry";
 import { RecoilRoot, useSetRecoilState } from "recoil";
-import ConnectWalletModal from "../components/ConnectWalletModal";
 import { extendedTheme } from "../theme";
 import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/chaindata";
 import { signingCosmWasmClientAtom } from "../state";
@@ -42,8 +43,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <WalletProvider
           chains={[...chains, junoTestnet]}
           assetLists={[...assets, junoAssets]}
-          wallets={wallets}
-          walletModal={ConnectWalletModal}
+          wallets={[...keplrWallet, ...cosmostationWallets, ...leapwallets]}
           signerOptions={signerOptions}
         >
           <InnerWalletProvider>{children}</InnerWalletProvider>
