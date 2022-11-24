@@ -4,6 +4,7 @@ import { Box, Flex, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/rea
 import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { handleChangeColorModeValue } from "../../utils/theme";
 import { Pair } from "../../utils/types";
+import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
   readonly poolData: Pair;
@@ -48,7 +49,7 @@ export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps)
                   color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                 >
                   {/*@ts-ignore */}
-                  {asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native_token}
+                  {asset.info.hasOwnProperty("token") ? <TokenName address={asset.info.token} /> : asset.info.native_token}
                 </Text>
               </Box>
             </Flex>

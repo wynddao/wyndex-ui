@@ -15,9 +15,9 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
 
   return (
     <SimpleGrid columns={{ sm: 2, lg: 4 }} gap={4} mb={8}>
-      {poolsData.map(({ id, apr, fee, tokens }, index) => {
+      {poolsData.map(({ id, apr, fee, tokens, contractAddress }, index) => {
         return (
-          <Link key={index} href={`/pools/${index}`}>
+          <Link key={index} href={`/pools/${contractAddress}`}>
             <Box
               borderRadius="lg"
               border="1px solid"

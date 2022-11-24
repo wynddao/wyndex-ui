@@ -30,7 +30,7 @@ import { BsHexagon, BsHexagonFill } from "react-icons/bs";
 import { CgArrowsExchangeV } from "react-icons/cg";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { Asset } from "../../utils";
+import { Asset } from "../../utils/types";
 
 export default function FromToken({
   data,

@@ -18,7 +18,7 @@ import { RiSearch2Fill } from "react-icons/ri";
 import SkeletonOptions from "./SkeletonOptions";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { Asset } from "../../utils";
+import { Asset } from "../../utils/types";
 
 export default function ToToken({
   data,
