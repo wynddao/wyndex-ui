@@ -1,0 +1,9 @@
+{
+  "name": "WYND",
+  "tokenType": "cw20",
+  "contractAddress": "juno1q56cfjewxp2f0pqtrpyx78j55zfxnz4z27y6fayew0wqw9m2t87sjfgf54",
+  "img": "https://app.wynddao.com/image.png",
+  "denom": "uwynd",
+  "decimals": 6,
+  "chain": "junotestnet"
+}

@@ -21,23 +21,20 @@ import {
   Tooltip,
   useColorMode,
 } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
+import { CustomHooks } from "../../state";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { defaultData, defaultInput } from "./__mocks__/liquidity";
-
-export interface dataType {
-  label: string;
-  value: string;
-  imgSrc: string;
-  percent: number;
-  availableCurrency: number;
-  show: boolean;
-}
+import { Asset, Pair } from "../../utils/types";
+import { Asset as WyndAsset } from "../../state/clients/types/WyndexPair.types";
+import { getAssetInfo } from "../../utils/assets";
+import { Coin } from "cosmwasm";
 
 interface inputType {
   id: string;
   value: string;
+  contract?: string;
 }
 
 interface singleType {
@@ -46,17 +43,57 @@ interface singleType {
 }
 
 interface popType {
-  optionsIndex: dataType[];
+  optionsIndex: Asset[];
   isOpen: boolean;
 }
 
-export default function AddLiquidity() {
+interface DataType extends Asset {
+  show?: boolean;
+}
+
+export default function AddLiquidity({ poolData }: { poolData: Pair }) {
   const { colorMode } = useColorMode();
 
-  const [data, setData] = useState<dataType[]>(defaultData);
+  const [data, setData] = useState<DataType[]>(poolData.tokens);
+  const defaultInput = poolData.tokens.map(({ denom: label, contractAddress }) => ({
+    id: label,
+    value: "0",
+    contract: contractAddress,
+  }));
   const [tokenInputValue, setTokenInputValue] = useState<inputType[]>(defaultInput);
   const [single, setSingle] = useState<singleType>({ selectedIndex: 0, isSingle: false });
   const [openPop, setOpenPop] = useState<popType>({ optionsIndex: [], isOpen: false });
+  const [tokenAddress, setTokenAddress] = useState<string>("");
+
+  const { address: walletAddress } = useWallet();
+
+  const doProvideLiquidity = CustomHooks.useCustomProvideLP({
+    sender: walletAddress || "",
+  });
+
+  const prodiveLiquidity = async () => {
+    const assets = tokenInputValue.map((token): WyndAsset => {
+      return {
+        amount: token.value,
+        info: token.contract ? { token: token.contract } : { native_token: token.id },
+      };
+    });
+    const funds: Coin[] | undefined = tokenInputValue.find((element) => !element.contract)
+      ? [
+          {
+            amount: tokenInputValue.find((element) => !element.contract)?.value || "1",
+            denom: tokenInputValue.find((element) => !element.contract)?.id || "ujunox",
+          },
+        ]
+      : undefined;
+    doProvideLiquidity({
+      pairContractAddress: poolData.contractAddress,
+      assets: assets,
+      funds,
+    })
+      .then((res) => console.log(res))
+      .catch((e) => console.log(e));
+  };
 
   useEffect(() => {
     if (single.isSingle) {
@@ -81,7 +118,7 @@ export default function AddLiquidity() {
         </Text>
       </Text>
       <Stack spacing={2} mb={6}>
-        {data.map(({ label, value, availableCurrency, show, imgSrc }, i) => {
+        {data.map(({ name, denom, img, show, contractAddress }, i) => {
           return (
             show && (
               <Box position="relative">
@@ -102,7 +139,7 @@ export default function AddLiquidity() {
                     _focus={{ outline: "none" }}
                   >
                     <PopoverBody>
-                      {openPop.optionsIndex.map(({ label: optionLabel, imgSrc }, i) => (
+                      {openPop.optionsIndex.map(({ denom: optionLabel, img }, i) => (
                         <Button
                           key={i}
                           variant="ghost"
@@ -116,8 +153,8 @@ export default function AddLiquidity() {
                           px={{ base: 2, sm: 4 }}
                           py={4}
                           onClick={() => {
-                            data.map(({ label }, i) => {
-                              if (optionLabel === label) {
+                            data.map(({ denom }, i) => {
+                              if (optionLabel === denom) {
                                 setSingle({
                                   selectedIndex: i,
                                   isSingle: true,
@@ -130,7 +167,7 @@ export default function AddLiquidity() {
                             });
                           }}
                         >
-                          <Image alt={`${label} logo`} src={imgSrc} w={12} mr={{ base: 3, sm: 4 }} />
+                          <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
                           {optionLabel}
                         </Button>
                       ))}
@@ -138,7 +175,7 @@ export default function AddLiquidity() {
                   </PopoverContent>
                 </Popover>
                 <Flex
-                  key={value}
+                  key={1}
                   border="1px solid"
                   borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
                   borderRadius={openPop.isOpen ? "1rem 1rem 1rem 0" : "2xl"}
@@ -149,7 +186,7 @@ export default function AddLiquidity() {
                   gap={4}
                 >
                   <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
-                    <Image alt={`${label} logo`} src={imgSrc} w={12} mr={{ base: 3, sm: 4 }} />
+                    <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
                     <Flex
                       position="relative"
                       align="center"
@@ -162,7 +199,7 @@ export default function AddLiquidity() {
                       }
                     >
                       <Text fontWeight="bold" fontSize={{ base: "xl" }}>
-                        {label}
+                        {denom}
                       </Text>
                       {single.isSingle && (
                         <IconButton
@@ -190,10 +227,8 @@ export default function AddLiquidity() {
                         <Text
                           as="span"
                           color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
-                        >
-                          {availableCurrency}&nbsp;
-                        </Text>
-                        {label}
+                        ></Text>
+                        {denom}
                       </Text>
                       <Button
                         alignSelf="end"
@@ -201,10 +236,10 @@ export default function AddLiquidity() {
                         _focus={{ outline: "none" }}
                         onClick={() => {
                           const getVal = tokenInputValue.map(({ id, value: defaultVal }) => {
-                            if (id === label) {
+                            if (id === denom) {
                               return {
                                 id: id,
-                                value: availableCurrency.toString(),
+                                value: "1",
                               };
                             }
                             return { id: id, value: defaultVal };
@@ -220,17 +255,21 @@ export default function AddLiquidity() {
                       value={tokenInputValue[i].value}
                       bg={handleChangeColorModeValue(colorMode, "whiteAlpha.500", "whiteAlpha.50")}
                       min={0}
-                      max={availableCurrency}
+                      max={1001}
                       onChange={(val) => {
-                        const getVal = tokenInputValue.map(({ id, value: defaultVal }) => {
-                          if (id === label) {
-                            return {
-                              id: id,
-                              value: val,
-                            };
-                          }
-                          return { id: id, value: defaultVal };
-                        });
+                        const getVal = tokenInputValue.map(
+                          ({ id, value: defaultVal, contract: contractDefault }) => {
+                            if (id === denom) {
+                              return {
+                                id: id,
+                                value: val,
+                                contract: contractAddress || undefined,
+                              };
+                            }
+                            return { id: id, value: defaultVal, contract: contractDefault };
+                          },
+                        );
+                        console.log(getVal);
                         setTokenInputValue(getVal);
                       }}
                     >
@@ -292,6 +331,7 @@ export default function AddLiquidity() {
       </Flex>
       <Box px={{ sm: 12 }}>
         <Button
+          onClick={() => prodiveLiquidity()}
           isDisabled={tokenInputValue.filter(({ value }) => value !== "0").length > 0 ? false : true}
           w="full"
           size="lg"

@@ -1,16 +1,23 @@
 "use client";
-
 import { Box, Button, Flex, Heading, Text, useColorModeValue, useDisclosure } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { getPairs } from "../../utils";
+import { Pair } from "../../utils/types";
+import CreatePoolModal from "../CreatePoolModal";
 import PoolsCard from "./PoolsCard";
-import { getDefaultData } from "./__mocks__/pools";
-
-const CreatePoolModal = dynamic(() => import("../CreatePoolModal"));
 
 export default function Pools() {
-  const { isWalletConnected, openView: openConnectWallet } = useWallet();
-  const { isOpen, onOpen: openCreatePool, onClose } = useDisclosure();
+  const { onOpen, isOpen, onClose } = useDisclosure();
+  const [data, setData] = useState<Pair[]>([]);
+
+  const getAsync = async () => {
+    const pairs = await getPairs();
+    setData(pairs);
+  };
+
+  useEffect(() => {
+    getAsync();
+  }, []);
 
   return (
     <>
@@ -19,10 +26,7 @@ export default function Pools() {
           <Heading as="h2" fontSize="2xl" mr={4}>
             Active Pools
           </Heading>
-          <Button
-            onClick={isWalletConnected ? openCreatePool : openConnectWallet}
-            display={{ base: "none", sm: "block" }}
-          >
+          <Button onClick={onOpen} display={{ base: "none", sm: "block" }}>
             Create New Pool
           </Button>
         </Flex>
@@ -30,7 +34,7 @@ export default function Pools() {
           <Text fontSize="2xl" fontWeight="bold" mb={4}>
             My Pools
           </Text>
-          <PoolsCard poolsData={getDefaultData(4)} />
+          <PoolsCard poolsData={data} />
         </Box>
       </Flex>
       <CreatePoolModal isOpen={isOpen} onClose={onClose} />

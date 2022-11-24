@@ -1,4 +1,5 @@
 import { asset_list } from "@chain-registry/osmosis";
+import { Asset } from "./types";
 
 const handleRandomCase = (text: string) =>
   text
@@ -18,3 +19,18 @@ export const OsmosisTokens = asset_list.assets.map(({ name, logo_URIs, symbol, t
   traces: traces?.[0],
   ibc: ibc,
 }));
+
+export const getAssetInfo = (item: Asset) => {
+  // If there is a contract address, token is cw20
+  if (item.contractAddress) {
+    return {
+      token: item.contractAddress,
+    };
+  }
+  // If there is no contract address, token is native
+  else {
+    return {
+      native_token: item.denom,
+    };
+  }
+};

@@ -1,34 +1,16 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
 import PoolHeader from "./PoolHeader";
-import { getDefaultPoolData } from "./__mocks__/pool";
-
-export interface PoolData {
-  id: string;
-  token1: {
-    name: string;
-    img: string;
-    amount: number;
-    tokenTotalAmount: number;
-    percent: number;
-  };
-  token2: {
-    name: string;
-    img: string;
-    amount: number;
-    tokenTotalAmount: number;
-    percent: number;
-  };
-  poolLiquidity: number;
-  swapFee: number;
-  myLiquidity: number;
-  bounded: number;
-}
-
+import { Pair } from "../../utils/types";
+import { getPair } from "../../utils";
+import { usePairInfos } from "../../state";
+import { AssetInfo } from "../../state/clients/types/WyndexFactory.types";
+import { getAssetInfo } from "../../utils/assets";
+import PoolWrapper from "./PoolWrapper";
 export interface UnbondingPeriodListData {
   days: string;
   apr: number;
@@ -40,13 +22,16 @@ interface PoolProps {
 }
 
 export default function Pool({ poolAddress }: PoolProps) {
-  const poolData = useMemo(() => getDefaultPoolData(poolAddress), [poolAddress]);
+  const [poolData, setPoolData] = useState<Pair | undefined>(undefined);
 
-  return (
-    <Box>
-      <PoolHeader poolData={poolData} />
-      <LiquidityMining />
-      <PoolCatalyst poolData={poolData} />
-    </Box>
-  );
+  const getAsync = async () => {
+    const pair = await getPair(poolAddress);
+    setPoolData(pair);
+  };
+
+  useEffect(() => {
+    getAsync();
+  }, []);
+
+  return <Box>{poolData ? <PoolWrapper poolData={poolData} /> : null}</Box>;
 }

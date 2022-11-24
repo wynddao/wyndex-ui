@@ -1,97 +1,80 @@
 "use client";
 
-import { Box, Flex, Image, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
-import { PoolData } from ".";
+import { Box, Flex, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
+import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
+import { handleChangeColorModeValue } from "../../utils/theme";
+import { Pair } from "../../utils/types";
+import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
-  readonly poolData: PoolData;
+  readonly poolData: Pair;
+  readonly chainData: PoolResponse;
 }
 
-export default function PoolCatalyst({ poolData }: PoolCatalystProps) {
+export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps) {
+  const { colorMode } = useColorMode();
   return (
     <Box p={4} pt={8}>
       <Text fontSize="2xl" fontWeight="bold" mb={4}>
         Pool Catalyst
       </Text>
       <SimpleGrid columns={{ md: 2 }} gap={8}>
-        <Box borderRadius="xl" bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")} p={6}>
-          <Flex align="center" mb={4}>
-            <Box
-              w={20}
-              h={20}
-              bg="whiteAlpha.900"
-              borderRadius="full"
-              border="1px solid"
-              borderColor="orange.300"
-              overflow="hidden"
-              p={0.5}
-              mr={4}
+        {chainData.assets.map((asset, i) => (
+          <Box
+            key={i}
+            borderRadius="xl"
+            bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")}
+            p={6}
+          >
+            <Flex align="center" mb={4}>
+              <Box
+                w={20}
+                h={20}
+                bg="whiteAlpha.900"
+                borderRadius="full"
+                border="1px solid"
+                borderColor="orange.300"
+                overflow="hidden"
+                p={0.5}
+                mr={4}
+              >
+                <Image alt="Token 1 logo" src={poolData.tokens[0].img} />
+              </Box>
+              <Box>
+                <Text fontSize="3xl" fontWeight="extrabold">
+                  {poolData.tokens[0].liquidity && poolData.tokens[0].liquidity.shares * 100}%
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
+                >
+                  {/*@ts-ignore */}
+                  {asset.info.hasOwnProperty("token") ? (
+                    <TokenName address={asset.info.token} />
+                  ) : (
+                    asset.info.native_token
+                  )}
+                </Text>
+              </Box>
+            </Flex>
+            <Text
+              fontWeight="bold"
+              color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
             >
-              <Image alt="Token 1 logo" src={poolData.token1.img} />
-            </Box>
-            <Box>
-              <Text fontSize="3xl" fontWeight="extrabold">
-                {poolData.token1.percent}%
-              </Text>
-              <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
-                {poolData.token1.name}
-              </Text>
-            </Box>
-          </Flex>
-          <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
-            Total amount
-          </Text>
-          <Text fontSize="xl" fontWeight="bold" mb={2}>
-            {poolData.token1.tokenTotalAmount.toLocaleString()}&nbsp;
-            {poolData.token1.name}
-          </Text>
-          <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
-            My amount
-          </Text>
-          <Text fontSize="xl" fontWeight="bold">
-            {poolData.token1.amount.toLocaleString()}&nbsp;
-            {poolData.token1.name}
-          </Text>
-        </Box>
-        <Box borderRadius="xl" bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")} p={6}>
-          <Flex align="center" mb={4}>
-            <Box
-              w={20}
-              h={20}
-              bg="whiteAlpha.900"
-              borderRadius="full"
-              border="1px solid"
-              borderColor="orange.300"
-              overflow="hidden"
-              p={0.5}
-              mr={4}
+              Total amount
+            </Text>
+            <Text fontSize="xl" fontWeight="bold" mb={2}>
+              {asset.amount}
+            </Text>
+            <Text
+              fontWeight="bold"
+              color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
             >
-              <Image alt="Token 2 logo" src={poolData.token2.img} />
-            </Box>
-            <Box>
-              <Text fontSize="3xl" fontWeight="extrabold">
-                {poolData.token2.percent}%
-              </Text>
-              <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
-                {poolData.token2.name}
-              </Text>
-            </Box>
-          </Flex>
-          <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
-            Total amount
-          </Text>
-          <Text fontSize="xl" fontWeight="bold" mb={2}>
-            {poolData.token2.tokenTotalAmount.toLocaleString()}&nbsp;
-            {poolData.token2.name}
-          </Text>
-          <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
-            My amount
-          </Text>
-          <Text fontSize="xl" fontWeight="bold">
-            {poolData.token2.amount.toLocaleString()}&nbsp;
-            {poolData.token2.name}
-          </Text>
-        </Box>
+              My amount
+            </Text>
+            <Text fontSize="xl" fontWeight="bold"></Text>
+          </Box>
+        ))}
       </SimpleGrid>
     </Box>
   );

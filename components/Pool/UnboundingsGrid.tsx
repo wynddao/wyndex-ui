@@ -1,11 +1,11 @@
 "use client";
 
 import { GridItem, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
-import { UnbondingPeriodListData } from ".";
 import { handleChangeColorModeValue } from "../../utils/theme";
+import { UnbondingPeriod } from "../../utils/types";
 
 interface UnboundingsGridProps {
-  readonly unbondingPeriodList: readonly UnbondingPeriodListData[];
+  readonly unbondingPeriodList: readonly UnbondingPeriod[];
 }
 
 export default function UnboundingsGrid({ unbondingPeriodList }: UnboundingsGridProps) {
@@ -13,7 +13,7 @@ export default function UnboundingsGrid({ unbondingPeriodList }: UnboundingsGrid
 
   return (
     <SimpleGrid columns={{ md: 2, lg: 3 }} gap={8} p={4} pb={12}>
-      {unbondingPeriodList.map(({ days, apr }, i) => {
+      {unbondingPeriodList.map(({ duration, apr }, i) => {
         return (
           <GridItem
             key={i}
@@ -23,10 +23,10 @@ export default function UnboundingsGrid({ unbondingPeriodList }: UnboundingsGrid
             px={8}
           >
             <Text fontWeight="bold" fontSize="2xl">
-              {days === "1" ? "a day" : `${days} days`}&nbsp;unbonding
+              {new Date(duration).getMinutes()} Days
             </Text>
             <Text fontWeight="bold" fontSize="xl" color="orange.300">
-              APR {apr}%
+              APR {apr * 100}%
             </Text>
           </GridItem>
         );
