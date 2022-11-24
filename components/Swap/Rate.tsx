@@ -59,7 +59,7 @@ export default function Rate({
         color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
       >
         <Text>Swap Fee</Text>
-        <Text>0.3%</Text>
+        <Text>@TODO</Text>
       </Flex>
       <Divider
         borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.400", "whiteAlpha.600")}
@@ -72,7 +72,7 @@ export default function Rate({
         color={handleChangeColorModeValue(colorMode, "blackAlpha.800", "whiteAlpha.900")}
       >
         <Text>Estimated Slippage</Text>
-        <Text>&lt;&nbsp;0.001%</Text>
+        <Text>@TODO</Text>
       </Flex>
     </Box>
   );
