@@ -30,6 +30,8 @@ import { Asset, Pair } from "../../utils/types";
 import { Asset as WyndAsset } from "../../state/clients/types/WyndexPair.types";
 import { getAssetInfo } from "../../utils/assets";
 import { Coin } from "cosmwasm";
+import { useRecoilState } from "recoil";
+import { txModalAtom } from "../../state/recoil/atoms/txModal";
 
 interface inputType {
   id: string;
@@ -51,7 +53,7 @@ interface DataType extends Asset {
   show?: boolean;
 }
 
-export default function AddLiquidity({ poolData }: { poolData: Pair }) {
+export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; onClose: () => void }) {
   const { colorMode } = useColorMode();
 
   const [data, setData] = useState<DataType[]>(poolData.tokens);
@@ -63,7 +65,7 @@ export default function AddLiquidity({ poolData }: { poolData: Pair }) {
   const [tokenInputValue, setTokenInputValue] = useState<inputType[]>(defaultInput);
   const [single, setSingle] = useState<singleType>({ selectedIndex: 0, isSingle: false });
   const [openPop, setOpenPop] = useState<popType>({ optionsIndex: [], isOpen: false });
-  const [tokenAddress, setTokenAddress] = useState<string>("");
+  const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
 
   const { address: walletAddress } = useWallet();
 
@@ -86,13 +88,21 @@ export default function AddLiquidity({ poolData }: { poolData: Pair }) {
           },
         ]
       : undefined;
-    doProvideLiquidity({
-      pairContractAddress: poolData.contractAddress,
-      assets: assets,
-      funds,
-    })
-      .then((res) => console.log(res))
-      .catch((e) => console.log(e));
+    onClose();
+    setTxModalState({ ...txModalState, active: true, loading: true }),
+      doProvideLiquidity({
+        pairContractAddress: poolData.contractAddress,
+        assets: assets,
+        funds,
+      }).then((res: any) =>
+        setTxModalState({
+          ...txModalState,
+          height: res.height,
+          txHash: res.transactionHash,
+          active: true,
+          loading: false,
+        }),
+      );
   };
 
   useEffect(() => {
