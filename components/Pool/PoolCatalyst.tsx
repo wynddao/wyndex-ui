@@ -49,7 +49,11 @@ export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps)
                   color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                 >
                   {/*@ts-ignore */}
-                  {asset.info.hasOwnProperty("token") ? <TokenName address={asset.info.token} /> : asset.info.native_token}
+                  {asset.info.hasOwnProperty("token") ? (
+                    <TokenName address={asset.info.token} />
+                  ) : (
+                    asset.info.native_token
+                  )}
                 </Text>
               </Box>
             </Flex>

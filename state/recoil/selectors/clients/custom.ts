@@ -1,11 +1,11 @@
 import { selectorFamily } from "recoil";
-import { Cw20Client } from "../../../clients/Cw20Allowance.client";
+import { CustomClient } from "../../../clients/Custom.client";
 import { signingCosmWasmClientAtom } from "../../atoms";
 
 export type ExecuteClientParams = {
   sender: string;
 };
-export const executeClient = selectorFamily<Cw20Client | undefined, ExecuteClientParams>({
+export const executeClient = selectorFamily<CustomClient | undefined, ExecuteClientParams>({
   key: "cw20ExecuteClient",
   get:
     ({ sender }) =>
@@ -13,7 +13,7 @@ export const executeClient = selectorFamily<Cw20Client | undefined, ExecuteClien
       const client = get(signingCosmWasmClientAtom);
       if (!client) return;
       //@ts-ignore
-      return new Cw20Client(client, sender);
+      return new CustomClient(client, sender);
     },
   dangerouslyAllowMutability: true,
 });

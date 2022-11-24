@@ -4,8 +4,8 @@ import { ExecuteResult } from "cosmwasm";
 import { useCallback } from "react";
 import { useRecoilValueLoadable } from "recoil";
 
-import { Cw20Client as ExecuteClient } from "../../clients/Cw20Allowance.client";
-import { ExecuteClientParams, executeClient } from "../../recoil/selectors/clients/cw20Allowance";
+import { CustomClient as ExecuteClient } from "../../clients/Custom.client";
+import { ExecuteClientParams, executeClient } from "../../recoil/selectors/clients/custom";
 import { FunctionKeyOf } from "../../types";
 
 // This hook wrapper lets us easily make hooks out of all execution functions on
@@ -16,7 +16,7 @@ const wrapExecuteHook =
   (params: ExecuteClientParams) => {
     const clientLoadable = useRecoilValueLoadable(executeClient(params));
     const client = clientLoadable.state === "hasValue" ? clientLoadable.contents : undefined;
-
+    console.log(clientLoadable);
     return useCallback(
       (...args: Parameters<ExecuteClient[T]>) => {
         if (client)
@@ -27,4 +27,4 @@ const wrapExecuteHook =
     );
   };
 
-export const useAllowance = wrapExecuteHook("increaseAllowance");
+export const useCustomProvideLP = wrapExecuteHook("customProvideLP");

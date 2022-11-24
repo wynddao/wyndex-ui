@@ -24,7 +24,7 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
-import { Cw20AllowanceHooks, Cw20Hooks, WyndexPairHooks } from "../../state";
+import { CustomHooks } from "../../state";
 import { handleChangeColorModeValue } from "../../utils/theme";
 import { Asset, Pair } from "../../utils/types";
 import { Asset as WyndAsset } from "../../state/clients/types/WyndexPair.types";
@@ -67,28 +67,17 @@ export default function AddLiquidity({ poolData }: { poolData: Pair }) {
 
   const { address: walletAddress } = useWallet();
 
-  const doAllowance = Cw20AllowanceHooks.useAllowance({
-    sender: walletAddress || "",
-  });
-
-  const doProvideLiquidity = WyndexPairHooks.useProvideLiquidity({
-    contractAddress: poolData.contractAddress,
+  const doProvideLiquidity = CustomHooks.useCustomProvideLP({
     sender: walletAddress || "",
   });
 
   const prodiveLiquidity = async () => {
     const assets = tokenInputValue.map((token): WyndAsset => {
-      /*doAllowance({
-        amount: token.value,
-        spender: poolData.contractAddress,
-        contractAddress: token.contract || "",
-      }); */
       return {
         amount: token.value,
         info: token.contract ? { token: token.contract } : { native_token: token.id },
       };
     });
-
     const funds: Coin[] | undefined = tokenInputValue.find((element) => !element.contract)
       ? [
           {
@@ -97,14 +86,13 @@ export default function AddLiquidity({ poolData }: { poolData: Pair }) {
           },
         ]
       : undefined;
-    doProvideLiquidity(
-      {
-        assets,
-      },
-      "auto",
-      undefined,
+    doProvideLiquidity({
+      pairContractAddress: poolData.contractAddress,
+      assets: assets,
       funds,
-    );
+    })
+      .then((res) => console.log(res))
+      .catch((e) => console.log(e));
   };
 
   useEffect(() => {
