@@ -16,7 +16,6 @@ const wrapExecuteHook =
   (params: ExecuteClientParams) => {
     const clientLoadable = useRecoilValueLoadable(executeClient(params));
     const client = clientLoadable.state === "hasValue" ? clientLoadable.contents : undefined;
-    console.log(clientLoadable);
     return useCallback(
       (...args: Parameters<ExecuteClient[T]>) => {
         if (client)
