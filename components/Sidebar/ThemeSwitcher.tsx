@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Icon, Switch, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { Flex, Icon, Switch, useColorMode } from "@chakra-ui/react";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { handleChangeColorModeValue } from "../../utils/theme";
 
@@ -15,6 +15,7 @@ export default function ThemeSwitcher() {
         sx={{ color: handleChangeColorModeValue(colorMode, "inherit", "yellow.400") }}
       />
       <Switch
+        aria-label="auto"
         isChecked={colorMode === "light"}
         onChange={() => toggleColorMode()}
         size={{ base: "md", lg: "lg" }}

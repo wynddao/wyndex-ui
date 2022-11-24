@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 import { getPairs } from "../../utils";
 import { Pair } from "../../utils/types";
 import CreatePoolModal from "../CreatePoolModal";
+import { useWallet } from "@cosmos-kit/react";
+import dynamic from "next/dynamic";
 import PoolsCard from "./PoolsCard";
 
+const CreatePoolModal = dynamic(() => import("../CreatePoolModal"));
+
 export default function Pools() {
+
   const { onOpen, isOpen, onClose } = useDisclosure();
   const [data, setData] = useState<Pair[]>([]);
 
@@ -26,7 +31,10 @@ export default function Pools() {
           <Heading as="h2" fontSize="2xl" mr={4}>
             Active Pools
           </Heading>
-          <Button onClick={onOpen} display={{ base: "none", sm: "block" }}>
+          <Button
+            onClick={isWalletConnected ? openCreatePool : openConnectWallet}
+            display={{ base: "none", sm: "block" }}
+          >
             Create New Pool
           </Button>
         </Flex>
