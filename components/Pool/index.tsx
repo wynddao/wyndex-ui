@@ -33,13 +33,5 @@ export default function Pool({ poolAddress }: PoolProps) {
     getAsync();
   }, []);
 
-  return (
-    <Box>
-      {poolData && (
-        <>
-          <PoolWrapper poolData={poolData} />
-        </>
-      )}
-    </Box>
-  );
+  return <Box>{poolData ? <PoolWrapper poolData={poolData} /> : null}</Box>;
 }
