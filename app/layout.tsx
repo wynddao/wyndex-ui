@@ -1,4 +1,5 @@
 import Sidebar from "../components/Sidebar";
+import TxModal from "../components/TxModal";
 import Providers from "./providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -11,6 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
+          <TxModal />
           <Sidebar>{children}</Sidebar>
         </Providers>
       </body>
