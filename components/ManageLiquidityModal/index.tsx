@@ -50,7 +50,7 @@ export default function ManageLiquidity({ isOpen, onClose, poolData }: ManageLiq
             </TabList>
             <TabPanels>
               <TabPanel p={0}>
-                <AddLiquidity poolData={poolData} />
+                <AddLiquidity poolData={poolData} onClose={onClose} />
               </TabPanel>
               <TabPanel>
                 <RemoveLiquidity />
