@@ -23,7 +23,7 @@ import ManageLiquidityModal from "../ManageLiquidityModal";
 interface PoolHeaderProps {
   readonly poolData: Pair;
   readonly chainData: PoolResponse;
-  readonly pairData: PairInfo
+  readonly pairData: PairInfo;
 }
 
 const LinkUndecorated = chakra(Link, { baseStyle: { _hover: { textDecoration: "none" } } });

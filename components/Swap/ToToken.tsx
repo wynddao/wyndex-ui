@@ -117,8 +117,7 @@ export default function ToToken({
                 fontWeight="bold"
                 textAlign="start"
                 color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
-              >
-              </Text>
+              ></Text>
             </Box>
           </Flex>
           <Text

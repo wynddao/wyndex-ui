@@ -48,17 +48,16 @@ export default function Home() {
     }
   };
 
-  const getAsync = async() => {
+  const getAsync = async () => {
     const assets = await getAssets();
     setData(assets);
-  }
+  };
 
   useEffect(() => {
     getAsync();
-  }, [])
+  }, []);
   useEffect(() => {
     if (fromItem && toItem) {
-
       const operation: SwapOperation[] = [
         {
           astro_swap: {

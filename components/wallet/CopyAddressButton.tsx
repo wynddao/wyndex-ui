@@ -1,43 +1,35 @@
 /* eslint-disable prefer-const */
-import {
-  Box,
-  Button,
-  Icon,
-  Image,
-  Text,
-  useClipboard,
-  useColorMode
-} from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { FiCopy } from 'react-icons/fi';
+import { Box, Button, Icon, Image, Text, useClipboard, useColorMode } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { FaCheckCircle } from "react-icons/fa";
+import { FiCopy } from "react-icons/fi";
 
-import { handleChangeColorModeValue } from '../../default-component';
-import { CopyAddressType } from '../../types';
+import { handleChangeColorModeValue } from "../../default-component";
+import { CopyAddressType } from "../../types";
 
 const SIZES = {
   lg: {
     height: 12,
     walletImageSize: 7,
     icon: 5,
-    fontSize: 'md'
+    fontSize: "md",
   },
   md: {
     height: 10,
     walletImageSize: 6,
     icon: 4,
-    fontSize: 'sm'
+    fontSize: "sm",
   },
   sm: {
     height: 7,
     walletImageSize: 5,
     icon: 3.5,
-    fontSize: 'sm'
-  }
+    fontSize: "sm",
+  },
 };
 
 export function stringTruncateFromCenter(str: string, maxLength: number) {
-  const midChar = '…'; // character to insert into the center of the result
+  const midChar = "…"; // character to insert into the center of the result
   let left: number;
   let right: number;
 
@@ -57,26 +49,23 @@ export const CopyAddressButton = ({
   walletIcon,
   isLoading,
   isRound,
-  size = 'md',
-  maxDisplayLength
+  size = "md",
+  maxDisplayLength,
 }: CopyAddressType) => {
-  const { hasCopied, onCopy } = useClipboard(address ? address : '');
-  const [displayAddress, setDisplayAddress] = useState('');
+  const { hasCopied, onCopy } = useClipboard(address ? address : "");
+  const [displayAddress, setDisplayAddress] = useState("");
   const { colorMode } = useColorMode();
   const defaultMaxLength = {
     lg: 14,
     md: 16,
-    sm: 18
+    sm: 18,
   };
 
   useEffect(() => {
-    if (!address) setDisplayAddress('address not identified yet');
-    if (address && maxDisplayLength)
-      setDisplayAddress(stringTruncateFromCenter(address, maxDisplayLength));
+    if (!address) setDisplayAddress("address not identified yet");
+    if (address && maxDisplayLength) setDisplayAddress(stringTruncateFromCenter(address, maxDisplayLength));
     if (address && !maxDisplayLength)
-      setDisplayAddress(
-        stringTruncateFromCenter(address, defaultMaxLength[size])
-      );
+      setDisplayAddress(stringTruncateFromCenter(address, defaultMaxLength[size]));
   }, [address, maxDisplayLength, defaultMaxLength, size]);
 
   return (
@@ -86,45 +75,37 @@ export const CopyAddressButton = ({
       display="flex"
       alignItems="center"
       justifyContent="center"
-      borderRadius={isRound ? 'full' : 'lg'}
+      borderRadius={isRound ? "full" : "lg"}
       border="1px solid"
-      borderColor={handleChangeColorModeValue(
-        colorMode,
-        'gray.200',
-        'whiteAlpha.300'
-      )}
+      borderColor={handleChangeColorModeValue(colorMode, "gray.200", "whiteAlpha.300")}
       w="full"
       h={SIZES[size].height}
       minH="fit-content"
       pl={2}
       pr={2}
-      color={handleChangeColorModeValue(
-        colorMode,
-        'gray.700',
-        'whiteAlpha.600'
-      )}
+      color={handleChangeColorModeValue(colorMode, "gray.700", "whiteAlpha.600")}
       transition="all .3s ease-in-out"
       isDisabled={!address && true}
       isLoading={isLoading}
       _hover={{
-        bg: 'rgba(142, 142, 142, 0.05)'
+        bg: "rgba(142, 142, 142, 0.05)",
       }}
       _focus={{
-        outline: 'none'
+        outline: "none",
       }}
       _disabled={{
         opacity: 0.6,
-        cursor: 'not-allowed',
-        borderColor: 'rgba(142, 142, 142, 0.1)',
+        cursor: "not-allowed",
+        borderColor: "rgba(142, 142, 142, 0.1)",
         _hover: {
-          bg: 'transparent'
+          bg: "transparent",
         },
         _active: {
-          outline: 'none'
+          outline: "none",
         },
         _focus: {
-          outline: 'none'
-        }
+          outline: "none",
+        },
       }}
       onClick={onCopy}
     >
@@ -143,12 +124,7 @@ export const CopyAddressButton = ({
           <Image alt={displayAddress} src={walletIcon} />
         </Box>
       )}
-      <Text
-        fontSize={SIZES[size].fontSize}
-        fontWeight="normal"
-        letterSpacing="0.4px"
-        opacity={0.75}
-      >
+      <Text fontSize={SIZES[size].fontSize} fontWeight="normal" letterSpacing="0.4px" opacity={0.75}>
         {displayAddress}
       </Text>
       {address && (
@@ -159,13 +135,7 @@ export const CopyAddressButton = ({
           ml={2}
           opacity={0.9}
           color={
-            hasCopied
-              ? 'green.400'
-              : handleChangeColorModeValue(
-                  colorMode,
-                  'gray.500',
-                  'whiteAlpha.400'
-                )
+            hasCopied ? "green.400" : handleChangeColorModeValue(colorMode, "gray.500", "whiteAlpha.400")
           }
         />
       )}

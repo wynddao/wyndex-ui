@@ -1,143 +1,141 @@
-import { PlacementWithLogical } from '@chakra-ui/react';
-import { FaAndroid } from 'react-icons/fa';
-import { FiArrowLeft, FiX } from 'react-icons/fi';
-import { GrFirefox } from 'react-icons/gr';
+import { PlacementWithLogical } from "@chakra-ui/react";
+import { FaAndroid } from "react-icons/fa";
+import { FiArrowLeft, FiX } from "react-icons/fi";
+import { GrFirefox } from "react-icons/gr";
 import {
   RiAppStoreFill,
   RiChromeFill,
   RiDoorOpenFill,
   RiDownload2Line,
-  RiErrorWarningLine
-} from 'react-icons/ri';
-import { TbRefreshAlert } from 'react-icons/tb';
+  RiErrorWarningLine,
+} from "react-icons/ri";
+import { TbRefreshAlert } from "react-icons/tb";
 
-import { LogoStatus, WalletMode } from '../../types';
+import { LogoStatus, WalletMode } from "../../types";
 
 export const ConnectWalletButtonConfig = {
   NotExist: {
     leftIcon: RiDownload2Line,
-    text: 'Install'
+    text: "Install",
   },
   Connected: {
     leftIcon: RiDoorOpenFill,
-    text: 'Disconnect'
+    text: "Disconnect",
   },
   Connecting: {
     leftIcon: undefined,
-    text: 'Connecting...'
+    text: "Connecting...",
   },
   Rejected: {
     leftIcon: TbRefreshAlert,
-    text: 'Reconnect'
+    text: "Reconnect",
   },
   Error: {
     leftIcon: RiErrorWarningLine,
-    text: 'Change Wallet'
-  }
+    text: "Change Wallet",
+  },
 };
 
 export const WalletIcons = {
-  keplr:
-    'https://pbs.twimg.com/profile_images/1498228570862219266/uctq7aeh_400x400.png',
-  metamask:
-    'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg'
+  keplr: "https://pbs.twimg.com/profile_images/1498228570862219266/uctq7aeh_400x400.png",
+  metamask: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
 };
 
 export const WalletData = [
   {
-    name: 'Keplr',
-    prettyName: 'Keplr Extension',
-    logo: 'https://pbs.twimg.com/profile_images/1498228570862219266/uctq7aeh_400x400.png',
+    name: "Keplr",
+    prettyName: "Keplr Extension",
+    logo: "https://pbs.twimg.com/profile_images/1498228570862219266/uctq7aeh_400x400.png",
     mode: WalletMode.Extension,
     mobileDisabled: false,
-    rejectMessage: 'Request Rejected!',
+    rejectMessage: "Request Rejected!",
     downloads: {
       desktop: [
         {
-          browser: 'chrome',
+          browser: "chrome",
           icon: RiChromeFill,
-          link: 'https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en'
+          link: "https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en",
         },
         {
-          browser: 'firefox',
+          browser: "firefox",
           icon: GrFirefox,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
-        }
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+        },
       ],
       tablet: [
         {
-          os: 'android',
+          os: "android",
           icon: FaAndroid,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
         },
         {
-          os: 'ios',
+          os: "ios",
           icon: RiAppStoreFill,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
-        }
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+        },
       ],
       mobile: [
         {
-          os: 'android',
+          os: "android",
           icon: FaAndroid,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
         },
         {
-          os: 'ios',
+          os: "ios",
           icon: RiAppStoreFill,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
-        }
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+        },
       ],
-      default: 'https://www.keplr.app/download'
-    }
+      default: "https://www.keplr.app/download",
+    },
   },
   {
-    name: 'WalletConnectKeplr',
-    prettyName: 'Keplr Mobile',
-    logo: 'https://user-images.githubusercontent.com/545047/191616515-eee176d0-9e50-4325-9529-6c0019d5c71a.png',
+    name: "WalletConnectKeplr",
+    prettyName: "Keplr Mobile",
+    logo: "https://user-images.githubusercontent.com/545047/191616515-eee176d0-9e50-4325-9529-6c0019d5c71a.png",
     mode: WalletMode.WalletConnect,
     mobileDisabled: false,
-    rejectMessage: 'Request Rejected!',
+    rejectMessage: "Request Rejected!",
     downloads: {
       desktop: [
         {
-          browser: 'chrome',
+          browser: "chrome",
           icon: RiChromeFill,
-          link: 'https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en'
+          link: "https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en",
         },
         {
-          browser: 'firefox',
+          browser: "firefox",
           icon: GrFirefox,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
-        }
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+        },
       ],
       tablet: [
         {
-          os: 'android',
+          os: "android",
           icon: FaAndroid,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
         },
         {
-          os: 'ios',
+          os: "ios",
           icon: RiAppStoreFill,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
-        }
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+        },
       ],
       mobile: [
         {
-          os: 'android',
+          os: "android",
           icon: FaAndroid,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
         },
         {
-          os: 'ios',
+          os: "ios",
           icon: RiAppStoreFill,
-          link: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/'
-        }
+          link: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+        },
       ],
-      default: 'https://www.keplr.app/download'
-    }
-  }
+      default: "https://www.keplr.app/download",
+    },
+  },
   // {
   //   id: "meme",
   //   logo: "https://i.imgflip.com/jl9b3.jpg",
@@ -233,40 +231,40 @@ export const DisplayModalHead = {
   withInfo: {
     leftIcon: RiErrorWarningLine,
     rightIcon: FiX,
-    header: 'What is wallet?',
+    header: "What is wallet?",
     content:
-      'Wallet is a gateway to the Cosmos interchain world. By connecting your wallet to Cosmos, you have more accessibility to smart invest.',
-    placement: 'bottom' as PlacementWithLogical
+      "Wallet is a gateway to the Cosmos interchain world. By connecting your wallet to Cosmos, you have more accessibility to smart invest.",
+    placement: "bottom" as PlacementWithLogical,
   },
   default: {
     leftIcon: FiArrowLeft,
-    rightIcon: FiX
+    rightIcon: FiX,
   },
   connected: {
     leftIcon: undefined,
-    rightIcon: FiX
-  }
+    rightIcon: FiX,
+  },
 };
 
 export const DisplayModalContent = {
   NotExist: {
     logoStatus: LogoStatus.Warning,
-    header: 'Is Not Exist',
-    desc: 'Please install the'
+    header: "Is Not Exist",
+    desc: "Please install the",
   },
   Connecting: {
     logoStatus: LogoStatus.Loading,
-    header: 'Requesting Connection',
-    desc: 'Open the browser extension or app to connect your wallet.'
+    header: "Requesting Connection",
+    desc: "Open the browser extension or app to connect your wallet.",
   },
   Rejected: {
     logoStatus: LogoStatus.Error,
-    header: 'Wallet Rejected',
-    desc: 'Connection authorization is denied.'
+    header: "Wallet Rejected",
+    desc: "Connection authorization is denied.",
   },
   Error: {
     logoStatus: LogoStatus.Error,
-    header: 'Oops! something wrong...',
-    desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, quasi.'
-  }
+    header: "Oops! something wrong...",
+    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, quasi.",
+  },
 };
