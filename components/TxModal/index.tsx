@@ -8,10 +8,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
+import Image from "next/image";
 import { useRecoilState } from "recoil";
 import { txModalAtom, TxModalState } from "../../state/recoil/atoms/txModal";
+import druidImage from "./assets/druid.gif";
 
 export default function TxModal() {
   const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
@@ -22,7 +26,7 @@ export default function TxModal() {
     <Modal isOpen={txModalState.active} onClose={() => closeTxModal()} isCentered={true}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Your Transaction</ModalHeader>
+        {txModalState.loading && <ModalHeader>Your Transaction</ModalHeader>}
         <ModalCloseButton />
         <ModalBody>
           <TxModalContent txModalState={txModalState} />
@@ -49,8 +53,16 @@ const TxModalContent = ({ txModalState }: { txModalState: TxModalState }) => {
     );
   }
   return (
-    <Center>
-      <p>TxHash: {txModalState.txHash}</p>
-    </Center>
+    <SimpleGrid columns={1}>
+      <Image src={druidImage} alt="druidSuccess" />
+      <Center>
+        <Text fontSize="3xl">Success!</Text>
+      </Center>
+      <Center>
+        <Text noOfLines={1} maxW="100%">
+          {txModalState.txHash}
+        </Text>
+      </Center>
+    </SimpleGrid>
   );
 };
