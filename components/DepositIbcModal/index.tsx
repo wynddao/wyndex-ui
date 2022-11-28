@@ -17,12 +17,14 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import { assets } from "chain-registry";
 import { useEffect, useState } from "react";
 import { IoWallet } from "react-icons/io5";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilState } from "recoil";
-import { depositIbcModalOpenAtom } from "../../state/recoil/atoms/modal";
+import { depositIbcModalAtom } from "../../state/recoil/atoms/modal";
+import { getAsset, getBalances } from "../../utils";
 
 interface fromTokenType {
   name: string;
@@ -36,7 +38,8 @@ interface toTokenType {
 }
 
 export default function DepositIbcModal() {
-  const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalOpenAtom);
+  const { address } = useWallet();
+  const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
 
   const [fromToken, setFromToken] = useState<fromTokenType>({
     name: "",
@@ -53,6 +56,23 @@ export default function DepositIbcModal() {
     base: RiArrowDownFill,
     md: RiArrowRightFill,
   });
+
+  useEffect(() => {
+    (async function updateFromToken() {
+      if (!depositIbcModalOpen.asset || !address) return;
+
+      const asset = await getAsset(depositIbcModalOpen.asset);
+      const balances = await getBalances(address);
+      const balance = balances.find((coin) => coin.denom === asset.denom)?.amount || "0";
+
+      const fromToken: fromTokenType = {
+        name: asset.name,
+        address: asset.contractAddress || "",
+        availableBalance: balance,
+      };
+      setFromToken(fromToken);
+    })();
+  }, [address, depositIbcModalOpen.asset]);
 
   useEffect(() => {
     const getShuffledArr = (arr: any[]) => {
@@ -81,14 +101,8 @@ export default function DepositIbcModal() {
           };
         }
       });
-    const getFromToken = getShuffledArr([...assetList])[0];
-    const getToToken = getShuffledArr([...assetList]).filter(({ name }) => !(getFromToken.name === name))[0];
+    const getToToken = getShuffledArr([...assetList])[0];
 
-    setFromToken({
-      name: getFromToken.name,
-      address: getFromToken.address,
-      availableBalance: `${Math.floor(Math.random() * 9999) / 1000}`,
-    });
     setToToken({
       name: getToToken.name,
       address: getToToken.address,
@@ -97,8 +111,8 @@ export default function DepositIbcModal() {
 
   return (
     <Modal
-      isOpen={depositIbcModalOpen}
-      onClose={() => setDepositIbcModalOpen(false)}
+      isOpen={depositIbcModalOpen.isOpen}
+      onClose={() => setDepositIbcModalOpen({ isOpen: false })}
       blockScrollOnMount={false}
       isCentered={true}
     >
@@ -133,7 +147,7 @@ export default function DepositIbcModal() {
               color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={fromToken.address}
+              title={fromToken.address || "(native)"}
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -144,7 +158,7 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {fromToken.address}
+              {fromToken.name}
             </Text>
           </GridItem>
           <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
@@ -166,7 +180,7 @@ export default function DepositIbcModal() {
               color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={toToken.address}
+              title={toToken.address || "(native)"}
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -177,7 +191,7 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {toToken.address}
+              {toToken.name}
             </Text>
           </GridItem>
         </Grid>
