@@ -1,11 +1,16 @@
 import { atom } from "recoil";
 
-export const depositIbcModalOpenAtom = atom<boolean>({
-  key: "depositIbcModalOpen",
-  default: false,
+interface IbcModalState {
+  readonly isOpen: boolean;
+  readonly asset?: string | null;
+}
+
+export const depositIbcModalAtom = atom<IbcModalState>({
+  key: "depositIbcModal",
+  default: { isOpen: false },
 });
 
-export const withdrawIbcModalOpenAtom = atom<boolean>({
-  key: "withdrawIbcModalOpen",
-  default: false,
+export const withdrawIbcModalAtom = atom<IbcModalState>({
+  key: "withdrawIbcModal",
+  default: { isOpen: false },
 });
