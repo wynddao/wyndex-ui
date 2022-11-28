@@ -1,34 +1,74 @@
 "use client";
 
 import { Box, Grid, GridItem, Heading, Input, Select, Text, useColorMode } from "@chakra-ui/react";
-import { useState } from "react";
-import { TokenInfo, TokenType } from "../../utils/experimentalTokenList";
+import { useWallet } from "@cosmos-kit/react";
+import { useEffect, useState } from "react";
+import { getAssets, getAssetsRecap, getBalances } from "../../utils";
 import { handleChangeColorModeValue } from "../../utils/theme";
+import { Asset } from "../../utils/types";
 import AssetList from "./AssetList";
 
-export type ShowBalanceAssetsDetailsType = TokenInfo & {
-  readonly amount: string;
-};
-
-export interface ShowBalanceAssetsTotalType {
+export interface AssetsRecap {
   readonly total: string;
-  readonly availableAsset: string;
-  readonly bondedAssets: string;
-  readonly stakedAssets: string;
+  readonly locked: string;
+  readonly available: string;
+}
+
+export interface AssetWithBalance extends Asset {
+  readonly balance: string;
 }
 
 type TokensToShow = "show-all" | "show-native" | "show-cw20";
 
-interface AssetBalancesProps {
-  readonly assetsDetailsData: readonly ShowBalanceAssetsDetailsType[];
-  readonly assetsTotalData: ShowBalanceAssetsTotalType;
-}
-
-export default function AssetBalances({ assetsDetailsData, assetsTotalData }: AssetBalancesProps) {
+export default function AssetBalances() {
   const { colorMode } = useColorMode();
+  const { address, getCosmWasmClient } = useWallet();
 
+  const [assetsRecap, setAssetsRecap] = useState<AssetsRecap>();
+  const [assets, setAssets] = useState<readonly AssetWithBalance[]>([]);
   const [searchText, setSearchText] = useState("");
   const [tokensToShow, setTokensToShow] = useState<TokensToShow>("show-all");
+
+  useEffect(() => {
+    (async function updateAssetsRecap() {
+      if (!address) return;
+
+      const assetsRecap = await getAssetsRecap(address);
+      setAssetsRecap(assetsRecap);
+    })();
+  }, [address, getCosmWasmClient]);
+
+  useEffect(() => {
+    (async function updateAssets() {
+      const client = await getCosmWasmClient();
+      if (!client || !address) return;
+
+      const assets = await getAssets();
+      const balances = await getBalances(address);
+      const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
+        const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
+        return { ...asset, balance };
+      });
+
+      setAssets(assetsWithBalance);
+    })();
+  }, [address, getCosmWasmClient]);
+
+  useEffect(() => {
+    (async function getAssetsWithBalance() {
+      const client = await getCosmWasmClient();
+      if (!client || !address) return;
+
+      const assets = await getAssets();
+      const balances = await getBalances(address);
+      const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
+        const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
+        return { ...asset, balance };
+      });
+
+      setAssets(assetsWithBalance);
+    })();
+  }, [address, getCosmWasmClient]);
 
   return (
     <Box>
@@ -50,7 +90,7 @@ export default function AssetBalances({ assetsDetailsData, assetsTotalData }: As
             Total Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {assetsTotalData.total}
+            {assetsRecap?.total || "—"}
           </Text>
         </Box>
         <Box py={{ md: 2 }}>
@@ -58,7 +98,7 @@ export default function AssetBalances({ assetsDetailsData, assetsTotalData }: As
             Locked Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {assetsTotalData.bondedAssets}
+            {assetsRecap?.locked || "—"}
           </Text>
         </Box>
         <Box py={{ md: 2 }}>
@@ -66,7 +106,7 @@ export default function AssetBalances({ assetsDetailsData, assetsTotalData }: As
             Available Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {assetsTotalData.availableAsset}
+            {assetsRecap?.available || "—"}
           </Text>
         </Box>
       </Grid>
@@ -111,12 +151,12 @@ export default function AssetBalances({ assetsDetailsData, assetsTotalData }: As
           </GridItem>
         </Grid>
         <AssetList
-          assetsDetailsData={assetsDetailsData
+          assetsDetailsData={assets
             .filter(
               (asset) =>
                 tokensToShow === "show-all" ||
-                (tokensToShow === "show-native" && asset.type === TokenType.Native) ||
-                (tokensToShow === "show-cw20" && asset.type === TokenType.Cw20),
+                (tokensToShow === "show-native" && asset.tokenType === "native") ||
+                (tokensToShow === "show-cw20" && asset.tokenType === "cw20"),
             )
             .filter((asset) => asset.name.toLowerCase().includes(searchText.toLowerCase()))}
         />
