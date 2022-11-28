@@ -1,12 +1,12 @@
 "use client";
 
 import { Grid, GridItem, Stack, useColorMode } from "@chakra-ui/react";
-import { ShowBalanceAssetsDetailsType } from ".";
+import { AssetWithBalance } from ".";
 import { handleChangeColorModeValue } from "../../utils/theme";
 import AssetListItem from "./AssetListItem";
 
 interface AssetListProps {
-  readonly assetsDetailsData: readonly ShowBalanceAssetsDetailsType[];
+  readonly assetsDetailsData: readonly AssetWithBalance[];
 }
 
 export default function AssetList({ assetsDetailsData }: AssetListProps) {

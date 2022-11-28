@@ -19,23 +19,22 @@ import {
 import { useEffect } from "react";
 import { FiCopy } from "react-icons/fi";
 import { useSetRecoilState } from "recoil";
-import { ShowBalanceAssetsDetailsType } from ".";
-import { depositIbcModalOpenAtom, withdrawIbcModalOpenAtom } from "../../state/recoil/atoms/modal";
-import { TokenType } from "../../utils/experimentalTokenList";
+import { AssetWithBalance } from ".";
+import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
 import { handleChangeColorModeValue } from "../../utils/theme";
 
 interface AssetListItemProps {
-  readonly assetDetails: ShowBalanceAssetsDetailsType;
+  readonly assetDetails: AssetWithBalance;
 }
 
 export default function AssetListItem({
-  assetDetails: { name, imgSrc, type, amount, denom, contractAddress },
+  assetDetails: { name, img, tokenType, balance, denom, contractAddress },
 }: AssetListItemProps) {
   const { colorMode } = useColorMode();
   const { onCopy, hasCopied, setValue } = useClipboard("");
 
-  const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalOpenAtom);
-  const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalOpenAtom);
+  const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
+  const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
 
   useEffect(() => {
     setValue(contractAddress || "");
@@ -83,18 +82,18 @@ export default function AssetListItem({
             borderRadius="full"
             mr={4}
           >
-            <Image alt={`${name} logo`} src={imgSrc} />
+            <Image alt={`${name} logo`} src={img} />
           </Box>
           <Text fontSize="lg" mr={4}>
             {name}
           </Text>
           <Badge
             bg={handleChangeColorModeValue(colorMode, "primary.600", "primary.400")}
-            color={type === TokenType.Native ? "orange.500" : "purple.500"}
+            color={tokenType === "native" ? "orange.500" : "purple.500"}
             borderRadius="full"
             px={2}
           >
-            {type === TokenType.Native ? "Native" : "CW20"}
+            {tokenType === "native" ? "Native" : "CW20"}
           </Badge>
           {contractAddress ? (
             <Tooltip label={hasCopied ? "Copied!" : "Copy token address"}>
@@ -125,7 +124,7 @@ export default function AssetListItem({
         <Text display={{ base: "block", md: "none" }}>Balance</Text>
         <Box w="full" textAlign="end">
           <Text fontSize="lg" mb={0.5}>
-            {amount}
+            {balance}
           </Text>
           <Text fontSize="lg" opacity={0.7}>
             {denom}
@@ -143,10 +142,10 @@ export default function AssetListItem({
       >
         <Flex flexDirection="column" gap={2}>
           <Flex flexDirection="row" gap={2}>
-            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen(true)}>
+            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
               IBC Deposit
             </Button>
-            <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen(true)}>
+            <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
               IBC Withdraw
             </Button>
           </Flex>
