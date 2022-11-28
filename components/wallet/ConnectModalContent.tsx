@@ -9,53 +9,49 @@ import {
   Text,
   useColorMode,
   useColorModeValue,
-  useDimensions
-} from '@chakra-ui/react';
-import { QRCodeSVG } from 'qrcode.react';
-import React, { useRef } from 'react';
-import { FiChevronRight } from 'react-icons/fi';
+  useDimensions,
+} from "@chakra-ui/react";
+import { QRCodeSVG } from "qrcode.react";
+import React, { useRef } from "react";
+import { FiChevronRight } from "react-icons/fi";
 
-import { handleChangeColorModeValue } from '../../default-component';
-import {
-  AnimateBox,
-  LoadingVariants,
-  ModalContentVariants
-} from '../../motion-component';
+import { handleChangeColorModeValue } from "../../default-component";
+import { AnimateBox, LoadingVariants, ModalContentVariants } from "../../motion-component";
 import {
   ConnectModalContentType,
   DisplayWalletListType,
   DownloadWalletButtonType,
-  IconTypeProps
-} from '../../types';
+  IconTypeProps,
+} from "../../types";
 
 const SIZES = {
   lg: {
     h: 12,
     iconSize: 9,
-    fontSize: 'lg',
-    contentFontSize: 'md',
-    logoSize: 32
+    fontSize: "lg",
+    contentFontSize: "md",
+    logoSize: 32,
   },
   md: {
     h: 10,
     iconSize: 7,
-    fontSize: 'md',
-    contentFontSize: 'sm',
-    logoSize: 28
+    fontSize: "md",
+    contentFontSize: "sm",
+    logoSize: 28,
   },
   sm: {
     h: 8,
     iconSize: 6,
-    fontSize: 'md',
-    contentFontSize: 'sm',
-    logoSize: 24
-  }
+    fontSize: "md",
+    contentFontSize: "sm",
+    logoSize: 24,
+  },
 };
 
 const DisplayModalLogo = ({ logo }: { logo: IconTypeProps }) => {
   return (
     <>
-      {typeof logo === 'string' ? (
+      {typeof logo === "string" ? (
         <Image src={logo} />
       ) : (
         <Center w="full" h="full">
@@ -67,40 +63,29 @@ const DisplayModalLogo = ({ logo }: { logo: IconTypeProps }) => {
 };
 
 export const DisplayContent = ({
-  size = 'md',
+  size = "md",
   status,
   logo,
   contentHeader,
   contentDesc,
   addressButton,
-  bottomButton
+  bottomButton,
 }: ConnectModalContentType) => {
   const { colorMode } = useColorMode();
   const Style = {
     warning: {
-      color: handleChangeColorModeValue(colorMode, 'orange.300', 'orange.400')
+      color: handleChangeColorModeValue(colorMode, "orange.300", "orange.400"),
     },
     error: {
-      color: handleChangeColorModeValue(colorMode, 'red.400', 'red.500')
-    }
+      color: handleChangeColorModeValue(colorMode, "red.400", "red.500"),
+    },
   };
   return (
-    <AnimateBox
-      initial="hidden"
-      animate="enter"
-      exit="exit"
-      variants={ModalContentVariants}
-    >
-      <Flex
-        flex={1}
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        p={8}
-      >
+    <AnimateBox initial="hidden" animate="enter" exit="exit" variants={ModalContentVariants}>
+      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center" p={8}>
         {logo && (
-          <Center position="relative" mb={typeof logo === 'string' ? 4 : 0}>
-            {status === 'loading' && (
+          <Center position="relative" mb={typeof logo === "string" ? 4 : 0}>
+            {status === "loading" && (
               <AnimateBox
                 position="absolute"
                 top={-2}
@@ -118,7 +103,7 @@ export const DisplayContent = ({
                 variants={LoadingVariants}
               ></AnimateBox>
             )}
-            {(status === 'warning' || status === 'error') && (
+            {(status === "warning" || status === "error") && (
               <Box
                 position="absolute"
                 top={-2}
@@ -146,7 +131,7 @@ export const DisplayContent = ({
         )}
         {contentHeader && (
           <Text
-            color={Style[status] ? Style[status].color : 'inherit'}
+            color={Style[status] ? Style[status].color : "inherit"}
             fontSize={SIZES[size].fontSize}
             fontWeight="medium"
             textAlign="center"
@@ -157,12 +142,7 @@ export const DisplayContent = ({
           </Text>
         )}
         {contentDesc && (
-          <Text
-            fontSize={SIZES[size].contentFontSize}
-            textAlign="center"
-            lineHeight="normal"
-            opacity={0.7}
-          >
+          <Text fontSize={SIZES[size].contentFontSize} textAlign="center" lineHeight="normal" opacity={0.7}>
             {contentDesc}
           </Text>
         )}
@@ -181,11 +161,7 @@ export const DisplayContent = ({
   );
 };
 
-export const InstallWalletButton = ({
-  size = 'md',
-  icon,
-  text
-}: DownloadWalletButtonType) => {
+export const InstallWalletButton = ({ size = "md", icon, text }: DownloadWalletButtonType) => {
   const { colorMode } = useColorMode();
   return (
     <Button
@@ -196,23 +172,13 @@ export const InstallWalletButton = ({
       fontWeight="medium"
       fontSize={SIZES[size].fontSize}
       border="1px solid"
-      borderColor={handleChangeColorModeValue(
-        colorMode,
-        'gray.300',
-        'gray.600'
-      )}
-      color={handleChangeColorModeValue(colorMode, 'gray.600', 'gray.200')}
+      borderColor={handleChangeColorModeValue(colorMode, "gray.300", "gray.600")}
+      color={handleChangeColorModeValue(colorMode, "gray.600", "gray.200")}
       _hover={{ opacity: 0.8 }}
       _active={{ opacity: 0.9 }}
-      _focus={{ outline: 'none' }}
+      _focus={{ outline: "none" }}
     >
-      <Stack
-        w="full"
-        isInline={true}
-        justifyContent="center"
-        alignItems="center"
-        px={3}
-      >
+      <Stack w="full" isInline={true} justifyContent="center" alignItems="center" px={3}>
         <Icon as={icon} />
         <Text whiteSpace="break-spaces">{text ? text : `Install Wallet`}</Text>
       </Stack>
@@ -225,19 +191,13 @@ export const QRCode = ({ link, text }: { link: string; text?: string }) => {
   const dimensions = useDimensions(elementRef);
 
   return (
-    <AnimateBox
-      ref={elementRef}
-      initial="hidden"
-      animate="enter"
-      exit="exit"
-      variants={ModalContentVariants}
-    >
+    <AnimateBox ref={elementRef} initial="hidden" animate="enter" exit="exit" variants={ModalContentVariants}>
       <Stack justifyContent="center" alignItems="center" spacing={4} p={6}>
         <Text>{text}</Text>
         <Box
           w="full"
           border="1px solid"
-          borderColor={useColorModeValue('blackAlpha.100', 'whiteAlpha.600')}
+          borderColor={useColorModeValue("blackAlpha.100", "whiteAlpha.600")}
           borderRadius="lg"
           boxShadow="base"
           p={5}
@@ -245,9 +205,9 @@ export const QRCode = ({ link, text }: { link: string; text?: string }) => {
           <QRCodeSVG
             value={link}
             size={dimensions && dimensions.contentBox.width - 24}
-            bgColor={'#ffffff'}
-            fgColor={'#000000'}
-            level={'L'}
+            bgColor={"#ffffff"}
+            fgColor={"#000000"}
+            level={"L"}
             includeMargin={false}
           />
         </Box>
@@ -256,18 +216,10 @@ export const QRCode = ({ link, text }: { link: string; text?: string }) => {
   );
 };
 
-export const DisplayWalletList = ({
-  walletsData,
-  size = 'md',
-  handleClick
-}: DisplayWalletListType) => {
+export const DisplayWalletList = ({ walletsData, size = "md", handleClick }: DisplayWalletListType) => {
   const { colorMode } = useColorMode();
   return (
-    <AnimateBox
-      initial="hidden"
-      animate="enter"
-      variants={ModalContentVariants}
-    >
+    <AnimateBox initial="hidden" animate="enter" variants={ModalContentVariants}>
       <Stack
         spacing={1.5}
         pl={3}
@@ -278,26 +230,18 @@ export const DisplayWalletList = ({
         justifyContent="space-between"
         css={{
           // For Firefox
-          scrollbarWidth: 'thin',
+          scrollbarWidth: "thin",
           // For Chrome and other browsers except Firefox
-          '&::-webkit-scrollbar': {
-            width: '8px',
-            background: 'transparent'
+          "&::-webkit-scrollbar": {
+            width: "8px",
+            background: "transparent",
           },
-          '&::-webkit-scrollbar-thumb': {
-            background: handleChangeColorModeValue(
-              colorMode,
-              'rgba(0,0,0,0.1)',
-              'rgba(255,255,255,0.1)'
-            ),
-            borderRadius: '6px',
-            border: '3px solid',
-            borderColor: handleChangeColorModeValue(
-              colorMode,
-              '#fff',
-              '#2D3748'
-            )
-          }
+          "&::-webkit-scrollbar-thumb": {
+            background: handleChangeColorModeValue(colorMode, "rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)"),
+            borderRadius: "6px",
+            border: "3px solid",
+            borderColor: handleChangeColorModeValue(colorMode, "#fff", "#2D3748"),
+          },
         }}
       >
         <Stack spacing={1.5} pt={2.5}>
@@ -314,38 +258,20 @@ export const DisplayWalletList = ({
                 p={2.5}
                 justifyContent="start"
                 borderRadius="lg"
-                color={handleChangeColorModeValue(
-                  colorMode,
-                  'gray.600',
-                  'white'
-                )}
+                color={handleChangeColorModeValue(colorMode, "gray.600", "white")}
                 transition="all .3s ease-in-out"
                 _hover={{
-                  bg: handleChangeColorModeValue(
-                    colorMode,
-                    'gray.200',
-                    'gray.600'
-                  )
+                  bg: handleChangeColorModeValue(colorMode, "gray.200", "gray.600"),
                 }}
                 _active={{
-                  bg: handleChangeColorModeValue(
-                    colorMode,
-                    'gray.300',
-                    'gray.700'
-                  )
+                  bg: handleChangeColorModeValue(colorMode, "gray.300", "gray.700"),
                 }}
-                _focus={{ outline: 'none' }}
+                _focus={{ outline: "none" }}
                 onClick={(e) => {
                   if (e.currentTarget.id === name) handleClick(walletsData[i]);
                 }}
               >
-                <Stack
-                  w="full"
-                  isInline={true}
-                  justifyContent="start"
-                  alignItems="center"
-                  spacing={2.5}
-                >
+                <Stack w="full" isInline={true} justifyContent="start" alignItems="center" spacing={2.5}>
                   <Box
                     borderRadius="full"
                     overflow="hidden"
@@ -356,7 +282,7 @@ export const DisplayWalletList = ({
                     maxW={SIZES[size].iconSize}
                     maxH={SIZES[size].iconSize}
                   >
-                    {typeof logo === 'string' ? (
+                    {typeof logo === "string" ? (
                       <Image src={logo} />
                     ) : (
                       <Icon as={logo} w="full" h="full" p={0.5} />

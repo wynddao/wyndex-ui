@@ -8,28 +8,17 @@ import {
   Stack,
   Text,
   useColorMode,
-  useDimensions
-} from '@chakra-ui/react';
-import { QRCodeSVG } from 'qrcode.react';
-import React, { useRef } from 'react';
-import { FiChevronRight } from 'react-icons/fi';
+  useDimensions,
+} from "@chakra-ui/react";
+import { QRCodeSVG } from "qrcode.react";
+import React, { useRef } from "react";
+import { FiChevronRight } from "react-icons/fi";
 
-import { handleChangeColorModeValue } from '../../default-component';
-import {
-  AnimateBox,
-  LoadingVariants,
-  ModalContentVariants
-} from '../../motion-component';
-import {
-  ConnectModalContentType,
-  DisplayWalletListType,
-  DownloadWalletButtonType
-} from '../../types';
+import { handleChangeColorModeValue } from "../../default-component";
+import { AnimateBox, LoadingVariants, ModalContentVariants } from "../../motion-component";
+import { ConnectModalContentType, DisplayWalletListType, DownloadWalletButtonType } from "../../types";
 
-export const SimpleInstallWalletButton = ({
-  icon,
-  text
-}: DownloadWalletButtonType) => {
+export const SimpleInstallWalletButton = ({ icon, text }: DownloadWalletButtonType) => {
   const { colorMode } = useColorMode();
   return (
     <Box w="full" px={6} mt={1}>
@@ -39,42 +28,22 @@ export const SimpleInstallWalletButton = ({
         h="auto"
         fontWeight="medium"
         fontSize="lg"
-        color={handleChangeColorModeValue(
-          colorMode,
-          'rgba(37, 57, 201, 0.72)',
-          'rgba(196, 203, 255, 0.9)'
-        )}
+        color={handleChangeColorModeValue(colorMode, "rgba(37, 57, 201, 0.72)", "rgba(196, 203, 255, 0.9)")}
         border="1px solid"
-        borderColor={handleChangeColorModeValue(
-          colorMode,
-          '#ffffff',
-          'rgba(0, 0, 0, 0.25)'
-        )}
-        bg={handleChangeColorModeValue(
-          colorMode,
-          'rgba(37, 57, 201, 0.1)',
-          'rgba(40, 62, 219, 0.15)'
-        )}
+        borderColor={handleChangeColorModeValue(colorMode, "#ffffff", "rgba(0, 0, 0, 0.25)")}
+        bg={handleChangeColorModeValue(colorMode, "rgba(37, 57, 201, 0.1)", "rgba(40, 62, 219, 0.15)")}
         boxShadow={handleChangeColorModeValue(
           colorMode,
-          '0 0 1px 2px rgba(37, 57, 201, 0.5)',
-          '0 0 1px 2px rgba(196, 203, 255, 0.5)'
+          "0 0 1px 2px rgba(37, 57, 201, 0.5)",
+          "0 0 1px 2px rgba(196, 203, 255, 0.5)",
         )}
         _hover={{ opacity: 0.8 }}
         _active={{ opacity: 0.9 }}
-        _focus={{ outline: 'none' }}
+        _focus={{ outline: "none" }}
       >
-        <Stack
-          w="full"
-          isInline={true}
-          justifyContent="center"
-          alignItems="center"
-          p={3}
-        >
+        <Stack w="full" isInline={true} justifyContent="center" alignItems="center" p={3}>
           {icon && <Icon as={icon} />}
-          <Text whiteSpace="break-spaces">
-            {text ? text : `Install Wallet`}
-          </Text>
+          <Text whiteSpace="break-spaces">{text ? text : `Install Wallet`}</Text>
         </Stack>
       </Button>
     </Box>
@@ -89,25 +58,20 @@ export const SimpleDisplayModalContent = ({
   username,
   walletIcon,
   addressButton,
-  bottomButton
+  bottomButton,
 }: ConnectModalContentType) => {
   const { colorMode } = useColorMode();
   const Style = {
     warning: {
-      color: handleChangeColorModeValue(colorMode, 'orange.300', 'orange.400')
+      color: handleChangeColorModeValue(colorMode, "orange.300", "orange.400"),
     },
     error: {
-      color: handleChangeColorModeValue(colorMode, 'red.400', 'red.500')
-    }
+      color: handleChangeColorModeValue(colorMode, "red.400", "red.500"),
+    },
   };
 
   return (
-    <AnimateBox
-      initial="hidden"
-      animate="enter"
-      exit="exit"
-      variants={ModalContentVariants}
-    >
+    <AnimateBox initial="hidden" animate="enter" exit="exit" variants={ModalContentVariants}>
       <Flex
         flex={1}
         flexDirection="column"
@@ -127,9 +91,9 @@ export const SimpleDisplayModalContent = ({
             minH={24}
             maxW={24}
             maxH={24}
-            mb={typeof logo === 'string' ? 6 : 0}
+            mb={typeof logo === "string" ? 6 : 0}
           >
-            {status === 'loading' && (
+            {status === "loading" && (
               <AnimateBox
                 position="absolute"
                 top={-2}
@@ -147,7 +111,7 @@ export const SimpleDisplayModalContent = ({
                 variants={LoadingVariants}
               ></AnimateBox>
             )}
-            {(status === 'warning' || status === 'error') && (
+            {(status === "warning" || status === "error") && (
               <Box
                 position="absolute"
                 top={-2}
@@ -160,21 +124,12 @@ export const SimpleDisplayModalContent = ({
               ></Box>
             )}
             <Box borderRadius="full" overflow="hidden">
-              {typeof logo === 'string' ? (
-                <Image src={logo} />
-              ) : (
-                <Icon as={logo} w="full" h="full" />
-              )}
+              {typeof logo === "string" ? <Image src={logo} /> : <Icon as={logo} w="full" h="full" />}
             </Box>
           </Center>
         )}
         {contentHeader && (
-          <Text
-            fontSize="lg"
-            fontWeight="semibold"
-            color={Style[status]?.color}
-            mb={0.5}
-          >
+          <Text fontSize="lg" fontWeight="semibold" color={Style[status]?.color} mb={0.5}>
             {contentHeader}
           </Text>
         )}
@@ -208,31 +163,13 @@ export const SimpleDisplayModalContent = ({
   );
 };
 
-export const SimpleQRCode = ({
-  link,
-  description
-}: {
-  link: string;
-  description?: string;
-}) => {
+export const SimpleQRCode = ({ link, description }: { link: string; description?: string }) => {
   const elementRef = useRef();
   const dimensions = useDimensions(elementRef);
   const { colorMode } = useColorMode();
   return (
-    <AnimateBox
-      ref={elementRef}
-      initial="hidden"
-      animate="enter"
-      exit="exit"
-      variants={ModalContentVariants}
-    >
-      <Stack
-        justifyContent="center"
-        alignItems="center"
-        spacing={4}
-        p={8}
-        pt={6}
-      >
+    <AnimateBox ref={elementRef} initial="hidden" animate="enter" exit="exit" variants={ModalContentVariants}>
+      <Stack justifyContent="center" alignItems="center" spacing={4} p={8} pt={6}>
         {description && (
           <Text fontWeight="medium" textAlign="center" opacity={0.75}>
             {description}
@@ -241,11 +178,7 @@ export const SimpleQRCode = ({
         <Box
           w="full"
           border="1px solid"
-          borderColor={handleChangeColorModeValue(
-            colorMode,
-            'blackAlpha.100',
-            'whiteAlpha.600'
-          )}
+          borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.600")}
           borderRadius="lg"
           boxShadow="base"
           p={5}
@@ -253,9 +186,9 @@ export const SimpleQRCode = ({
           <QRCodeSVG
             value={link}
             size={dimensions && dimensions.contentBox.width - 24}
-            bgColor={'#ffffff'}
-            fgColor={'#000000'}
-            level={'L'}
+            bgColor={"#ffffff"}
+            fgColor={"#000000"}
+            level={"L"}
             includeMargin={false}
           />
         </Box>
@@ -267,16 +200,12 @@ export const SimpleQRCode = ({
 export const SimpleDisplayWalletList = ({
   initialFocus,
   walletsData,
-  handleClick
+  handleClick,
 }: DisplayWalletListType) => {
   const { colorMode } = useColorMode();
 
   return (
-    <AnimateBox
-      initial="hidden"
-      animate="enter"
-      variants={ModalContentVariants}
-    >
+    <AnimateBox initial="hidden" animate="enter" variants={ModalContentVariants}>
       <Stack
         flex={1}
         spacing={3}
@@ -287,30 +216,26 @@ export const SimpleDisplayWalletList = ({
         py={0.5}
         css={{
           // For Firefox
-          scrollbarWidth: 'auto',
+          scrollbarWidth: "auto",
           scrollbarColor: handleChangeColorModeValue(
             colorMode,
-            'rgba(0,0,0,0.3) rgba(0,0,0,0.2)',
-            'rgba(255,255,255,0.2) rgba(255,255,255,0.1)'
+            "rgba(0,0,0,0.3) rgba(0,0,0,0.2)",
+            "rgba(255,255,255,0.2) rgba(255,255,255,0.1)",
           ),
           // For Chrome and other browsers except Firefox
-          '&::-webkit-scrollbar': {
-            width: '10px',
-            background: 'transparent',
+          "&::-webkit-scrollbar": {
+            width: "10px",
+            background: "transparent",
             // background: "gray",
-            borderRadius: '3px',
-            mr: 1
+            borderRadius: "3px",
+            mr: 1,
           },
-          '&::-webkit-scrollbar-thumb': {
-            background: handleChangeColorModeValue(
-              colorMode,
-              'rgba(0,0,0,0.1)',
-              'rgba(255,255,255,0.1)'
-            ),
-            borderRadius: '6px',
-            border: '3px solid transparent',
-            backgroundClip: 'content-box'
-          }
+          "&::-webkit-scrollbar-thumb": {
+            background: handleChangeColorModeValue(colorMode, "rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)"),
+            borderRadius: "6px",
+            border: "3px solid transparent",
+            backgroundClip: "content-box",
+          },
         }}
       >
         {walletsData.map(({ name, prettyName, logo }, i) => {
@@ -326,56 +251,33 @@ export const SimpleDisplayWalletList = ({
               justifyContent="start"
               borderRadius="none"
               whiteSpace="break-spaces"
-              color={handleChangeColorModeValue(
-                colorMode,
-                'blackAlpha.800',
-                'whiteAlpha.800'
-              )}
+              color={handleChangeColorModeValue(colorMode, "blackAlpha.800", "whiteAlpha.800")}
               boxShadow={handleChangeColorModeValue(
                 colorMode,
-                '0 20px 1px -19px #fff',
-                '0 20px 1px -19px #2d3748'
+                "0 20px 1px -19px #fff",
+                "0 20px 1px -19px #2d3748",
               )}
               transition="all .4s ease-in-out"
               _hover={{
-                color: handleChangeColorModeValue(
-                  colorMode,
-                  'primary.300',
-                  'primary.100'
-                ),
-                borderRadius: 'md',
+                color: handleChangeColorModeValue(colorMode, "primary.300", "primary.100"),
+                borderRadius: "md",
                 boxShadow: handleChangeColorModeValue(
                   colorMode,
-                  '0 0 2px 0 rgba(98, 17, 240, 0.5)',
-                  '0 0 2px 0 rgba(182, 153, 232, 0.9)'
-                )
+                  "0 0 2px 0 rgba(98, 17, 240, 0.5)",
+                  "0 0 2px 0 rgba(182, 153, 232, 0.9)",
+                ),
               }}
               _focus={{
-                borderRadius: 'md',
-                outline: 'none'
+                borderRadius: "md",
+                outline: "none",
               }}
               onClick={(e) => {
                 if (e.currentTarget.id === name) handleClick(walletsData[i]);
               }}
             >
-              <Stack
-                w="full"
-                isInline={true}
-                justifyContent="start"
-                alignItems="center"
-                spacing={2.5}
-              >
-                <Box
-                  borderRadius="lg"
-                  overflow="hidden"
-                  w={9}
-                  h={9}
-                  minW={9}
-                  minH={9}
-                  maxW={9}
-                  maxH={9}
-                >
-                  <Image src={typeof logo === 'string' && logo} />
+              <Stack w="full" isInline={true} justifyContent="start" alignItems="center" spacing={2.5}>
+                <Box borderRadius="lg" overflow="hidden" w={9} h={9} minW={9} minH={9} maxW={9} maxH={9}>
+                  <Image src={typeof logo === "string" && logo} />
                 </Box>
                 <Box textAlign="start" flex={1}>
                   <Text fontSize="xl" fontWeight="semibold" lineHeight={1.1}>

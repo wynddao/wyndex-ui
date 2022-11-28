@@ -1,11 +1,13 @@
-import GreetingMsg from "../components/GreetingMsg";
-import InputAddressForm from "../components/InputAddressForm";
+import AssetBalances from "../components/AssetBalances";
+import DepositIbcModal from "../components/DepositIbcModal";
+import WithdrawIbcModal from "../components/WithdrawIbcModal";
 
 export default function Page() {
   return (
     <>
-      <GreetingMsg />
-      <InputAddressForm />
+      <AssetBalances />
+      <DepositIbcModal />
+      <WithdrawIbcModal />
     </>
   );
 }

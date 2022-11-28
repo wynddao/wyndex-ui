@@ -11,8 +11,3 @@ export const signingCosmWasmStargateClientAtom = atom<SigningCosmWasmStargateCli
   key: "signingCosmWasmStargateClient",
   dangerouslyAllowMutability: true,
 });
-
-export const myAddressAtom = atom<number | null>({
-  key: "myAddress",
-  default: null,
-});

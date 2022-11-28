@@ -1,22 +1,17 @@
-import { Modal, ModalContent, ModalOverlay, Stack } from '@chakra-ui/react';
-import React from 'react';
+import { Modal, ModalContent, ModalOverlay, Stack } from "@chakra-ui/react";
+import React from "react";
 
-import { ConnectModalType } from '../../types';
+import { ConnectModalType } from "../../types";
 
 export const SimpleConnectModal = ({
   initialRef,
   modalHead,
   modalContent,
   modalIsOpen,
-  modalOnClose
+  modalOnClose,
 }: ConnectModalType) => {
   return (
-    <Modal
-      initialFocusRef={initialRef}
-      isOpen={modalIsOpen}
-      isCentered={true}
-      onClose={modalOnClose}
-    >
+    <Modal initialFocusRef={initialRef} isOpen={modalIsOpen} isCentered={true} onClose={modalOnClose}>
       <ModalOverlay />
       <ModalContent
         alignSelf="center"
@@ -27,7 +22,7 @@ export const SimpleConnectModal = ({
         p={1}
         pb={8}
         mx={4}
-        _focus={{ outline: 'none' }}
+        _focus={{ outline: "none" }}
       >
         <Stack flex={1} spacing={0} h="full">
           {modalHead}

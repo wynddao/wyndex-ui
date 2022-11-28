@@ -23,7 +23,7 @@ const tabName = ["Add Liquidity", "Remove Liquidity"];
 interface ManageLiquidityProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
-  readonly poolData: Pair
+  readonly poolData: Pair;
 }
 
 export default function ManageLiquidity({ isOpen, onClose, poolData }: ManageLiquidityProps) {

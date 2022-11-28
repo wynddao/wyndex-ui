@@ -28,4 +28,3 @@ const wrapExecuteHook =
   };
 
 export const useProvideLiquidity = wrapExecuteHook("provideLiquidity");
-

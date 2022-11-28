@@ -1,2 +1,2 @@
-export * from "./testnet"
-export * from "./testnet_assets"
+export * from "./testnet";
+export * from "./testnet_assets";
