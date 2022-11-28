@@ -18,11 +18,13 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import { assets } from "chain-registry";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilState } from "recoil";
-import { withdrawIbcModalOpenAtom } from "../../state/recoil/atoms/modal";
+import { withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
+import { getAsset, getBalances } from "../../utils";
 
 interface fromTokenType {
   name: string;
@@ -36,7 +38,8 @@ interface toTokenType {
 }
 
 export default function WithdrawIbcModal() {
-  const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalOpenAtom);
+  const { address } = useWallet();
+  const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalAtom);
 
   const [fromToken, setFromToken] = useState<fromTokenType>({
     name: "",
@@ -83,16 +86,25 @@ export default function WithdrawIbcModal() {
     });
 
   useEffect(() => {
-    const getFromToken = getShuffledArr([...assetList])[0];
-    const getToToken = getShuffledArr([...assetList]).filter(({ name }) => !(getFromToken.name === name))[0];
-    const getRandomBalance =
-      parseFloat(getShuffledArr([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).toString().replace(/,/gm, "")) / 100000000;
+    (async function updateFromToken() {
+      if (!withdrawIbcModalOpen.asset || !address) return;
 
-    setFromToken({
-      name: getFromToken.name,
-      address: getRandomLetter(getFromToken.name).replace(/,/gm, ""),
-      availableBalance: getRandomBalance.toFixed(4),
-    });
+      const asset = await getAsset(withdrawIbcModalOpen.asset);
+      const balances = await getBalances(address);
+      const balance = balances.find((coin) => coin.denom === asset.denom)?.amount || "0";
+
+      const fromToken: fromTokenType = {
+        name: asset.name,
+        address: asset.contractAddress || "",
+        availableBalance: balance,
+      };
+      setFromToken(fromToken);
+    })();
+  }, [address, withdrawIbcModalOpen.asset]);
+
+  useEffect(() => {
+    const getToToken = getShuffledArr([...assetList])[0];
+
     setToToken({
       name: getToToken.name,
       address: getRandomLetter(getToToken.name).replace(/,/gm, ""),
@@ -111,13 +123,13 @@ export default function WithdrawIbcModal() {
       });
       setChangeToToken(false);
     }
-  }, [changeToToken]);
+  }, []);
 
   return (
     <Box bg={useColorModeValue("gray.100", "gray.700")}>
       <Modal
-        isOpen={withdrawIbcModalOpen}
-        onClose={() => setWithdrawIbcModalOpen(false)}
+        isOpen={withdrawIbcModalOpen.isOpen}
+        onClose={() => setWithdrawIbcModalOpen({ isOpen: false })}
         blockScrollOnMount={false}
         isCentered={true}
       >
@@ -152,7 +164,7 @@ export default function WithdrawIbcModal() {
                 color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
                 whiteSpace="break-spaces"
                 overflow="hidden"
-                title={fromToken.address}
+                title={fromToken.address || "(native)"}
                 _before={{
                   content: "attr(title)",
                   width: "50%",
@@ -163,7 +175,7 @@ export default function WithdrawIbcModal() {
                   direction: "rtl",
                 }}
               >
-                {fromToken.address}
+                {fromToken.name}
               </Text>
             </GridItem>
             <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
@@ -187,7 +199,7 @@ export default function WithdrawIbcModal() {
                   color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
                   whiteSpace="break-spaces"
                   overflow="hidden"
-                  title={toToken.address}
+                  title={toToken.address || "(native)"}
                   _before={{
                     content: "attr(title)",
                     width: "50%",
@@ -198,7 +210,7 @@ export default function WithdrawIbcModal() {
                     direction: "rtl",
                   }}
                 >
-                  {toToken.address}
+                  {toToken.name}
                 </Text>
                 <Button
                   size="xs"
@@ -212,7 +224,7 @@ export default function WithdrawIbcModal() {
             </GridItem>
           </Grid>
           <Text fontSize="xl" fontWeight="bold" mb={3}>
-            Amount To Deposit
+            Amount To Withdraw
           </Text>
           <Box borderRadius="2xl" border="1px solid" borderColor="orange.300" px={4} py={6} mb={12}>
             <Text fontWeight="semibold" mr={4} mb={3}>
@@ -252,7 +264,7 @@ export default function WithdrawIbcModal() {
             colorScheme="primary"
             w="full"
             isDisabled={inputValue === "0" || inputValue === "" ? true : false}
-            onClick={() => () => setWithdrawIbcModalOpen(false)}
+            onClick={() => () => setWithdrawIbcModalOpen({ isOpen: false })}
           >
             Withdraw
           </Button>
