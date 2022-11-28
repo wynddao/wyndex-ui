@@ -17,9 +17,9 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
 
   return (
     <>
-      <PoolHeader poolData={poolData} chainData={pool} pairData={pair} />
-      <LiquidityMining poolData={poolData} />
-      <PoolCatalyst poolData={poolData} chainData={pool} />
+      <PoolHeader chainData={pool} pairData={pair} />
+      <LiquidityMining poolData={poolData} pairData={pair} />
+      <PoolCatalyst chainData={pool} pairData={pair} />
     </>
   );
 }

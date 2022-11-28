@@ -3,6 +3,7 @@
 import {
   Box,
   Button,
+  Flex,
   Table,
   TableContainer,
   Tbody,
@@ -12,14 +13,21 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
+import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
+import { convertSeconds } from "../../utils/time";
 import { UnbondingPeriod } from "../../utils/types";
 
 interface BoundingsTableProps {
-  readonly unbondingPeriodList: readonly UnbondingPeriod[];
+  readonly stakeContract: string;
+  tokenName: any;
 }
 
-export default function BoundingsTable({ unbondingPeriodList }: BoundingsTableProps) {
+export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTableProps) {
   const tableHeaders = ["Unbonding Duration", "Current APR", "Amount", "Action"];
+  const { address } = useWallet();
+  //@ts-ignore
+  const { allStakes } = useUserStakeInfos(stakeContract, address);
 
   return (
     <Box p={4}>
@@ -38,16 +46,23 @@ export default function BoundingsTable({ unbondingPeriodList }: BoundingsTablePr
             </Tr>
           </Thead>
           <Tbody>
-            {unbondingPeriodList.map(({ duration, apr }, i) => {
+            {allStakes.map(({ stake, unbonding_period }, i) => {
               return (
                 <Tr key={i}>
-                  <Td fontWeight="semibold">{duration} ms</Td>
-                  <Td fontWeight="semibold">{apr}%</Td>
-                  <Td fontWeight="semibold">@TODO</Td>
+                  <Td fontWeight="semibold">{convertSeconds(unbonding_period).days} Days</Td>
+                  <Td fontWeight="semibold">20% @TODO</Td>
+                  <Td fontWeight="semibold">
+                    {stake} {tokenName}
+                  </Td>
                   <Td>
-                    <Button variant="unstyled" color="orange.300" isDisabled={true}>
-                      Unbonding All
-                    </Button>
+                    <Flex>
+                      <Button variant="solid" color="orange.300" marginRight={3}>
+                        Rebond
+                      </Button>
+                      <Button variant="unstyled" color="orange.300">
+                        Unbond
+                      </Button>
+                    </Flex>
                   </Td>
                 </Tr>
               );

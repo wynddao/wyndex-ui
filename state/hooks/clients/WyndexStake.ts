@@ -4,8 +4,8 @@ import { ExecuteResult } from "cosmwasm";
 import { useCallback } from "react";
 import { useRecoilValueLoadable } from "recoil";
 
-import { Cw20Client as ExecuteClient } from "../../clients/Cw20.client";
-import { ExecuteClientParams, executeClient } from "../../recoil/selectors/clients/cw20";
+import { WyndexStakeClient as ExecuteClient } from "../../clients/WyndexStake.client";
+import { ExecuteClientParams, executeClient } from "../../recoil/selectors/clients/stake";
 import { FunctionKeyOf } from "../../types";
 
 // This hook wrapper lets us easily make hooks out of all execution functions on
@@ -27,5 +27,4 @@ const wrapExecuteHook =
     );
   };
 
-export const useAllowance = wrapExecuteHook("allowance");
-export const useSend = wrapExecuteHook("send");
+export const useUnbond = wrapExecuteHook("unbond");

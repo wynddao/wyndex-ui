@@ -5,7 +5,7 @@
  */
 
 import { selectorFamily } from "recoil";
-import { signingCosmWasmStargateClientAtom } from "../../atoms";
+import { signingCosmWasmClientAtom } from "../../atoms";
 import { cosmWasmStargateClientSelector } from "../chain";
 import {
   Uint128,
@@ -58,8 +58,10 @@ export const executeClient = selectorFamily<Cw20Client | undefined, ExecuteClien
   get:
     ({ contractAddress, sender }) =>
     ({ get }) => {
-      const client = get(signingCosmWasmStargateClientAtom);
+      const client = get(signingCosmWasmClientAtom);
+
       if (!client) return;
+      //@ts-ignore
       return new Cw20Client(client, sender, contractAddress);
     },
   dangerouslyAllowMutability: true,

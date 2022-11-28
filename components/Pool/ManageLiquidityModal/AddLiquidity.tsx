@@ -24,14 +24,15 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
-import { CustomHooks } from "../../state";
-import { handleChangeColorModeValue } from "../../utils/theme";
-import { Asset, Pair } from "../../utils/types";
-import { Asset as WyndAsset } from "../../state/clients/types/WyndexPair.types";
-import { getAssetInfo } from "../../utils/assets";
+import { CustomHooks } from "../../../state";
+import { handleChangeColorModeValue } from "../../../utils/theme";
+import { Asset, Pair } from "../../../utils/types";
+import { Asset as WyndAsset, PairInfo } from "../../../state/clients/types/WyndexPair.types";
+import { getAssetInfo } from "../../../utils/assets";
 import { Coin } from "cosmwasm";
 import { useRecoilState } from "recoil";
-import { txModalAtom } from "../../state/recoil/atoms/txModal";
+import { txModalAtom } from "../../../state/recoil/atoms/txModal";
+import TokenName from "../../TokenName";
 
 interface inputType {
   id: string;
@@ -45,19 +46,41 @@ interface singleType {
 }
 
 interface popType {
-  optionsIndex: Asset[];
+  optionsIndex: DataType[];
   isOpen: boolean;
 }
 
-interface DataType extends Asset {
+interface DataType {
+  img: string;
+  denom: string;
+  name: any;
+  contractAddress?: string;
   show?: boolean;
 }
 
-export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; onClose: () => void }) {
+export default function AddLiquidity({ data: pairData, onClose }: { data: PairInfo; onClose: () => void }) {
   const { colorMode } = useColorMode();
 
-  const [data, setData] = useState<DataType[]>(poolData.tokens);
-  const defaultInput = poolData.tokens.map(({ denom: label, contractAddress }) => ({
+  const poolData: DataType[] = pairData.asset_infos.map((asset) => {
+    return {
+      img: "https://via.placeholder.com/300",
+      // @ts-ignore
+      denom: asset.hasOwnProperty("native_token") ? asset.native_token : asset.token,
+      // @ts-ignore
+      contractAddress: asset.hasOwnProperty("token") ? asset.token : undefined,
+      // @ts-ignore
+      name: asset.hasOwnProperty("token") ? (
+        // @ts-ignore
+        <TokenName address={asset.token} />
+      ) : (
+        // @ts-ignore
+        <span>{asset.native_token}</span>
+      ),
+    };
+  });
+
+  const [data, setData] = useState<DataType[]>(poolData);
+  const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
     id: label,
     value: "0",
     contract: contractAddress,
@@ -74,35 +97,50 @@ export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; on
   });
 
   const prodiveLiquidity = async () => {
-    const assets = tokenInputValue.map((token): WyndAsset => {
-      return {
-        amount: token.value,
-        info: token.contract ? { token: token.contract } : { native_token: token.id },
-      };
-    });
-    const funds: Coin[] | undefined = tokenInputValue.find((element) => !element.contract)
-      ? [
-          {
-            amount: tokenInputValue.find((element) => !element.contract)?.value || "1",
-            denom: tokenInputValue.find((element) => !element.contract)?.id || "ujunox",
-          },
-        ]
-      : undefined;
+    const assets = tokenInputValue
+      .filter((token) => {
+        return token.value !== "0";
+      })
+      .map((token): WyndAsset => {
+        return {
+          amount: token.value,
+          info: token.contract ? { token: token.contract } : { native_token: token.id },
+        };
+      });
+    const funds: Coin[] | undefined =
+      tokenInputValue.find((element) => !element.contract)?.value !== "0"
+        ? [
+            {
+              amount: tokenInputValue.find((element) => !element.contract)?.value || "1",
+              denom: tokenInputValue.find((element) => !element.contract)?.id || "ujunox",
+            },
+          ]
+        : undefined;
     onClose();
-    setTxModalState({ ...txModalState, active: true, loading: true }),
-      doProvideLiquidity({
-        pairContractAddress: poolData.contractAddress,
+    setTxModalState({ ...txModalState, active: true, loading: true });
+    console.log({ pairContractAddress: pairData.contract_addr, assets: assets, funds });
+    try {
+      const res = await doProvideLiquidity({
+        pairContractAddress: pairData.contract_addr,
         assets: assets,
         funds,
-      }).then((res: any) =>
-        setTxModalState({
-          ...txModalState,
-          height: res.height,
-          txHash: res.transactionHash,
-          active: true,
-          loading: false,
-        }),
-      );
+      });
+      setTxModalState({
+        ...txModalState,
+        height: res.height,
+        txHash: res.transactionHash,
+        active: true,
+        loading: false,
+        error: undefined,
+      });
+    } catch (err: any) {
+      setTxModalState({
+        ...txModalState,
+        active: true,
+        loading: false,
+        error: err.message,
+      });
+    }
   };
 
   useEffect(() => {
@@ -121,69 +159,65 @@ export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; on
 
   return (
     <>
-      <Text fontSize="sm" fontWeight="semibold" pt={2}>
-        LP token balance:&nbsp;
-        <Text as="span" color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}>
-          0 GAMM-600
-        </Text>
-      </Text>
       <Stack spacing={2} mb={6}>
-        {data.map(({ name, denom, img, show, contractAddress }, i) => {
+        {data.map(({ denom, img, show, contractAddress, name }, i) => {
           return (
             show && (
               <Box position="relative">
-                <Popover returnFocusOnClose={false} isOpen={openPop.isOpen}>
-                  <PopoverTrigger>
-                    <Button w={0} h={0} minW={0} p={0} />
-                  </PopoverTrigger>
-                  <PopoverContent
-                    position="absolute"
-                    top={{ base: 24, sm: "6.7rem" }}
-                    left={0}
-                    borderTopStyle="dashed"
-                    borderRadius={openPop.isOpen ? "0 0 0.375rem 0.375rem" : "md"}
-                    bg={handleChangeColorModeValue(colorMode, "#f5f5f5", "whiteAlpha.50")}
-                    w="full"
-                    maxW={{ base: 60, sm: "sm" }}
-                    minW={{ base: 60, sm: "sm" }}
-                    _focus={{ outline: "none" }}
-                  >
-                    <PopoverBody>
-                      {openPop.optionsIndex.map(({ denom: optionLabel, img }, i) => (
-                        <Button
-                          key={i}
-                          variant="ghost"
-                          w="full"
-                          h="fit-content"
-                          justifyContent="flex-start"
-                          flexWrap="wrap"
-                          fontSize="xl"
-                          fontWeight="bold"
-                          wordBreak="break-word"
-                          px={{ base: 2, sm: 4 }}
-                          py={4}
-                          onClick={() => {
-                            data.map(({ denom }, i) => {
-                              if (optionLabel === denom) {
-                                setSingle({
-                                  selectedIndex: i,
-                                  isSingle: true,
-                                });
-                                setOpenPop({
-                                  optionsIndex: openPop.optionsIndex,
-                                  isOpen: false,
-                                });
-                              }
-                            });
-                          }}
-                        >
-                          <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
-                          {optionLabel}
-                        </Button>
-                      ))}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
+                {single.isSingle && (
+                  <Popover returnFocusOnClose={false} isOpen={openPop.isOpen}>
+                    <PopoverTrigger>
+                      <Button w={0} h={0} minW={0} p={0} />
+                    </PopoverTrigger>
+                    <PopoverContent
+                      position="absolute"
+                      top={{ base: 24, sm: "6.7rem" }}
+                      left={0}
+                      borderTopStyle="dashed"
+                      borderRadius={openPop.isOpen ? "0 0 0.375rem 0.375rem" : "md"}
+                      bg={handleChangeColorModeValue(colorMode, "#f5f5f5", "whiteAlpha.50")}
+                      w="full"
+                      maxW={{ base: 60, sm: "sm" }}
+                      minW={{ base: 60, sm: "sm" }}
+                      _focus={{ outline: "none" }}
+                    >
+                      <PopoverBody>
+                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name }, i) => (
+                          <Button
+                            key={i}
+                            variant="ghost"
+                            w="full"
+                            h="fit-content"
+                            justifyContent="flex-start"
+                            flexWrap="wrap"
+                            fontSize="xl"
+                            fontWeight="bold"
+                            wordBreak="break-word"
+                            px={{ base: 2, sm: 4 }}
+                            py={4}
+                            onClick={() => {
+                              data.map(({ denom }, i) => {
+                                if (optionLabel === denom) {
+                                  setSingle({
+                                    selectedIndex: i,
+                                    isSingle: true,
+                                  });
+                                  setOpenPop({
+                                    optionsIndex: openPop.optionsIndex,
+                                    isOpen: false,
+                                  });
+                                }
+                              });
+                            }}
+                          >
+                            <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
+                            {name}
+                          </Button>
+                        ))}
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                )}
                 <Flex
                   key={1}
                   border="1px solid"
@@ -209,7 +243,7 @@ export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; on
                       }
                     >
                       <Text fontWeight="bold" fontSize={{ base: "xl" }}>
-                        {denom}
+                        {name}
                       </Text>
                       {single.isSingle && (
                         <IconButton
@@ -238,7 +272,7 @@ export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; on
                           as="span"
                           color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
                         ></Text>
-                        {denom}
+                        {name}
                       </Text>
                       <Button
                         alignSelf="end"
@@ -279,7 +313,6 @@ export default function AddLiquidity({ poolData, onClose }: { poolData: Pair; on
                             return { id: id, value: defaultVal, contract: contractDefault };
                           },
                         );
-                        console.log(getVal);
                         setTokenInputValue(getVal);
                       }}
                     >

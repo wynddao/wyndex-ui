@@ -14,7 +14,7 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { Pair } from "../../utils/types";
+import { PairInfo } from "../../../state/clients/types/WyndexPair.types";
 import AddLiquidity from "./AddLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
 
@@ -23,10 +23,10 @@ const tabName = ["Add Liquidity", "Remove Liquidity"];
 interface ManageLiquidityProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
-  readonly poolData: Pair;
+  readonly data: PairInfo;
 }
 
-export default function ManageLiquidity({ isOpen, onClose, poolData }: ManageLiquidityProps) {
+export default function ManageLiquidity({ isOpen, onClose, data }: ManageLiquidityProps) {
   const [tabIndex, setTabIndex] = useState(0);
 
   return (
@@ -50,7 +50,7 @@ export default function ManageLiquidity({ isOpen, onClose, poolData }: ManageLiq
             </TabList>
             <TabPanels>
               <TabPanel p={0}>
-                <AddLiquidity poolData={poolData} onClose={onClose} />
+                <AddLiquidity data={data} onClose={onClose} />
               </TabPanel>
               <TabPanel>
                 <RemoveLiquidity />

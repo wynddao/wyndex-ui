@@ -1,17 +1,16 @@
 "use client";
 
 import { Box, Flex, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
-import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
+import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { Pair } from "../../utils/types";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
-  readonly poolData: Pair;
   readonly chainData: PoolResponse;
+  readonly pairData: PairInfo;
 }
 
-export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps) {
+export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps) {
   const { colorMode } = useColorMode();
   return (
     <Box p={4} pt={8}>
@@ -38,20 +37,20 @@ export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps)
                 p={0.5}
                 mr={4}
               >
-                <Image alt="Token 1 logo" src={poolData.tokens[0].img} />
+                {/* TODO */}
+                <Image alt="Token 1 logo" src="https://via.placeholder.com/300" />
               </Box>
               <Box>
-                <Text fontSize="3xl" fontWeight="extrabold">
-                  {poolData.tokens[0].liquidity && poolData.tokens[0].liquidity.shares * 100}%
-                </Text>
+                <Text fontSize="3xl" fontWeight="extrabold"></Text>
                 <Text
                   fontWeight="bold"
                   color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
                 >
-                  {/*@ts-ignore */}
                   {asset.info.hasOwnProperty("token") ? (
+                    // @ts-ignore
                     <TokenName address={asset.info.token} />
                   ) : (
+                    //@ts-ignore
                     asset.info.native_token
                   )}
                 </Text>
@@ -72,7 +71,9 @@ export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps)
             >
               My amount
             </Text>
-            <Text fontSize="xl" fontWeight="bold"></Text>
+            <Text fontSize="xl" fontWeight="bold">
+              TODO
+            </Text>
           </Box>
         ))}
       </SimpleGrid>
