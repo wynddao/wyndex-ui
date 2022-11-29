@@ -140,17 +140,12 @@ export default function AssetListItem({
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        <Flex flexDirection="column" gap={2}>
-          <Flex flexDirection="row" gap={2}>
-            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
-              IBC Deposit
-            </Button>
-            <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
-              IBC Withdraw
-            </Button>
-          </Flex>
-          <Button fontSize="sm" disabled>
-            Derivative Staking
+        <Flex flexDirection="row" gap={2}>
+          <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
+            IBC Deposit
+          </Button>
+          <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
+            IBC Withdraw
           </Button>
         </Flex>
       </GridItem>
