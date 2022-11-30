@@ -50,7 +50,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                     // @ts-ignore
                     <TokenName address={asset.info.token} />
                   ) : (
-                    //@ts-ignore
+                    // @ts-ignore
                     asset.info.native_token
                   )}
                 </Text>
