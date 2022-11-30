@@ -50,8 +50,10 @@ export default function PoolCatalyst({ poolData, chainData }: PoolCatalystProps)
                 >
                   {/*@ts-ignore */}
                   {asset.info.hasOwnProperty("token") ? (
+                    // @ts-ignore
                     <TokenName address={asset.info.token} />
                   ) : (
+                    // @ts-ignore
                     asset.info.native_token
                   )}
                 </Text>
