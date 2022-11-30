@@ -1,10 +1,13 @@
-import { useRecoilValue } from "recoil";
+import { useCallback } from "react";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue, useSetRecoilState } from "recoil";
 import { Claim, StakedResponse } from "../clients/types/WyndexStake.types";
 import { WyndexStakeSelectors } from "../recoil";
+import { refreshPendingBondings } from "../recoil/atoms/refresh";
 
 interface UseUserStakeInfosResponse {
   allStakes: StakedResponse[];
-  pendingStakes: Claim[];
+  allBondings: Claim[];
+  refreshBondings: () => void;
 }
 
 export const useUserStakeInfos = (
@@ -22,7 +25,7 @@ export const useUserStakeInfos = (
     }),
   ).stakes;
 
-  const pendingStakes = useRecoilValue(
+  const allBondings = useRecoilValue(
     WyndexStakeSelectors.claimsSelector({
       contractAddress: stakeContract,
       params: [
@@ -32,9 +35,21 @@ export const useUserStakeInfos = (
       ],
     }),
   ).claims;
+  
+  const refreshBondings = useRecoilRefresher_UNSTABLE(
+    WyndexStakeSelectors.claimsSelector({
+      contractAddress: stakeContract,
+      params: [
+        {
+          address: walletAddress,
+        },
+      ],
+    }),
+  );
 
   return {
     allStakes,
-    pendingStakes,
+    allBondings,
+    refreshBondings,
   };
 };

@@ -8,6 +8,7 @@ import { Cw20Hooks } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexPair.types";
 import { useCw20UserInfos } from "../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
+import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { txModalAtom } from "../../state/recoil/atoms/txModal";
 import { Pair } from "../../utils/types";
 import TokenName from "../TokenName";
@@ -19,12 +20,12 @@ import UnboundingsGrid from "./UnboundingsGrid";
 export default function LiquidityMining({ poolData, pairData }: { poolData: Pair; pairData: PairInfo }) {
   // TODO: Query is missing for stake contract address
   const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
-  const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
   const { infos } = useStakeInfos(wyndexStake);
   const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
-
+  const { refreshBondings } = useUserStakeInfos(wyndexStake, walletAddress || "");
   const stake = Cw20Hooks.useSend({
     contractAddress: pairData.liquidity_token,
     sender: walletAddress ?? "",
@@ -38,6 +39,10 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
         contract: wyndexStake,
         msg: btoa(`{"delegate": { "unbonding_period": ${duration}}}`),
       });
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
+      refreshBondings();
+      refreshBalance();
       setTxModalState({
         ...txModalState,
         height: res.height,

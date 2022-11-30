@@ -27,7 +27,6 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
   const { wyndexStake, tokenName } = props;
   const { infos } = useStakeInfos(wyndexStake);
   const { address: walletAddress } = useWallet();
-  const { pendingStakes } = useUserStakeInfos(wyndexStake, walletAddress || "");
 
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
 
