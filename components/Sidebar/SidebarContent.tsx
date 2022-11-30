@@ -2,7 +2,7 @@
 
 import { Box, BoxProps, CloseButton, Flex, Icon, useColorModeValue } from "@chakra-ui/react";
 import Image from "next/image";
-import { FiActivity, FiBarChart, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
+import { FiActivity, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { LinkItemProps } from ".";
 import wyndLogoBlack from "../../public/logo-black.svg";
 import wyndLogoWhite from "../../public/logo-white.svg";
@@ -14,7 +14,6 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
-  { name: "Derivative Staking", to: "/derivative-staking", icon: FiBarChart },
   { name: "Governance", to: "https://app.wynddao.com", icon: FiUsers },
 ];
 
