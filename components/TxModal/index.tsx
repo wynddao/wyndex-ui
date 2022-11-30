@@ -2,6 +2,7 @@
 
 import {
   Center,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -13,8 +14,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Image from "next/image";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { useRecoilState } from "recoil";
 import { txModalAtom, TxModalState } from "../../state/recoil/atoms/txModal";
+import { EXPLORER_URL } from "../../utils";
 import druidImage from "./assets/druid.gif";
 
 export default function TxModal() {
@@ -59,9 +62,12 @@ const TxModalContent = ({ txModalState }: { txModalState: TxModalState }) => {
         <Text fontSize="3xl">Success!</Text>
       </Center>
       <Center>
-        <Text noOfLines={1} maxW="100%">
-          {txModalState.txHash}
-        </Text>
+        <Link maxWidth={"90%"} href={EXPLORER_URL + txModalState.txHash} target="_blank">
+          <Text color="orange.300" noOfLines={1} maxW="100%">
+            {txModalState.txHash}
+            <FaExternalLinkAlt />
+          </Text>
+        </Link>
       </Center>
     </SimpleGrid>
   );

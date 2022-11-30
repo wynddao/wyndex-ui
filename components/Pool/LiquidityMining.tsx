@@ -12,6 +12,7 @@ import { txModalAtom } from "../../state/recoil/atoms/txModal";
 import { Pair } from "../../utils/types";
 import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
+import PendingBoundingsTable from "./PendingBoundingsTable";
 import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnboundingsGrid";
 
@@ -91,10 +92,16 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
         </Box>
         <UnboundingsGrid infos={infos} />
         {walletAddress ? (
-          <BoundingsTable
-            tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-            stakeContract={"juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung"}
-          />
+          <>
+            <BoundingsTable
+              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+              stakeContract={wyndexStake}
+            />
+            <PendingBoundingsTable
+              wyndexStake={wyndexStake}
+              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+            />
+          </>
         ) : null}
         <StartEarningModal
           doStake={doStake}

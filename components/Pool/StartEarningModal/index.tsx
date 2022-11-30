@@ -23,7 +23,7 @@ import { useState } from "react";
 import { BondingPeriodInfo } from "../../../state/clients/types/WyndexStake.types";
 import { handleChangeColorModeValue } from "../../../utils/theme";
 import { convertSeconds } from "../../../utils/time";
-import RadioCard from "./RadioCard";
+import RadioCard from "../../RadioCard";
 
 interface StartEarningModalProps {
   isOpen: boolean;

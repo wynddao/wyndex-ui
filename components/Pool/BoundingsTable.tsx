@@ -14,9 +14,12 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { useState } from "react";
+import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { convertSeconds } from "../../utils/time";
 import { UnbondingPeriod } from "../../utils/types";
+import ManageBoundingsModal from "./ManageBoundingsModal";
 
 interface BoundingsTableProps {
   readonly stakeContract: string;
@@ -28,48 +31,72 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
   const { address } = useWallet();
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(stakeContract, address);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [activeStake, setActiveStake] = useState<StakedResponse | undefined>(undefined);
+  const [nextDuration, setNextDuration] = useState<StakedResponse | undefined>(undefined);
+  const [prevDuration, setPrevDuration] = useState<StakedResponse | undefined>(undefined);
 
   return (
-    <Box p={4}>
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        My Boundings
-      </Text>
-      <TableContainer>
-        <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
-          <Thead bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}>
-            <Tr>
-              {tableHeaders.map((header) => (
-                <Td key={header} fontSize="md" fontWeight="semibold" letterSpacing="normal">
-                  {header}
-                </Td>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {allStakes.map(({ stake, unbonding_period }, i) => {
-              return (
-                <Tr key={i}>
-                  <Td fontWeight="semibold">{convertSeconds(unbonding_period).days} Days</Td>
-                  <Td fontWeight="semibold">20% @TODO</Td>
-                  <Td fontWeight="semibold">
-                    {stake} {tokenName}
+    <>
+      <Box p={4}>
+        <Text fontSize="xl" fontWeight="bold" mb={4}>
+          My Boundings
+        </Text>
+        <TableContainer>
+          <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
+            <Thead bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}>
+              <Tr>
+                {tableHeaders.map((header) => (
+                  <Td key={header} fontSize="md" fontWeight="semibold" letterSpacing="normal">
+                    {header}
                   </Td>
-                  <Td>
-                    <Flex>
-                      <Button variant="solid" color="orange.300" marginRight={3}>
-                        Rebond
-                      </Button>
-                      <Button variant="unstyled" color="orange.300">
-                        Unbond
-                      </Button>
-                    </Flex>
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Box>
+                ))}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {allStakes.map(({ stake, unbonding_period }, i) => {
+                return (
+                  <Tr key={i}>
+                    <Td fontWeight="semibold">{convertSeconds(unbonding_period).days} Days</Td>
+                    <Td fontWeight="semibold">20% @TODO</Td>
+                    <Td fontWeight="semibold">
+                      {stake} {tokenName}
+                    </Td>
+                    <Td>
+                      <Flex>
+                        <Button
+                          onClick={() => {
+                            setModalOpen(true);
+                            setActiveStake(allStakes[i]);
+                            setPrevDuration(i - 1 in allStakes ? allStakes[i - 1] : undefined);
+                            setNextDuration(i + 1 in allStakes ? allStakes[i + 1] : undefined);
+                          }}
+                          variant="solid"
+                          color="orange.300"
+                          marginRight={3}
+                        >
+                          Manage
+                        </Button>
+                      </Flex>
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+      {activeStake ? (
+        <ManageBoundingsModal
+          wyndexStakeAddress={stakeContract}
+          higherDuration={nextDuration}
+          lowerDuration={prevDuration}
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          tokenName={tokenName}
+          stake={activeStake}
+        />
+      ) : null}
+    </>
   );
 }

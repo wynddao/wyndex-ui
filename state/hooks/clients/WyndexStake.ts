@@ -28,3 +28,4 @@ const wrapExecuteHook =
   };
 
 export const useUnbond = wrapExecuteHook("unbond");
+export const useRebond = wrapExecuteHook("rebond");

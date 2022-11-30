@@ -1,9 +1,10 @@
 import { useRecoilValue } from "recoil";
-import { StakedResponse } from "../clients/types/WyndexStake.types";
+import { Claim, StakedResponse } from "../clients/types/WyndexStake.types";
 import { WyndexStakeSelectors } from "../recoil";
 
 interface UseUserStakeInfosResponse {
   allStakes: StakedResponse[];
+  pendingStakes: Claim[];
 }
 
 export const useUserStakeInfos = (
@@ -21,7 +22,19 @@ export const useUserStakeInfos = (
     }),
   ).stakes;
 
+  const pendingStakes = useRecoilValue(
+    WyndexStakeSelectors.claimsSelector({
+      contractAddress: stakeContract,
+      params: [
+        {
+          address: walletAddress,
+        },
+      ],
+    }),
+  ).claims;
+
   return {
     allStakes,
+    pendingStakes,
   };
 };

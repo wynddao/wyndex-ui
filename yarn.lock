@@ -2801,6 +2801,11 @@ chakra-react-select@^4.4.0:
   dependencies:
     react-select "^5.5.7"
 
+chakra-ui-steps@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/chakra-ui-steps/-/chakra-ui-steps-1.8.0.tgz#0db079a46a94f6e2d06ec2260ebe55603bfd5567"
+  integrity sha512-9gJAG/XHEbLLTMRDhlXf4XRAj7DWvCNmu4LGfUSBNw9LIlqlhmRZLwq7JKdVbfo+fa44lRraW+ZjcYLgQPfTRw==
+
 chalk@4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.1.tgz#c80b3fab28bf6371e6863325eee67e618b77e6ad"
