@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue, useSetRecoilState } from "recoil";
 import { Claim, StakedResponse } from "../clients/types/WyndexStake.types";
 import { WyndexStakeSelectors } from "../recoil";
-import { refreshPendingBondings } from "../recoil/atoms/refresh";
 
 interface UseUserStakeInfosResponse {
   allStakes: StakedResponse[];
@@ -35,7 +34,7 @@ export const useUserStakeInfos = (
       ],
     }),
   ).claims;
-  
+
   const refreshBondings = useRecoilRefresher_UNSTABLE(
     WyndexStakeSelectors.claimsSelector({
       contractAddress: stakeContract,

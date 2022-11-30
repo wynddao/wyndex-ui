@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { WyndexStakeHooks } from "../../../state";
 import { StakedResponse } from "../../../state/clients/types/WyndexStake.types";
+import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { txModalAtom } from "../../../state/recoil/atoms/txModal";
 import { handleChangeColorModeValue } from "../../../utils/theme";
 import { convertSeconds } from "../../../utils/time";
@@ -44,6 +45,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
+  const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
     onChange: (v) => {
@@ -62,10 +64,10 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
         return "Unstake your tokens";
       case "bondDown":
         return `Decrease your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to 
-        ${convertSeconds(lowerDuration?.unbonding_period).days} days`;
+        ${lowerDuration?.unbonding_period && convertSeconds(lowerDuration?.unbonding_period).days} days`;
       case "bondUp":
         return `Increase your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to 
-        ${convertSeconds(higherDuration?.unbonding_period).days} days`;
+        ${higherDuration?.unbonding_period && convertSeconds(higherDuration?.unbonding_period).days} days`;
       default:
         return "";
     }
@@ -226,6 +228,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bondTo: lowerDuration?.unbonding_period || 0,
             tokens: amount.toString(),
           });
+          await new Promise((resolve) => setTimeout(resolve, 6500));
+          refreshBondings();
           setTxModalState({
             ...txModalState,
             height: res.height,
@@ -253,6 +257,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bondTo: higherDuration?.unbonding_period || 0,
             tokens: amount.toString(),
           });
+          await new Promise((resolve) => setTimeout(resolve, 6500));
+          refreshBondings();
           setTxModalState({
             ...txModalState,
             height: res.height,
@@ -279,6 +285,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             tokens: amount.toString(),
             unbondingPeriod: stake.unbonding_period,
           });
+          await new Promise((resolve) => setTimeout(resolve, 6500));
+          refreshBondings();
           setTxModalState({
             ...txModalState,
             height: res.height,
