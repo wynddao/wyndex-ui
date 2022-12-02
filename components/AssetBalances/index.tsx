@@ -16,6 +16,7 @@ export interface AssetsRecap {
 
 export interface AssetWithBalance extends Asset {
   readonly balance: string;
+  readonly ibcBalance: string;
 }
 
 type TokensToShow = "show-all" | "show-native" | "show-cw20";
@@ -45,25 +46,11 @@ export default function AssetBalances() {
 
       const assets = await getAssets();
       const balances = await getBalances(address);
+
       const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
         const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
-      });
-
-      setAssets(assetsWithBalance);
-    })();
-  }, [address, getCosmWasmClient]);
-
-  useEffect(() => {
-    (async function getAssetsWithBalance() {
-      const client = await getCosmWasmClient();
-      if (!client || !address) return;
-
-      const assets = await getAssets();
-      const balances = await getBalances(address);
-      const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
-        const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
+        const ibcBalance = balances.find((coin) => coin.denom === "ibc/" + asset.denom)?.amount ?? "0";
+        return { ...asset, balance, ibcBalance };
       });
 
       setAssets(assetsWithBalance);
