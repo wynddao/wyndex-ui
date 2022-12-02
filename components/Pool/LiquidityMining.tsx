@@ -95,9 +95,10 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
             </Flex>
           </Flex>
         </Box>
-        <UnboundingsGrid infos={infos} />
+
         {walletAddress ? (
           <>
+            <UnboundingsGrid infos={infos} />
             <BoundingsTable
               tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
               stakeContract={wyndexStake}
@@ -106,16 +107,17 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
               wyndexStake={wyndexStake}
               tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
             />
+
+            <StartEarningModal
+              doStake={doStake}
+              isOpen={isModalOpen}
+              balance={Number(lpBalance)}
+              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+              onClose={() => setIsModalOpen(false)}
+              bondingInfos={infos}
+            />
           </>
         ) : null}
-        <StartEarningModal
-          doStake={doStake}
-          isOpen={isModalOpen}
-          balance={Number(lpBalance)}
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-          onClose={() => setIsModalOpen(false)}
-          bondingInfos={infos}
-        />
       </Box>
     </>
   );
