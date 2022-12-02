@@ -158,14 +158,18 @@ export default function AssetListItem({
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        <Flex flexDirection="row" gap={2}>
-          <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
-            IBC Deposit
-          </Button>
-          <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
-            IBC Withdraw
-          </Button>
-        </Flex>
+        {tokenType === "native" ? (
+          <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
+            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
+              IBC Deposit
+            </Button>
+            <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
+              IBC Withdraw
+            </Button>
+          </Flex>
+        ) : (
+          <Text fontSize="lg">—</Text>
+        )}
       </GridItem>
     </Grid>
   );
