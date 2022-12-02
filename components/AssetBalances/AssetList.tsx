@@ -31,6 +31,7 @@ export default function AssetList({ assetsDetailsData }: AssetListProps) {
       >
         <GridItem>Asset / Chain</GridItem>
         <GridItem textAlign="end">Balance</GridItem>
+        <GridItem textAlign="end">IBC Balance</GridItem>
         <GridItem textAlign="end">Actions</GridItem>
       </Grid>
       <Stack
