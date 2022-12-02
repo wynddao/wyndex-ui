@@ -105,9 +105,8 @@ export default function AssetBalances() {
           position="sticky"
           top={0}
           zIndex={5}
-          display={{ base: "none", lg: "grid" }}
           templateColumns="repeat(4, minmax(12rem, 1fr))"
-          columnGap={{ lg: 16 }}
+          columnGap={{ base: 4 }}
           fontSize="sm"
           fontWeight="semibold"
           bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
