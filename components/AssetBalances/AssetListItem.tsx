@@ -44,9 +44,9 @@ export default function AssetListItem({
     <Grid
       templateColumns={{
         base: "1fr 1fr",
-        lg: "repeat(2, minmax(12rem, 1fr)) minmax(6rem, 12rem)",
+        xl: "repeat(4, minmax(12rem, 1fr))",
       }}
-      columnGap={{ lg: 16 }}
+      columnGap={{ base: 4 }}
       fontWeight="semibold"
       alignItems="center"
       bg={{
