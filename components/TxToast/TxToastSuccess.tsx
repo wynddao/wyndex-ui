@@ -2,13 +2,14 @@ import { Box, Link } from "@chakra-ui/react";
 import { ExecuteResult } from "cosmwasm";
 import React from "react";
 import { toast } from "react-hot-toast";
+import { EXPLORER_URL } from "../../utils";
 
 export default function TxToastSuccess({ tx }: { tx: ExecuteResult }) {
   return (
     <Box display="flex" gap="1rem" minW="fit-content" justifyContent="center" alignItems="center">
       <Box display="flex" flexFlow="column" paddingX="0.5rem">
         Tx Success
-        <Link href={tx.transactionHash} isExternal color="gray.500">
+        <Link href={`${EXPLORER_URL}/${tx.transactionHash}`} isExternal color="gray.500">
           See transaction
         </Link>
       </Box>

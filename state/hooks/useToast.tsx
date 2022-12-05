@@ -5,8 +5,6 @@ import { TxError } from "../../utils/txError";
 import { TxToastSuccess } from "../../components/TxToast";
 
 export const useToast = () => {
-  const toastId = React.useRef(null);
-
   const txToast = async (fn: Function, ...args: unknown[]): Promise<ExecuteResult | undefined> => {
     try {
       return await toast.promise(
