@@ -4,7 +4,15 @@
     "amount": "10000"
   },
   {
+    "denom": "ibc/ujunox",
+    "amount": "123"
+  },
+  {
     "denom": "uwynd",
     "amount": "345.234242419234"
+  },
+  {
+    "denom": "ibc/uwynd",
+    "amount": "45.00234283"
   }
 ]

@@ -28,7 +28,7 @@ interface AssetListItemProps {
 }
 
 export default function AssetListItem({
-  assetDetails: { name, img, tokenType, balance, denom, contractAddress },
+  assetDetails: { name, img, tokenType, balance, ibcBalance, denom, contractAddress },
 }: AssetListItemProps) {
   const { colorMode } = useColorMode();
   const { onCopy, hasCopied, setValue } = useClipboard("");
@@ -44,9 +44,9 @@ export default function AssetListItem({
     <Grid
       templateColumns={{
         base: "1fr 1fr",
-        lg: "repeat(2, minmax(12rem, 1fr)) minmax(6rem, 12rem)",
+        xl: "repeat(4, minmax(12rem, 1fr))",
       }}
-      columnGap={{ lg: 16 }}
+      columnGap={{ base: 4 }}
       fontWeight="semibold"
       alignItems="center"
       bg={{
@@ -135,19 +135,41 @@ export default function AssetListItem({
         colSpan={{ base: 2, md: 1 }}
         display="flex"
         alignItems={{ base: "center", md: "end" }}
+        py={{ base: 2, md: 0 }}
+        pr={{ base: 4, lg: 0 }}
+        pl={{ base: 4, lg: 0 }}
+      >
+        <Text display={{ base: "block", md: "none" }}>IBC Balance</Text>
+        <Box w="full" textAlign="end">
+          <Text fontSize="lg" mb={0.5}>
+            {ibcBalance}
+          </Text>
+          <Text fontSize="lg" opacity={0.7}>
+            {denom}
+          </Text>
+        </Box>
+      </GridItem>
+      <GridItem
+        colSpan={{ base: 2, md: 1 }}
+        display="flex"
+        alignItems={{ base: "center", md: "end" }}
         justifyContent="flex-end"
         py={{ base: 2, md: 0 }}
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        <Flex flexDirection="row" gap={2}>
-          <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
-            IBC Deposit
-          </Button>
-          <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
-            IBC Withdraw
-          </Button>
-        </Flex>
+        {tokenType === "native" ? (
+          <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
+            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
+              IBC Deposit
+            </Button>
+            <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
+              IBC Withdraw
+            </Button>
+          </Flex>
+        ) : (
+          <Text fontSize="lg">—</Text>
+        )}
       </GridItem>
     </Grid>
   );

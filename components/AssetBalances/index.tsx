@@ -16,6 +16,7 @@ export interface AssetsRecap {
 
 export interface AssetWithBalance extends Asset {
   readonly balance: string;
+  readonly ibcBalance: string;
 }
 
 type TokensToShow = "show-all" | "show-native" | "show-cw20";
@@ -45,25 +46,11 @@ export default function AssetBalances() {
 
       const assets = await getAssets();
       const balances = await getBalances(address);
+
       const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
         const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
-      });
-
-      setAssets(assetsWithBalance);
-    })();
-  }, [address, getCosmWasmClient]);
-
-  useEffect(() => {
-    (async function getAssetsWithBalance() {
-      const client = await getCosmWasmClient();
-      if (!client || !address) return;
-
-      const assets = await getAssets();
-      const balances = await getBalances(address);
-      const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
-        const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
+        const ibcBalance = balances.find((coin) => coin.denom === "ibc/" + asset.denom)?.amount ?? "0";
+        return { ...asset, balance, ibcBalance };
       });
 
       setAssets(assetsWithBalance);
@@ -118,9 +105,8 @@ export default function AssetBalances() {
           position="sticky"
           top={0}
           zIndex={5}
-          display={{ base: "none", lg: "grid" }}
           templateColumns="repeat(4, minmax(12rem, 1fr))"
-          columnGap={{ lg: 16 }}
+          columnGap={{ base: 4 }}
           fontSize="sm"
           fontWeight="semibold"
           bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}

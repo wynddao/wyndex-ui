@@ -18,9 +18,9 @@ export default function AssetList({ assetsDetailsData }: AssetListProps) {
         position="sticky"
         top={9}
         zIndex={5}
-        display={{ base: "none", lg: "grid" }}
-        templateColumns="repeat(2, minmax(12rem, 1fr)) minmax(6rem, 12rem)"
-        columnGap={{ lg: 16 }}
+        display={{ base: "none", xl: "grid" }}
+        templateColumns="repeat(4, minmax(12rem, 1fr))"
+        columnGap={{ base: 4 }}
         fontSize="sm"
         fontWeight="semibold"
         bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
@@ -31,6 +31,7 @@ export default function AssetList({ assetsDetailsData }: AssetListProps) {
       >
         <GridItem>Asset / Chain</GridItem>
         <GridItem textAlign="end">Balance</GridItem>
+        <GridItem textAlign="end">IBC Balance</GridItem>
         <GridItem textAlign="end">Actions</GridItem>
       </Grid>
       <Stack
