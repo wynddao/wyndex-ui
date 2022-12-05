@@ -19,11 +19,10 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
 import { WyndexStakeHooks } from "../../../state";
 import { StakedResponse } from "../../../state/clients/types/WyndexStake.types";
+import { useToast } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
-import { txModalAtom } from "../../../state/recoil/atoms/txModal";
 import { handleChangeColorModeValue } from "../../../utils/theme";
 import { convertSeconds } from "../../../utils/time";
 import RadioCard from "../../RadioCard";
@@ -44,7 +43,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const { colorMode } = useColorMode();
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
@@ -57,16 +55,17 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     initialStep: 0,
   });
   const group = getRootProps();
+  const { txToast } = useToast();
 
   const renderText = (text: string): string => {
     switch (text) {
       case "unstake":
         return "Unstake your tokens";
       case "bondDown":
-        return `Decrease your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to 
+        return `Decrease your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to
         ${lowerDuration?.unbonding_period && convertSeconds(lowerDuration?.unbonding_period).days} days`;
       case "bondUp":
-        return `Increase your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to 
+        return `Increase your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to
         ${higherDuration?.unbonding_period && convertSeconds(higherDuration?.unbonding_period).days} days`;
       default:
         return "";
@@ -221,89 +220,38 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const doExecute = async () => {
     switch (selectedMode) {
       case "bondDown": {
-        setTxModalState({ ...txModalState, active: true, loading: true });
-        try {
-          const res = await doRebond({
+        txToast(async () => {
+          await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: lowerDuration?.unbonding_period || 0,
             tokens: amount.toString(),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
-          setTxModalState({
-            ...txModalState,
-            height: res.height,
-            txHash: res.transactionHash,
-            active: true,
-            loading: false,
-            error: undefined,
-          });
-          onClose();
-        } catch (err: any) {
-          setTxModalState({
-            ...txModalState,
-            active: true,
-            loading: false,
-            error: err.message,
-          });
-        }
+        });
         break;
       }
       case "bondUp": {
-        setTxModalState({ ...txModalState, active: true, loading: true });
-        try {
-          const res = await doRebond({
+        txToast(async () => {
+          await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: higherDuration?.unbonding_period || 0,
             tokens: amount.toString(),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
-          setTxModalState({
-            ...txModalState,
-            height: res.height,
-            txHash: res.transactionHash,
-            active: true,
-            loading: false,
-            error: undefined,
-          });
-          onClose();
-        } catch (err: any) {
-          setTxModalState({
-            ...txModalState,
-            active: true,
-            loading: false,
-            error: err.message,
-          });
-        }
+        });
         break;
       }
       case "unstake": {
-        setTxModalState({ ...txModalState, active: true, loading: true });
-        try {
-          const res = await doUnbond({
+        txToast(async () => {
+          await doUnbond({
             tokens: amount.toString(),
             unbondingPeriod: stake.unbonding_period,
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
-          setTxModalState({
-            ...txModalState,
-            height: res.height,
-            txHash: res.transactionHash,
-            active: true,
-            loading: false,
-            error: undefined,
-          });
-          onClose();
-        } catch (err: any) {
-          setTxModalState({
-            ...txModalState,
-            active: true,
-            loading: false,
-            error: err.message,
-          });
-        }
+        });
       }
     }
   };
