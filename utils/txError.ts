@@ -5,7 +5,7 @@ export class TxError extends Error {
   }
 
   pretty() {
-    const [msg] = this.message.split("Unknown desc =")[1].split("[CosmWasm");
+    const [msg] = this.message.split("Unknown desc =")[1]?.split("[CosmWasm");
     if (msg.includes("contract: ")) return this.formatContractErr(msg);
     // Support new cases
     return "Something wen't wrong";
