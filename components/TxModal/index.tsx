@@ -2,6 +2,7 @@
 
 import {
   Center,
+  HStack,
   Link,
   Modal,
   ModalBody,
@@ -18,6 +19,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { useRecoilState } from "recoil";
 import { txModalAtom, TxModalState } from "../../state/recoil/atoms/txModal";
 import { EXPLORER_URL } from "../../utils";
+import { TxError } from "../../utils/txError";
 import druidImage from "./assets/druid.gif";
 
 export default function TxModal() {
@@ -29,10 +31,12 @@ export default function TxModal() {
     <Modal isOpen={txModalState.active} onClose={() => closeTxModal()} isCentered={true}>
       <ModalOverlay />
       <ModalContent>
-        {txModalState.loading && <ModalHeader>Your Transaction</ModalHeader>}
+        <ModalHeader>{txModalState.loading && "Your Transaction"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <TxModalContent txModalState={txModalState} />
+          <Center padding={"1rem"}>
+            <TxModalContent txModalState={txModalState} />
+          </Center>
         </ModalBody>
       </ModalContent>
     </Modal>
@@ -41,20 +45,13 @@ export default function TxModal() {
 
 const TxModalContent = ({ txModalState }: { txModalState: TxModalState }) => {
   if (txModalState.loading) {
-    return (
-      <Center>
-        <Spinner size="xl" />
-      </Center>
-    );
+    return <Spinner size="xl" />;
   }
 
   if (txModalState.error) {
-    return (
-      <Center>
-        <p>Error: {txModalState.error}</p>
-      </Center>
-    );
+    return <p>Error: {new TxError(txModalState.error).pretty()}</p>;
   }
+
   return (
     <SimpleGrid columns={1}>
       <Image src={druidImage} alt="druidSuccess" />
@@ -62,11 +59,11 @@ const TxModalContent = ({ txModalState }: { txModalState: TxModalState }) => {
         <Text fontSize="3xl">Success!</Text>
       </Center>
       <Center>
-        <Link maxWidth={"90%"} href={EXPLORER_URL + txModalState.txHash} target="_blank">
-          <Text color="orange.300" noOfLines={1} maxW="100%">
+        <Link className="link" maxWidth={"90%"} href={EXPLORER_URL + txModalState.txHash} target="_blank">
+          <HStack color="orange.300" maxW="100%">
             {txModalState.txHash}
             <FaExternalLinkAlt />
-          </Text>
+          </HStack>
         </Link>
       </Center>
     </SimpleGrid>
