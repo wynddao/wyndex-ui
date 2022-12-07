@@ -53,34 +53,40 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
               </Tr>
             </Thead>
             <Tbody>
-              {allStakes.map(({ stake, unbonding_period }, i) => {
-                return (
-                  <Tr key={i}>
-                    <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days</Td>
-                    <Td fontWeight="semibold">20% @TODO</Td>
-                    <Td fontWeight="semibold">
-                      {stake} {tokenName}
-                    </Td>
-                    <Td>
-                      <Flex>
-                        <Button
-                          onClick={() => {
-                            setModalOpen(true);
-                            setActiveStake(allStakes[i]);
-                            setPrevDuration(i - 1 in allStakes ? allStakes[i - 1] : undefined);
-                            setNextDuration(i + 1 in allStakes ? allStakes[i + 1] : undefined);
-                          }}
-                          variant="solid"
-                          color="orange.300"
-                          marginRight={3}
-                        >
-                          Manage
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                );
-              })}
+              {allStakes.length > 0 ? (
+                allStakes.map(({ stake, unbonding_period }, i) => {
+                  return (
+                    <Tr key={i}>
+                      <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days</Td>
+                      <Td fontWeight="semibold">20% @TODO</Td>
+                      <Td fontWeight="semibold">
+                        {stake} {tokenName}
+                      </Td>
+                      <Td>
+                        <Flex>
+                          <Button
+                            onClick={() => {
+                              setModalOpen(true);
+                              setActiveStake(allStakes[i]);
+                              setPrevDuration(i - 1 in allStakes ? allStakes[i - 1] : undefined);
+                              setNextDuration(i + 1 in allStakes ? allStakes[i + 1] : undefined);
+                            }}
+                            variant="solid"
+                            color="orange.300"
+                            marginRight={3}
+                          >
+                            Manage
+                          </Button>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                  );
+                })
+              ) : (
+                <Tr>
+                  <Td fontWeight="semibold" colSpan={4}>You currently have no bondings.</Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>

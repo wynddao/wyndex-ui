@@ -28,12 +28,20 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
   const { address: walletAddress } = useWallet();
 
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
+  const [hasAnyRebondings, setHasAnyRebondings] = useState<boolean>(false);
 
   useEffect(() => {
     const pendingRebonding = infos.map(async (info) => {
       return await getPendingRebonding(walletAddress || "", info.unbonding_period, wyndexStake);
     });
-    Promise.all(pendingRebonding).then((res) => setRebondings(res));
+    Promise.all(pendingRebonding).then((res) => {
+      const hasRebonded = res.find((e) => {
+        return e.locked_tokens.length > 0;
+      });
+
+      setHasAnyRebondings(hasRebonded ? true : false);
+      setRebondings(res);
+    });
   }, [infos, walletAddress, wyndexStake]);
 
   return (
@@ -78,6 +86,13 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
                   <></>
                 ),
               )}
+            {!hasAnyRebondings && (
+              <Tr>
+                <Td fontWeight="semibold" colSpan={4}>
+                  You currently have no pending rebondings.
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
       </TableContainer>
