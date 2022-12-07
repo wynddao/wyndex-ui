@@ -68,20 +68,24 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
             {rebondings &&
               rebondings.map((period, x) =>
                 period.locked_tokens && period.locked_tokens.length > 0 ? (
-                  period.locked_tokens.map((amount: string[], i: number) => (
-                    <Tr key={i}>
-                      <Td fontWeight="semibold">
-                        {amount[1]} {tokenName}
-                      </Td>
-                      <Td fontWeight="semibold">
-                        {new Date(Number(amount[0]) / 1000000).toLocaleDateString()}{" "}
-                        {new Date(Number(amount[0]) / 1000000).toLocaleTimeString()}
-                      </Td>
-                      <Td fontWeight="semibold">
-                        Rebonded down to {secondsToDays(infos[x].unbonding_period)} days
-                      </Td>
-                    </Tr>
-                  ))
+                  period.locked_tokens.map((amount: string[], i: number) => {
+                    if (new Date().getTime() < Number(amount[0]) / 1000000) {
+                      return (
+                        <Tr key={i}>
+                          <Td fontWeight="semibold">
+                            {amount[1]} {tokenName}
+                          </Td>
+                          <Td fontWeight="semibold">
+                            {new Date(Number(amount[0]) / 1000000).toLocaleDateString()}{" "}
+                            {new Date(Number(amount[0]) / 1000000).toLocaleTimeString()}
+                          </Td>
+                          <Td fontWeight="semibold">
+                            Rebonded down to {secondsToDays(infos[x].unbonding_period)} days
+                          </Td>
+                        </Tr>
+                      );
+                    }
+                  })
                 ) : (
                   <></>
                 ),
