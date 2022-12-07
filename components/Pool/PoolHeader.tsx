@@ -8,17 +8,17 @@ import {
   GridItem,
   Heading,
   Link,
+  Show,
   SimpleGrid,
   Text,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { usePairInfos, usePoolInfos } from "../../state";
-import { AssetInfo } from "../../state/clients/types/WyndexMultiHop.types";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
-import { getAssetInfo } from "../../utils/assets";
 import TokenName from "../TokenName";
 import ManageLiquidityModal from "./ManageLiquidityModal";
+import druid from "./assets/druid.png";
+import Image from "next/image";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -41,7 +41,12 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
 
   return (
     <>
-      <Box bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")} p={4}>
+      <Box
+        bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}
+        p={4}
+        position="relative"
+        overflow="hidden"
+      >
         <Flex align="center" wrap="wrap" mb={6}>
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
             Pool: {pairNames[0]} / {pairNames[1]}
@@ -49,14 +54,6 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
           <Flex align="center" wrap="wrap">
             <Button onClick={onOpen} m={2} ml={0} mr={{ md: 4 }}>
               Add/Remove Liquidity
-            </Button>
-            <Button
-              as={LinkUndecorated}
-              /* onClick={router.isReady ? () => router.push(`/`) : undefined} */
-              m={2}
-              ml={0}
-            >
-              Swap Tokens
             </Button>
           </Flex>
         </Flex>
@@ -103,6 +100,14 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
             </Text>
           </GridItem>
         </SimpleGrid>
+        <Show breakpoint="(min-width: 1077px)">
+          <Image
+            src={druid}
+            alt="Wynd druid"
+            height={700}
+            style={{ position: "absolute", right: 0, bottom: -340 }}
+          />
+        </Show>
       </Box>
       <ManageLiquidityModal data={pairData} isOpen={isOpen} onClose={onClose} />
     </>
