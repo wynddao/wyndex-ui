@@ -1,3 +1,4 @@
+"use client";
 import { ChakraProvider, useColorMode } from "@chakra-ui/react";
 import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from "react";
 import { darkTheme, lightTheme } from "../theme";
@@ -56,7 +57,6 @@ const WrapperChackraUI: React.FC<PropsWithChildren> = ({ children }) => {
   const { setColorMode } = useColorMode();
 
   useEffect(() => {
-    console.log(theme);
     setColorMode(theme);
   }, [theme, setColorMode]);
 
