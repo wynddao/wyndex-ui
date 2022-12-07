@@ -4,3 +4,4 @@ export * from "./usePairInfos";
 export * from "./useCw20UserInfos";
 export * from "./usePoolInfos";
 export * from "./useTokenName";
+export * from "./useToast";

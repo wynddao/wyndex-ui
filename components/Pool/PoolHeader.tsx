@@ -17,26 +17,34 @@ import { usePairInfos, usePoolInfos } from "../../state";
 import { AssetInfo } from "../../state/clients/types/WyndexMultiHop.types";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { getAssetInfo } from "../../utils/assets";
-import { Pair } from "../../utils/types";
-import ManageLiquidityModal from "../ManageLiquidityModal";
+import TokenName from "../TokenName";
+import ManageLiquidityModal from "./ManageLiquidityModal";
 
 interface PoolHeaderProps {
-  readonly poolData: Pair;
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
 }
 
 const LinkUndecorated = chakra(Link, { baseStyle: { _hover: { textDecoration: "none" } } });
 
-export default function PoolHeader({ poolData, chainData, pairData }: PoolHeaderProps) {
+export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
   const { onOpen, isOpen, onClose } = useDisclosure();
+  const pairNames = pairData.asset_infos.map((assetInfo, index) => {
+    if (assetInfo.hasOwnProperty("native_token")) {
+      // @ts-ignore
+      return <span key={index}>{assetInfo.native_token}</span>;
+    } else {
+      // @ts-ignore
+      return <TokenName key={index} address={assetInfo.token} />;
+    }
+  });
 
   return (
     <>
       <Box bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")} p={4}>
         <Flex align="center" wrap="wrap" mb={6}>
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
-            Pools&nbsp;#{poolData.id}&nbsp;:&nbsp;{poolData.tokens[0].name}/{poolData.tokens[1].name} <br />
+            Pool: {pairNames[0]} / {pairNames[1]}
           </Heading>
           <Flex align="center" wrap="wrap">
             <Button onClick={onOpen} m={2} ml={0} mr={{ md: 4 }}>
@@ -91,12 +99,12 @@ export default function PoolHeader({ poolData, chainData, pairData }: PoolHeader
               Swap Fee
             </Text>
             <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="extrabold">
-              {poolData.fee * 100} %
+              @TODO
             </Text>
           </GridItem>
         </SimpleGrid>
       </Box>
-      <ManageLiquidityModal isOpen={isOpen} onClose={onClose} poolData={poolData} />
+      <ManageLiquidityModal data={pairData} isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

@@ -43,7 +43,7 @@ export default function Sidebar({ children }: SidebarProps) {
         </DrawerContent>
       </Drawer>
       <MobileNav display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box ml={{ base: 0, md: 60, xl: 280 }} p="4">
         {children}
       </Box>
     </Box>

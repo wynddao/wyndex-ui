@@ -56,7 +56,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
 const InnerWalletProvider = ({ children }: { children: React.ReactNode }) => {
   const setSigningCosmWasmClient = useSetRecoilState(signingCosmWasmClientAtom);
-  const { getSigningCosmWasmClient } = useWallet();
+  const { getSigningCosmWasmClient, address } = useWallet();
 
   // Save client in recoil atom so it can be used by selectors.
   useEffect(() => {
@@ -66,7 +66,7 @@ const InnerWalletProvider = ({ children }: { children: React.ReactNode }) => {
       setSigningCosmWasmClient(signingCosmWasmClient);
     };
     async();
-  }, [setSigningCosmWasmClient]);
+  }, [getSigningCosmWasmClient, setSigningCosmWasmClient, address]);
 
   return <>{children}</>;
 };
