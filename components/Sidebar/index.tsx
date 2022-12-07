@@ -1,11 +1,11 @@
 "use client";
 
-import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import { Box, Drawer, DrawerContent, useDisclosure } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
 import { IconType } from "react-icons";
 import { CHAIN_NAME } from "../../utils";
-import MobileNav from "./MobileNav";
+import Hamburguer from "./Hamburguer";
 import SidebarContent from "./SidebarContent";
 
 export interface LinkItemProps {
@@ -27,7 +27,7 @@ export default function Sidebar({ children }: SidebarProps) {
   }, [setCurrentChain]);
 
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box minH="100vh" bg={"wynd.gray.100"}>
       <SidebarContent onClose={() => onClose} display={{ base: "none", md: "flex" }} />
       <Drawer
         autoFocus={false}
@@ -42,8 +42,8 @@ export default function Sidebar({ children }: SidebarProps) {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      <MobileNav display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60, xl: 280 }} p="4">
+      <Hamburguer display={{ base: "flex", md: "none" }} onOpen={onOpen} />
+      <Box ml={{ base: 0, md: 60, xl: 280 }} paddingLeft="4">
         {children}
       </Box>
     </Box>

@@ -1,8 +1,6 @@
-import { Box, Text, useColorMode, useColorModeValue, useRadio } from "@chakra-ui/react";
-import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
+import { Box, Text, useColorMode, useRadio } from "@chakra-ui/react";
 import { handleChangeColorModeValue } from "../../utils/theme";
 
-// eslint-disable-next-line
 export default function RadioTag(props: any) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
   const input = getInputProps();

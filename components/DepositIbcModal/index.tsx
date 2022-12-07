@@ -15,7 +15,6 @@ import {
   NumberInputField,
   Text,
   useBreakpointValue,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { assets } from "chain-registry";
@@ -131,12 +130,7 @@ export default function DepositIbcModal() {
           alignItems="center"
           mb={6}
         >
-          <GridItem
-            border="1px solid"
-            borderColor={useColorModeValue("blackAlpha.200", "whiteAlpha.300")}
-            borderRadius="2xl"
-            p={4}
-          >
+          <GridItem border="1px solid" borderColor={"wynd.neutral.800"} borderRadius="2xl" p={4}>
             <Text fontWeight="semibold" mr={4}>
               From
             </Text>
@@ -144,7 +138,7 @@ export default function DepositIbcModal() {
               maxW={64}
               height="1.5em"
               fontWeight="semibold"
-              color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
+              color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
               title={fromToken.address || "(native)"}
@@ -162,14 +156,9 @@ export default function DepositIbcModal() {
             </Text>
           </GridItem>
           <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
-            <Icon as={icon} color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")} />
+            <Icon as={icon} color={"wynd.neutral.800"} />
           </GridItem>
-          <GridItem
-            border="1px solid"
-            borderColor={useColorModeValue("blackAlpha.200", "whiteAlpha.300")}
-            borderRadius="2xl"
-            p={4}
-          >
+          <GridItem border="1px solid" borderColor={"wynd.neutral.800"} borderRadius="2xl" p={4}>
             <Text fontWeight="semibold" mr={4}>
               To
             </Text>
@@ -177,7 +166,7 @@ export default function DepositIbcModal() {
               maxW={64}
               height="1.5em"
               fontWeight="semibold"
-              color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
+              color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
               title={toToken.address || "(native)"}
@@ -201,7 +190,7 @@ export default function DepositIbcModal() {
         <Box borderRadius="2xl" border="1px solid" borderColor="orange.300" px={4} py={6} mb={12}>
           <Text fontWeight="semibold" mr={4} mb={3}>
             Available balance:&ensp;
-            <Text as="span" color={useColorModeValue("primary.500", "primary.300")}>
+            <Text as="span" color={"wynd.cyan.400"}>
               {fromToken.availableBalance}&ensp;{fromToken.name}
             </Text>
           </Text>
@@ -211,7 +200,7 @@ export default function DepositIbcModal() {
             alignItems="center"
             defaultValue={15}
             value={inputValue}
-            bg={useColorModeValue("whiteAlpha.500", "whiteAlpha.50")}
+            bg={"wynd"}
             min={0}
             max={parseFloat(fromToken.availableBalance)}
             onChange={(value) => setInputValue(value)}
