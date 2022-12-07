@@ -1,14 +1,12 @@
-interface convertSecondsResponse {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
+import { intervalToDuration } from "date-fns";
+
+export function secondsToDays(seconds: number): number {
+  const epoch = new Date(0);
+  const secondsAfterEpoch = new Date(seconds * 1000);
+  return (
+    intervalToDuration({
+      start: epoch,
+      end: secondsAfterEpoch,
+    }).days ?? 0
+  );
 }
-
-export const convertSeconds = (seconds: number): convertSecondsResponse => {
-  const total_minutes = Math.floor(seconds / 60);
-  const total_hours = Math.floor(total_minutes / 60);
-  const days = Math.floor(total_hours / 24);
-
-  return { days, hours: total_hours % 24, minutes: total_minutes % 60, seconds };
-};

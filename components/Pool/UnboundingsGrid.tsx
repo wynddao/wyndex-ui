@@ -3,7 +3,7 @@
 import { GridItem, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import { BondingPeriodInfo } from "../../state/clients/types/WyndexStake.types";
 import { handleChangeColorModeValue } from "../../utils/theme";
-import { convertSeconds } from "../../utils/time";
+import { secondsToDays } from "../../utils/time";
 
 interface UnboundingsGridProps {
   readonly infos: readonly BondingPeriodInfo[];
@@ -24,7 +24,7 @@ export default function UnboundingsGrid({ infos }: UnboundingsGridProps) {
             px={8}
           >
             <Text fontWeight="bold" fontSize="2xl">
-              {convertSeconds(unbonding_period).days} Days
+              {secondsToDays(unbonding_period)} Days
             </Text>
             <Text fontWeight="bold" fontSize="xl" color="orange.300">
               20% APR @TODO

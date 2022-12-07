@@ -31,6 +31,7 @@
     "chakra-react-select": "^4.4.0",
     "chakra-ui-steps": "^1.8.0",
     "cosmwasm": "^1.1.1",
+    "date-fns": "^2.29.3",
     "framer-motion": "^6",
     "json-mock-api": "^1.2.2",
     "next": "13.0.4",

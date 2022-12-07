@@ -17,7 +17,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { useState } from "react";
 import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { convertSeconds } from "../../utils/time";
+import { secondsToDays } from "../../utils/time";
 import ManageBoundingsModal from "./ManageBoundingsModal";
 
 interface BoundingsTableProps {
@@ -56,7 +56,7 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
               {allStakes.map(({ stake, unbonding_period }, i) => {
                 return (
                   <Tr key={i}>
-                    <Td fontWeight="semibold">{convertSeconds(unbonding_period).days} Days</Td>
+                    <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days</Td>
                     <Td fontWeight="semibold">20% @TODO</Td>
                     <Td fontWeight="semibold">
                       {stake} {tokenName}

@@ -14,8 +14,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
-import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
-import { convertSeconds } from "../../../utils/time";
+import { secondsToDays } from "../../../utils/time";
 import { getPendingRebonding } from "./util";
 
 interface PendingBoundingsTableOptions {
@@ -71,7 +70,7 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
                         {new Date(Number(amount[0]) / 1000000).toLocaleTimeString()}
                       </Td>
                       <Td fontWeight="semibold">
-                        Rebonded down to {convertSeconds(infos[x].unbonding_period).days} days
+                        Rebonded down to {secondsToDays(infos[x].unbonding_period)} days
                       </Td>
                     </Tr>
                   ))

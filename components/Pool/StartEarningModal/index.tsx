@@ -22,7 +22,7 @@ import {
 import { useState } from "react";
 import { BondingPeriodInfo } from "../../../state/clients/types/WyndexStake.types";
 import { handleChangeColorModeValue } from "../../../utils/theme";
-import { convertSeconds } from "../../../utils/time";
+import { secondsToDays } from "../../../utils/time";
 import RadioCard from "../../RadioCard";
 
 interface StartEarningModalProps {
@@ -129,7 +129,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                   >
                     <Flex justifyContent="space-between">
                       <Text as="p" align="left">
-                        {convertSeconds(unbonding_period).days} Days
+                        {secondsToDays(unbonding_period)} Days
                       </Text>
                       <Text as="p" align="right">
                         20% APR (@TODO)

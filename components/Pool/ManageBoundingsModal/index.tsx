@@ -23,8 +23,9 @@ import { WyndexStakeHooks } from "../../../state";
 import { StakedResponse } from "../../../state/clients/types/WyndexStake.types";
 import { useToast } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
+import { renderUnboundingText } from "../../../utils/text";
 import { handleChangeColorModeValue } from "../../../utils/theme";
-import { convertSeconds } from "../../../utils/time";
+import { secondsToDays } from "../../../utils/time";
 import RadioCard from "../../RadioCard";
 
 interface ManageBoundingsModalProps {
@@ -57,21 +58,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const group = getRootProps();
   const { txToast } = useToast();
 
-  const renderText = (text: string): string => {
-    switch (text) {
-      case "unstake":
-        return "Unstake your tokens";
-      case "bondDown":
-        return `Decrease your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to
-        ${lowerDuration?.unbonding_period && convertSeconds(lowerDuration?.unbonding_period).days} days`;
-      case "bondUp":
-        return `Increase your bonding duration from ${convertSeconds(stake.unbonding_period).days} days to
-        ${higherDuration?.unbonding_period && convertSeconds(higherDuration?.unbonding_period).days} days`;
-      default:
-        return "";
-    }
-  };
-
   const ChooseModeContent = () => {
     const mode = [];
 
@@ -93,7 +79,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             return (
               <RadioCard key={value} {...radio} isChecked={selectedMode === value}>
                 <Text as="p" align="center">
-                  {renderText(value)}
+                  {renderUnboundingText(value, higherDuration, lowerDuration, stake)}
                 </Text>
               </RadioCard>
             );
@@ -178,16 +164,16 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
         return (
           <p>
             You{"'"}re about to re-bond {amount} {tokenName} from a duration of{" "}
-            {convertSeconds(stake.unbonding_period).days} days to a lower duration of {/* @ts-ignore */}
-            {convertSeconds(lowerDuration?.unbonding_period).days} days!
+            {secondsToDays(stake.unbonding_period)} days to a lower duration of {/* @ts-ignore */}
+            {secondsToDays(lowerDuration?.unbonding_period)} days!
           </p>
         );
       case "bondUp":
         return (
           <p>
             You{"'"}re about to re-bond {amount} {tokenName} from a duration of{" "}
-            {convertSeconds(stake.unbonding_period).days} days to a higher duration of {/* @ts-ignore */}
-            {convertSeconds(higherDuration?.unbonding_period).days} days!
+            {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
+            {secondsToDays(higherDuration?.unbonding_period)} days!
           </p>
         );
       default:
