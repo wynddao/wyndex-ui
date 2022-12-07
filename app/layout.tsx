@@ -18,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>WynDex</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Frontend for WynDex" />
+        <link rel="icon" type="image/svg" href="/logo-gradient.svg"></link>
       </head>
       <body>
         {isLoaded ? (
