@@ -31,16 +31,16 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
         sx={
           isLinkActive
             ? {
-                bg: "wynd.cyan.500",
-                color: "wynd.neutral.100",
+                bg: "whiteAlpha.200",
+                color: "wynd.neutral.900",
               }
             : undefined
         }
         _hover={
           isLinkActive
             ? {
-                bg: "wynd.cyan.500",
-                color: "wynd.neutral.100",
+                bg: "whiteAlpha.500",
+                color: "wynd.neutral.900",
               }
             : { bg: "wynd.neutral.200", color: "wynd-cyan-500" }
         }

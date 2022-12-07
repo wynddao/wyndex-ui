@@ -46,8 +46,8 @@ export default function AssetBalances() {
       const balances = await getBalances(address);
 
       const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
-        const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        const ibcBalance = balances.find((coin) => coin.denom === "ibc/" + asset.denom)?.amount ?? "0";
+        const balance = balances?.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
+        const ibcBalance = balances?.find((coin) => coin.denom === "ibc/" + asset.denom)?.amount ?? "0";
         return { ...asset, balance, ibcBalance };
       });
 

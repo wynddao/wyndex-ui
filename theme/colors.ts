@@ -63,6 +63,7 @@ export const lightColors = {
     },
     base: {
       background: "#FAF8F9",
+      subBg: "#f5f5f5",
       text: "#4F4F4F",
     },
     black: "#1A1A1A",
@@ -135,6 +136,7 @@ export const darkColors = {
     },
     base: {
       background: "#1A1A1A",
+      subBg: "#262626",
       text: "#F2F2F2",
     },
     black: "#FFFFFF",

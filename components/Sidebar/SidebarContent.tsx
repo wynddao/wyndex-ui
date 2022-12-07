@@ -28,9 +28,9 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
     <Flex
       flexDirection="column"
       justifyContent="space-between"
-      bg={"wynd.gray.100"}
+      bg={"wynd.base.background"}
       borderRight="1px"
-      borderRightColor="wynd.gray.100"
+      borderRightColor="wynd.neutral.400"
       w={{ base: "full", md: "auto" }}
       pos="fixed"
       h="full"

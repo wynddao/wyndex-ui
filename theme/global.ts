@@ -4,12 +4,6 @@ export const styles = {
       bg: "wynd.base.background",
       color: "wynd.base.text",
     },
-    a: {
-      color: "teal.500",
-      _hover: {
-        textDecoration: "underline",
-      },
-    },
     button: {
       outline: "none",
     },
