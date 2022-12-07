@@ -1,5 +1,4 @@
-"use client";
-import { ChakraProvider, useColorMode } from "@chakra-ui/react";
+import { ChakraProvider, localStorageManager, useColorMode } from "@chakra-ui/react";
 import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from "react";
 import { darkTheme, lightTheme } from "../theme";
 import { useLocalStorage } from "react-use";
@@ -17,11 +16,7 @@ interface IThemeContext {
 const ThemeContext = createContext<IThemeContext | null>(null);
 
 const ThemeProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
-  const preferSchema = window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? ThemeModes.dark
-    : ThemeModes.light;
-
-  const [theme, setTheme] = useLocalStorage<ThemeModes>("themeColor", preferSchema);
+  const [theme, setTheme] = useLocalStorage<ThemeModes>("themeColor");
   const themeConfig = useMemo(() => (theme === ThemeModes.dark ? darkTheme : lightTheme), [theme]);
 
   const switchTheme = useCallback(() => {
@@ -29,7 +24,11 @@ const ThemeProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   }, [setTheme, theme]);
 
   useEffect(() => {
-    setTheme(theme);
+    const preferSchema = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? ThemeModes.dark
+      : ThemeModes.light;
+
+    setTheme(theme || preferSchema);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
