@@ -9,7 +9,7 @@ const floating = keyframes`
   to { transform: translateY(0.5rem); }
 `;
 
-export default function MisteryBoxContainer() {
+export default function MysteryBoxContainer() {
   const animation = usePrefersReducedMotion() ? undefined : `${floating} 1.5s ease-in-out infinite alternate`;
   const [open, setOpen] = useState<boolean>(false);
 
