@@ -18,7 +18,6 @@ import { useState } from "react";
 import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { convertSeconds } from "../../utils/time";
-import { UnbondingPeriod } from "../../utils/types";
 import ManageBoundingsModal from "./ManageBoundingsModal";
 
 interface BoundingsTableProps {

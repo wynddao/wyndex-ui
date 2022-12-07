@@ -5,6 +5,7 @@ import { getAssetInfo } from "../../utils/assets";
 import { Pair } from "../../utils/types";
 import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
+import PoolCatalystSimple from "./PoolCatalystSimple";
 import PoolHeader from "./PoolHeader";
 
 interface PoolWrapperOptions {
@@ -21,7 +22,11 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     <>
       <PoolHeader chainData={pool} pairData={pair} />
       {walletAddress && <LiquidityMining poolData={poolData} pairData={pair} />}
-      <PoolCatalyst chainData={pool} pairData={pair} />
+      {walletAddress ? (
+        <PoolCatalyst chainData={pool} pairData={pair} />
+      ) : (
+        <PoolCatalystSimple chainData={pool} />
+      )}
     </>
   );
 }
