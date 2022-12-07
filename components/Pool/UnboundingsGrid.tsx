@@ -2,7 +2,6 @@
 
 import { GridItem, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import { BondingPeriodInfo } from "../../state/clients/types/WyndexStake.types";
-import { handleChangeColorModeValue } from "../../utils/theme";
 import { secondsToDays } from "../../utils/time";
 
 interface UnboundingsGridProps {
@@ -16,13 +15,7 @@ export default function UnboundingsGrid({ infos }: UnboundingsGridProps) {
     <SimpleGrid columns={{ md: 2, lg: 3 }} gap={8} p={4} pb={12}>
       {infos.map(({ unbonding_period }, i) => {
         return (
-          <GridItem
-            key={i}
-            bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")}
-            borderRadius="xl"
-            py={6}
-            px={8}
-          >
+          <GridItem key={i} bg={"wynd.neutral.100"} borderRadius="xl" py={6} px={8}>
             <Text fontWeight="bold" fontSize="2xl">
               {secondsToDays(unbonding_period)} Days
             </Text>

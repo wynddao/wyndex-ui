@@ -26,7 +26,6 @@ import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
 import { CustomHooks } from "../../../state";
-import { handleChangeColorModeValue } from "../../../utils/theme";
 import { Asset as WyndAsset, PairInfo } from "../../../state/clients/types/WyndexPair.types";
 import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
@@ -155,7 +154,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       left={0}
                       borderTopStyle="dashed"
                       borderRadius={openPop.isOpen ? "0 0 0.375rem 0.375rem" : "md"}
-                      bg={handleChangeColorModeValue(colorMode, "#f5f5f5", "whiteAlpha.50")}
+                      bg={"wynd.alpha.50"}
                       w="full"
                       maxW={{ base: 60, sm: "sm" }}
                       minW={{ base: 60, sm: "sm" }}
@@ -201,7 +200,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                 <Flex
                   key={1}
                   border="1px solid"
-                  borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
+                  borderColor={"wynd.alpha.900"}
                   borderRadius={openPop.isOpen ? "1rem 1rem 1rem 0" : "2xl"}
                   align="center"
                   flexDirection={{ base: "column", sm: "row" }}
@@ -248,10 +247,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                     >
                       <Text fontWeight="medium" textAlign="center">
                         Available&nbsp;
-                        <Text
-                          as="span"
-                          color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
-                        ></Text>
+                        <Text as="span" color={"wynd.cyan.500"}></Text>
                         {name}
                       </Text>
                       <Button
@@ -277,7 +273,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                     <NumberInput
                       alignItems="center"
                       value={tokenInputValue[i].value}
-                      bg={handleChangeColorModeValue(colorMode, "whiteAlpha.500", "whiteAlpha.50")}
+                      bg={"wynd.alpha.200"}
                       min={0}
                       max={1001}
                       onChange={(val) => {
@@ -322,10 +318,10 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
         <Tooltip
           label="Single Asset LP allows you to provide liquidity using one asset. However, this will impact the pool price of the asset you’re providing liquidity with."
           placement="top-end"
-          bg={handleChangeColorModeValue(colorMode, "blackAlpha.900", "whiteAlpha.900")}
+          bg={"wynd.alpha.900"}
           borderRadius="lg"
           border="1px solid"
-          borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
+          borderColor={"wynd.alpha.900"}
         >
           <Box position="relative">
             <IoMdInformationCircle />
@@ -336,10 +332,10 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
         flexDirection={{ base: "column", sm: "row" }}
         justify="space-between"
         textAlign={{ base: "end", sm: "start" }}
-        bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")}
+        bg={"wynd.neutral.100"}
         borderRadius="lg"
         border="1px solid"
-        borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
+        borderColor={"wynd.alpha.900"}
         p={4}
         mb={6}
       >

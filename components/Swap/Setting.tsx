@@ -14,7 +14,7 @@ import {
 import { useRef } from "react";
 import { BsHexagon, BsHexagonFill, BsExclamationCircleFill } from "react-icons/bs";
 import { RiSettings4Fill } from "react-icons/ri";
-import { handleChangeColorModeValue } from "../../utils/theme";
+
 import RadioTag from "./RadioTag";
 
 export default function Setting() {
@@ -36,32 +36,22 @@ export default function Setting() {
           variant="unstyled"
           w="min"
           h="min"
-          color={
-            isOpen ? "orange.300" : handleChangeColorModeValue(colorMode, "blackAlpha.400", "whiteAlpha.500")
-          }
+          color={isOpen ? "orange.300" : "wynd.alpha.500"}
           transition="all .5s"
           _hover={{
-            color: isOpen
-              ? "orange.200"
-              : handleChangeColorModeValue(colorMode, "blackAlpha.500", "whiteAlpha.600"),
+            color: isOpen ? "orange.200" : "wynd.alpha.500",
           }}
           _focus={{ boxShadow: "none" }}
           onClick={onToggle}
         >
-          <Icon
-            zIndex={-10}
-            as={BsHexagonFill}
-            w={8}
-            h={8}
-            color={handleChangeColorModeValue(colorMode, "gray.100", "whiteAlpha.300")}
-          />
+          <Icon zIndex={-10} as={BsHexagonFill} w={8} h={8} color={"wynd.alpha.600"} />
           <Icon position="absolute" top={0} left={1} right={0} zIndex={10} as={BsHexagon} w={8} h={8} />
           <Icon position="absolute" top={2} left={3} right={2} w={4} h={4} as={RiSettings4Fill} />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        bg={handleChangeColorModeValue(colorMode, "white", "black")}
-        borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.200", "whiteAlpha.400")}
+        bg={"wynd.white"}
+        borderColor={"wynd.alpha.600"}
         boxShadow="md"
         w="fit-content"
         right={4}
@@ -70,12 +60,7 @@ export default function Setting() {
           <Text fontWeight="semibold" mb={1.5}>
             Transaction Setting
           </Text>
-          <Text
-            fontWeight="semibold"
-            color={handleChangeColorModeValue(colorMode, "blackAlpha.500", "whiteAlpha.600")}
-            verticalAlign="middle"
-            mb={4}
-          >
+          <Text fontWeight="semibold" color={"wynd.alpha.500"} verticalAlign="middle" mb={4}>
             Slippage tolerance&ensp;
             <Icon as={BsExclamationCircleFill} color="orange.200" />
           </Text>

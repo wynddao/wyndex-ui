@@ -1,5 +1,4 @@
 import { Box, Text, useColorMode, useRadio } from "@chakra-ui/react";
-import { handleChangeColorModeValue } from "../../utils/theme";
 
 export default function RadioTag(props: any) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -13,7 +12,7 @@ export default function RadioTag(props: any) {
       <Box
         {...checkbox}
         cursor="pointer"
-        bg={handleChangeColorModeValue(colorMode, "blackAlpha.300", "whiteAlpha.300")}
+        bg={"wynd.alpha.700"}
         borderRadius="full"
         _checked={{
           bg: "primary.500",

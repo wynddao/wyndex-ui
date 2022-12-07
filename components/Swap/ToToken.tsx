@@ -17,7 +17,7 @@ import { AsyncSelect, chakraComponents, ControlProps, GroupBase, OptionProps } f
 import { RiSearch2Fill } from "react-icons/ri";
 import SkeletonOptions from "./SkeletonOptions";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { handleChangeColorModeValue } from "../../utils/theme";
+
 import { Asset } from "../../utils/types";
 
 export default function ToToken({
@@ -35,7 +35,7 @@ export default function ToToken({
   const customStyles = {
     control: (provided: SystemStyleObject) => ({
       ...provided,
-      bg: handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50"),
+      bg: "wynd.neutral.100",
     }),
     menu: (provided: SystemStyleObject) => ({
       ...provided,
@@ -53,33 +53,25 @@ export default function ToToken({
       pr: { base: 2, sm: 4 },
       // For Firefox
       scrollbarWidth: "auto",
-      scrollbarColor: handleChangeColorModeValue(
-        colorMode,
-        "rgba(0,0,0,0.3) rgba(0,0,0,0.2)",
-        "rgba(255,255,255,0.2) rgba(255,255,255,0.1)",
-      ),
+      scrollbarColor: "wynd.alpha.900",
       // For Chrome and other browsers except Firefox
       "&::-webkit-scrollbar": {
         width: "18px",
-        background: handleChangeColorModeValue(colorMode, "rgba(160,160,160,0.1)", "rgba(255,255,255,0.1)"),
+        background: "wynd.alpha.800",
         borderRadius: "4px",
       },
       "&::-webkit-scrollbar-thumb": {
-        background: handleChangeColorModeValue(colorMode, "rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)"),
+        background: "wynd.alpha.900",
         borderRadius: "4px",
       },
     }),
     option: (provided: SystemStyleObject, state: { isSelected: boolean }) => ({
       ...provided,
       borderRadius: "lg",
-      bg: state.isSelected
-        ? handleChangeColorModeValue(colorMode, "primary.100", "primary.500")
-        : "transparent",
+      bg: state.isSelected ? "wynd.cyan.200" : "transparent",
       color: "inherit",
       _hover: {
-        bg: state.isSelected
-          ? handleChangeColorModeValue(colorMode, "primary.100", "primary.500")
-          : handleChangeColorModeValue(colorMode, "blackAlpha.200", "whiteAlpha.200"),
+        bg: state.isSelected ? "wynd.cyan.300" : "wynd.alpha.700",
       },
       _disabled: {
         _hover: { bg: "transparent" },
@@ -116,7 +108,7 @@ export default function ToToken({
                 fontSize={{ base: "md", sm: "lg" }}
                 fontWeight="bold"
                 textAlign="start"
-                color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+                color={"wynd.neutral.800"}
               ></Text>
             </Box>
           </Flex>
@@ -152,7 +144,7 @@ export default function ToToken({
     <Box
       ref={toMenuRef}
       position="relative"
-      bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
+      bg={"wynd.neutral.200"}
       boxShadow={isOpen ? "0 0 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
       borderRadius="xl"
       p={6}
@@ -193,7 +185,7 @@ export default function ToToken({
               <Icon
                 as={isOpen ? FiChevronUp : FiChevronDown}
                 fontSize={{ base: "xl", sm: "3xl" }}
-                color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+                color={"wynd.neutral.800"}
               />
             </Flex>
           ) : (
@@ -208,7 +200,7 @@ export default function ToToken({
             <Text
               fontSize={{ base: "lg", sm: "2xl", md: "3xl" }}
               fontWeight="bold"
-              color={handleChangeColorModeValue(colorMode, "blackAlpha.800", "whiteAlpha.800")}
+              color={"wynd.alpha.800"}
               textAlign="end"
               wordBreak="break-word"
               mb={{ base: 1, sm: 2 }}
@@ -220,7 +212,7 @@ export default function ToToken({
               fontSize={{ base: "lg", sm: "2xl", md: "3xl" }}
               fontWeight="bold"
               textAlign="end"
-              color={handleChangeColorModeValue(colorMode, "blackAlpha.800", "whiteAlpha.800")}
+              color={"wynd.alpha.800"}
             >
               {toItem.name}
             </Text>
@@ -232,7 +224,7 @@ export default function ToToken({
       <Box
         position="absolute"
         zIndex="dropdown"
-        bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
+        bg={"wynd.neutral.200"}
         boxShadow={isOpen ? "0 12px 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
         borderRadius="xl"
         left={0}

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { LinkItemProps } from ".";
-import { handleChangeColorModeValue } from "../../utils/theme";
 
 type NavItemProps = LinkItemProps & FlexProps;
 

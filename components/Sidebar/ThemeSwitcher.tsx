@@ -3,7 +3,6 @@
 import { Flex, Icon, Switch, useColorMode } from "@chakra-ui/react";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { ThemeModes, useTheme } from "../../providers/ThemeProvider";
-import { handleChangeColorModeValue } from "../../utils/theme";
 
 export default function ThemeSwitcher() {
   const { switchTheme, theme } = useTheme();

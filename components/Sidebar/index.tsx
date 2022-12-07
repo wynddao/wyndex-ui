@@ -27,7 +27,7 @@ export default function Sidebar({ children }: SidebarProps) {
   }, [setCurrentChain]);
 
   return (
-    <Box minH="100vh" bg={"wynd.gray.100"}>
+    <Box minH="100vh" bg={"wynd.gray.200"}>
       <SidebarContent onClose={() => onClose} display={{ base: "none", md: "flex" }} />
       <Drawer
         autoFocus={false}
