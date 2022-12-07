@@ -10,6 +10,7 @@ import {
   Flex,
   IconButton,
   Image,
+  Link,
   NumberInput,
   NumberInputField,
   Popover,
@@ -26,14 +27,11 @@ import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
 import { CustomHooks } from "../../../state";
 import { handleChangeColorModeValue } from "../../../utils/theme";
-import { Asset, Pair } from "../../../utils/types";
 import { Asset as WyndAsset, PairInfo } from "../../../state/clients/types/WyndexPair.types";
-import { getAssetInfo } from "../../../utils/assets";
 import { Coin } from "cosmwasm";
-import { useRecoilState } from "recoil";
-import { txModalAtom } from "../../../state/recoil/atoms/txModal";
 import TokenName from "../../TokenName";
 
+import { useToast } from "../../../state/hooks";
 interface inputType {
   id: string;
   value: string;
@@ -88,7 +86,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
   const [tokenInputValue, setTokenInputValue] = useState<inputType[]>(defaultInput);
   const [single, setSingle] = useState<singleType>({ selectedIndex: 0, isSingle: false });
   const [openPop, setOpenPop] = useState<popType>({ optionsIndex: [], isOpen: false });
-  const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
+  const { txToast } = useToast();
 
   const { address: walletAddress } = useWallet();
 
@@ -117,30 +115,12 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
           ]
         : undefined;
     onClose();
-    setTxModalState({ ...txModalState, active: true, loading: true });
-    console.log({ pairContractAddress: pairData.contract_addr, assets: assets, funds });
-    try {
-      const res = await doProvideLiquidity({
-        pairContractAddress: pairData.contract_addr,
-        assets: assets,
-        funds,
-      });
-      setTxModalState({
-        ...txModalState,
-        height: res.height,
-        txHash: res.transactionHash,
-        active: true,
-        loading: false,
-        error: undefined,
-      });
-    } catch (err: any) {
-      setTxModalState({
-        ...txModalState,
-        active: true,
-        loading: false,
-        error: err.message,
-      });
-    }
+
+    await txToast(doProvideLiquidity, {
+      pairContractAddress: pairData.contract_addr,
+      assets: assets,
+      funds,
+    });
   };
 
   useEffect(() => {
@@ -163,7 +143,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
         {data.map(({ denom, img, show, contractAddress, name }, i) => {
           return (
             show && (
-              <Box position="relative">
+              <Box position="relative" key={`box-${name}-${i}`}>
                 {single.isSingle && (
                   <Popover returnFocusOnClose={false} isOpen={openPop.isOpen}>
                     <PopoverTrigger>

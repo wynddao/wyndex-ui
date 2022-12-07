@@ -2,29 +2,29 @@
 
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { useMemo, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useState } from "react";
 import { Cw20Hooks } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexPair.types";
 import { useCw20UserInfos } from "../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { txModalAtom } from "../../state/recoil/atoms/txModal";
 import { Pair } from "../../utils/types";
 import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
 import PendingBoundingsTable from "./PendingBoundingsTable";
 import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnboundingsGrid";
+import { ExecuteResult } from "cosmwasm";
+import { useToast } from "../../state/hooks";
 
 export default function LiquidityMining({ poolData, pairData }: { poolData: Pair; pairData: PairInfo }) {
   // TODO: Query is missing for stake contract address
   const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
+  const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
   const { infos } = useStakeInfos(wyndexStake);
-  const [txModalState, setTxModalState] = useRecoilState(txModalAtom);
   const { refreshBondings } = useUserStakeInfos(wyndexStake, walletAddress || "");
   const stake = Cw20Hooks.useSend({
     contractAddress: pairData.liquidity_token,
@@ -32,9 +32,8 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
   });
 
   const doStake = async (amount: number, duration: number) => {
-    setTxModalState({ ...txModalState, active: true, loading: true });
-    try {
-      const res = await stake({
+    await txToast(async (): Promise<ExecuteResult> => {
+      const result = await stake({
         amount: amount.toString(),
         contract: wyndexStake,
         msg: btoa(`{"delegate": { "unbonding_period": ${duration}}}`),
@@ -43,24 +42,10 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
       await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshBondings();
       refreshBalance();
-      setTxModalState({
-        ...txModalState,
-        height: res.height,
-        txHash: res.transactionHash,
-        active: true,
-        loading: false,
-        error: undefined,
-      });
-      setIsModalOpen(false);
-    } catch (err: any) {
-      setTxModalState({
-        ...txModalState,
-        active: true,
-        loading: false,
-        error: err.message,
-      });
-    }
+      return result;
+    });
   };
+
   return (
     <>
       <Box>

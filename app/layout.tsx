@@ -1,6 +1,8 @@
+"use client";
+
 import Sidebar from "../components/Sidebar";
-import TxModal from "../components/TxModal";
 import Providers from "./providers";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          <TxModal />
+          <Toaster />
           <Sidebar>{children}</Sidebar>
         </Providers>
       </body>
