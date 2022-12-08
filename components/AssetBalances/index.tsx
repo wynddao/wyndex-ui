@@ -1,10 +1,9 @@
 "use client";
 
-import { Box, Grid, GridItem, Heading, Input, Select, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Heading, Input, Select, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { getAssets, getAssetsRecap, getBalances } from "../../utils";
-import { handleChangeColorModeValue } from "../../utils/theme";
 import { Asset } from "../../utils/types";
 import AssetList from "./AssetList";
 
@@ -22,7 +21,6 @@ export interface AssetWithBalance extends Asset {
 type TokensToShow = "show-all" | "show-native" | "show-cw20";
 
 export default function AssetBalances() {
-  const { colorMode } = useColorMode();
   const { address, getCosmWasmClient } = useWallet();
 
   const [assetsRecap, setAssetsRecap] = useState<AssetsRecap>();
@@ -48,8 +46,8 @@ export default function AssetBalances() {
       const balances = await getBalances(address);
 
       const assetsWithBalance: AssetWithBalance[] = assets.map((asset) => {
-        const balance = balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        const ibcBalance = balances.find((coin) => coin.denom === "ibc/" + asset.denom)?.amount ?? "0";
+        const balance = balances?.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
+        const ibcBalance = balances?.find((coin) => coin.denom === "ibc/" + asset.denom)?.amount ?? "0";
         return { ...asset, balance, ibcBalance };
       });
 
@@ -97,7 +95,7 @@ export default function AssetBalances() {
           </Text>
         </Box>
       </Grid>
-      <Box bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")} p={8}>
+      <Box bg={"wynd.neutral.100"} p={8}>
         <Text fontSize="xl" fontWeight="bold" mb={4}>
           Assets
         </Text>
@@ -109,8 +107,8 @@ export default function AssetBalances() {
           columnGap={{ base: 4 }}
           fontSize="sm"
           fontWeight="semibold"
-          bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
-          color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+          bg={"wynd.neutral.200"}
+          color={"wynd.neutral.800"}
           borderRadius="md"
           borderBottomLeftRadius={0}
           borderBottomRightRadius={0}

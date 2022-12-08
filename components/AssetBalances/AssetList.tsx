@@ -1,8 +1,7 @@
 "use client";
 
-import { Grid, GridItem, Stack, useColorMode } from "@chakra-ui/react";
+import { Grid, GridItem, Stack } from "@chakra-ui/react";
 import { AssetWithBalance } from ".";
-import { handleChangeColorModeValue } from "../../utils/theme";
 import AssetListItem from "./AssetListItem";
 
 interface AssetListProps {
@@ -10,8 +9,6 @@ interface AssetListProps {
 }
 
 export default function AssetList({ assetsDetailsData }: AssetListProps) {
-  const { colorMode } = useColorMode();
-
   return (
     <>
       <Grid
@@ -23,8 +20,8 @@ export default function AssetList({ assetsDetailsData }: AssetListProps) {
         columnGap={{ base: 4 }}
         fontSize="sm"
         fontWeight="semibold"
-        bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
-        color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+        bg={"wynd.neutral.300"}
+        color={"wynd.neutral.900"}
         boxShadow="base"
         py={2}
         px={4}

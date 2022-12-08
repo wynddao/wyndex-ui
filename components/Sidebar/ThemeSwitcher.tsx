@@ -1,30 +1,43 @@
 "use client";
 
-import { Flex, Icon, Switch, useColorMode } from "@chakra-ui/react";
+import { FormLabel, Icon, Switch } from "@chakra-ui/react";
 import { FiMoon, FiSun } from "react-icons/fi";
-import { handleChangeColorModeValue } from "../../utils/theme";
+import { ThemeModes, useTheme } from "../../providers/ThemeProvider";
 
 export default function ThemeSwitcher() {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { switchTheme, theme } = useTheme();
 
   return (
-    <Flex alignItems="center" justifyContent="center" gap={4} m={{ base: "4", lg: "8" }}>
+    <FormLabel
+      htmlFor="theme-switcher"
+      as={"label"}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      gap={2}
+      p={{ base: "4", lg: "8" }}
+      position="relative"
+    >
       <Icon
         fontSize={{ base: "md", lg: "lg" }}
         as={FiMoon}
-        sx={{ color: handleChangeColorModeValue(colorMode, "inherit", "yellow.400") }}
+        sx={{ color: theme === ThemeModes.dark && "yellow.400" }}
+        transition="all ease-in 0.5s"
       />
       <Switch
         aria-label="auto"
-        isChecked={colorMode === "light"}
-        onChange={() => toggleColorMode()}
+        id="theme-switcher"
         size={{ base: "md", lg: "lg" }}
+        isChecked={theme === ThemeModes.dark ? false : true}
+        style={{ transition: "all ease-in 1s" }}
+        onChange={switchTheme}
       />
       <Icon
         fontSize={{ base: "md", lg: "lg" }}
         as={FiSun}
-        sx={{ color: handleChangeColorModeValue(colorMode, "orange.500", "inherit") }}
+        sx={{ color: theme === ThemeModes.light && "orange.500" }}
+        transition="all ease-in 0.5s"
       />
-    </Flex>
+    </FormLabel>
   );
 }

@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { handleChangeColorModeValue } from "../../utils/theme";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
@@ -43,12 +42,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
       </Text>
       <SimpleGrid columns={{ md: 2 }} gap={8}>
         {chainData.assets.map((asset, i) => (
-          <Box
-            key={i}
-            borderRadius="xl"
-            bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")}
-            p={6}
-          >
+          <Box key={i} borderRadius="xl" bg={"wynd.neutral.100"} p={6}>
             <Flex align="center" mb={4}>
               <Box
                 w={20}
@@ -66,10 +60,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
               </Box>
               <Box>
                 <Text fontSize="3xl" fontWeight="extrabold"></Text>
-                <Text
-                  fontWeight="bold"
-                  color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                >
+                <Text fontWeight="bold" color={"wynd.neutral.600"}>
                   {asset.info.hasOwnProperty("token") ? (
                     // @ts-ignore
                     <TokenName address={asset.info.token} />
@@ -80,19 +71,13 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                 </Text>
               </Box>
             </Flex>
-            <Text
-              fontWeight="bold"
-              color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-            >
+            <Text fontWeight="bold" color={"wynd.neutral.600"}>
               Total amount
             </Text>
             <Text fontSize="xl" fontWeight="bold" mb={2}>
               {asset.amount}
             </Text>
-            <Text
-              fontWeight="bold"
-              color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-            >
+            <Text fontWeight="bold" color={"wynd.neutral.600"}>
               My amount
             </Text>
             <Text fontSize="xl" fontWeight="bold">

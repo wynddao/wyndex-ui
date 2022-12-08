@@ -3,8 +3,15 @@
 import Sidebar from "../components/Sidebar";
 import Providers from "./providers";
 import { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   return (
     <html lang="en">
       <head>
@@ -13,10 +20,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="description" content="Frontend for WynDex" />
       </head>
       <body>
-        <Providers>
-          <Toaster />
-          <Sidebar>{children}</Sidebar>
-        </Providers>
+        {isLoaded ? (
+          <Providers>
+            <Toaster />
+            <Sidebar>{children}</Sidebar>
+          </Providers>
+        ) : null}
       </body>
     </html>
   );

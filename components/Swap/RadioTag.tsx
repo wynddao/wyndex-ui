@@ -1,8 +1,5 @@
-import { Box, Text, useColorMode, useColorModeValue, useRadio } from "@chakra-ui/react";
-import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
-import { handleChangeColorModeValue } from "../../utils/theme";
+import { Box, Text, useColorMode, useRadio } from "@chakra-ui/react";
 
-// eslint-disable-next-line
 export default function RadioTag(props: any) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
   const input = getInputProps();
@@ -15,7 +12,7 @@ export default function RadioTag(props: any) {
       <Box
         {...checkbox}
         cursor="pointer"
-        bg={handleChangeColorModeValue(colorMode, "blackAlpha.300", "whiteAlpha.300")}
+        bg={"wynd.alpha.700"}
         borderRadius="full"
         _checked={{
           bg: "primary.500",

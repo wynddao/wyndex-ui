@@ -1,6 +1,4 @@
 "use client";
-
-import { useColorMode } from "@chakra-ui/react";
 import { AsyncSelect } from "chakra-react-select";
 import { dataType } from "..";
 import CustomControl from "./CustomControl";
@@ -15,12 +13,10 @@ interface TokenDropdownProps {
 }
 
 export default function TokenDropdown({ tokens, selectedToken, selectToken, onClose }: TokenDropdownProps) {
-  const { colorMode } = useColorMode();
-
   return (
     <AsyncSelect
       placeholder="Search"
-      chakraStyles={getCustomStyles(colorMode)}
+      chakraStyles={getCustomStyles()}
       isClearable={false}
       blurInputOnSelect={true}
       controlShouldRenderValue={false}

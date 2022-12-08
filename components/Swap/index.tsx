@@ -104,7 +104,7 @@ export default function Home() {
           operations={operations}
         />
       )}
-      <Button h={{ base: 12, md: 16 }} w="full" colorScheme="primary" onClick={() => onSwap()}>
+      <Button h={{ base: 12, md: 16 }} w="full" onClick={() => onSwap()} bg="wynd.alpha.400">
         Swap
       </Button>
     </Stack>

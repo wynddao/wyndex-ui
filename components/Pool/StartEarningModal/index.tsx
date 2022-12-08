@@ -21,7 +21,6 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { BondingPeriodInfo } from "../../../state/clients/types/WyndexStake.types";
-import { handleChangeColorModeValue } from "../../../utils/theme";
 import { secondsToDays } from "../../../utils/time";
 import RadioCard from "../../RadioCard";
 
@@ -44,7 +43,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
     onChange: (v) => {
       setValue(v);
     },
-    defaultValue: 1,
+    defaultValue: "1",
   });
 
   const group = getRootProps();
@@ -59,7 +58,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           <Flex
             key={1}
             border="1px solid"
-            borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
+            borderColor={"wynd.alpha.800"}
             borderRadius="1rem 1rem 1rem 0"
             align="center"
             flexDirection={{ base: "column", sm: "row" }}
@@ -86,10 +85,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
               >
                 <Text fontWeight="medium" textAlign="center">
                   Available&nbsp;
-                  <Text
-                    as="span"
-                    color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
-                  ></Text>
+                  <Text as="span" color={"wynd.cyan.600"}></Text>
                   <strong>{balance}</strong>
                 </Text>
                 <Button
@@ -103,7 +99,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
               </Stack>
               <NumberInput
                 alignItems="center"
-                bg={handleChangeColorModeValue(colorMode, "whiteAlpha.500", "whiteAlpha.50")}
+                bg={"wynd.alpha.50"}
                 min={0}
                 value={amount}
                 max={balance}

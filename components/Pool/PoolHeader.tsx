@@ -10,7 +10,6 @@ import {
   Link,
   SimpleGrid,
   Text,
-  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { usePairInfos, usePoolInfos } from "../../state";
@@ -41,7 +40,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
 
   return (
     <>
-      <Box bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")} p={4}>
+      <Box bg={"whiteAlpha.50"} p={4}>
         <Flex align="center" wrap="wrap" mb={6}>
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
             Pool: {pairNames[0]} / {pairNames[1]}
@@ -63,7 +62,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
 
         <SimpleGrid columns={{ md: 2 }} gap={{ base: 2, md: 4 }} maxW={{ lg: "50%" }}>
           <GridItem>
-            <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
+            <Text fontWeight="bold" color={"whiteAlpha.600"}>
               Pool Address
             </Text>
             <Text fontSize={{ base: "sm", sm: "sm" }} fontWeight="extrabold" wordBreak="break-word">
@@ -71,7 +70,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
+            <Text fontWeight="bold" color={"whiteAlpha.600"}>
               Pool Liquidity
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
@@ -79,7 +78,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
+            <Text fontWeight="bold" color={"whiteAlpha.600"}>
               Liquidity Token Address
             </Text>
             <Text fontSize={{ base: "sm", sm: "sm" }} fontWeight="extrabold">
@@ -87,7 +86,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")} mb={1}>
+            <Text fontWeight="bold" color={"whiteAlpha.600"} mb={1}>
               My Bounded Amount
             </Text>
             <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="extrabold">
@@ -95,7 +94,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="bold" color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")} mb={1}>
+            <Text fontWeight="bold" color={"whiteAlpha.600"} mb={1}>
               Swap Fee
             </Text>
             <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="extrabold">

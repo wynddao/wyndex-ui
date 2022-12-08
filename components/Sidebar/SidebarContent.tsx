@@ -1,9 +1,10 @@
 "use client";
 
-import { Box, BoxProps, CloseButton, Flex, Icon, useColorModeValue } from "@chakra-ui/react";
+import { Box, BoxProps, CloseButton, Flex, Icon } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiActivity, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { LinkItemProps } from ".";
+import { ThemeModes, useTheme } from "../../providers/ThemeProvider";
 import wyndLogoBlack from "../../public/logo-black.svg";
 import wyndLogoWhite from "../../public/logo-white.svg";
 import ConnectWalletButton from "./ConnectWalletButton";
@@ -22,13 +23,14 @@ interface SidebarContentProps extends BoxProps {
 }
 
 export default function SidebarContent({ onClose, ...restProps }: SidebarContentProps) {
+  const { theme } = useTheme();
   return (
     <Flex
       flexDirection="column"
       justifyContent="space-between"
-      bg={useColorModeValue("white", "gray.900")}
+      bg={"wynd.base.background"}
       borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
+      borderRightColor="wynd.neutral.400"
       w={{ base: "full", md: "auto" }}
       pos="fixed"
       h="full"
@@ -38,7 +40,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
           <Image
             alt="Wynd logo"
-            src={useColorModeValue(wyndLogoBlack, wyndLogoWhite)}
+            src={theme === ThemeModes.dark ? wyndLogoWhite : wyndLogoBlack}
             sizes="100vw"
             style={{ width: "100%", height: "auto", maxWidth: 128, maxHeight: 38 }}
           />
@@ -56,7 +58,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
           fontSize={{ base: "14", lg: "16" }}
           cursor="pointer"
           _hover={{
-            bg: useColorModeValue("brand.cyan.100", "brand.blue.800"),
+            bg: "wynd.cyan.100",
             color: "white",
           }}
           {...restProps}

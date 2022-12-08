@@ -14,14 +14,12 @@ import {
   Text,
   Tooltip,
   useClipboard,
-  useColorMode,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { FiCopy } from "react-icons/fi";
 import { useSetRecoilState } from "recoil";
 import { AssetWithBalance } from ".";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { handleChangeColorModeValue } from "../../utils/theme";
 
 interface AssetListItemProps {
   readonly assetDetails: AssetWithBalance;
@@ -30,7 +28,6 @@ interface AssetListItemProps {
 export default function AssetListItem({
   assetDetails: { name, img, tokenType, balance, ibcBalance, denom, contractAddress },
 }: AssetListItemProps) {
-  const { colorMode } = useColorMode();
   const { onCopy, hasCopied, setValue } = useClipboard("");
 
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
@@ -50,20 +47,20 @@ export default function AssetListItem({
       fontWeight="semibold"
       alignItems="center"
       bg={{
-        base: handleChangeColorModeValue(colorMode, "whiteAlpha.600", "blackAlpha.300"),
-        lg: handleChangeColorModeValue(colorMode, "whiteAlpha.300", "blackAlpha.500"),
+        base: "wynd.neutral.600",
+        lg: "whiteAlpha.300",
       }}
       border={{ base: "1px solid", lg: "none" }}
-      borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.200", "whiteAlpha.200")}
+      borderColor={"wynd.neutral.200"}
       borderRadius={{ base: "lg", lg: "none" }}
       _odd={{
         bg: {
-          lg: handleChangeColorModeValue(colorMode, "whiteAlpha.600", "blackAlpha.300"),
+          lg: "wynd.neutral.600",
         },
       }}
       _notLast={{
         borderBottom: "1px solid",
-        borderBottomColor: handleChangeColorModeValue(colorMode, "blackAlpha.200", "whiteAlpha.200"),
+        borderBottomColor: "wynd.neutral.200",
       }}
       p={4}
     >
@@ -76,9 +73,9 @@ export default function AssetListItem({
             minH={{ base: 14, lg: 16 }}
             maxW={{ base: 14, lg: 16 }}
             maxH={{ base: 14, lg: 16 }}
-            bg={handleChangeColorModeValue(colorMode, "whiteAlpha.500", "whiteAlpha.50")}
+            bg={"whiteAlpha.500"}
             border="1px solid"
-            borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
+            borderColor={"wynd.neutral.900"}
             borderRadius="full"
             mr={4}
           >
@@ -88,7 +85,7 @@ export default function AssetListItem({
             {name}
           </Text>
           <Badge
-            bg={handleChangeColorModeValue(colorMode, "primary.600", "primary.400")}
+            bg={"wynd.cyan.600"}
             color={tokenType === "native" ? "orange.500" : "purple.500"}
             borderRadius="full"
             px={2}
@@ -100,7 +97,7 @@ export default function AssetListItem({
               <Tag
                 size="md"
                 variant="outline"
-                colorScheme={handleChangeColorModeValue(colorMode, "blackAlpha", "whiteAlpha")}
+                colorScheme={"wynd.neutral.50"}
                 sx={{ cursor: "pointer" }}
                 onClick={onCopy}
               >

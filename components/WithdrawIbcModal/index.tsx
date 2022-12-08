@@ -16,7 +16,6 @@ import {
   Stack,
   Text,
   useBreakpointValue,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { assets } from "chain-registry";
@@ -126,7 +125,7 @@ export default function WithdrawIbcModal() {
   }, []);
 
   return (
-    <Box bg={useColorModeValue("gray.100", "gray.700")}>
+    <Box bg={"wynd.neutral.100"}>
       <Modal
         isOpen={withdrawIbcModalOpen.isOpen}
         onClose={() => setWithdrawIbcModalOpen({ isOpen: false })}
@@ -148,12 +147,7 @@ export default function WithdrawIbcModal() {
             alignItems="center"
             mb={6}
           >
-            <GridItem
-              border="1px solid"
-              borderColor={useColorModeValue("blackAlpha.200", "whiteAlpha.300")}
-              borderRadius="2xl"
-              p={4}
-            >
+            <GridItem border="1px solid" borderColor={"whiteAlpha.300"} borderRadius="2xl" p={4}>
               <Text fontWeight="semibold" mr={4}>
                 From
               </Text>
@@ -161,7 +155,7 @@ export default function WithdrawIbcModal() {
                 maxW={{ base: 60, md: 64 }}
                 height="1.5em"
                 fontWeight="semibold"
-                color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
+                color={"whiteAlpha.500"}
                 whiteSpace="break-spaces"
                 overflow="hidden"
                 title={fromToken.address || "(native)"}
@@ -179,14 +173,9 @@ export default function WithdrawIbcModal() {
               </Text>
             </GridItem>
             <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
-              <Icon as={icon} color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")} />
+              <Icon as={icon} color={"whiteAlpha.500"} />
             </GridItem>
-            <GridItem
-              border="1px solid"
-              borderColor={useColorModeValue("blackAlpha.200", "whiteAlpha.300")}
-              borderRadius="2xl"
-              p={4}
-            >
+            <GridItem border="1px solid" borderColor={"whiteAlpha.300"} borderRadius="2xl" p={4}>
               <Text fontWeight="semibold" mr={4}>
                 To
               </Text>
@@ -196,7 +185,7 @@ export default function WithdrawIbcModal() {
                   maxW={{ base: 48, md: 52 }}
                   height="1.5em"
                   fontWeight="semibold"
-                  color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}
+                  color={"whiteAlpha.500"}
                   whiteSpace="break-spaces"
                   overflow="hidden"
                   title={toToken.address || "(native)"}
@@ -229,7 +218,7 @@ export default function WithdrawIbcModal() {
           <Box borderRadius="2xl" border="1px solid" borderColor="orange.300" px={4} py={6} mb={12}>
             <Text fontWeight="semibold" mr={4} mb={3}>
               Available balance:&ensp;
-              <Text as="span" color={useColorModeValue("primary.500", "primary.300")}>
+              <Text as="span" color={"wynd.cyan.600"}>
                 {fromToken.availableBalance}&ensp;{fromToken.name}
               </Text>
             </Text>
@@ -239,7 +228,7 @@ export default function WithdrawIbcModal() {
               alignItems="center"
               defaultValue={15}
               value={inputValue}
-              bg={useColorModeValue("whiteAlpha.500", "whiteAlpha.50")}
+              bg={"whiteAlpha.500"}
               min={0}
               max={parseFloat(fromToken.availableBalance)}
               onChange={(value) => setInputValue(value)}

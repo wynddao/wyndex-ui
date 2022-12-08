@@ -24,7 +24,6 @@ import { StakedResponse } from "../../../state/clients/types/WyndexStake.types";
 import { useToast } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { renderUnboundingText } from "../../../utils/text";
-import { handleChangeColorModeValue } from "../../../utils/theme";
 import { secondsToDays } from "../../../utils/time";
 import RadioCard from "../../RadioCard";
 
@@ -94,7 +93,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       <Flex
         key={1}
         border="1px solid"
-        borderColor={handleChangeColorModeValue(colorMode, "blackAlpha.100", "whiteAlpha.100")}
+        borderColor={"wynd.alpha.800"}
         borderRadius="1rem 1rem 1rem 0"
         align="center"
         flexDirection={{ base: "column", sm: "row" }}
@@ -122,10 +121,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           >
             <Text fontWeight="medium" textAlign="center">
               Available&nbsp;
-              <Text
-                as="span"
-                color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
-              ></Text>
+              <Text as="span" color={"wynd.cyan.700"}></Text>
               <strong>{stake.stake}</strong>
             </Text>
             <Button
@@ -139,7 +135,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           </Stack>
           <NumberInput
             alignItems="center"
-            bg={handleChangeColorModeValue(colorMode, "whiteAlpha.500", "whiteAlpha.50")}
+            bg={"wynd.alpha.50"}
             min={0}
             value={amount}
             max={Number(stake.stake)}

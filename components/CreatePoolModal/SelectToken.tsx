@@ -8,14 +8,12 @@ import {
   Icon,
   Image,
   Text,
-  useColorMode,
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { dataType } from ".";
-import { handleChangeColorModeValue } from "../../utils/theme";
 import TokenDropdown from "./TokenDropdown";
 
 interface SelectTokenProps {
@@ -25,7 +23,6 @@ interface SelectTokenProps {
 }
 
 export default function SelectToken({ tokens, selectedToken, selectToken }: SelectTokenProps) {
-  const { colorMode } = useColorMode();
   const { isOpen, onToggle, onClose } = useDisclosure();
 
   const selectMenuRef = useRef<HTMLDivElement | null>(null);
@@ -36,7 +33,7 @@ export default function SelectToken({ tokens, selectedToken, selectToken }: Sele
       flexDirection="column"
       ref={selectMenuRef}
       position="relative"
-      bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
+      bg={"wynd.neutral.200"}
       borderRadius="xl"
       boxShadow={isOpen ? "0 0 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
       gap={2}
@@ -76,7 +73,7 @@ export default function SelectToken({ tokens, selectedToken, selectToken }: Sele
             <Icon
               as={isOpen ? FiChevronUp : FiChevronDown}
               fontSize={{ base: "xl", sm: "2xl" }}
-              color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+              color={"wynd.neutral.800"}
             />
           </Flex>
         </Button>
@@ -84,7 +81,7 @@ export default function SelectToken({ tokens, selectedToken, selectToken }: Sele
       <Box
         position="absolute"
         zIndex={2000}
-        bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
+        bg={"wynd.neutral.200"}
         boxShadow={isOpen ? "0 12px 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
         borderRadius="xl"
         left={0}
