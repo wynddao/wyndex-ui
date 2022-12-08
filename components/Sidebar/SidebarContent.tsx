@@ -16,6 +16,7 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
   { name: "Governance", to: "https://app.wynddao.com", icon: FiUsers },
+  { name: "Mystery Box", to: "/mystery-box", icon: FiPackage },
 ];
 
 interface SidebarContentProps extends BoxProps {
@@ -49,23 +50,6 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         {LinkItems.map((link) => (
           <NavItem key={link.name} to={link.to} icon={link.icon} name={link.name} />
         ))}
-        <Flex
-          align="center"
-          p={{ base: "2", lg: "4" }}
-          mx={{ base: "2", lg: "4" }}
-          borderRadius="lg"
-          role="group"
-          fontSize={{ base: "14", lg: "16" }}
-          cursor="pointer"
-          _hover={{
-            bg: "wynd.cyan.100",
-            color: "white",
-          }}
-          {...restProps}
-        >
-          <Icon mr="4" fontSize="0.8em" as={FiPackage} />
-          Mistery Box
-        </Flex>
       </Box>
       <Flex
         direction="column"
