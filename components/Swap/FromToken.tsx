@@ -3,7 +3,6 @@ import {
   Flex,
   Icon,
   SystemStyleObject,
-  useColorMode,
   useDisclosure,
   Text,
   Box,
@@ -29,7 +28,7 @@ import SkeletonOptions from "./SkeletonOptions";
 import { BsHexagon, BsHexagonFill } from "react-icons/bs";
 import { CgArrowsExchangeV } from "react-icons/cg";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { handleChangeColorModeValue } from "../../utils/theme";
+
 import { Asset } from "../../utils/types";
 
 export default function FromToken({
@@ -66,11 +65,10 @@ export default function FromToken({
   ]);
   const fromMenuRef = useRef<HTMLDivElement | null>(null);
   const { isOpen, onToggle, onClose } = useDisclosure();
-  const { colorMode } = useColorMode();
   const customStyles = {
     control: (provided: SystemStyleObject) => ({
       ...provided,
-      bg: handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50"),
+      bg: "wynd.neutral.100",
     }),
     menu: (provided: SystemStyleObject) => ({
       ...provided,
@@ -88,33 +86,25 @@ export default function FromToken({
       pr: { base: 2, sm: 4 },
       // For Firefox
       scrollbarWidth: "auto",
-      scrollbarColor: handleChangeColorModeValue(
-        colorMode,
-        "rgba(0,0,0,0.3) rgba(0,0,0,0.2)",
-        "rgba(255,255,255,0.2) rgba(255,255,255,0.1)",
-      ),
+      scrollbarColor: "wynd.alpha.900",
       // For Chrome and other browsers except Firefox
       "&::-webkit-scrollbar": {
         width: "18px",
-        background: handleChangeColorModeValue(colorMode, "rgba(160,160,160,0.1)", "rgba(255,255,255,0.1)"),
+        background: "wynd.alpha.800",
         borderRadius: "4px",
       },
       "&::-webkit-scrollbar-thumb": {
-        background: handleChangeColorModeValue(colorMode, "rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)"),
+        background: "wynd.alpha.900",
         borderRadius: "4px",
       },
     }),
     option: (provided: SystemStyleObject, state: { isSelected: boolean }) => ({
       ...provided,
       borderRadius: "lg",
-      bg: state.isSelected
-        ? handleChangeColorModeValue(colorMode, "primary.100", "primary.500")
-        : "transparent",
+      bg: state.isSelected ? "wynd.cyan.200" : "transparent",
       color: "inherit",
       _hover: {
-        bg: state.isSelected
-          ? handleChangeColorModeValue(colorMode, "primary.100", "primary.500")
-          : handleChangeColorModeValue(colorMode, "blackAlpha.200", "whiteAlpha.200"),
+        bg: state.isSelected ? "wynd.cyan.300" : "wynd.alpha.700",
       },
       _disabled: {
         _hover: { bg: "transparent" },
@@ -151,7 +141,7 @@ export default function FromToken({
                 fontSize={{ base: "md", sm: "lg" }}
                 fontWeight="bold"
                 textAlign="start"
-                color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+                color={"wynd.neutral.800"}
               ></Text>
             </Box>
           </Flex>
@@ -195,8 +185,8 @@ export default function FromToken({
         id={id}
         variant="unstyled"
         fontSize="xs"
-        bg={handleChangeColorModeValue(colorMode, lightBg, darkBg)}
-        color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+        bg={lightBg}
+        color={"wynd.neutral.800"}
         borderRadius="md"
         fontWeight="semibold"
         _focus={{
@@ -240,9 +230,9 @@ export default function FromToken({
     <Box
       ref={fromMenuRef}
       position="relative"
-      bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
+      bg={"wynd.neutral.200"}
       borderRadius="xl"
-      boxShadow={isOpen ? "0 0 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
+      boxShadow={isOpen ? "0 0 20px -8px rgba(0, 0, 0, 0.5)" : "none"}
       p={6}
     >
       <Flex
@@ -307,7 +297,7 @@ export default function FromToken({
               <Icon
                 as={isOpen ? FiChevronUp : FiChevronDown}
                 fontSize={{ base: "xl", sm: "3xl" }}
-                color={handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")}
+                color={"wynd.neutral.800"}
               />
             </Flex>
           ) : (
@@ -324,11 +314,7 @@ export default function FromToken({
               fontSize={{ base: "lg", sm: "2xl" }}
               fontWeight="bold"
               textAlign="end"
-              color={
-                tokenInputValue === "0"
-                  ? handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")
-                  : handleChangeColorModeValue(colorMode, "blackAlpha.800", "whiteAlpha.800")
-              }
+              color={tokenInputValue === "0" ? "wynd.neutral.800" : "wynd.alpha.800"}
               mb={{ base: 1, sm: 2 }}
               placeholder="0"
             >
@@ -356,11 +342,7 @@ export default function FromToken({
               fontSize={{ sm: "xl" }}
               textAlign="end"
               fontWeight="bold"
-              color={
-                tokenInputValue === "0"
-                  ? handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")
-                  : handleChangeColorModeValue(colorMode, "blackAlpha.700", "whiteAlpha.700")
-              }
+              color={tokenInputValue === "0" ? "wynd.neutral.600" : "wynd.neutral.800"}
               mb={0}
             >
               ≈$0
@@ -376,8 +358,8 @@ export default function FromToken({
       <Box
         position="absolute"
         zIndex={2000}
-        bg={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
-        boxShadow={isOpen ? "0 12px 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
+        bg={"wynd.neutral.200"}
+        boxShadow={isOpen ? "0 12px 20px -8px rgba(0, 0, 0, 0.5)" : "none"}
         borderRadius="xl"
         left={0}
         right={0}
@@ -431,7 +413,7 @@ export default function FromToken({
             position="absolute"
             zIndex={5}
             bottom={{ base: -8, sm: -10 }}
-            color={handleChangeColorModeValue(colorMode, "blackAlpha.300", "whiteAlpha.600")}
+            color={"wynd.alpha.700"}
             onClick={() => {
               setFromItem(toItem as Asset);
               setToItem(fromItem as Asset);
@@ -442,7 +424,7 @@ export default function FromToken({
               as={BsHexagonFill}
               w={{ base: 12, sm: 16 }}
               h={{ base: 12, sm: 16 }}
-              color={handleChangeColorModeValue(colorMode, "gray.100", "gray.700")}
+              color={"wynd.neutral.200"}
             />
             <Icon
               position="absolute"

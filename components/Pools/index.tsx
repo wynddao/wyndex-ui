@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Flex, Heading, Text, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getPairs } from "../../utils";
 import { Pair } from "../../utils/types";
@@ -30,7 +30,7 @@ export default function Pools() {
             Create New Pool
           </Button>
         </Flex>
-        <Box bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")} m={-4} px={4} py={6}>
+        <Box bg={"whiteAlpha.50"} m={-4} px={4} py={6}>
           <Text fontSize="2xl" fontWeight="bold" mb={4}>
             My Pools
           </Text>

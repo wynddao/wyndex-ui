@@ -1,0 +1,51 @@
+.hexagon-back:before,
+.hexagon-back:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 80px solid transparent;
+  border-right: 80px solid transparent;
+}
+.hexagon-back:before {
+  bottom: 100%;
+  border-bottom: 46.19px solid var(--chakra-colors-brand-green-500);
+  left: 0;
+}
+.hexagon-back:after {
+  top: 100%;
+  width: 0;
+  border-top: 46.19px solid var(--chakra-colors-brand-green-500);
+  left: 0;
+}
+
+.druid {
+  opacity: 0;
+  transform: scale(-1);
+}
+.druid.druid-open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.box-right,
+.box-left,
+.box-top {
+  opacity: 1;
+}
+.box-right.box-right-open,
+.box-left.box-left-open,
+.box-top.box-top-open {
+  opacity: 0.6;
+}
+
+.box-top.box-top-open {
+  transform: translateY(-4rem);
+}
+
+.box-right.box-right-open {
+  transform: translatex(4rem);
+}
+
+.box-left.box-left-open {
+  transform: translatex(-4rem);
+}

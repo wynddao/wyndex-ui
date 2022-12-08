@@ -19,7 +19,6 @@ import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { secondsToDays } from "../../utils/time";
 import ManageBoundingsModal from "./ManageBoundingsModal";
-
 interface BoundingsTableProps {
   readonly stakeContract: string;
   tokenName: any;

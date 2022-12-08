@@ -2,7 +2,6 @@
 
 import { Box, Flex, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
-import { handleChangeColorModeValue } from "../../utils/theme";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
@@ -18,12 +17,7 @@ export default function PoolCatalystSimple({ chainData }: PoolCatalystProps) {
       </Text>
       <SimpleGrid columns={{ md: 2 }} gap={8}>
         {chainData.assets.map((asset, i) => (
-          <Box
-            key={i}
-            borderRadius="xl"
-            bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")}
-            p={6}
-          >
+          <Box key={i} borderRadius="xl" bg={"wynd.alpha.900"} p={6}>
             <Flex align="center" mb={4}>
               <Box
                 w={20}
@@ -41,10 +35,7 @@ export default function PoolCatalystSimple({ chainData }: PoolCatalystProps) {
               </Box>
               <Box>
                 <Text fontSize="3xl" fontWeight="extrabold"></Text>
-                <Text
-                  fontWeight="bold"
-                  color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                >
+                <Text fontWeight="bold" color={"wynd.alpha.600"}>
                   {asset.info.hasOwnProperty("token") ? (
                     // @ts-ignore
                     <TokenName address={asset.info.token} />
@@ -55,10 +46,7 @@ export default function PoolCatalystSimple({ chainData }: PoolCatalystProps) {
                 </Text>
               </Box>
             </Flex>
-            <Text
-              fontWeight="bold"
-              color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-            >
+            <Text fontWeight="bold" color={"wynd.alpha.600"}>
               Total amount
             </Text>
             <Text fontSize="xl" fontWeight="bold" mb={2}>

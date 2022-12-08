@@ -3,7 +3,6 @@
 import { Box, Divider, Flex, Grid, GridItem, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import Link from "next/link";
 
-import { handleChangeColorModeValue } from "../../utils/theme";
 import { Pair } from "../../utils/types";
 
 interface PoolsCardProps {
@@ -21,13 +20,13 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
             <Box
               borderRadius="lg"
               border="1px solid"
-              borderColor={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
+              borderColor={"wynd.cyan.500"}
               boxShadow="md"
               _hover={{
                 cursor: "pointer",
-                borderColor: handleChangeColorModeValue(colorMode, "primary.500", "primary.300"),
+                borderColor: "wynd.cyan.500",
               }}
-              bg={handleChangeColorModeValue(colorMode, "blackAlpha.50", "whiteAlpha.50")}
+              bg={"wynd.neutral.100"}
               p={4}
             >
               <Flex align="center" mb={4}>
@@ -38,7 +37,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     bg="whiteAlpha.900"
                     borderRadius="full"
                     border="1px solid"
-                    borderColor={handleChangeColorModeValue(colorMode, "primary.100", "primary.900")}
+                    borderColor={"wynd.cyan.100"}
                     overflow="hidden"
                     p={0.5}
                   >
@@ -52,7 +51,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     bg="whiteAlpha.900"
                     borderRadius="full"
                     border="1px solid"
-                    borderColor={handleChangeColorModeValue(colorMode, "primary.100", "primary.900")}
+                    borderColor={"wynd.cyan.100"}
                     overflow="hidden"
                     p={0.5}
                   >
@@ -63,19 +62,12 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                   <Text fontSize="xl" fontWeight="extrabold">
                     Pools #{index}
                   </Text>
-                  <Text
-                    fontWeight="bold"
-                    color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                    wordBreak="break-word"
-                  ></Text>
+                  <Text fontWeight="bold" color={"wynd.neutral.600"} wordBreak="break-word"></Text>
                 </Flex>
               </Flex>
               <Grid templateColumns={{ lg: "1fr 1fr" }} gap={{ base: 2, md: 4 }}>
                 <GridItem>
-                  <Text
-                    fontWeight="semibold"
-                    color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                  >
+                  <Text fontWeight="semibold" color={"wynd.neutral.600"}>
                     APR
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
@@ -83,10 +75,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text
-                    fontWeight="semibold"
-                    color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                  >
+                  <Text fontWeight="semibold" color={"wynd.neutral.600"}>
                     Fee
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
@@ -94,15 +83,10 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                   </Text>
                 </GridItem>
                 <GridItem colSpan={{ lg: 2 }}>
-                  <Divider
-                    borderColor={handleChangeColorModeValue(colorMode, "primary.300", "primary.100")}
-                  />
+                  <Divider borderColor={"wynd.cyan.300"} />
                 </GridItem>
                 <GridItem>
-                  <Text
-                    fontWeight="semibold"
-                    color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                  >
+                  <Text fontWeight="semibold" color={"wynd.neutral.600"}>
                     Liquidity
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
@@ -111,10 +95,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                   </Text>
                 </GridItem>
                 <GridItem>
-                  <Text
-                    fontWeight="semibold"
-                    color={handleChangeColorModeValue(colorMode, "blackAlpha.600", "whiteAlpha.600")}
-                  >
+                  <Text fontWeight="semibold" color={"wynd.neutral.600"}>
                     Shares
                   </Text>
                   {tokens[0].liquidity && tokens[1].liquidity && (
