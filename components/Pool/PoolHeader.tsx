@@ -41,7 +41,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
   return (
     <>
       <Box
-        bg={"whiteAlpha.50"}
+        bg={"wynd.base.sidebar"}
         bgImage="url('/images/Vector.png')"
         bgPosition="right"
         bgRepeat="no-repeat"

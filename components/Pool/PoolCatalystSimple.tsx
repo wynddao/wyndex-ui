@@ -17,7 +17,7 @@ export default function PoolCatalystSimple({ chainData }: PoolCatalystProps) {
       </Text>
       <SimpleGrid columns={{ md: 2 }} gap={8}>
         {chainData.assets.map((asset, i) => (
-          <Box key={i} borderRadius="xl" bg={"wynd.alpha.900"} p={6}>
+          <Box key={i} borderRadius="xl" bg={"wynd.base.sidebar"} p={6}>
             <Flex align="center" mb={4}>
               <Box
                 w={20}
