@@ -43,6 +43,9 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
     <>
       <Box
         bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}
+        bgImage="url('/images/Vector.png')"
+        bgPosition="right"
+        bgRepeat="no-repeat"
         p={4}
         position="relative"
         overflow="hidden"
@@ -109,7 +112,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
           />
         </Show>
       </Box>
-      <ManageLiquidityModal data={pairData} isOpen={isOpen} onClose={onClose} />
+      <ManageLiquidityModal poolData={chainData} data={pairData} isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

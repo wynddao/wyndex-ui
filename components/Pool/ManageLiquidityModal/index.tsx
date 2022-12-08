@@ -14,7 +14,8 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { PairInfo } from "../../../state/clients/types/WyndexPair.types";
+import { useCw20UserInfos } from "../../../state";
+import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import AddLiquidity from "./AddLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
 
@@ -24,10 +25,12 @@ interface ManageLiquidityProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly data: PairInfo;
+  readonly poolData: PoolResponse;
 }
 
-export default function ManageLiquidity({ isOpen, onClose, data }: ManageLiquidityProps) {
+export default function ManageLiquidity({ isOpen, onClose, data, poolData }: ManageLiquidityProps) {
   const [tabIndex, setTabIndex] = useState(0);
+  const { balance: lpBalance, refreshBalance } = useCw20UserInfos(data.liquidity_token);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
@@ -53,7 +56,7 @@ export default function ManageLiquidity({ isOpen, onClose, data }: ManageLiquidi
                 <AddLiquidity data={data} onClose={onClose} />
               </TabPanel>
               <TabPanel>
-                <RemoveLiquidity />
+                <RemoveLiquidity poolData={poolData} pairData={data} availableTokens={Number(lpBalance)} />
               </TabPanel>
             </TabPanels>
           </Tabs>

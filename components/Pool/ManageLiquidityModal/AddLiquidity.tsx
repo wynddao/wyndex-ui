@@ -10,7 +10,6 @@ import {
   Flex,
   IconButton,
   Image,
-  Link,
   NumberInput,
   NumberInputField,
   Popover,
@@ -25,13 +24,13 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
-import { CustomHooks } from "../../../state";
+import { CustomHooks, Cw20Selectors, useToast } from "../../../state";
 import { handleChangeColorModeValue } from "../../../utils/theme";
 import { Asset as WyndAsset, PairInfo } from "../../../state/clients/types/WyndexPair.types";
 import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
 
-import { useToast } from "../../../state/hooks";
+import { useAvailableTokens } from "./useAvailableTokens";
 interface inputType {
   id: string;
   value: string;
@@ -58,6 +57,7 @@ interface DataType {
 
 export default function AddLiquidity({ data: pairData, onClose }: { data: PairInfo; onClose: () => void }) {
   const { colorMode } = useColorMode();
+  const [balances, setBalances] = useState<(string | undefined)[]>(["", ""]);
 
   const poolData: DataType[] = pairData.asset_infos.map((asset) => {
     return {
@@ -77,6 +77,9 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
     };
   });
 
+  const { address: walletAddress } = useWallet();
+  const balance = useAvailableTokens(pairData, walletAddress || "");
+  Promise.all(balance).then((res) => setBalances(res));
   const [data, setData] = useState<DataType[]>(poolData);
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
     id: label,
@@ -87,8 +90,6 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
   const [single, setSingle] = useState<singleType>({ selectedIndex: 0, isSingle: false });
   const [openPop, setOpenPop] = useState<popType>({ optionsIndex: [], isOpen: false });
   const { txToast } = useToast();
-
-  const { address: walletAddress } = useWallet();
 
   const doProvideLiquidity = CustomHooks.useCustomProvideLP({
     sender: walletAddress || "",
@@ -162,7 +163,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       _focus={{ outline: "none" }}
                     >
                       <PopoverBody>
-                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name }, i) => (
+                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name, contractAddress }, i) => (
                           <Button
                             key={i}
                             variant="ghost"
@@ -247,11 +248,11 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available&nbsp;
+                        Available {balances[i]}
                         <Text
                           as="span"
                           color={handleChangeColorModeValue(colorMode, "primary.500", "primary.300")}
-                        ></Text>
+                        ></Text>{" "}
                         {name}
                       </Text>
                       <Button
@@ -259,15 +260,18 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                         size="xs"
                         _focus={{ outline: "none" }}
                         onClick={() => {
-                          const getVal = tokenInputValue.map(({ id, value: defaultVal }) => {
-                            if (id === denom) {
-                              return {
-                                id: id,
-                                value: "1",
-                              };
-                            }
-                            return { id: id, value: defaultVal };
-                          });
+                          const getVal = tokenInputValue.map(
+                            ({ id, value: defaultVal, contract: contractDefault }) => {
+                              if (id === denom) {
+                                return {
+                                  id: id,
+                                  value: balances[i] || "0",
+                                  contract: contractAddress || undefined,
+                                };
+                              }
+                              return { id: id, value: defaultVal, contract: contractDefault };
+                            },
+                          );
                           setTokenInputValue(getVal);
                         }}
                       >
@@ -279,7 +283,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       value={tokenInputValue[i].value}
                       bg={handleChangeColorModeValue(colorMode, "whiteAlpha.500", "whiteAlpha.50")}
                       min={0}
-                      max={1001}
+                      max={Number(balances[i])}
                       onChange={(val) => {
                         const getVal = tokenInputValue.map(
                           ({ id, value: defaultVal, contract: contractDefault }) => {

@@ -14,9 +14,13 @@ export class TxError extends Error {
   }
 
   parser() {
+    console.log(this.message);
+    const match = this.re.exec(this.message);
+    if (match != null) {
+      return match[1];
+    }
     if (this.message.includes("Unknown desc ="))
       return this.message.split("Unknown desc =")[1]?.split("[CosmWasm");
-    if (this.message.includes("Failed to retrieve")) return this.message.slice(7);
     return "Something wen't wrong";
   }
 
@@ -24,4 +28,6 @@ export class TxError extends Error {
     this.cause = "contract";
     return msg.split("contract: ")[1];
   }
+
+  private re = /message index: [0-9]: (.+?):/;
 }
