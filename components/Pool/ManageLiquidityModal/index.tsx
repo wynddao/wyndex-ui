@@ -53,10 +53,16 @@ export default function ManageLiquidity({ isOpen, onClose, data, poolData }: Man
             </TabList>
             <TabPanels>
               <TabPanel p={0}>
-                <AddLiquidity data={data} onClose={onClose} />
+                <AddLiquidity data={data} refreshBalance={refreshBalance} onClose={onClose} />
               </TabPanel>
               <TabPanel>
-                <RemoveLiquidity poolData={poolData} pairData={data} availableTokens={Number(lpBalance)} />
+                <RemoveLiquidity
+                  refreshBalance={refreshBalance}
+                  poolData={poolData}
+                  onClose={onClose}
+                  pairData={data}
+                  availableTokens={Number(lpBalance)}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>

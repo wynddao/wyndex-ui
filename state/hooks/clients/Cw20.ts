@@ -29,3 +29,4 @@ const wrapExecuteHook =
 
 export const useAllowance = wrapExecuteHook("allowance");
 export const useSend = wrapExecuteHook("send");
+export const useSendFrom = wrapExecuteHook("sendFrom");

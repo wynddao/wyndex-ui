@@ -30,8 +30,6 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
       flexDirection="column"
       justifyContent="space-between"
       bg={"wynd.base.sidebar"}
-      borderRight="1px"
-      borderRightColor="wynd.neutral.400"
       w={{ base: "full", md: "auto" }}
       pos="fixed"
       h="full"

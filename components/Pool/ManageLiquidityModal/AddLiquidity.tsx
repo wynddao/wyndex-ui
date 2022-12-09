@@ -54,7 +54,15 @@ interface DataType {
   show?: boolean;
 }
 
-export default function AddLiquidity({ data: pairData, onClose }: { data: PairInfo; onClose: () => void }) {
+export default function AddLiquidity({
+  data: pairData,
+  onClose,
+  refreshBalance,
+}: {
+  data: PairInfo;
+  onClose: () => void;
+  refreshBalance: () => void;
+}) {
   const { colorMode } = useColorMode();
   const [balances, setBalances] = useState<(string | undefined)[]>(["", ""]);
 
@@ -121,6 +129,10 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
       assets: assets,
       funds,
     });
+
+    // New balances will not appear until the next block.
+    await new Promise((resolve) => setTimeout(resolve, 6500));
+    refreshBalance();
   };
 
   useEffect(() => {
@@ -248,12 +260,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                     >
                       <Text fontWeight="medium" textAlign="center">
                         Available {balances[i]}
-                        <Text
-                          as="span"
-                          color={"wynd.cyan.500"}
-                        ></Text>{" "}
-
-                        {name}
+                        <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
                         alignSelf="end"

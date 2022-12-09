@@ -14,7 +14,7 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
-import { useToast, WyndexPairHooks } from "../../../state";
+import { Cw20Hooks, useCw20UserInfos, useToast, WyndexPairHooks } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
@@ -24,37 +24,45 @@ export default function RemoveLiquidity({
   availableTokens,
   poolData,
   pairData,
+  onClose,
+  refreshBalance,
 }: {
   availableTokens: number;
   poolData: PoolResponse;
   pairData: PairInfo;
+  onClose: () => void;
+  refreshBalance: () => void;
 }) {
   const [removeValue, setRemoveValue] = useState(35);
   const { address: walletAddress } = useWallet();
-  const doRecieve = WyndexPairHooks.useRecieve({
-    contractAddress: pairData.contract_addr,
+
+  const doSend = Cw20Hooks.useSend({
     sender: walletAddress ?? "",
+    contractAddress: pairData.liquidity_token,
   });
 
   const { txToast } = useToast();
 
   const recieve = async () => {
-    console.log(pairData);
     await txToast(async (): Promise<ExecuteResult> => {
-      const result = await doRecieve({
+      const result = await doSend({
         amount: ((removeValue / 100) * availableTokens).toFixed(0).toString(),
         msg: btoa(`{"withdraw_liquidity": { "assets": ${JSON.stringify(poolData.assets)}}}`),
-        sender: walletAddress || "",
+        contract: pairData.contract_addr,
       });
+
+      onClose();
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
-      // TODO refreshBalance();
+      refreshBalance();
+
       return result;
     });
   };
   return (
     <Box>
       <Text fontSize={{ base: "xl", sm: "xl" }} fontWeight="semibold" textAlign="center">
+        {/* TODO */}
         UJUN-TTOK-LP
       </Text>
       <Text fontSize={{ base: "5xl", sm: "7xl" }} fontWeight="bold" textAlign="center">
