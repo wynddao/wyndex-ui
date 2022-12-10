@@ -16,6 +16,7 @@ import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnboundingsGrid";
 import { ExecuteResult } from "cosmwasm";
 import { useToast } from "../../state/hooks";
+import PendingUnbondingsTable from "./PendingUnbondingsTable";
 
 export default function LiquidityMining({ poolData, pairData }: { poolData: Pair; pairData: PairInfo }) {
   // TODO: Query is missing for stake contract address
@@ -92,7 +93,10 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
               wyndexStake={wyndexStake}
               tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
             />
-
+            <PendingUnbondingsTable
+              stakeAddress={wyndexStake}
+              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+            />
             <StartEarningModal
               doStake={doStake}
               isOpen={isModalOpen}
