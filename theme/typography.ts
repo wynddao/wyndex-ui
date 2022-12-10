@@ -1,5 +1,7 @@
 export const typography = {
   fonts: {
-    brand: `Georgia,Garamond,serif`,
+    heading: `'Barlow', sans-serif`,
+    body: `'Barlow', sans-serif`,
+    brand: `Barlow, sans-serif`,
   },
 };
