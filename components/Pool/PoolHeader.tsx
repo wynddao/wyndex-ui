@@ -18,6 +18,7 @@ import TokenName from "../TokenName";
 import ManageLiquidityModal from "./ManageLiquidityModal";
 import druid from "./assets/druid.png";
 import Image from "next/image";
+import { microdenomToDenom } from "../../utils/tokens";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -31,7 +32,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native_token")) {
       // @ts-ignore
-      return <span key={index}>{assetInfo.native_token}</span>;
+      return <span key={index}>{microdenomToDenom(assetInfo.native_token)}</span>;
     } else {
       // @ts-ignore
       return <TokenName key={index} address={assetInfo.token} />;
