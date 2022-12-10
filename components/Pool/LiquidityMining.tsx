@@ -85,7 +85,8 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
         </Box>
         <UnboundingsGrid stakeAddress={wyndexStake} />
         <BoundingsTable
-          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          tokenSymbol={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
           stakeContract={wyndexStake}
         />
         <PendingBoundingsTable

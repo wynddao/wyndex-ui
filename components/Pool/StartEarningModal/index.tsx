@@ -22,6 +22,7 @@ import {
 import { useState } from "react";
 import { BondingPeriodInfo } from "../../../state/clients/types/WyndexStake.types";
 import { secondsToDays } from "../../../utils/time";
+import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens";
 import RadioCard from "../../RadioCard";
 
 interface StartEarningModalProps {
@@ -35,7 +36,6 @@ interface StartEarningModalProps {
 
 export default function StartEarningModal(props: StartEarningModalProps) {
   const { isOpen, onClose, balance, tokenName, bondingInfos, doStake } = props;
-  const { colorMode } = useColorMode();
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
   const [amount, setAmount] = useState<number>(0);
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -86,10 +86,10 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                 <Text fontWeight="medium" textAlign="center">
                   Available&nbsp;
                   <Text as="span" color={"wynd.cyan.600"}></Text>
-                  <strong>{balance}</strong>
+                  <strong>{microamountToAmount(balance, 6)}</strong>
                 </Text>
                 <Button
-                  onClick={() => setAmount(balance)}
+                  onClick={() => setAmount(Number(microamountToAmount(balance, 6)))}
                   alignSelf="end"
                   size="xs"
                   _focus={{ outline: "none" }}
@@ -142,7 +142,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           </Alert>
           <Box px={{ sm: 12 }} marginY={5}>
             <Button
-              onClick={() => doStake(amount, Number(value))}
+              onClick={() => doStake(Number(amountToMicroamount(amount, 6)), Number(value))}
               isDisabled={amount === 0}
               w="full"
               size="lg"
