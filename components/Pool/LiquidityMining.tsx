@@ -17,6 +17,7 @@ import UnboundingsGrid from "./UnboundingsGrid";
 import { ExecuteResult } from "cosmwasm";
 import { useToast } from "../../state/hooks";
 import PendingUnbondingsTable from "./PendingUnbondingsTable";
+import { microamountToAmount } from "../../utils/tokens";
 
 export default function LiquidityMining({ poolData, pairData }: { poolData: Pair; pairData: PairInfo }) {
   // TODO: Query is missing for stake contract address
@@ -72,10 +73,11 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
                 color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
                 mb={2}
               >
-                Available LP tokens
+                Available LP tokens (<TokenName address={pairData.liquidity_token}></TokenName>)
               </Text>
               <Text fontSize="2xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
-                {lpBalance} <TokenName address={pairData.liquidity_token}></TokenName>
+                {microamountToAmount(lpBalance, 6)}{" "}
+                <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
               </Text>
               <Button onClick={() => setIsModalOpen(true)}>Start Earning</Button>
             </Flex>
@@ -83,16 +85,16 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
         </Box>
         <UnboundingsGrid stakeAddress={wyndexStake} />
         <BoundingsTable
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
           stakeContract={wyndexStake}
         />
         <PendingBoundingsTable
           wyndexStake={wyndexStake}
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
         />
         <PendingUnbondingsTable
           stakeAddress={wyndexStake}
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
         />
         <StartEarningModal
           doStake={doStake}

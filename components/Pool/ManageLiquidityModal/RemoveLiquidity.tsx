@@ -16,6 +16,7 @@ import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { Cw20Hooks, useCw20UserInfos, useToast, WyndexPairHooks } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
+import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import TokenName from "../../TokenName";
 
 const gaps = [25, 50, 75, 100];
@@ -66,23 +67,26 @@ export default function RemoveLiquidity({
         UJUN-TTOK-LP
       </Text>
       <Text fontSize={{ base: "5xl", sm: "7xl" }} fontWeight="bold" textAlign="center">
-        {((removeValue / 100) * availableTokens).toFixed(0)}
+        {Number(microamountToAmount((removeValue / 100) * availableTokens, 6)).toFixed(6)}
       </Text>
       <Flex justify={"space-between"} pb={10}>
         {poolData.assets.map((asset, i) => (
           <Box key={i}>
             <Text>
               ≈
-              {(
-                (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
-                Number(asset.amount)
-              ).toFixed(2)}{" "}
+              {Number(
+                microamountToAmount(
+                  (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
+                    Number(asset.amount),
+                  6,
+                ),
+              ).toFixed(6)}{" "}
               {asset.info.hasOwnProperty("token") ? (
                 //@ts-ignore
-                <TokenName address={asset.info.token} />
+                <TokenName symbol={true} address={asset.info.token} />
               ) : (
                 //@ts-ignore
-                <span>{asset.info.native_token}</span>
+                <span>{microdenomToDenom(asset.info.native_token)}</span>
               )}
             </Text>
           </Box>

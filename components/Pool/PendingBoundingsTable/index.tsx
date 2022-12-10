@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { secondsToDays } from "../../../utils/time";
+import { microamountToAmount } from "../../../utils/tokens";
 import { getPendingRebonding } from "./util";
 
 interface PendingBoundingsTableOptions {
@@ -73,7 +74,7 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
                       return (
                         <Tr key={i}>
                           <Td fontWeight="semibold">
-                            {amount[1]} {tokenName}
+                            {microamountToAmount(amount[1], 6)} {tokenName}
                           </Td>
                           <Td fontWeight="semibold">
                             {new Date(Number(amount[0]) / 1000000).toLocaleDateString()}{" "}

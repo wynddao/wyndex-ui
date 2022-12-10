@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
+import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
@@ -71,7 +72,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                     <TokenName address={asset.info.token} />
                   ) : (
                     // @ts-ignore
-                    asset.info.native_token
+                   microdenomToDenom(asset.info.native_token)
                   )}
                 </Text>
               </Box>
@@ -80,13 +81,13 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
               Total amount
             </Text>
             <Text fontSize="xl" fontWeight="bold" mb={2}>
-              {asset.amount}
+              {microamountToAmount(asset.amount, 6)}
             </Text>
             <Text fontWeight="bold" color={"wynd.neutral.600"}>
               My amount
             </Text>
             <Text fontSize="xl" fontWeight="bold">
-              {(myShare * Number(asset.amount)).toFixed(3)}
+              {microamountToAmount(myShare * Number(asset.amount), 6)}
             </Text>
           </Box>
         ))}

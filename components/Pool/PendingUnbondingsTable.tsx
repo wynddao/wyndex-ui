@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { secondsToDays } from "../../utils/time";
+import { microamountToAmount } from "../../utils/tokens";
 
 interface PendingUnbondingsTableProps {
   stakeAddress: string;
@@ -47,7 +48,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
                 return (
                   <Tr key={i}>
                     <Td fontWeight="semibold">
-                      {amount} {tokenName}
+                      {microamountToAmount(amount, 6)} {tokenName}
                     </Td>
                     <Td fontWeight="semibold">
                       {/*@ts-ignore */}

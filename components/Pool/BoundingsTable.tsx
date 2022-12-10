@@ -18,6 +18,7 @@ import { useState } from "react";
 import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { secondsToDays } from "../../utils/time";
+import { microamountToAmount } from "../../utils/tokens";
 import ManageBoundingsModal from "./ManageBoundingsModal";
 interface BoundingsTableProps {
   readonly stakeContract: string;
@@ -59,7 +60,7 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
                       <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days</Td>
                       <Td fontWeight="semibold">20% @TODO</Td>
                       <Td fontWeight="semibold">
-                        {stake} {tokenName}
+                        {microamountToAmount(stake, 6)} {tokenName}
                       </Td>
                       <Td>
                         <Flex>
@@ -83,7 +84,9 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
                 })
               ) : (
                 <Tr>
-                  <Td fontWeight="semibold" colSpan={4}>You currently have no bondings.</Td>
+                  <Td fontWeight="semibold" colSpan={4}>
+                    You currently have no bondings.
+                  </Td>
                 </Tr>
               )}
             </Tbody>

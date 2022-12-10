@@ -30,6 +30,7 @@ import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
 
 import { useAvailableTokens } from "./useAvailableTokens";
+import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 interface inputType {
   id: string;
   value: string;
@@ -76,10 +77,10 @@ export default function AddLiquidity({
       // @ts-ignore
       name: asset.hasOwnProperty("token") ? (
         // @ts-ignore
-        <TokenName address={asset.token} />
+        <TokenName symbol={true} address={asset.token} />
       ) : (
         // @ts-ignore
-        <span>{asset.native_token}</span>
+        <span>{microdenomToDenom(asset.native_token)}</span>
       ),
     };
   });
@@ -109,7 +110,7 @@ export default function AddLiquidity({
       })
       .map((token): WyndAsset => {
         return {
-          amount: token.value,
+          amount: amountToMicroamount(token.value, 6),
           info: token.contract ? { token: token.contract } : { native_token: token.id },
         };
       });
@@ -117,7 +118,9 @@ export default function AddLiquidity({
       tokenInputValue.find((element) => !element.contract)?.value !== "0"
         ? [
             {
-              amount: tokenInputValue.find((element) => !element.contract)?.value || "1",
+              amount:
+                amountToMicroamount(tokenInputValue.find((element) => !element.contract)?.value || "", 6) ||
+                "1",
               denom: tokenInputValue.find((element) => !element.contract)?.id || "ujunox",
             },
           ]
@@ -259,7 +262,7 @@ export default function AddLiquidity({
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available {balances[i]}
+                        Available {microamountToAmount(balances[i] ?? "", 6)}
                         <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
@@ -272,7 +275,7 @@ export default function AddLiquidity({
                               if (id === denom) {
                                 return {
                                   id: id,
-                                  value: balances[i] || "0",
+                                  value: microamountToAmount(balances[i] ?? "", 6) || "0",
                                   contract: contractAddress || undefined,
                                 };
                               }
