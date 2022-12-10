@@ -14,10 +14,7 @@ interface PoolCatalystProps {
 }
 
 export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps) {
-  const { colorMode } = useColorMode();
   const { address: walletAddress } = useWallet();
-  const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
-
   // TODO: Query is missing for stake contract address
   const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
 
@@ -42,7 +39,15 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
       </Text>
       <SimpleGrid columns={{ md: 2 }} gap={8}>
         {chainData.assets.map((asset, i) => (
-          <Box key={i} borderRadius="xl" bg={"wynd.base.sidebar"} bgImage={"/images/Vector2.png"} bgRepeat={"no-repeat"} bgPos={"right"} p={6}>
+          <Box
+            key={i}
+            borderRadius="xl"
+            bg={"wynd.base.sidebar"}
+            bgImage={"/images/Vector2.png"}
+            bgRepeat={"no-repeat"}
+            bgPos={"right"}
+            p={6}
+          >
             <Flex align="center" mb={4}>
               <Box
                 w={20}
