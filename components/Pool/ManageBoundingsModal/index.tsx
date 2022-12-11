@@ -43,7 +43,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const { address: walletAddress } = useWallet();
   const { colorMode } = useColorMode();
   const [selectedMode, setSelectedMode] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>("0");
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
@@ -127,7 +127,9 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
               <strong>{roundForExecution(Number(microamountToAmount(stake.stake, 6)))}</strong>
             </Text>
             <Button
-              onClick={() => setAmount(roundForExecution(Number(microamountToAmount(stake.stake, 6))))}
+              onClick={() =>
+                setAmount(roundForExecution(Number(microamountToAmount(stake.stake, 6))).toString())
+              }
               alignSelf="end"
               size="xs"
               _focus={{ outline: "none" }}
@@ -141,7 +143,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             min={0}
             value={amount}
             max={roundForExecution(Number(microamountToAmount(stake.stake, 6)))}
-            onChange={(e) => setAmount(Number(e))}
+            onChange={(e) => setAmount(e)}
           >
             <NumberInputField textAlign="end" pr={4} />
           </NumberInput>
@@ -251,7 +253,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       onClose={() => {
         onClose();
         reset();
-        setAmount(0);
+        setAmount("0");
       }}
       isCentered={true}
     >
@@ -282,7 +284,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
                 <Button
                   size="sm"
                   onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
-                  isDisabled={activeStep === 1 && amount === 0}
+                  isDisabled={activeStep === 1 && (Number(amount) === 0 || Number(amountToMicroamount(amount, 6)) > Number(stake.stake)) }
                 >
                   {activeStep === steps.length - 1 ? "Execute" : "Next"}
                 </Button>

@@ -40,6 +40,8 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
         contract: wyndexStake,
         msg: btoa(`{"delegate": { "unbonding_period": ${duration}}}`),
       });
+      setIsModalOpen(false);
+
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshBondings();

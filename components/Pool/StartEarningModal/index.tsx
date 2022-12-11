@@ -37,7 +37,7 @@ interface StartEarningModalProps {
 export default function StartEarningModal(props: StartEarningModalProps) {
   const { isOpen, onClose, balance, tokenName, bondingInfos, doStake } = props;
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>("0");
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "unbondingPeriod",
     onChange: (v) => {
@@ -89,7 +89,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                   <strong>{microamountToAmount(balance, 6)}</strong>
                 </Text>
                 <Button
-                  onClick={() => setAmount(Number(microamountToAmount(balance, 6)))}
+                  onClick={() => setAmount(microamountToAmount(balance, 6))}
                   alignSelf="end"
                   size="xs"
                   _focus={{ outline: "none" }}
@@ -103,7 +103,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                 min={0}
                 value={amount}
                 max={balance}
-                onChange={(e) => setAmount(Number(e))}
+                onChange={(e) => setAmount(e)}
               >
                 <NumberInputField textAlign="end" pr={4} />
               </NumberInput>
@@ -143,7 +143,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           <Box px={{ sm: 12 }} marginY={5}>
             <Button
               onClick={() => doStake(Number(amountToMicroamount(amount, 6)), Number(value))}
-              isDisabled={amount === 0}
+              isDisabled={Number(amountToMicroamount(amount, 6)) <= 0 || Number(amountToMicroamount(amount, 6)) > Number(balance)}
               w="full"
               size="lg"
               h={{ base: 12, sm: 14 }}
