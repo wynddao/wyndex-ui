@@ -319,6 +319,7 @@ export default function AddLiquidity({
           );
         })}
       </Stack>
+      {/*
       <Flex position="relative" justify="end" align="center" fontSize="xl" mb={6}>
         <Checkbox
           isChecked={single.isSingle}
@@ -346,6 +347,7 @@ export default function AddLiquidity({
           </Box>
         </Tooltip>
       </Flex>
+        */}
       <Flex
         flexDirection={{ base: "column", sm: "row" }}
         justify="space-between"
