@@ -55,7 +55,7 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
           <Flex justify={{ md: "space-between" }} flexDirection={{ base: "column", md: "row" }}>
             <Box maxW={{ md: "md", lg: "2xl" }}>
               <Text fontSize="2xl" fontWeight="bold" mb={2}>
-                Liquidity Mining
+                Start WYNNING!
               </Text>
               <Text
                 fontSize="lg"
@@ -79,7 +79,7 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
                 {microamountToAmount(lpBalance, 6)}{" "}
                 <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
               </Text>
-              <Button onClick={() => setIsModalOpen(true)}>Start Earning</Button>
+              <Button onClick={() => setIsModalOpen(true)}>Start WYNNING!</Button>
             </Flex>
           </Flex>
         </Box>

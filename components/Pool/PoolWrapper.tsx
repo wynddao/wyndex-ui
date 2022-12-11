@@ -25,14 +25,14 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     <>
       <PoolHeader chainData={pool} pairData={pair} />
       {walletAddress ? (
-        <LiquidityMining poolData={poolData} pairData={pair} />
-      ) : (
-        <UnboundingsGrid stakeAddress={wyndexStake} />
-      )}
-      {walletAddress ? (
         <PoolCatalyst chainData={pool} pairData={pair} />
       ) : (
         <PoolCatalystSimple chainData={pool} />
+      )}
+      {walletAddress ? (
+        <LiquidityMining poolData={poolData} pairData={pair} />
+      ) : (
+        <UnboundingsGrid stakeAddress={wyndexStake} />
       )}
     </>
   );

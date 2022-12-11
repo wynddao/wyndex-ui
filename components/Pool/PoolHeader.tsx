@@ -64,42 +64,26 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
         <SimpleGrid columns={{ md: 2 }} gap={{ base: 2, md: 4 }} maxW={{ lg: "50%" }}>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"}>
-              Pool Address
-            </Text>
-            <Text fontSize={{ base: "sm", sm: "sm" }} fontWeight="extrabold" wordBreak="break-word">
-              {pairData.contract_addr}
-            </Text>
-          </GridItem>
-          <GridItem>
-            <Text fontWeight="bold" color={"whiteAlpha.600"}>
               Pool Liquidity
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span style={{ color: "red" }}>@TODO</span>
+              <span>23M USDC</span>
             </Text>
           </GridItem>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"}>
-              Liquidity Token Address
+              Swap Fee
             </Text>
-            <Text fontSize={{ base: "sm", sm: "sm" }} fontWeight="extrabold">
-              {pairData.liquidity_token}
+            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
+              <span>0.2%</span>
             </Text>
           </GridItem>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"} mb={1}>
               My Bounded Amount
             </Text>
-            <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="extrabold">
-              <span style={{ color: "red" }}>@TODO</span>
-            </Text>
-          </GridItem>
-          <GridItem>
-            <Text fontWeight="bold" color={"whiteAlpha.600"} mb={1}>
-              Swap Fee
-            </Text>
-            <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="extrabold">
-              @TODO
+            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
+              <span>23M USDC</span>
             </Text>
           </GridItem>
         </SimpleGrid>
@@ -107,8 +91,8 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
           <Image
             src={druid}
             alt="Wynd druid"
-            height={700}
-            style={{ position: "absolute", right: 0, bottom: -340 }}
+            height={600}
+            style={{ position: "absolute", right: 0, bottom: -320 }}
           />
         </Show>
       </Box>
