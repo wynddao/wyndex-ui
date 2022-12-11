@@ -107,7 +107,8 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                       My amount
                     </Text>
                     <Text fontSize="xl" fontWeight="bold">
-                      {microamountToAmount(myShare * Number(asset.amount), 6)}
+                      {"≈ "}
+                      {Number(microamountToAmount(myShare * Number(asset.amount), 6)).toFixed(6)}
                     </Text>
                   </Box>
                 </SimpleGrid>

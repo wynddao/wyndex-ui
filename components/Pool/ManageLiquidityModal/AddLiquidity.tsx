@@ -125,14 +125,14 @@ export default function AddLiquidity({
             },
           ]
         : undefined;
-    onClose();
+
 
     await txToast(doProvideLiquidity, {
       pairContractAddress: pairData.contract_addr,
       assets: assets,
       funds,
     });
-
+    onClose();
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
     refreshBalance();
