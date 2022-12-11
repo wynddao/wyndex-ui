@@ -36,7 +36,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
     let sum = 0;
     pendingUnstaking.map(({ amount, release_at }) => {
       //@ts-ignore
-      if (Number(release_at.at_time) / 1000000 > new Date().getTime()) {
+      if (Number(release_at.at_time) / 1000000 < new Date().getTime()) {
         setClaimable(true);
         sum += Number(amount);
       }
