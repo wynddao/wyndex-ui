@@ -7,7 +7,7 @@ import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
 import PoolCatalystSimple from "./PoolCatalystSimple";
 import PoolHeader from "./PoolHeader";
-import UnboundingsGrid from "./UnboundingsGrid";
+import UnboundingsGrid from "./UnbondingsGrid";
 
 interface PoolWrapperOptions {
   poolData: Pair;

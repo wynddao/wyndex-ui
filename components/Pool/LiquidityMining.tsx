@@ -13,7 +13,7 @@ import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
 import PendingBoundingsTable from "./PendingBoundingsTable";
 import StartEarningModal from "./StartEarningModal";
-import UnboundingsGrid from "./UnboundingsGrid";
+import UnboundingsGrid from "./UnbondingsGrid";
 import { ExecuteResult } from "cosmwasm";
 import { useToast } from "../../state/hooks";
 import PendingUnbondingsTable from "./PendingUnbondingsTable";
