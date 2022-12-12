@@ -1,15 +1,16 @@
 import { selectorFamily } from "recoil";
+import { cosmWasmStargateClientSelector as cosmWasmClient } from "../chain";
 import {
-  ArrayOfAssetValidated,
+  Uint128,
   ConfigResponse,
   CumulativePricesResponse,
   PairInfo,
   PoolResponse,
-  Uint128,
+  ArrayOfAssetValidated,
 } from "../../../clients/types/WyndexPair.types";
 import { WyndexPairClient, WyndexPairQueryClient } from "../../../clients/WyndexPair.client";
-import { signingCosmWasmClientAtom } from "../../atoms";
-import { cosmWasmClientSelector } from "../chain";
+import { signingCosmWasmStargateClientAtom } from "../../atoms";
+
 type QueryClientParams = {
   contractAddress: string;
 };
@@ -18,7 +19,7 @@ export const queryClient = selectorFamily<WyndexPairQueryClient, QueryClientPara
   get:
     ({ contractAddress }) =>
     ({ get }) => {
-      const client = get(cosmWasmClientSelector);
+      const client = get(cosmWasmClient);
       return new WyndexPairQueryClient(client, contractAddress);
     },
 });
@@ -33,7 +34,7 @@ export const executeClient = selectorFamily<WyndexPairClient | undefined, Execut
   get:
     ({ contractAddress, sender }) =>
     ({ get }) => {
-      const client = get(signingCosmWasmClientAtom);
+      const client = get(signingCosmWasmStargateClientAtom);
       if (!client) return;
       return new WyndexPairClient(client, sender, contractAddress);
     },
@@ -96,7 +97,6 @@ export const shareSelector = selectorFamily<
       return await client.share(...params);
     },
 });
-
 export const cumulativePricesSelector = selectorFamily<
   CumulativePricesResponse,
   QueryClientParams & {

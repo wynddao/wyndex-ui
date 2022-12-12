@@ -1,6 +1,6 @@
 import { selectorFamily } from "recoil";
 import { CustomClient } from "../../../clients/Custom.client";
-import { signingCosmWasmClientAtom } from "../../atoms";
+import { signingCosmWasmStargateClientAtom } from "../../atoms";
 
 export type ExecuteClientParams = {
   sender: string;
@@ -10,7 +10,7 @@ export const executeClient = selectorFamily<CustomClient | undefined, ExecuteCli
   get:
     ({ sender }) =>
     ({ get }) => {
-      const client = get(signingCosmWasmClientAtom);
+      const client = get(signingCosmWasmStargateClientAtom);
       if (!client) return;
       //@ts-ignore
       return new CustomClient(client, sender);
