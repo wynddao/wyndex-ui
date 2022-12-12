@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { secondsToDays } from "../../../utils/time";
+import { microamountToAmount } from "../../../utils/tokens";
 import { getPendingRebonding } from "./util";
 
 interface PendingBoundingsTableOptions {
@@ -28,12 +29,20 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
   const { address: walletAddress } = useWallet();
 
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
+  const [hasAnyRebondings, setHasAnyRebondings] = useState<boolean>(false);
 
   useEffect(() => {
     const pendingRebonding = infos.map(async (info) => {
       return await getPendingRebonding(walletAddress || "", info.unbonding_period, wyndexStake);
     });
-    Promise.all(pendingRebonding).then((res) => setRebondings(res));
+    Promise.all(pendingRebonding).then((res) => {
+      const hasRebonded = res.find((e) => {
+        return e.locked_tokens.length > 0;
+      });
+
+      setHasAnyRebondings(hasRebonded ? true : false);
+      setRebondings(res);
+    });
   }, [infos, walletAddress, wyndexStake]);
 
   return (
@@ -60,24 +69,35 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
             {rebondings &&
               rebondings.map((period, x) =>
                 period.locked_tokens && period.locked_tokens.length > 0 ? (
-                  period.locked_tokens.map((amount: string[], i: number) => (
-                    <Tr key={i}>
-                      <Td fontWeight="semibold">
-                        {amount[1]} {tokenName}
-                      </Td>
-                      <Td fontWeight="semibold">
-                        {new Date(Number(amount[0]) / 1000000).toLocaleDateString()}{" "}
-                        {new Date(Number(amount[0]) / 1000000).toLocaleTimeString()}
-                      </Td>
-                      <Td fontWeight="semibold">
-                        Rebonded down to {secondsToDays(infos[x].unbonding_period)} days
-                      </Td>
-                    </Tr>
-                  ))
+                  period.locked_tokens.map((amount: string[], i: number) => {
+                    if (new Date().getTime() < Number(amount[0]) / 1000000) {
+                      return (
+                        <Tr key={i}>
+                          <Td fontWeight="semibold">
+                            {microamountToAmount(amount[1], 6)} {tokenName}
+                          </Td>
+                          <Td fontWeight="semibold">
+                            {new Date(Number(amount[0]) / 1000000).toLocaleDateString()}{" "}
+                            {new Date(Number(amount[0]) / 1000000).toLocaleTimeString()}
+                          </Td>
+                          <Td fontWeight="semibold">
+                            Rebonded down to {secondsToDays(infos[x].unbonding_period)} days
+                          </Td>
+                        </Tr>
+                      );
+                    }
+                  })
                 ) : (
                   <></>
                 ),
               )}
+            {!hasAnyRebondings && (
+              <Tr>
+                <Td fontWeight="semibold" colSpan={4}>
+                  You currently have no pending rebondings.
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
       </TableContainer>

@@ -10,7 +10,6 @@ import {
   Flex,
   IconButton,
   Image,
-  Link,
   NumberInput,
   NumberInputField,
   Popover,
@@ -25,12 +24,13 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
-import { CustomHooks } from "../../../state";
+import { CustomHooks, useToast } from "../../../state";
 import { Asset as WyndAsset, PairInfo } from "../../../state/clients/types/WyndexPair.types";
 import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
 
-import { useToast } from "../../../state/hooks";
+import { useAvailableTokens } from "./useAvailableTokens";
+import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 interface inputType {
   id: string;
   value: string;
@@ -55,8 +55,17 @@ interface DataType {
   show?: boolean;
 }
 
-export default function AddLiquidity({ data: pairData, onClose }: { data: PairInfo; onClose: () => void }) {
+export default function AddLiquidity({
+  data: pairData,
+  onClose,
+  refreshBalance,
+}: {
+  data: PairInfo;
+  onClose: () => void;
+  refreshBalance: () => void;
+}) {
   const { colorMode } = useColorMode();
+  const [balances, setBalances] = useState<(string | undefined)[]>(["", ""]);
 
   const poolData: DataType[] = pairData.asset_infos.map((asset) => {
     return {
@@ -68,14 +77,17 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
       // @ts-ignore
       name: asset.hasOwnProperty("token") ? (
         // @ts-ignore
-        <TokenName address={asset.token} />
+        <TokenName symbol={true} address={asset.token} />
       ) : (
         // @ts-ignore
-        <span>{asset.native_token}</span>
+        <span>{microdenomToDenom(asset.native_token)}</span>
       ),
     };
   });
 
+  const { address: walletAddress } = useWallet();
+  const balance = useAvailableTokens(pairData, walletAddress || "");
+  Promise.all(balance).then((res) => setBalances(res));
   const [data, setData] = useState<DataType[]>(poolData);
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
     id: label,
@@ -86,8 +98,6 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
   const [single, setSingle] = useState<singleType>({ selectedIndex: 0, isSingle: false });
   const [openPop, setOpenPop] = useState<popType>({ optionsIndex: [], isOpen: false });
   const { txToast } = useToast();
-
-  const { address: walletAddress } = useWallet();
 
   const doProvideLiquidity = CustomHooks.useCustomProvideLP({
     sender: walletAddress || "",
@@ -100,7 +110,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
       })
       .map((token): WyndAsset => {
         return {
-          amount: token.value,
+          amount: amountToMicroamount(token.value, 6),
           info: token.contract ? { token: token.contract } : { native_token: token.id },
         };
       });
@@ -108,18 +118,24 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
       tokenInputValue.find((element) => !element.contract)?.value !== "0"
         ? [
             {
-              amount: tokenInputValue.find((element) => !element.contract)?.value || "1",
+              amount:
+                amountToMicroamount(tokenInputValue.find((element) => !element.contract)?.value || "", 6) ||
+                "1",
               denom: tokenInputValue.find((element) => !element.contract)?.id || "ujunox",
             },
           ]
         : undefined;
-    onClose();
+
 
     await txToast(doProvideLiquidity, {
       pairContractAddress: pairData.contract_addr,
       assets: assets,
       funds,
     });
+    onClose();
+    // New balances will not appear until the next block.
+    await new Promise((resolve) => setTimeout(resolve, 6500));
+    refreshBalance();
   };
 
   useEffect(() => {
@@ -161,7 +177,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       _focus={{ outline: "none" }}
                     >
                       <PopoverBody>
-                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name }, i) => (
+                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name, contractAddress }, i) => (
                           <Button
                             key={i}
                             variant="ghost"
@@ -246,24 +262,26 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available&nbsp;
-                        <Text as="span" color={"wynd.cyan.500"}></Text>
-                        {name}
+                        Available {microamountToAmount(balances[i] ?? "", 6)}
+                        <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
                         alignSelf="end"
                         size="xs"
                         _focus={{ outline: "none" }}
                         onClick={() => {
-                          const getVal = tokenInputValue.map(({ id, value: defaultVal }) => {
-                            if (id === denom) {
-                              return {
-                                id: id,
-                                value: "1",
-                              };
-                            }
-                            return { id: id, value: defaultVal };
-                          });
+                          const getVal = tokenInputValue.map(
+                            ({ id, value: defaultVal, contract: contractDefault }) => {
+                              if (id === denom) {
+                                return {
+                                  id: id,
+                                  value: microamountToAmount(balances[i] ?? "", 6) || "0",
+                                  contract: contractAddress || undefined,
+                                };
+                              }
+                              return { id: id, value: defaultVal, contract: contractDefault };
+                            },
+                          );
                           setTokenInputValue(getVal);
                         }}
                       >
@@ -275,7 +293,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
                       value={tokenInputValue[i].value}
                       bg={"wynd.alpha.200"}
                       min={0}
-                      max={1001}
+                      max={Number(balances[i])}
                       onChange={(val) => {
                         const getVal = tokenInputValue.map(
                           ({ id, value: defaultVal, contract: contractDefault }) => {
@@ -301,6 +319,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
           );
         })}
       </Stack>
+      {/*
       <Flex position="relative" justify="end" align="center" fontSize="xl" mb={6}>
         <Checkbox
           isChecked={single.isSingle}
@@ -328,6 +347,7 @@ export default function AddLiquidity({ data: pairData, onClose }: { data: PairIn
           </Box>
         </Tooltip>
       </Flex>
+        */}
       <Flex
         flexDirection={{ base: "column", sm: "row" }}
         justify="space-between"

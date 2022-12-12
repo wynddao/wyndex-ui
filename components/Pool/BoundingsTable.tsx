@@ -18,14 +18,16 @@ import { useState } from "react";
 import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { secondsToDays } from "../../utils/time";
+import { microamountToAmount } from "../../utils/tokens";
 import ManageBoundingsModal from "./ManageBoundingsModal";
 interface BoundingsTableProps {
   readonly stakeContract: string;
   tokenName: any;
+  tokenSymbol: any;
 }
 
-export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTableProps) {
-  const tableHeaders = ["Unbonding Duration", "Current APR", "Amount", "Action"];
+export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }: BoundingsTableProps) {
+  const tableHeaders = ["Bonded Tier", "Current APR", "Amount", "Action"];
   const { address } = useWallet();
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(stakeContract, address);
@@ -38,7 +40,7 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
     <>
       <Box p={4}>
         <Text fontSize="xl" fontWeight="bold" mb={4}>
-          My Boundings
+          My Bonded Liquidity
         </Text>
         <TableContainer>
           <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
@@ -52,34 +54,42 @@ export default function BoundingsTable({ stakeContract, tokenName }: BoundingsTa
               </Tr>
             </Thead>
             <Tbody>
-              {allStakes.map(({ stake, unbonding_period }, i) => {
-                return (
-                  <Tr key={i}>
-                    <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days</Td>
-                    <Td fontWeight="semibold">20% @TODO</Td>
-                    <Td fontWeight="semibold">
-                      {stake} {tokenName}
-                    </Td>
-                    <Td>
-                      <Flex>
-                        <Button
-                          onClick={() => {
-                            setModalOpen(true);
-                            setActiveStake(allStakes[i]);
-                            setPrevDuration(i - 1 in allStakes ? allStakes[i - 1] : undefined);
-                            setNextDuration(i + 1 in allStakes ? allStakes[i + 1] : undefined);
-                          }}
-                          variant="solid"
-                          color="orange.300"
-                          marginRight={3}
-                        >
-                          Manage
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                );
-              })}
+              {allStakes.length > 0 ? (
+                allStakes.map(({ stake, unbonding_period }, i) => {
+                  return (
+                    <Tr key={i}>
+                      <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days Unbonding</Td>
+                      <Td fontWeight="semibold">20% @TODO</Td>
+                      <Td fontWeight="semibold">
+                        {microamountToAmount(stake, 6)} {tokenSymbol}
+                      </Td>
+                      <Td>
+                        <Flex>
+                          <Button
+                            onClick={() => {
+                              setModalOpen(true);
+                              setActiveStake(allStakes[i]);
+                              setPrevDuration(i - 1 in allStakes ? allStakes[i - 1] : undefined);
+                              setNextDuration(i + 1 in allStakes ? allStakes[i + 1] : undefined);
+                            }}
+                            variant="solid"
+                            color="orange.300"
+                            marginRight={3}
+                          >
+                            Manage
+                          </Button>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                  );
+                })
+              ) : (
+                <Tr>
+                  <Td fontWeight="semibold" colSpan={4}>
+                    You currently have no bondings.
+                  </Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>

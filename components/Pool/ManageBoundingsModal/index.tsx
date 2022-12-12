@@ -25,6 +25,7 @@ import { useToast } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { renderUnboundingText } from "../../../utils/text";
 import { secondsToDays } from "../../../utils/time";
+import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens";
 import RadioCard from "../../RadioCard";
 
 interface ManageBoundingsModalProps {
@@ -42,7 +43,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const { address: walletAddress } = useWallet();
   const { colorMode } = useColorMode();
   const [selectedMode, setSelectedMode] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>("0");
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
@@ -56,6 +57,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   });
   const group = getRootProps();
   const { txToast } = useToast();
+  const roundForExecution = (N: number): number => Math.floor(N * 10000) / 10000;
 
   const ChooseModeContent = () => {
     const mode = [];
@@ -122,10 +124,12 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             <Text fontWeight="medium" textAlign="center">
               Available&nbsp;
               <Text as="span" color={"wynd.cyan.700"}></Text>
-              <strong>{stake.stake}</strong>
+              <strong>{roundForExecution(Number(microamountToAmount(stake.stake, 6)))}</strong>
             </Text>
             <Button
-              onClick={() => setAmount(Number(stake.stake))}
+              onClick={() =>
+                setAmount(roundForExecution(Number(microamountToAmount(stake.stake, 6))).toString())
+              }
               alignSelf="end"
               size="xs"
               _focus={{ outline: "none" }}
@@ -138,8 +142,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bg={"wynd.alpha.50"}
             min={0}
             value={amount}
-            max={Number(stake.stake)}
-            onChange={(e) => setAmount(Number(e))}
+            max={roundForExecution(Number(microamountToAmount(stake.stake, 6)))}
+            onChange={(e) => setAmount(e)}
           >
             <NumberInputField textAlign="end" pr={4} />
           </NumberInput>
@@ -200,13 +204,18 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   });
 
   const doExecute = async () => {
+    console.log({
+      bondFrom: stake.unbonding_period,
+      bondTo: lowerDuration?.unbonding_period || 0,
+      tokens: Number(amountToMicroamount(amount, 6)).toFixed(5).toString(),
+    });
     switch (selectedMode) {
       case "bondDown": {
         txToast(async () => {
           await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: lowerDuration?.unbonding_period || 0,
-            tokens: amount.toString(),
+            tokens: amountToMicroamount(amount, 6),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
@@ -218,7 +227,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: higherDuration?.unbonding_period || 0,
-            tokens: amount.toString(),
+            tokens: amountToMicroamount(amount, 6),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
@@ -228,7 +237,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "unstake": {
         txToast(async () => {
           await doUnbond({
-            tokens: amount.toString(),
+            tokens: amountToMicroamount(amount, 6),
             unbondingPeriod: stake.unbonding_period,
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
@@ -244,7 +253,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       onClose={() => {
         onClose();
         reset();
-        setAmount(0);
+        setAmount("0");
       }}
       isCentered={true}
     >
@@ -275,7 +284,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
                 <Button
                   size="sm"
                   onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
-                  isDisabled={activeStep === 1 && amount === 0}
+                  isDisabled={activeStep === 1 && (Number(amount) === 0 || Number(amountToMicroamount(amount, 6)) > Number(stake.stake)) }
                 >
                   {activeStep === steps.length - 1 ? "Execute" : "Next"}
                 </Button>

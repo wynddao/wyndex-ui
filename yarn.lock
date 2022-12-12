@@ -1512,6 +1512,11 @@
   dependencies:
     "@floating-ui/core" "^1.0.4"
 
+"@fontsource/barlow@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/barlow/-/barlow-4.5.9.tgz#e3b18084e839c1c0a5ac30f7fef6737cd720f6df"
+  integrity sha512-Nzg7bpw6raZtNdHwvLIt6ue/Gas/tpsNyf7zrRvVdV38iOrtOip2aabO3lexEyiYkKjKrlqAjEyAtTrC2XfkRg==
+
 "@hookform/resolvers@^2.9.10":
   version "2.9.10"
   resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.9.10.tgz#e7e88942ee34e97b7bc937b0be4694194c9cd420"

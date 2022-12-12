@@ -13,9 +13,11 @@ import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
 import PendingBoundingsTable from "./PendingBoundingsTable";
 import StartEarningModal from "./StartEarningModal";
-import UnboundingsGrid from "./UnboundingsGrid";
+import UnboundingsGrid from "./UnbondingsGrid";
 import { ExecuteResult } from "cosmwasm";
 import { useToast } from "../../state/hooks";
+import PendingUnbondingsTable from "./PendingUnbondingsTable";
+import { microamountToAmount } from "../../utils/tokens";
 
 export default function LiquidityMining({ poolData, pairData }: { poolData: Pair; pairData: PairInfo }) {
   // TODO: Query is missing for stake contract address
@@ -38,6 +40,8 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
         contract: wyndexStake,
         msg: btoa(`{"delegate": { "unbonding_period": ${duration}}}`),
       });
+      setIsModalOpen(false);
+
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshBondings();
@@ -53,7 +57,7 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
           <Flex justify={{ md: "space-between" }} flexDirection={{ base: "column", md: "row" }}>
             <Box maxW={{ md: "md", lg: "2xl" }}>
               <Text fontSize="2xl" fontWeight="bold" mb={2}>
-                Liquidity Mining
+                Start WYNNING!
               </Text>
               <Text
                 fontSize="lg"
@@ -71,38 +75,38 @@ export default function LiquidityMining({ poolData, pairData }: { poolData: Pair
                 color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
                 mb={2}
               >
-                Available LP tokens
+                Available LP tokens (<TokenName address={pairData.liquidity_token}></TokenName>)
               </Text>
               <Text fontSize="2xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
-                {lpBalance} <TokenName address={pairData.liquidity_token}></TokenName>
+                {microamountToAmount(lpBalance, 6)}{" "}
+                <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
               </Text>
-              <Button onClick={() => setIsModalOpen(true)}>Start Earning</Button>
+              <Button onClick={() => setIsModalOpen(true)}>Start WYNNING!</Button>
             </Flex>
           </Flex>
         </Box>
-
-        {walletAddress ? (
-          <>
-            <UnboundingsGrid infos={infos} />
-            <BoundingsTable
-              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-              stakeContract={wyndexStake}
-            />
-            <PendingBoundingsTable
-              wyndexStake={wyndexStake}
-              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-            />
-
-            <StartEarningModal
-              doStake={doStake}
-              isOpen={isModalOpen}
-              balance={Number(lpBalance)}
-              tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-              onClose={() => setIsModalOpen(false)}
-              bondingInfos={infos}
-            />
-          </>
-        ) : null}
+        <UnboundingsGrid stakeAddress={wyndexStake} />
+        <BoundingsTable
+          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          tokenSymbol={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+          stakeContract={wyndexStake}
+        />
+        <PendingBoundingsTable
+          wyndexStake={wyndexStake}
+          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+        />
+        <PendingUnbondingsTable
+          stakeAddress={wyndexStake}
+          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+        />
+        <StartEarningModal
+          doStake={doStake}
+          isOpen={isModalOpen}
+          balance={Number(lpBalance)}
+          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          onClose={() => setIsModalOpen(false)}
+          bondingInfos={infos}
+        />
       </Box>
     </>
   );

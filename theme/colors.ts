@@ -135,8 +135,9 @@ export const darkColors = {
       50: "#17171780",
     },
     base: {
-      background: "#1A1A1A",
-      subBg: "#262626",
+      background: "#2F2C71",
+      subBg: "#131222",
+      sidebar: "#100B16",
       text: "#F2F2F2",
     },
     black: "#FFFFFF",
