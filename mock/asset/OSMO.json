@@ -1,0 +1,8 @@
+{
+  "name": "OSMO",
+  "tokenType": "native",
+  "img": "https://app.osmosis.zone/_next/image?url=%2Ftokens%2Fosmo.svg&w=64&q=75",
+  "denom": "uosmo",
+  "decimals": 6,
+  "chain": "osmo-test-4"
+}
