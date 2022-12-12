@@ -43,7 +43,7 @@ export default function Sidebar({ children }: SidebarProps) {
         </DrawerContent>
       </Drawer>
       <Hamburguer display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60, xl: 280 }} paddingLeft="4">
+      <Box ml={{ base: 0, md: 60, xl: 280 }} paddingX="4">
         {children}
       </Box>
     </Box>
