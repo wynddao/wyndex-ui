@@ -31,16 +31,60 @@ export const getAsset = async (asset: string): Promise<Asset> => {
 };
 
 /**
- * Get balance for all coins from address
+ * Get balance for all IBC coins from address
  *
  * @param address
  * @returns readonly Coin[]
  */
-export const getBalances = async (address: string): Promise<readonly Coin[]> => {
-  return fetch(REST_API_ENDPOINT + "/balances/" + address)
+export const getIbcBalances = async (address: string): Promise<readonly Coin[]> => {
+  return fetch(REST_API_ENDPOINT + "/balances/ibc/" + address)
     .then((res) => res.json())
     .then((res) => {
       return res as readonly Coin[];
+    });
+};
+
+/**
+ * Get balance for all CW20 coins from address
+ *
+ * @param address
+ * @returns readonly Coin[]
+ */
+export const getCw20Balances = async (address: string): Promise<readonly Coin[]> => {
+  return fetch(REST_API_ENDPOINT + "/balances/cw20/" + address)
+    .then((res) => res.json())
+    .then((res) => {
+      return res as readonly Coin[];
+    });
+};
+
+/**
+ * Get IBC balance from address and coinName
+ *
+ * @param address
+ * @param coinName
+ * @returns Coin
+ */
+export const getIbcBalance = async (address: string, coinName: string): Promise<Coin> => {
+  return fetch(REST_API_ENDPOINT + "/balance/" + address + "/ibc/" + coinName)
+    .then((res) => res.json())
+    .then((res) => {
+      return res as Coin;
+    });
+};
+
+/**
+ * Get native balance from address and coinName
+ *
+ * @param address
+ * @param coinName
+ * @returns Coin
+ */
+export const getNativeBalance = async (address: string, coinName: string): Promise<Coin> => {
+  return fetch(REST_API_ENDPOINT + "/balance/" + address + "/native/" + coinName)
+    .then((res) => res.json())
+    .then((res) => {
+      return res as Coin;
     });
 };
 
