@@ -2,21 +2,21 @@
 
 import { Box, Divider, Flex, Grid, GridItem, Image, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import Link from "next/link";
-
-import { Pair } from "../../utils/types";
+import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
+import { microdenomToDenom } from "../../utils/tokens";
+import TokenName from "../TokenName";
 
 interface PoolsCardProps {
-  readonly poolsData: readonly Pair[];
+  readonly poolsData: readonly PairInfo[];
 }
 
 export default function PoolsCard({ poolsData }: PoolsCardProps) {
-  const { colorMode } = useColorMode();
-
+  console.log(poolsData);
   return (
     <SimpleGrid columns={{ sm: 2, lg: 4 }} gap={4} mb={8}>
-      {poolsData.map(({ id, apr, fee, tokens, contractAddress }, index) => {
+      {poolsData.map((pool, index) => {
         return (
-          <Link key={index} href={`/pools/${contractAddress}`}>
+          <Link key={index} href={`/pools/${pool.contract_addr}`}>
             <Box
               borderRadius="lg"
               border="1px solid"
@@ -41,7 +41,8 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     overflow="hidden"
                     p={0.5}
                   >
-                    <Image src={tokens[0].img} alt={tokens[0].name} />
+                    {/* TODO */}
+                    <Image src="" alt="" />
                   </Box>
                   <Box
                     position="absolute"
@@ -55,12 +56,33 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     overflow="hidden"
                     p={0.5}
                   >
-                    <Image src={tokens[1].img} alt={tokens[1].name} />
+                    {/* TODO */}
+                    <Image src="" alt="" />
                   </Box>
                 </Flex>
                 <Flex flexDirection="column" justify="center">
                   <Text fontSize="xl" fontWeight="extrabold">
-                    Pools #{index}
+                    {pool.asset_infos.map((assetInfo, index) => {
+                      const divider = index === 0 ? " / " : null;
+
+                      if (assetInfo.hasOwnProperty("native_token")) {
+                        return (
+                          <span key={index}>
+                            {/* @ts-ignore */}
+                            {microdenomToDenom(assetInfo.native_token)}
+                            {divider}
+                          </span>
+                        );
+                      } else {
+                        return (
+                          <span key={index}>
+                            {/* @ts-ignore */}
+                            <TokenName address={assetInfo.token} />
+                            {divider}
+                          </span>
+                        );
+                      }
+                    })}
                   </Text>
                   <Text fontWeight="bold" color={"wynd.neutral.600"} wordBreak="break-word"></Text>
                 </Flex>
@@ -71,7 +93,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     APR
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
-                    {apr * 100} %
+                    TODO
                   </Text>
                 </GridItem>
                 <GridItem>
@@ -79,7 +101,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     Fee
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
-                    {fee * 100} %
+                    TODO
                   </Text>
                 </GridItem>
                 <GridItem colSpan={{ lg: 2 }}>
@@ -90,20 +112,19 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     Liquidity
                   </Text>
                   <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
-                    {tokens[0].liquidity?.amount} {tokens[0].denom} <br />
-                    {tokens[1].liquidity?.amount} {tokens[1].denom}
+                    TODO <br />
+                    TODO
                   </Text>
                 </GridItem>
                 <GridItem>
                   <Text fontWeight="semibold" color={"wynd.neutral.600"}>
                     Shares
                   </Text>
-                  {tokens[0].liquidity && tokens[1].liquidity && (
-                    <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
-                      {tokens[0].liquidity?.shares * 100} %<br />
-                      {tokens[1].liquidity?.shares * 100} %
-                    </Text>
-                  )}
+                  <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
+                    TODO
+                    <br />
+                    TODO%
+                  </Text>
                 </GridItem>
               </Grid>
             </Box>

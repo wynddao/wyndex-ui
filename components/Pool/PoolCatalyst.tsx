@@ -17,8 +17,7 @@ interface PoolCatalystProps {
 
 export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps) {
   const { address: walletAddress } = useWallet();
-  // TODO: Query is missing for stake contract address
-  const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
+  const wyndexStake = pairData.staking_addr;
 
   const [show, setShow] = useState<boolean>(true);
 

@@ -1,6 +1,7 @@
 import { useWallet } from "@cosmos-kit/react";
 import { usePairInfos, usePoolInfos } from "../../state";
 import { AssetInfo } from "../../state/clients/types/WyndexFactory.types";
+import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { getAssetInfo } from "../../utils/assets";
 import { Pair } from "../../utils/types";
 import LiquidityMining from "./LiquidityMining";
@@ -10,30 +11,23 @@ import PoolHeader from "./PoolHeader";
 import UnboundingsGrid from "./UnbondingsGrid";
 
 interface PoolWrapperOptions {
-  poolData: Pair;
+  poolData: PoolResponse;
 }
 
 export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
-  const assetInfo: AssetInfo[] = [getAssetInfo(poolData.tokens[0]), getAssetInfo(poolData.tokens[1])];
+  const assetInfo = [poolData.assets[0].info, poolData.assets[1].info];
   const { address: walletAddress } = useWallet();
   const { pair } = usePairInfos(assetInfo);
-  const { pool } = usePoolInfos(pair.contract_addr);
-  // TODO: Query is missing for stake contract address
-  const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
 
   return (
     <>
-      <PoolHeader chainData={pool} pairData={pair} />
+      <PoolHeader walletAddress={walletAddress || ""} chainData={poolData} pairData={pair} />
       {walletAddress ? (
-        <PoolCatalyst chainData={pool} pairData={pair} />
+        <PoolCatalyst chainData={poolData} pairData={pair} />
       ) : (
-        <PoolCatalystSimple chainData={pool} />
+        <PoolCatalystSimple chainData={poolData} />
       )}
-      {walletAddress ? (
-        <LiquidityMining poolData={poolData} pairData={pair} />
-      ) : (
-        <UnboundingsGrid stakeAddress={wyndexStake} />
-      )}
+      {walletAddress ? <LiquidityMining pairData={pair} /> : <UnboundingsGrid stakeAddress={pair.staking_addr} />}
     </>
   );
 }
