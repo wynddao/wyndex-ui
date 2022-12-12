@@ -8,6 +8,7 @@ import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
+import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
@@ -78,8 +79,12 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                         p={0.5}
                         mr={4}
                       >
-                        {/* TODO */}
-                        <Image alt="Token 1 logo" src="https://via.placeholder.com/300" />
+                        <AssetImage
+                          asset={
+                            //  @ts-ignore
+                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native_token
+                          }
+                        />
                       </Box>
                       <Box>
                         <Text fontSize="3xl" fontWeight="extrabold"></Text>

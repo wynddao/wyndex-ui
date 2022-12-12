@@ -32,6 +32,7 @@ import TokenName from "../../TokenName";
 import { useAvailableTokens } from "./useAvailableTokens";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { getNativeTokenBalance } from "../../../utils/wallet";
+import AssetImage from "../../AssetImage";
 interface inputType {
   id: string;
   value: string;
@@ -230,7 +231,7 @@ export default function AddLiquidity({
                   gap={4}
                 >
                   <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
-                    <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
+                    <AssetImage asset={denom} width={12} mr={{ base: 3, sm: 4 }} />
                     <Flex
                       position="relative"
                       align="center"

@@ -4,6 +4,7 @@ import { Box, Divider, Flex, Grid, GridItem, Image, SimpleGrid, Text, useColorMo
 import Link from "next/link";
 import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
 import { microdenomToDenom } from "../../utils/tokens";
+import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 
 interface PoolsCardProps {
@@ -41,8 +42,15 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     overflow="hidden"
                     p={0.5}
                   >
-                    {/* TODO */}
-                    <Image src="" alt="" />
+                    <AssetImage
+                      asset={
+                        pool.asset_infos[0].hasOwnProperty("token")
+                          ? //  @ts-ignore
+                            pool.asset_infos[0].token
+                          : //  @ts-ignore
+                            pool.asset_infos[0].native_token
+                      }
+                    />
                   </Box>
                   <Box
                     position="absolute"
@@ -56,8 +64,15 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     overflow="hidden"
                     p={0.5}
                   >
-                    {/* TODO */}
-                    <Image src="" alt="" />
+                    <AssetImage
+                      asset={
+                        pool.asset_infos[1].hasOwnProperty("token")
+                          ? //  @ts-ignore
+                            pool.asset_infos[1].token
+                          : //  @ts-ignore
+                            pool.asset_infos[1].native_token
+                      }
+                    />
                   </Box>
                 </Flex>
                 <Flex flexDirection="column" justify="center">
