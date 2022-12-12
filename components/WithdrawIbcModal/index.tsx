@@ -23,12 +23,13 @@ import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilState } from "recoil";
 import { withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { getAsset, getBalances } from "../../utils";
+import { getAsset, getIbcBalance, getNativeBalance } from "../../utils";
 
 interface fromTokenType {
   name: string;
   address: string;
   availableBalance: string;
+  nativeBalance: string;
 }
 
 interface toTokenType {
@@ -44,6 +45,7 @@ export default function WithdrawIbcModal() {
     name: "",
     address: "",
     availableBalance: "",
+    nativeBalance: "",
   });
   const [toToken, setToToken] = useState<toTokenType>({
     name: "",
@@ -89,13 +91,14 @@ export default function WithdrawIbcModal() {
       if (!withdrawIbcModalOpen.asset || !address) return;
 
       const asset = await getAsset(withdrawIbcModalOpen.asset);
-      const balances = await getBalances(address);
-      const balance = balances.find((coin) => coin.denom === asset.denom)?.amount || "0";
+      const nativeBalance = await getNativeBalance(address, asset.name);
+      const ibcBalance = await getIbcBalance(address, asset.name);
 
       const fromToken: fromTokenType = {
         name: asset.name,
         address: asset.contractAddress || "",
-        availableBalance: balance,
+        availableBalance: ibcBalance.amount,
+        nativeBalance: nativeBalance.amount,
       };
       setFromToken(fromToken);
     })();
