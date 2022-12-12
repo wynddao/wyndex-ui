@@ -60,7 +60,7 @@ export default function Home() {
     if (fromItem && toItem) {
       const operation: SwapOperation[] = [
         {
-          astro_swap: {
+          wyndex_swap: {
             ask_asset_info: getAssetInfo(toItem),
             offer_asset_info: getAssetInfo(fromItem),
           },

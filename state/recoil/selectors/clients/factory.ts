@@ -1,15 +1,16 @@
 import { selectorFamily } from "recoil";
-import { WyndexFactoryClient, WyndexFactoryQueryClient } from "../../../clients";
+import { cosmWasmStargateClientSelector as cosmWasmClient } from "../chain";
 import {
-  ArrayOfAddr,
   ArrayOfPairType,
   ConfigResponse,
   FeeInfoResponse,
   PairInfo,
   PairsResponse,
+  ArrayOfAddr,
+  Boolean,
 } from "../../../clients/types/WyndexFactory.types";
+import { WyndexFactoryClient, WyndexFactoryQueryClient } from "../../../clients/WyndexFactory.client";
 import { signingCosmWasmStargateClientAtom } from "../../atoms";
-import { cosmWasmStargateClientSelector } from "../chain";
 type QueryClientParams = {
   contractAddress: string;
 };
@@ -18,7 +19,7 @@ export const queryClient = selectorFamily<WyndexFactoryQueryClient, QueryClientP
   get:
     ({ contractAddress }) =>
     ({ get }) => {
-      const client = get(cosmWasmStargateClientSelector);
+      const client = get(cosmWasmClient);
       return new WyndexFactoryQueryClient(client, contractAddress);
     },
 });
@@ -122,5 +123,19 @@ export const pairsToMigrateSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.pairsToMigrate(...params);
+    },
+});
+export const validateStakingAddressSelector = selectorFamily<
+  Boolean,
+  QueryClientParams & {
+    params: Parameters<WyndexFactoryQueryClient["validateStakingAddress"]>;
+  }
+>({
+  key: "wyndexFactoryValidateStakingAddress",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.validateStakingAddress(...params);
     },
 });

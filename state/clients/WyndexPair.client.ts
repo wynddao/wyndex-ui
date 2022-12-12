@@ -4,23 +4,16 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult, Coin, StdFee } from "cosmwasm";
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
+import { Coin, StdFee } from "@cosmjs/amino";
 import {
   AssetInfo,
   Binary,
-  InstantiateMsg,
-  ExecuteMsg,
   Uint128,
   Decimal,
-  Cw20ReceiveMsg,
   Asset,
-  QueryMsg,
-  Addr,
   ConfigResponse,
-  AssetInfoValidated,
   CumulativePricesResponse,
-  AssetValidated,
-  PairType,
   PairInfo,
   PoolResponse,
   ReverseSimulationResponse,
@@ -36,16 +29,24 @@ export interface WyndexPairReadOnlyInterface {
   simulation: ({
     askAssetInfo,
     offerAsset,
+    referral,
+    referralCommission,
   }: {
     askAssetInfo?: AssetInfo;
     offerAsset: Asset;
+    referral: boolean;
+    referralCommission?: Decimal;
   }) => Promise<SimulationResponse>;
   reverseSimulation: ({
     askAsset,
     offerAssetInfo,
+    referral,
+    referralCommission,
   }: {
     askAsset: Asset;
     offerAssetInfo?: AssetInfo;
+    referral: boolean;
+    referralCommission?: Decimal;
   }) => Promise<ReverseSimulationResponse>;
   cumulativePrices: () => Promise<CumulativePricesResponse>;
   queryComputeD: () => Promise<Uint128>;
@@ -92,28 +93,40 @@ export class WyndexPairQueryClient implements WyndexPairReadOnlyInterface {
   simulation = async ({
     askAssetInfo,
     offerAsset,
+    referral,
+    referralCommission,
   }: {
     askAssetInfo?: AssetInfo;
     offerAsset: Asset;
+    referral: boolean;
+    referralCommission?: Decimal;
   }): Promise<SimulationResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       simulation: {
         ask_asset_info: askAssetInfo,
         offer_asset: offerAsset,
+        referral,
+        referral_commission: referralCommission,
       },
     });
   };
   reverseSimulation = async ({
     askAsset,
     offerAssetInfo,
+    referral,
+    referralCommission,
   }: {
     askAsset: Asset;
     offerAssetInfo?: AssetInfo;
+    referral: boolean;
+    referralCommission?: Decimal;
   }): Promise<ReverseSimulationResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       reverse_simulation: {
         ask_asset: askAsset,
         offer_asset_info: offerAssetInfo,
+        referral,
+        referral_commission: referralCommission,
       },
     });
   };
@@ -165,12 +178,16 @@ export interface WyndexPairInterface extends WyndexPairReadOnlyInterface {
       beliefPrice,
       maxSpread,
       offerAsset,
+      referralAddress,
+      referralCommission,
       to,
     }: {
       askAssetInfo?: AssetInfo;
       beliefPrice?: Decimal;
       maxSpread?: Decimal;
       offerAsset: Asset;
+      referralAddress?: string;
+      referralCommission?: Decimal;
       to?: string;
     },
     fee?: number | StdFee | "auto",
@@ -289,12 +306,16 @@ export class WyndexPairClient extends WyndexPairQueryClient implements WyndexPai
       beliefPrice,
       maxSpread,
       offerAsset,
+      referralAddress,
+      referralCommission,
       to,
     }: {
       askAssetInfo?: AssetInfo;
       beliefPrice?: Decimal;
       maxSpread?: Decimal;
       offerAsset: Asset;
+      referralAddress?: string;
+      referralCommission?: Decimal;
       to?: string;
     },
     fee: number | StdFee | "auto" = "auto",
@@ -310,6 +331,8 @@ export class WyndexPairClient extends WyndexPairQueryClient implements WyndexPai
           belief_price: beliefPrice,
           max_spread: maxSpread,
           offer_asset: offerAsset,
+          referral_address: referralAddress,
+          referral_commission: referralCommission,
           to,
         },
       },

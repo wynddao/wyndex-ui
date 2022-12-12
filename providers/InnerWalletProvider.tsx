@@ -1,21 +1,20 @@
 import { useWallet } from "@cosmos-kit/react";
-import { SigningCosmWasmClient } from "cosmwasm";
 import { PropsWithChildren, useEffect } from "react";
 import { useSetRecoilState } from "recoil";
-import { signingCosmWasmClientAtom } from "../state";
+import { signingCosmWasmStargateClientAtom } from "../state";
 
 const InnerWalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const setSigningCosmWasmClient = useSetRecoilState(signingCosmWasmClientAtom);
-  const { getSigningCosmWasmClient } = useWallet();
+  const setSigningCosmWasmClient = useSetRecoilState(signingCosmWasmStargateClientAtom);
+  const { getSigningCosmWasmClient, address } = useWallet();
 
   // Save client in recoil atom so it can be used by selectors.
   useEffect(() => {
     const loadClient = async () => {
       const client = await getSigningCosmWasmClient();
-      setSigningCosmWasmClient(client as unknown as SigningCosmWasmClient);
+      setSigningCosmWasmClient(client);
     };
     loadClient();
-  }, [setSigningCosmWasmClient, getSigningCosmWasmClient]);
+  }, [setSigningCosmWasmClient, getSigningCosmWasmClient, address]);
 
   return <>{children}</>;
 };
