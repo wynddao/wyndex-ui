@@ -27,8 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Toaster />
             <Sidebar>{children}</Sidebar>
           </Providers>
-        ) : 
-        <Loader />}
+        ) : (
+          <Loader />
+        )}
       </body>
     </html>
   );

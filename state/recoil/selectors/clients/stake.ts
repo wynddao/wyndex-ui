@@ -72,7 +72,6 @@ export const executeClient = selectorFamily<WyndexStakeClient | undefined, Execu
   dangerouslyAllowMutability: true,
 });
 
-
 export const claimsSelector = selectorFamily<
   ClaimsResponse,
   QueryClientParams & {

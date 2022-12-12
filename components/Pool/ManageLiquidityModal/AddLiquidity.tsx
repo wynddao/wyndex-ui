@@ -126,7 +126,6 @@ export default function AddLiquidity({
           ]
         : undefined;
 
-
     await txToast(doProvideLiquidity, {
       pairContractAddress: pairData.contract_addr,
       assets: assets,
