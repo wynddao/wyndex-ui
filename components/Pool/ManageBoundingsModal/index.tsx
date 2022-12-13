@@ -284,7 +284,10 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
                 <Button
                   size="sm"
                   onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
-                  isDisabled={activeStep === 1 && (Number(amount) === 0 || Number(amountToMicroamount(amount, 6)) > Number(stake.stake)) }
+                  isDisabled={
+                    activeStep === 1 &&
+                    (Number(amount) === 0 || Number(amountToMicroamount(amount, 6)) > Number(stake.stake))
+                  }
                 >
                   {activeStep === steps.length - 1 ? "Execute" : "Next"}
                 </Button>

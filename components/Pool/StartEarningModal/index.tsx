@@ -143,7 +143,10 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           <Box px={{ sm: 12 }} marginY={5}>
             <Button
               onClick={() => doStake(Number(amountToMicroamount(amount, 6)), Number(value))}
-              isDisabled={Number(amountToMicroamount(amount, 6)) <= 0 || Number(amountToMicroamount(amount, 6)) > Number(balance)}
+              isDisabled={
+                Number(amountToMicroamount(amount, 6)) <= 0 ||
+                Number(amountToMicroamount(amount, 6)) > Number(balance)
+              }
               w="full"
               size="lg"
               h={{ base: 12, sm: 14 }}
