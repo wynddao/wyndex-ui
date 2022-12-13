@@ -37,11 +37,16 @@ export const getAsset = async (asset: string): Promise<Asset> => {
  * @returns readonly Coin[]
  */
 export const getIbcBalances = async (address: string): Promise<readonly Coin[]> => {
-  return fetch(REST_API_ENDPOINT + "/balances/ibc/" + address)
-    .then((res) => res.json())
-    .then((res) => {
-      return res as readonly Coin[];
-    });
+  try {
+    const ibcBalancesResponse = await fetch(REST_API_ENDPOINT + "/balances/ibc/" + address);
+    const ibcBalancesJson = await ibcBalancesResponse.json();
+    if (ibcBalancesJson.error) return [];
+
+    const ibcBalances: readonly Coin[] = ibcBalancesJson;
+    return ibcBalances;
+  } catch {
+    return [];
+  }
 };
 
 /**
@@ -51,11 +56,16 @@ export const getIbcBalances = async (address: string): Promise<readonly Coin[]> 
  * @returns readonly Coin[]
  */
 export const getCw20Balances = async (address: string): Promise<readonly Coin[]> => {
-  return fetch(REST_API_ENDPOINT + "/balances/cw20/" + address)
-    .then((res) => res.json())
-    .then((res) => {
-      return res as readonly Coin[];
-    });
+  try {
+    const cw20BalancesResponse = await fetch(REST_API_ENDPOINT + "/balances/cw20/" + address);
+    const cw20BalancesJson = await cw20BalancesResponse.json();
+    if (cw20BalancesJson.error) return [];
+
+    const cw20Balances: readonly Coin[] = cw20BalancesJson;
+    return cw20Balances;
+  } catch {
+    return [];
+  }
 };
 
 /**
@@ -65,12 +75,17 @@ export const getCw20Balances = async (address: string): Promise<readonly Coin[]>
  * @param coinName
  * @returns Coin
  */
-export const getIbcBalance = async (address: string, coinName: string): Promise<Coin> => {
-  return fetch(REST_API_ENDPOINT + "/balance/" + address + "/ibc/" + coinName)
-    .then((res) => res.json())
-    .then((res) => {
-      return res as Coin;
-    });
+export const getIbcBalance = async (address: string, coinName: string): Promise<Coin | null> => {
+  try {
+    const ibcBalanceResponse = await fetch(REST_API_ENDPOINT + "/balance/" + address + "/ibc/" + coinName);
+    const ibcBalanceJson = await ibcBalanceResponse.json();
+    if (ibcBalanceJson.error) return null;
+
+    const ibcBalance: Coin = ibcBalanceJson;
+    return ibcBalance;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -80,12 +95,19 @@ export const getIbcBalance = async (address: string, coinName: string): Promise<
  * @param coinName
  * @returns Coin
  */
-export const getNativeBalance = async (address: string, coinName: string): Promise<Coin> => {
-  return fetch(REST_API_ENDPOINT + "/balance/" + address + "/native/" + coinName)
-    .then((res) => res.json())
-    .then((res) => {
-      return res as Coin;
-    });
+export const getNativeBalance = async (address: string, coinName: string): Promise<Coin | null> => {
+  try {
+    const nativeBalanceResponse = await fetch(
+      REST_API_ENDPOINT + "/balance/" + address + "/native/" + coinName,
+    );
+    const nativeBalanceJson = await nativeBalanceResponse.json();
+    if (nativeBalanceJson.error) return null;
+
+    const nativeBalance: Coin = nativeBalanceJson;
+    return nativeBalance;
+  } catch {
+    return null;
+  }
 };
 
 /**
