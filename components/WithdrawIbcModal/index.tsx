@@ -97,8 +97,8 @@ export default function WithdrawIbcModal() {
       const fromToken: fromTokenType = {
         name: asset.name,
         address: asset.contractAddress || "",
-        availableBalance: ibcBalance.amount,
-        nativeBalance: nativeBalance.amount,
+        availableBalance: ibcBalance?.amount ?? "0",
+        nativeBalance: nativeBalance?.amount ?? "0",
       };
       setFromToken(fromToken);
     })();

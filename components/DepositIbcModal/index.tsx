@@ -69,8 +69,8 @@ export default function DepositIbcModal() {
       const fromToken: fromTokenType = {
         name: asset.name,
         address: asset.contractAddress || "",
-        availableBalance: nativeBalance.amount,
-        ibcBalance: ibcBalance.amount,
+        availableBalance: nativeBalance?.amount ?? "0",
+        ibcBalance: ibcBalance?.amount ?? "0",
       };
       setFromToken(fromToken);
     })();
