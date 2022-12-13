@@ -26,12 +26,18 @@ interface ManageLiquidityProps {
   readonly onClose: () => void;
   readonly data: PairInfo;
   readonly poolData: PoolResponse;
+  readonly walletAddress: string;
 }
 
-export default function ManageLiquidity({ isOpen, onClose, data, poolData }: ManageLiquidityProps) {
+export default function ManageLiquidity({
+  isOpen,
+  onClose,
+  data,
+  poolData,
+  walletAddress,
+}: ManageLiquidityProps) {
   const [tabIndex, setTabIndex] = useState(0);
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(data.liquidity_token);
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
@@ -53,7 +59,11 @@ export default function ManageLiquidity({ isOpen, onClose, data, poolData }: Man
             </TabList>
             <TabPanels>
               <TabPanel p={0}>
-                <AddLiquidity data={data} refreshBalance={refreshBalance} onClose={onClose} />
+                <AddLiquidity
+                  data={data}
+                  refreshBalance={refreshBalance}
+                  onClose={onClose}
+                />
               </TabPanel>
               <TabPanel>
                 <RemoveLiquidity

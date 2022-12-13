@@ -8,7 +8,6 @@ import { PairInfo } from "../../state/clients/types/WyndexPair.types";
 import { useCw20UserInfos } from "../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { Pair } from "../../utils/types";
 import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
 import PendingBoundingsTable from "./PendingBoundingsTable";
@@ -19,9 +18,8 @@ import { useToast } from "../../state/hooks";
 import PendingUnbondingsTable from "./PendingUnbondingsTable";
 import { microamountToAmount } from "../../utils/tokens";
 
-export default function LiquidityMining({ poolData, pairData }: { poolData: Pair; pairData: PairInfo }) {
-  // TODO: Query is missing for stake contract address
-  const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
+export default function LiquidityMining({ pairData }: { pairData: PairInfo }) {
+  const wyndexStake = pairData.staking_addr;
   const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

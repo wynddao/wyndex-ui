@@ -1,23 +1,14 @@
 "use client";
 import { Box, Button, Flex, Heading, Text, useDisclosure } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { getPairs } from "../../utils";
-import { Pair } from "../../utils/types";
+import { useFactoryInfos } from "../../state/hooks/useFactoryInfos";
 import CreatePoolModal from "../CreatePoolModal";
 import PoolsCard from "./PoolsCard";
 
 export default function Pools() {
   const { onOpen, isOpen, onClose } = useDisclosure();
-  const [data, setData] = useState<Pair[]>([]);
 
-  const getAsync = async () => {
-    const pairs = await getPairs();
-    setData(pairs);
-  };
+  const {allPairs } = useFactoryInfos();
 
-  useEffect(() => {
-    getAsync();
-  }, []);
 
   return (
     <>
@@ -34,7 +25,7 @@ export default function Pools() {
           <Text fontSize="2xl" fontWeight="bold" mb={4}>
             My Pools
           </Text>
-          <PoolsCard poolsData={data} />
+          <PoolsCard poolsData={allPairs} />
         </Box>
       </Flex>
       <CreatePoolModal isOpen={isOpen} onClose={onClose} />

@@ -23,11 +23,12 @@ import { microdenomToDenom } from "../../utils/tokens";
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
+  readonly walletAddress: string;
 }
 
 const LinkUndecorated = chakra(Link, { baseStyle: { _hover: { textDecoration: "none" } } });
 
-export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
+export default function PoolHeader({ chainData, pairData, walletAddress }: PoolHeaderProps) {
   const { onOpen, isOpen, onClose } = useDisclosure();
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native_token")) {
@@ -96,7 +97,7 @@ export default function PoolHeader({ chainData, pairData }: PoolHeaderProps) {
           />
         </Show>
       </Box>
-      <ManageLiquidityModal poolData={chainData} data={pairData} isOpen={isOpen} onClose={onClose} />
+      <ManageLiquidityModal walletAddress={walletAddress} poolData={chainData} data={pairData} isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

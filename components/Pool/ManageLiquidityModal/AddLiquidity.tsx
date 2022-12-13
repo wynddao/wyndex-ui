@@ -31,6 +31,8 @@ import TokenName from "../../TokenName";
 
 import { useAvailableTokens } from "./useAvailableTokens";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
+import { getNativeTokenBalance } from "../../../utils/wallet";
+import AssetImage from "../../AssetImage";
 interface inputType {
   id: string;
   value: string;
@@ -65,7 +67,6 @@ export default function AddLiquidity({
   refreshBalance: () => void;
 }) {
   const { colorMode } = useColorMode();
-  const [balances, setBalances] = useState<(string | undefined)[]>(["", ""]);
 
   const poolData: DataType[] = pairData.asset_infos.map((asset) => {
     return {
@@ -82,13 +83,15 @@ export default function AddLiquidity({
         // @ts-ignore
         <span>{microdenomToDenom(asset.native_token)}</span>
       ),
+      show: true,
     };
   });
 
   const { address: walletAddress } = useWallet();
-  const balance = useAvailableTokens(pairData, walletAddress || "");
-  Promise.all(balance).then((res) => setBalances(res));
+
   const [data, setData] = useState<DataType[]>(poolData);
+  const [balances, setBalances] = useState<string[]>([]);
+
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
     id: label,
     value: "0",
@@ -103,6 +106,19 @@ export default function AddLiquidity({
     sender: walletAddress || "",
   });
 
+  const balance = useAvailableTokens(pairData, walletAddress || "");
+
+  useEffect(() => {
+    const b = balance.map(async (e, i) => {
+      if (e === undefined) {
+        // @ts-ignore
+        return await getNativeTokenBalance(walletAddress || "", pairData.asset_infos[i].native_token);
+      }
+      return e;
+    });
+    Promise.all(b).then((res) => setBalances(res));
+  }, []);
+
   const prodiveLiquidity = async () => {
     const assets = tokenInputValue
       .filter((token) => {
@@ -114,17 +130,22 @@ export default function AddLiquidity({
           info: token.contract ? { token: token.contract } : { native_token: token.id },
         };
       });
-    const funds: Coin[] | undefined =
-      tokenInputValue.find((element) => !element.contract)?.value !== "0"
-        ? [
-            {
-              amount:
-                amountToMicroamount(tokenInputValue.find((element) => !element.contract)?.value || "", 6) ||
-                "1",
-              denom: tokenInputValue.find((element) => !element.contract)?.id || "ujunox",
-            },
-          ]
-        : undefined;
+    // @ts-ignore
+    const funds: Coin[] | undefined = tokenInputValue
+      .filter((element) => !element.contract)
+      .map((e) => {
+        if (!e.contract) {
+          return {
+            amount: amountToMicroamount(e.value || "", 6) || "1",
+            denom: e.id,
+          };
+        }
+      });
+    console.log({
+      pairContractAddress: pairData.contract_addr,
+      assets: assets,
+      funds,
+    });
 
     await txToast(doProvideLiquidity, {
       pairContractAddress: pairData.contract_addr,
@@ -137,24 +158,10 @@ export default function AddLiquidity({
     refreshBalance();
   };
 
-  useEffect(() => {
-    if (single.isSingle) {
-      setData((pre) => {
-        const getNewArr = pre.map((v, i) => {
-          if (single.selectedIndex !== i) return { ...v, show: false };
-          return { ...v, show: true };
-        });
-        return getNewArr;
-      });
-    }
-
-    if (!single.isSingle) setData((pre) => pre.map((v) => ({ ...v, show: true })));
-  }, [single.isSingle, single.selectedIndex]);
-
   return (
     <>
       <Stack spacing={2} mb={6}>
-        {data.map(({ denom, img, show, contractAddress, name }, i) => {
+        {poolData.map(({ denom, img, show, contractAddress, name }, i) => {
           return (
             show && (
               <Box position="relative" key={`box-${name}-${i}`}>
@@ -224,7 +231,7 @@ export default function AddLiquidity({
                   gap={4}
                 >
                   <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
-                    <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
+                    <AssetImage asset={denom} width={12} mr={{ base: 3, sm: 4 }} />
                     <Flex
                       position="relative"
                       align="center"
@@ -318,35 +325,6 @@ export default function AddLiquidity({
           );
         })}
       </Stack>
-      {/*
-      <Flex position="relative" justify="end" align="center" fontSize="xl" mb={6}>
-        <Checkbox
-          isChecked={single.isSingle}
-          onChange={(e) => {
-            setSingle({
-              selectedIndex: single.selectedIndex,
-              isSingle: e.target.checked,
-            });
-            setOpenPop({ optionsIndex: openPop.optionsIndex, isOpen: false });
-          }}
-          size="lg"
-        >
-          Single Asset LP&nbsp;
-        </Checkbox>
-        <Tooltip
-          label="Single Asset LP allows you to provide liquidity using one asset. However, this will impact the pool price of the asset you’re providing liquidity with."
-          placement="top-end"
-          bg={"wynd.alpha.900"}
-          borderRadius="lg"
-          border="1px solid"
-          borderColor={"wynd.alpha.900"}
-        >
-          <Box position="relative">
-            <IoMdInformationCircle />
-          </Box>
-        </Tooltip>
-      </Flex>
-        */}
       <Flex
         flexDirection={{ base: "column", sm: "row" }}
         justify="space-between"
