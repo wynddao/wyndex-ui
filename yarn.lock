@@ -2222,6 +2222,11 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
 
+"@wynddao/asset-list@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.6.tgz#cae9673409afc6c864c88fd39eedde7812e104be"
+  integrity sha512-495jCGLSPEoRtDUZXzoUvvwF/gw6JwgBD8CyhXCWqZGYgKGhLHhT9ahWoSLAyDjRMNZg6CU0TEd03Ffqb2DK6A==
+
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"
   resolved "https://registry.yarnpkg.com/@xobotyi/scrollbar-width/-/scrollbar-width-1.9.5.tgz#80224a6919272f405b87913ca13b92929bdf3c4d"

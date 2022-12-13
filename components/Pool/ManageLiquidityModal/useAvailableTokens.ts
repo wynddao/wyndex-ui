@@ -4,7 +4,9 @@ import { Cw20Selectors } from "../../../state";
 import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
 import { getNativeTokenBalance } from "../../../utils/wallet";
 
-export const useAvailableTokens = (pairData: PairInfo, walletAddress: string) => {
+
+
+export const useAvailableTokens = (pairData: PairInfo, walletAddress: string) : (string | undefined)[] => {
   const balance = [
     useRecoilValue(
       pairData.asset_infos[0].hasOwnProperty("token")
@@ -17,7 +19,7 @@ export const useAvailableTokens = (pairData: PairInfo, walletAddress: string) =>
             ],
           })
         : constSelector({
-            balance: getNativeTokenBalance(walletAddress || "", pairData.asset_infos[0].native_token),
+            balance: undefined,
           }),
     ),
     useRecoilValue(
@@ -31,7 +33,7 @@ export const useAvailableTokens = (pairData: PairInfo, walletAddress: string) =>
             ],
           })
         : constSelector({
-            balance: getNativeTokenBalance(walletAddress || "", pairData.asset_infos[1].native_token),
+            balance: undefined,
           }),
     ),
   ];

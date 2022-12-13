@@ -8,6 +8,7 @@ import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
+import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
@@ -17,8 +18,7 @@ interface PoolCatalystProps {
 
 export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps) {
   const { address: walletAddress } = useWallet();
-  // TODO: Query is missing for stake contract address
-  const wyndexStake = "juno1yt7m620jnug2hkzp0hwwud3sjdcq3hw7l8cs5yqyqulrntnmmkes9dwung";
+  const wyndexStake = pairData.staking_addr;
 
   const [show, setShow] = useState<boolean>(true);
 
@@ -79,8 +79,12 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                         p={0.5}
                         mr={4}
                       >
-                        {/* TODO */}
-                        <Image alt="Token 1 logo" src="https://via.placeholder.com/300" />
+                        <AssetImage
+                          asset={
+                            //  @ts-ignore
+                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native_token
+                          }
+                        />
                       </Box>
                       <Box>
                         <Text fontSize="3xl" fontWeight="extrabold"></Text>
