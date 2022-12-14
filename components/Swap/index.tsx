@@ -1,44 +1,30 @@
 "use client";
-import { Box, Button, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import React, { useEffect, useState } from "react";
 import { SwapOperation } from "../../state/clients/types/WyndexMultiHop.types";
 import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
 import { getAssets, MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
 import { getAssetInfo } from "../../utils/assets";
-import { Asset } from "../../utils/types";
-import FromToken from "./FromToken";
-import Rate from "./Rate";
-import Setting from "./Setting";
-import ToToken from "./ToToken";
+import SwapIcon from "./FromToComponent/SwapIcon";
+import FromToken from "./FromToComponent/FromToken";
+import Rate from "./RateComponent/Rate";
+import Setting from "./Setting/Setting";
+import ToToken from "./FromToComponent/ToToken";
+import { Asset, CW20Asset, IBCAsset, assetList } from "@wynddao/asset-list";
 
 export default function Home() {
   const [data, setData] = useState<Asset[]>([]);
-  const [fromItem, setFromItem] = useState<Asset>();
-  const [toItem, setToItem] = useState<Asset>();
-  const [loading, setLoading] = useState(true);
-  const [tokenInputValue, setTokenInputValue] = useState("");
+  const [fromToken, setFromToken] = useState<Asset | IBCAsset | CW20Asset>(assetList.tokens[0]);
+  const [toToken, setToToken] = useState<Asset | IBCAsset | CW20Asset>(assetList.tokens[4]);
+  const [loading, setLoading] = useState(false);
   const { address: walletAddress } = useWallet();
   const [operations, setOperations] = useState<SwapOperation[]>([]);
-
-  setTimeout(() => {
-    setLoading(false);
-  }, 500);
 
   const doSwap = useExecuteSwapOperations({
     contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
     sender: walletAddress ?? "",
   });
-
-  // token : cw20 token
-  // native_token : udenom
-
-  /*const operation: SwapOperation = {
-    astro_swap: {
-      ask_asset_info
-    }
-  }
-  */
 
   const onSwap = async () => {
     try {
@@ -48,65 +34,77 @@ export default function Home() {
     }
   };
 
-  const getAsync = async () => {
+  /*   const getAsync = async () => {
     const assets = await getAssets();
     setData(assets);
+  }; */
+
+  const swapTokens = () => {
+    setFromToken(toToken);
+    setToToken(fromToken);
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     getAsync();
-  }, []);
+  }, []); */
+
   useEffect(() => {
-    if (fromItem && toItem) {
+    if (fromToken && toToken) {
       const operation: SwapOperation[] = [
         {
           wyndex_swap: {
-            ask_asset_info: getAssetInfo(toItem),
-            offer_asset_info: getAssetInfo(fromItem),
+            ask_asset_info: getAssetInfo(toToken),
+            offer_asset_info: getAssetInfo(fromToken),
           },
         },
       ];
       setOperations(operation);
     }
-  }, [fromItem, toItem]);
+  }, [fromToken, toToken]);
 
   useEffect(() => {
-    if (!loading && data.length > 0) {
+    if (data.length > 0) {
       setData(data);
-      setFromItem(data[0]);
-      setToItem(data[1]);
-      setTokenInputValue("0");
+      setFromToken(data[0]);
+      setToToken(data[1]);
+      /* setTokenInputValue("0"); */
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
+  }, [data]);
 
   return (
-    <Stack spacing={6} w="full" p={{ base: 4, sm: 6 }}>
-      <Box zIndex={3000} alignSelf="end">
+    <Flex
+      gap={{ base: "2rem", lg: "4rem" }}
+      flexFlow="column"
+      w="full"
+      p={{ base: 4, sm: 6 }}
+      maxWidth="1200px"
+    >
+      <Box zIndex={100} alignSelf="end">
         <Setting />
       </Box>
-      <FromToken
-        data={data}
-        fromItem={fromItem}
-        toItem={toItem}
-        tokenInputValue={tokenInputValue}
-        setFromItem={setFromItem}
-        setToItem={setToItem}
-        setTokenInputValue={setTokenInputValue}
-      />
-      <ToToken data={data} toItem={toItem} setToItem={setToItem} />
-      {operations.length > 0 && (
-        <Rate
-          amount={tokenInputValue}
-          fromItem={fromItem}
-          toItem={toItem}
-          tokenInputValue={tokenInputValue}
-          operations={operations}
-        />
-      )}
-      <Button h={{ base: 12, md: 16 }} w="full" onClick={() => onSwap()} bg="wynd.alpha.400">
+      <Box display="flex" flexFlow={{ base: "column", lg: "row" }} gap="1rem" position="relative">
+        <FromToken fromToken={fromToken} setFromToken={setFromToken} />
+        <SwapIcon swapTokens={swapTokens} />
+        <ToToken toToken={toToken} setToToken={setToToken} />
+      </Box>
+      <Button
+        h={{ base: 12, md: 16 }}
+        w="full"
+        bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+        onClick={() => onSwap()}
+        bg="wynd.gray.200"
+        maxW={{ lg: "560px" }}
+        minW={{ lg: "560px" }}
+        margin={{ lg: "0 auto" }}
+        _hover={{
+          bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+        }}
+      >
         Swap
       </Button>
-    </Stack>
+      {operations.length > 0 && (
+        <Rate fromToken={fromToken} toToken={toToken} tokenInputValue="0" operations={operations} />
+      )}
+    </Flex>
   );
 }
