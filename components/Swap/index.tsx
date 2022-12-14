@@ -53,8 +53,8 @@ export default function Home() {
       const operation: SwapOperation[] = [
         {
           wyndex_swap: {
-            ask_asset_info: getAssetInfo(toToken),
-            offer_asset_info: getAssetInfo(fromToken),
+            ask_asset_info: getAssetInfo(toToken as any),
+            offer_asset_info: getAssetInfo(fromToken as any),
           },
         },
       ];
