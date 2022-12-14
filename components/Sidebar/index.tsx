@@ -32,6 +32,11 @@ export default function Sidebar({ children }: SidebarProps) {
         onClose={() => onClose}
         display={{ base: "none", md: "flex" }}
         width={{ base: 0, md: 60 }}
+        position="fixed"
+      />
+      <Box
+        display={{ base: "none", md: "flex" }}
+        width={{ base: 0, md: 60 }}
       />
       <Drawer
         autoFocus={false}
