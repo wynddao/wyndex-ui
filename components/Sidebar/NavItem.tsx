@@ -22,11 +22,11 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
     <Link href={to} style={{ textDecoration: "none" }}>
       <Flex
         align="center"
-        p={{ base: "2", lg: "4" }}
-        mx={{ base: "2", lg: "4" }}
+        p={{ base: "4" }}
+        mx={{ base: "2" }}
         borderRadius="lg"
         role="group"
-        fontSize={{ base: "14", lg: "16" }}
+        fontSize={{ base: "16" }}
         cursor="pointer"
         transition="all linear .5s"
         _hover={

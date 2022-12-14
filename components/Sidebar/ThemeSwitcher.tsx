@@ -15,7 +15,6 @@ export default function ThemeSwitcher() {
       alignItems="center"
       justifyContent="center"
       gap={2}
-      p={{ base: "4", lg: "8" }}
       position="relative"
     >
       <Icon

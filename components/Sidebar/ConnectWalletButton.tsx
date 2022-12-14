@@ -24,11 +24,11 @@ export default function ConnectWalletButton() {
     <Button as={Box} pr={0} w="full" h="auto">
       <Flex alignItems="center" justifyContent="space-between" gap={2} w="full">
         <Icon fontSize="1.25em" as={FiCreditCard} />
-        <Box>
+        <Box fontSize="sm">
           <Text>{username}</Text>
           <Text>
             {loadableBalance.state === "hasValue"
-              ? `${loadableBalance.contents.amount} ${loadableBalance.contents.denom}`
+              ? `${Number(loadableBalance.contents.amount).toFixed(2)} ${loadableBalance.contents.denom}`
               : "0"}
           </Text>
         </Box>
@@ -47,11 +47,16 @@ export default function ConnectWalletButton() {
       </Flex>
     </Button>
   ) : (
-    <Button onClick={openView} w="full">
-      <Flex alignItems="center" justifyContent="space-around" w="full">
-        <Icon fontSize="1.25em" as={FiCreditCard} />
-        <Text>Connect wallet</Text>
-      </Flex>
+    <Button
+      onClick={openView}
+      w="full"
+      alignItems="center"
+      justifyContent="center"
+      gap="0.5rem"
+      display="flex"
+    >
+      <Icon fontSize="lg" as={FiCreditCard} />
+      <Text fontSize="lg">Connect wallet</Text>
     </Button>
   );
 }

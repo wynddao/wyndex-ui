@@ -30,13 +30,12 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
       flexDirection="column"
       justifyContent="space-between"
       bg={"wynd.base.sidebar"}
-      w={{ base: "full", md: "auto" }}
-      pos="fixed"
-      h="full"
+      w={{ base: "full", md: "fit-content" }}
+      h="100vh"
       {...restProps}
     >
       <Box>
-        <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+        <Flex h="20" alignItems="center" mx="4" justifyContent="space-between">
           <Image
             alt="Wynd logo"
             src={theme === ThemeModes.dark ? wyndLogoWhite : wyndLogoBlack}
@@ -54,7 +53,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         alignItems="center"
         justifyContent="center"
         gap={{ base: 1, lg: 2 }}
-        m={{ base: "4", lg: "8" }}
+        p={{ base: "4" }}
       >
         <ThemeSwitcher />
         <ConnectWalletButton />

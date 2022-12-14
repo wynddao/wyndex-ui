@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Drawer, DrawerContent, useDisclosure } from "@chakra-ui/react";
+import { Box, Drawer, DrawerContent, Flex, useDisclosure } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
 import { IconType } from "react-icons";
@@ -27,11 +27,11 @@ export default function Sidebar({ children }: SidebarProps) {
   }, [setCurrentChain]);
 
   return (
-    <Box minH="100vh" bg={"wynd.base.subBg"}>
+    <Flex minH="100vh" bg={"wynd.base.subBg"} flexFlow={{ base: "column", md: "row" }}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "flex" }}
-        minWidth={{ base: 0, md: 60, xl: 228 }}
+        width={{ base: 0, md: 60 }}
       />
       <Drawer
         autoFocus={false}
@@ -47,9 +47,7 @@ export default function Sidebar({ children }: SidebarProps) {
         </DrawerContent>
       </Drawer>
       <Hamburguer display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60, xl: 228 }} pl={{ base: "0" }}>
-        {children}
-      </Box>
-    </Box>
+      <Box flex="1">{children}</Box>
+    </Flex>
   );
 }
