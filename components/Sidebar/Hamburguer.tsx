@@ -20,9 +20,7 @@ export default function Hamburguer({ onOpen, ...restProps }: MobileProps) {
       height="20"
       alignItems="center"
       gap={4}
-      bg={"wynd.neutral.100"}
-      borderBottomWidth="1px"
-      borderBottomColor={"wynd.neutral.200"}
+      bg={"wynd.base.sidebar"}
       justifyContent="flex-start"
       {...restProps}
     >

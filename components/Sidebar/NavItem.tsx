@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, FlexProps, Icon } from "@chakra-ui/react";
+import { Flex, FlexProps, Icon, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -28,26 +28,43 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
         role="group"
         fontSize={{ base: "14", lg: "16" }}
         cursor="pointer"
-        sx={
-          isLinkActive
-            ? {
-                bg: "whiteAlpha.200",
-                color: "wynd.neutral.900",
-              }
-            : undefined
-        }
+        transition="all linear .5s"
         _hover={
           isLinkActive
             ? {
-                bg: "whiteAlpha.500",
-                color: "wynd.neutral.900",
+                bg: "wynd.gray.200",
               }
-            : { bg: "wynd.neutral.200", color: "wynd-cyan-500" }
+            : { bg: "wynd.gray.200" }
         }
         {...restProps}
       >
-        {icon && <Icon mr="4" fontSize="0.8em" as={icon} />}
-        {name}
+        {icon && (
+          <Icon
+            mr="4"
+            fontSize="1rem"
+            as={icon}
+            sx={
+              isLinkActive
+                ? {
+                    color: "wynd.cyan.500",
+                  }
+                : undefined
+            }
+          />
+        )}
+        <Text
+          sx={
+            isLinkActive
+              ? {
+                  bgGradient: "linear(to-l, wynd.green.500, wynd.cyan.500)",
+                  bgClip: "text",
+                  fontWeight: "extrabold",
+                }
+              : undefined
+          }
+        >
+          {name}
+        </Text>
       </Flex>
     </Link>
   );
