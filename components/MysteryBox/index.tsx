@@ -23,11 +23,11 @@ export default function MysteryBoxContainer() {
         outline="none"
       >
         <Box
-          zIndex={open ? 5 : 1}
+          zIndex={1}
           pos="relative"
           width="160px"
           height="92.38px"
-          background="brand.green.500"
+          background="wynd.green.500"
           margin="46.19px 0"
           className="hexagon-back"
           filter="blur(20px)"

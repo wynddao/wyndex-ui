@@ -15,14 +15,7 @@ import {
   Collapse,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import {
-  AsyncSelect,
-  chakraComponents,
-  ControlProps,
-  GroupBase,
-  OptionBase,
-  OptionProps,
-} from "chakra-react-select";
+import { AsyncSelect, chakraComponents, ControlProps, GroupBase, OptionProps } from "chakra-react-select";
 import { RiSearch2Fill } from "react-icons/ri";
 import SkeletonOptions from "./SkeletonOptions";
 import { BsHexagon, BsHexagonFill } from "react-icons/bs";
@@ -81,9 +74,9 @@ export default function FromToken({
       ...provided,
       bg: "transparent",
       border: "none",
-      borderRadius: "none",
+      borderRadius: "md",
       py: 0,
-      pr: { base: 2, sm: 4 },
+      boxShadow: "none",
       // For Firefox
       scrollbarWidth: "auto",
       scrollbarColor: "wynd.alpha.900",
@@ -100,11 +93,10 @@ export default function FromToken({
     }),
     option: (provided: SystemStyleObject, state: { isSelected: boolean }) => ({
       ...provided,
-      borderRadius: "lg",
-      bg: state.isSelected ? "wynd.cyan.200" : "transparent",
+      bg: state.isSelected ? "wynd.neutral.100" : "wynd.neutral.200",
       color: "inherit",
       _hover: {
-        bg: state.isSelected ? "wynd.cyan.300" : "wynd.alpha.700",
+        bg: "wynd.alpha.100",
       },
       _disabled: {
         _hover: { bg: "transparent" },
@@ -215,8 +207,8 @@ export default function FromToken({
     setCheckedItems((pre) => {
       const newItems = pre.map(({ ...rest }, i) => ({
         ...rest,
-        lightBg: checked[i] ? "primary.100" : "blackAlpha.300",
-        darkBg: checked[i] ? "primary.800" : "whiteAlpha.300",
+        lightBg: checked[i] ? "wynd.cyan.100" : "blackAlpha.300",
+        darkBg: checked[i] ? "wynd.cyan.800" : "whiteAlpha.300",
       }));
       return newItems;
     });
@@ -369,6 +361,7 @@ export default function FromToken({
           <Box py={6}>
             {fromItem ? (
               <AsyncSelect
+                className="TEST"
                 placeholder="Search"
                 chakraStyles={customStyles}
                 isClearable={false}

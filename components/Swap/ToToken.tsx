@@ -3,7 +3,6 @@ import {
   Flex,
   Icon,
   SystemStyleObject,
-  useColorMode,
   useDisclosure,
   Text,
   Box,
@@ -31,7 +30,6 @@ export default function ToToken({
 }) {
   const toMenuRef = useRef<HTMLDivElement | null>(null);
   const { isOpen, onToggle, onClose } = useDisclosure();
-  const { colorMode } = useColorMode();
   const customStyles = {
     control: (provided: SystemStyleObject) => ({
       ...provided,
@@ -48,9 +46,9 @@ export default function ToToken({
       ...provided,
       bg: "transparent",
       border: "none",
-      borderRadius: "none",
+      borderRadius: "md",
       py: 0,
-      pr: { base: 2, sm: 4 },
+      boxShadow: "none",
       // For Firefox
       scrollbarWidth: "auto",
       scrollbarColor: "wynd.alpha.900",
@@ -67,11 +65,10 @@ export default function ToToken({
     }),
     option: (provided: SystemStyleObject, state: { isSelected: boolean }) => ({
       ...provided,
-      borderRadius: "lg",
-      bg: state.isSelected ? "wynd.cyan.200" : "transparent",
+      bg: state.isSelected ? "wynd.neutral.100" : "wynd.neutral.200",
       color: "inherit",
       _hover: {
-        bg: state.isSelected ? "wynd.cyan.300" : "wynd.alpha.700",
+        bg: "wynd.alpha.100",
       },
       _disabled: {
         _hover: { bg: "transparent" },
@@ -145,7 +142,7 @@ export default function ToToken({
       ref={toMenuRef}
       position="relative"
       bg={"wynd.neutral.200"}
-      boxShadow={isOpen ? "0 0 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
+      boxShadow={isOpen ? "0 0 20px -8px rgba(0,0,0, 0.5)" : "none"}
       borderRadius="xl"
       p={6}
     >
@@ -206,7 +203,7 @@ export default function ToToken({
               mb={{ base: 1, sm: 2 }}
               mr={{ base: 0, md: 2 }}
             >
-              ≈&nbsp;3.265358
+              ≈&nbsp;3.265
             </Text>
             <Text
               fontSize={{ base: "lg", sm: "2xl", md: "3xl" }}
@@ -225,7 +222,7 @@ export default function ToToken({
         position="absolute"
         zIndex="dropdown"
         bg={"wynd.neutral.200"}
-        boxShadow={isOpen ? "0 12px 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
+        boxShadow={isOpen ? "0 12px 20px -8px rgba(0,0,0, 0.5)" : "none"}
         borderRadius="xl"
         left={0}
         right={0}

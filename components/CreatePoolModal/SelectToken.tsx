@@ -35,7 +35,7 @@ export default function SelectToken({ tokens, selectedToken, selectToken }: Sele
       position="relative"
       bg={"wynd.neutral.200"}
       borderRadius="xl"
-      boxShadow={isOpen ? "0 0 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
+      boxShadow={isOpen ? "0 0 20px -8px rgba(0,0,0, 0.5)" : "none"}
       gap={2}
     >
       <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="bold">
@@ -82,7 +82,7 @@ export default function SelectToken({ tokens, selectedToken, selectToken }: Sele
         position="absolute"
         zIndex={2000}
         bg={"wynd.neutral.200"}
-        boxShadow={isOpen ? "0 12px 20px -8px rgba(105, 88, 164, 0.5)" : "none"}
+        boxShadow={isOpen ? "0 12px 20px -8px rgba(0,0,0, 0.5)" : "none"}
         borderRadius="xl"
         left={0}
         right={0}
