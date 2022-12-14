@@ -1,4 +1,4 @@
-import { Center, Flex, Image } from "@chakra-ui/react";
+import { Box, Flex, Image } from "@chakra-ui/react";
 
 export default function Loader() {
   return (
@@ -13,12 +13,15 @@ export default function Loader() {
         p={0}
         width={"100vw"}
         height={"100vh"}
-        alignContent={"center"}
+        alignItems={"center"}
         justifyContent={"center"}
       >
-        <Center>
-          <Image src={"/druid.gif"} alt="loading druid" />
-        </Center>
+        <Box
+          position="relative"
+          background="linear-gradient(to bottom, transparent 0%, rgba(19,18,34,1) 95%, rgba(19,18,34,1) 100%), url('/druid.gif')"
+          h="512px"
+          w="512px"
+        />
       </Flex>
     </>
   );
