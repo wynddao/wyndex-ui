@@ -8,13 +8,13 @@
 }
 .hexagon-back:before {
   bottom: 100%;
-  border-bottom: 46.19px solid var(--chakra-colors-brand-green-500);
+  border-bottom: 46.19px solid var(--chakra-colors-wynd-green-500);
   left: 0;
 }
 .hexagon-back:after {
   top: 100%;
   width: 0;
-  border-top: 46.19px solid var(--chakra-colors-brand-green-500);
+  border-top: 46.19px solid var(--chakra-colors-wynd-green-500);
   left: 0;
 }
 

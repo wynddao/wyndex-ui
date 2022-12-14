@@ -1,32 +1,31 @@
 "use client";
-import { Center, Grid, GridItem } from "@chakra-ui/react";
-import Image from "next/image";
+import { Box, Flex } from "@chakra-ui/react";
 import Swap from "../../components/Swap";
-import flute from "./assets/flute.png";
 
-export default function Page() {
+export default function SwapPage() {
   return (
-    <Grid h={{ xl: "100vh" }} overflow="hidden" templateColumns="repeat(8, 1fr)" position="relative">
-      <GridItem colStart={{ base: 0, xl: 2 }} colSpan={{ base: 8, xl: 4 }}>
-        <Swap />
-      </GridItem>
-      <GridItem display={{ base: "none", xl: "flex" }} colSpan={3}>
-        <Center>
-          <Image
-            style={{
-              maxWidth: "50%",
-              transform: "scaleX(-1)",
-              position: "absolute",
-              bottom: -300,
-              right: -200,
-              overflow: "hidden",
-            }}
-            alt="Panflute Druid"
-            src={flute}
-            placeholder="blur"
-          />
-        </Center>
-      </GridItem>
-    </Grid>
+    <Flex
+      overflow="hidden"
+      alignItems="center"
+      justifyContent="center"
+      bgImage={"/images/Vector.png"}
+      bgRepeat={"no-repeat"}
+      bgSize={"cover"}
+      bgPos="left"
+      minH="100vh"
+    >
+      <Swap />
+      <Box
+        bgImage={"/flute.png"}
+        bgRepeat={"no-repeat"}
+        bgSize={"cover"}
+        bgPos={"center"}
+        position="absolute"
+        h={{ xl: "400px", "2xl": "520px" }}
+        w={{ xl: "260px", "2xl": "400px" }}
+        bottom="0.5rem"
+        right="0.5rem"
+      />
+    </Flex>
   );
 }

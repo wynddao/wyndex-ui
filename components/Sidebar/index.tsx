@@ -28,7 +28,11 @@ export default function Sidebar({ children }: SidebarProps) {
 
   return (
     <Box minH="100vh" bg={"wynd.base.subBg"}>
-      <SidebarContent onClose={() => onClose} display={{ base: "none", md: "flex" }} />
+      <SidebarContent
+        onClose={() => onClose}
+        display={{ base: "none", md: "flex" }}
+        minWidth={{ base: 0, md: 60, xl: 228 }}
+      />
       <Drawer
         autoFocus={false}
         isOpen={isOpen}
@@ -43,7 +47,7 @@ export default function Sidebar({ children }: SidebarProps) {
         </DrawerContent>
       </Drawer>
       <Hamburguer display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60, xl: 280 }} paddingX="4">
+      <Box ml={{ base: 0, md: 60, xl: 228 }} pl={{ base: "0" }}>
         {children}
       </Box>
     </Box>
