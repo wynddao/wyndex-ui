@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { Box } from "@chakra-ui/react";
 import { usePoolInfos } from "../../state";
 import PoolWrapper from "./PoolWrapper";
@@ -15,5 +15,5 @@ interface PoolProps {
 export default function Pool({ poolAddress }: PoolProps) {
   const { pool } = usePoolInfos(poolAddress);
 
-  return <Box>{pool ? <PoolWrapper poolData={pool} /> : null}</Box>;
+  return <Box p="4">{pool ? <PoolWrapper poolData={pool} /> : null}</Box>;
 }

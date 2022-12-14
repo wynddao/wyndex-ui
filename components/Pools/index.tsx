@@ -7,11 +7,10 @@ import PoolsCard from "./PoolsCard";
 export default function Pools() {
   const { onOpen, isOpen, onClose } = useDisclosure();
 
-  const {allPairs } = useFactoryInfos();
-
+  const { allPairs } = useFactoryInfos();
 
   return (
-    <>
+    <Box p="4">
       <Flex p={4} flexDir="column" gap={2}>
         <Flex align="center" mb={6}>
           <Heading as="h2" fontSize="2xl" mr={4}>
@@ -29,6 +28,6 @@ export default function Pools() {
         </Box>
       </Flex>
       <CreatePoolModal isOpen={isOpen} onClose={onClose} />
-    </>
+    </Box>
   );
 }
