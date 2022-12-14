@@ -2,7 +2,7 @@
 import { Box, Flex } from "@chakra-ui/react";
 import Swap from "../../components/Swap";
 
-export default function SwapPage() {
+export default function Page() {
   return (
     <Flex
       overflow="hidden"
