@@ -9,8 +9,9 @@ import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
 
 export default function Pools() {
-  const { allPairs } = useFactoryInfos();
-  const { pools } = useIndexerInfos();
+  const { pools, userPools } = useIndexerInfos({ fetchPoolData: true });
+
+  const userPoolData = userPools.map((pool: any) => pools[pool.address]);
 
   type AssetInfoIndexer =
     | {
@@ -129,7 +130,7 @@ export default function Pools() {
           My Pools
         </Text>
 
-        <PoolsCard poolsData={allPairs.slice(0, 4)} />
+        <PoolsCard poolsData={userPoolData} />
       </Box>
       <DataTable columns={columns} data={data} />
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
