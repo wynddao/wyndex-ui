@@ -1,10 +1,10 @@
-import { StakedResponse } from "../state/clients/types/WyndexStake.types";
+import { BondingPeriodInfo, StakedResponse } from "../state/clients/types/WyndexStake.types";
 import { secondsToDays } from "./time";
 
 export const renderUnboundingText = (
   text: string,
-  higherDuration: StakedResponse | undefined,
-  lowerDuration: StakedResponse | undefined,
+  higherDuration: StakedResponse | BondingPeriodInfo | undefined,
+  lowerDuration: StakedResponse | BondingPeriodInfo | undefined,
   stake: StakedResponse,
 ): string => {
   switch (text) {

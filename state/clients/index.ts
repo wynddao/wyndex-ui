@@ -2,3 +2,4 @@ export { WyndexFactoryQueryClient, WyndexFactoryClient } from "./WyndexFactory.c
 export { WyndexPairQueryClient, WyndexPairClient } from "./WyndexPair.client";
 export { Cw20QueryClient, Cw20Client } from "./Cw20.client";
 export { CustomClient } from "./Custom.client";
+export { IndexerQueryClient } from "./Indexer.client";

@@ -15,7 +15,12 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useState } from "react";
-import { StakedResponse } from "../../state/clients/types/WyndexStake.types";
+import {
+  BondingInfoResponse,
+  BondingPeriodInfo,
+  StakedResponse,
+} from "../../state/clients/types/WyndexStake.types";
+import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { secondsToDays } from "../../utils/time";
 import { microamountToAmount } from "../../utils/tokens";
@@ -29,22 +34,48 @@ interface BoundingsTableProps {
 export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }: BoundingsTableProps) {
   const tableHeaders = ["Bonded Tier", "Current APR", "Amount", "Action"];
   const { address } = useWallet();
+  const { infos } = useStakeInfos(stakeContract);
+
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(stakeContract, address);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [activeStake, setActiveStake] = useState<StakedResponse | undefined>(undefined);
-  const [nextDuration, setNextDuration] = useState<StakedResponse | undefined>(undefined);
-  const [prevDuration, setPrevDuration] = useState<StakedResponse | undefined>(undefined);
+  const [nextDuration, setNextDuration] = useState<BondingPeriodInfo | undefined>(undefined);
+  const [prevDuration, setPrevDuration] = useState<BondingPeriodInfo | undefined>(undefined);
+
+  const getNextOrPrevDurationTime = (
+    stake: StakedResponse,
+    higher: boolean,
+  ): BondingPeriodInfo | undefined => {
+    const selectedIndex = infos
+      .map((e) => {
+        return e.unbonding_period;
+      })
+      .indexOf(stake.unbonding_period);
+
+    if (higher) {
+      return selectedIndex + 1 in infos ? infos[selectedIndex + 1] : undefined;
+    } else {
+      return selectedIndex - 1 in infos ? infos[selectedIndex - 1] : undefined;
+    }
+  };
 
   return (
     <>
       <Box p={4}>
-        <Text fontSize="xl" fontWeight="bold" mb={4}>
+        <Text
+          fontSize="xl"
+          fontWeight="bold"
+          mb={4}
+          bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+          bgClip="text"
+          display="inline-block"
+        >
           My Bonded Liquidity
         </Text>
         <TableContainer>
           <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
-            <Thead bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}>
+            <Thead bg={"wynd.base.sidebar"}>
               <Tr>
                 {tableHeaders.map((header) => (
                   <Td key={header} fontSize="md" fontWeight="semibold" letterSpacing="normal">
@@ -69,12 +100,17 @@ export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }
                             onClick={() => {
                               setModalOpen(true);
                               setActiveStake(allStakes[i]);
-                              setPrevDuration(i - 1 in allStakes ? allStakes[i - 1] : undefined);
-                              setNextDuration(i + 1 in allStakes ? allStakes[i + 1] : undefined);
+                              setPrevDuration(getNextOrPrevDurationTime(allStakes[i], false));
+                              setNextDuration(getNextOrPrevDurationTime(allStakes[i], true));
                             }}
-                            variant="solid"
-                            color="orange.300"
+                            variant="outline"
+                            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+                            bgClip="text"
                             marginRight={3}
+                            _hover={{
+                              bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                              bgClip: "text",
+                            }}
                           >
                             Manage
                           </Button>

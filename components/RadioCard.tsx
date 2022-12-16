@@ -20,10 +20,13 @@ export default function RadioCard(props: any) {
         _checked={{
           bg: "orange.500",
           color: "white",
-          borderColor: "orange.600",
+          bgGradient: "linear(to-l, wynd.green.400, wynd.cyan.400)",
         }}
         _focus={{
           boxShadow: "outline",
+        }}
+        _hover={{
+          bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
         }}
         px={5}
         py={3}

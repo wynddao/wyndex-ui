@@ -3,3 +3,4 @@ export * as WyndexMultiHopSelectors from "./multihop";
 export * as WyndexPairSelectors from "./pair";
 export * as Cw20Selectors from "./cw20";
 export * as WyndexStakeSelectors from "./stake";
+export * as IndexerSelectors from "./indexer";

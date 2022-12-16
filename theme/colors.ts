@@ -207,6 +207,7 @@ export const darkColors = {
       background: "#2F2C71",
       subBg: "#131222",
       sidebar: "#100B16",
+      sidebarHover: "#0d111b",
       text: "#F2F2F2",
     },
     black: "#FFFFFF",
