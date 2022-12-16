@@ -17,11 +17,14 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { Asset } from "@wynddao/asset-list";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../state";
 import { depositIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { getAsset, getIbcBalance, getNativeBalance } from "../../utils";
+import { getNativeBalance } from "../../utils";
+import { getAssetList } from "../../utils/getAssetList";
 import { microamountToAmount } from "../../utils/tokens";
 
 interface DepositIbcData {
@@ -41,17 +44,20 @@ export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { address } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
+  const { ibcBalanceSelector } = useIndexerInfos({});
 
   const [depositIbcData, setDepositIbcData] = useState<DepositIbcData>();
   const [inputValue, setInputValue] = useState<string>("");
 
+  const assets: readonly Asset[] = getAssetList().tokens;
+  const asset = assets.find((asset) => asset.name === depositIbcModalOpen.asset);
+  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.denom ?? ""));
+
   useEffect(() => {
     (async function updateFromToken() {
-      if (!depositIbcModalOpen.asset || !address) return;
+      if (!asset || !address) return;
 
-      const asset = await getAsset(depositIbcModalOpen.asset);
       const nativeBalance = await getNativeBalance(address, asset.name);
-      const ibcBalance = await getIbcBalance(address, asset.name);
 
       const depositIbcData: DepositIbcData = {
         nativeChain: {
@@ -67,7 +73,7 @@ export default function DepositIbcModal() {
       };
       setDepositIbcData(depositIbcData);
     })();
-  }, [address, depositIbcModalOpen.asset]);
+  }, [address, asset, ibcBalance?.amount]);
 
   async function submitDepositIbc() {
     // TODO get data from rest api and use keplr or cosmostation as needed
