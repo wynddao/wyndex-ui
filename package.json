@@ -24,9 +24,8 @@
     "@fontsource/barlow": "^4.5.9",
     "@hookform/resolvers": "^2.9.10",
     "@keplr-wallet/crypto": "^0.11.17",
-    "@types/node": "18.11.9",
-    "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.8",
+    "@tanstack/match-sorter-utils": "^8.7.2",
+    "@tanstack/react-table": "^8.7.3",
     "@wynddao/asset-list": "^0.0.6",
     "bufferutil": "^4.0.7",
     "chain-registry": "^1.5.0",
@@ -50,6 +49,9 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@types/node": "18.11.9",
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.8",
     "dotenv": "^16.0.3",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.4",

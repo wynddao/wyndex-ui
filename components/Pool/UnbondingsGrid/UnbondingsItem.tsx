@@ -23,7 +23,10 @@ export default function UnbondingsItem({ unbonding_period }: { unbonding_period:
         <Text fontWeight="bold" fontSize="2xl">
           {secondsToDays(unbonding_period)} Days
         </Text>
-        <Text fontWeight="bold" fontSize="xl" color="orange.300">
+        <Text
+          fontWeight="bold"
+          fontSize="xl"
+        >
           20% APR @TODO
         </Text>
       </Box>
@@ -51,7 +54,11 @@ export default function UnbondingsItem({ unbonding_period }: { unbonding_period:
             <Text fontWeight="bold" fontSize="2xl">
               Incetives
             </Text>
-            <Text fontWeight="bold" fontSize="xl" color="orange.300">
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              display="inline"
+            >
               +1% @TODO
             </Text>
           </Box>

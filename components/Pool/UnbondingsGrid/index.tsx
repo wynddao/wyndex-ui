@@ -29,7 +29,7 @@ export default function UnboundingsGrid({ stakeAddress }: UnboundingsGridProps) 
           </Flex>
         </Box>
       )}
-      <SimpleGrid columns={{ md: 2, lg: 3 }} gap={8} p={4} pb={12}>
+      <SimpleGrid columns={{ md: 2, lg: 4 }} gap={8} p={4} pb={12}>
         {infos.map(({ unbonding_period }, i) => {
           return <UnbondingsItem key={i} unbonding_period={unbonding_period} />;
         })}

@@ -54,7 +54,14 @@ export default function LiquidityMining({ pairData }: { pairData: PairInfo }) {
         <Box p={4} pt={8}>
           <Flex justify={{ md: "space-between" }} flexDirection={{ base: "column", md: "row" }}>
             <Box maxW={{ md: "md", lg: "2xl" }}>
-              <Text fontSize="2xl" fontWeight="bold" mb={2}>
+              <Text
+                fontSize="2xl"
+                fontWeight="bold"
+                mb={2}
+                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+                bgClip="text"
+                display="inline"
+              >
                 Start WYNNING!
               </Text>
               <Text
@@ -79,7 +86,15 @@ export default function LiquidityMining({ pairData }: { pairData: PairInfo }) {
                 {microamountToAmount(lpBalance, 6)}{" "}
                 <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
               </Text>
-              <Button onClick={() => setIsModalOpen(true)}>Start WYNNING!</Button>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                _hover={{
+                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                }}
+              >
+                Start WYNNING!
+              </Button>
             </Flex>
           </Flex>
         </Box>
