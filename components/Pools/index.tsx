@@ -11,8 +11,6 @@ import TokenName from "../TokenName";
 export default function Pools() {
   const { pools, userPools } = useIndexerInfos({ fetchPoolData: true });
 
-  const userPoolData = userPools.map((pool: any) => pools[pool.address]);
-
   type AssetInfoIndexer =
     | {
         token: string;
@@ -130,7 +128,7 @@ export default function Pools() {
           My Pools
         </Text>
 
-        <PoolsCard poolsData={userPoolData} />
+        <PoolsCard poolsData={userPools} />
       </Box>
       <DataTable columns={columns} data={data} />
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
