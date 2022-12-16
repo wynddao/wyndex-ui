@@ -90,7 +90,7 @@ export default function AssetIbcItem({
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        {name !== "JUNOX" ? (
+        {name !== "Juno" ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
             <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
               IBC Deposit
