@@ -48,14 +48,21 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
     <>
       <Box p={4}>
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="xl" fontWeight="bold" mb={4}>
+          <Text
+            fontSize="xl"
+            fontWeight="bold"
+            mb={4}
+            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+            bgClip="text"
+            display="inline"
+          >
             My Pending Unbondings
           </Text>
           {claimable && <Button onClick={() => setModalOpen(true)}>Claim now!</Button>}
         </Flex>
         <TableContainer>
           <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
-            <Thead bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}>
+            <Thead bg={"wynd.base.sidebar"}>
               <Tr>
                 {tableHeaders.map((header) => (
                   <Td key={header} fontSize="md" fontWeight="semibold" letterSpacing="normal">

@@ -21,13 +21,13 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
             <Box
               borderRadius="lg"
               border="1px solid"
-              borderColor={"wynd.cyan.500"}
+              borderColor={"wynd.neutral.100"}
               boxShadow="md"
               _hover={{
                 cursor: "pointer",
                 borderColor: "wynd.cyan.500",
               }}
-              bg={"wynd.neutral.100"}
+              bg={"wynd.base.sidebar"}
               p={4}
             >
               <Flex align="center" mb={4}>

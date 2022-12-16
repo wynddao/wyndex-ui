@@ -20,7 +20,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useState } from "react";
 import { WyndexStakeHooks } from "../../../state";
-import { StakedResponse } from "../../../state/clients/types/WyndexStake.types";
+import { BondingPeriodInfo, StakedResponse } from "../../../state/clients/types/WyndexStake.types";
 import { useToast } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { renderUnboundingText } from "../../../utils/text";
@@ -33,8 +33,8 @@ interface ManageBoundingsModalProps {
   onClose: () => void;
   tokenName: any;
   stake: StakedResponse;
-  higherDuration: StakedResponse | undefined;
-  lowerDuration: StakedResponse | undefined;
+  higherDuration: BondingPeriodInfo | undefined;
+  lowerDuration: BondingPeriodInfo | undefined;
   wyndexStakeAddress: string;
 }
 
