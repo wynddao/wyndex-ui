@@ -1,6 +1,5 @@
 import { asset_list } from "@chain-registry/osmosis";
-import { Asset } from "./types";
-
+import { Asset, CW20Asset } from "@wynddao/asset-list";
 const handleRandomCase = (text: string) =>
   text
     .split("")
@@ -22,15 +21,15 @@ export const OsmosisTokens = asset_list.assets.map(({ name, logo_URIs, symbol, t
 
 export const getAssetInfo = (item: Asset) => {
   // If there is a contract address, token is cw20
-  if (item.contractAddress) {
-    return {
-      token: item.contractAddress,
-    };
-  }
-  // If there is no contract address, token is native
-  else {
-    return {
-      native_token: item.denom,
-    };
-  }
+  return item.tags.includes("cw20")
+    ? {
+        token: (item as CW20Asset).token_address,
+      }
+    : {
+        native_token: item.denom,
+      };
+};
+
+export const getDenom = (item: Asset): string => {
+  return item.tags.includes("native") ? item.denom.slice(1) : item.denom;
 };
