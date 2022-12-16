@@ -26,7 +26,7 @@
     "@keplr-wallet/crypto": "^0.11.17",
     "@tanstack/match-sorter-utils": "^8.7.2",
     "@tanstack/react-table": "^8.7.3",
-    "@wynddao/asset-list": "^0.0.7",
+    "@wynddao/asset-list": "^0.0.8",
     "bufferutil": "^4.0.7",
     "chain-registry": "^1.5.0",
     "chakra-react-select": "^4.4.0",
