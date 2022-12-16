@@ -1,10 +1,10 @@
 "use client";
 
 import { Box, Grid, GridItem, Input, Stack, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
-import { Asset, assetList, IBCAsset } from "@wynddao/asset-list";
-import { useEffect, useState } from "react";
-import { getIbcBalances } from "../../../utils";
+import { Asset, IBCAsset } from "@wynddao/asset-list";
+import { useState } from "react";
+import { useIndexerInfos } from "../../../state";
+import { getAssetList } from "../../../utils/getAssetList";
 import AssetIbcItem from "./AssetIbcItem";
 
 export type AssetIbcWithBalance = IBCAsset & {
@@ -12,31 +12,21 @@ export type AssetIbcWithBalance = IBCAsset & {
 };
 
 export default function AssetIbcBalances() {
-  const { address } = useWallet();
-
-  const [assets, setAssets] = useState<readonly AssetIbcWithBalance[]>([]);
+  const { ibcBalances } = useIndexerInfos({ fetchIbcBalances: true });
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    (async function updateAssets() {
-      if (!address) return;
+  const assets: readonly Asset[] = getAssetList().tokens;
+  const ibcAssets = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
 
-      const assets: readonly Asset[] = assetList.tokens;
-      const ibcBalances = await getIbcBalances(address);
-      const ibcAssets = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
+  const assetsWithBalance: AssetIbcWithBalance[] = ibcAssets.map((asset): AssetIbcWithBalance => {
+    const balance = ibcBalances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
+    return { ...asset, balance };
+  });
 
-      const assetsWithBalance: AssetIbcWithBalance[] = ibcAssets.map((asset): AssetIbcWithBalance => {
-        const balance = ibcBalances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
-      });
-
-      setAssets(assetsWithBalance);
-    })();
-  }, [address]);
-
-  const searchedAssets = assets.filter((asset) =>
+  const searchedAssets = assetsWithBalance.filter((asset) =>
     asset.name.toLowerCase().includes(searchText.toLowerCase()),
   );
+
   const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
 
   return (
