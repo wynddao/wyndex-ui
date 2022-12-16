@@ -8,16 +8,15 @@ import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 
 interface PoolsCardProps {
-  readonly poolsData: readonly PairInfo[];
+  readonly poolsData: readonly any[];
 }
 
 export default function PoolsCard({ poolsData }: PoolsCardProps) {
-  console.log(poolsData);
   return (
     <SimpleGrid columns={{ sm: 2, lg: 4 }} gap={4} mb={8}>
       {poolsData.map((pool, index) => {
         return (
-          <Link key={index} href={`/pools/${pool.contract_addr}`}>
+          <Link key={index} href={`/pools/${pool.address}`}>
             <Box
               borderRadius="lg"
               border="1px solid"
@@ -44,11 +43,11 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                   >
                     <AssetImage
                       asset={
-                        pool.asset_infos[0].hasOwnProperty("token")
+                        pool.value.pair_info.asset_infos[0].hasOwnProperty("token")
                           ? //  @ts-ignore
-                            pool.asset_infos[0].token
+                            pool.value.pair_info.asset_infos[0].token
                           : //  @ts-ignore
-                            pool.asset_infos[0].native_token
+                            pool.value.pair_info.asset_infos[0].native_token
                       }
                     />
                   </Box>
@@ -66,18 +65,18 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                   >
                     <AssetImage
                       asset={
-                        pool.asset_infos[1].hasOwnProperty("token")
+                        pool.value.pair_info.asset_infos[1].hasOwnProperty("token")
                           ? //  @ts-ignore
-                            pool.asset_infos[1].token
+                            pool.value.pair_info.asset_infos[1].token
                           : //  @ts-ignore
-                            pool.asset_infos[1].native_token
+                            pool.value.pair_info.asset_infos[1].native_token
                       }
                     />
                   </Box>
                 </Flex>
                 <Flex flexDirection="column" justify="center">
                   <Text fontSize="xl" fontWeight="extrabold">
-                    {pool.asset_infos.map((assetInfo, index) => {
+                    {pool.value.pair_info.asset_infos.map((assetInfo: any, index: number) => {
                       const divider = index === 0 ? " / " : null;
 
                       if (assetInfo.hasOwnProperty("native_token")) {
