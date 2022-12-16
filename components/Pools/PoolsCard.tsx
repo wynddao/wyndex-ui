@@ -12,7 +12,6 @@ interface PoolsCardProps {
 }
 
 export default function PoolsCard({ poolsData }: PoolsCardProps) {
-  console.log(poolsData);
   return (
     <SimpleGrid columns={{ sm: 2, lg: 4 }} gap={4} mb={8}>
       {poolsData.map((pool, index) => {
