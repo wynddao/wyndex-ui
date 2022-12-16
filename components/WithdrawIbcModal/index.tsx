@@ -17,11 +17,14 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { Asset } from "@wynddao/asset-list";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../state";
 import { withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { getAsset, getIbcBalance, getNativeBalance } from "../../utils";
+import { getNativeBalance } from "../../utils";
+import { getAssetList } from "../../utils/getAssetList";
 import { microamountToAmount } from "../../utils/tokens";
 
 interface WithdrawIbcData {
@@ -41,17 +44,20 @@ export default function WithdrawIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { address } = useWallet();
   const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalAtom);
+  const { ibcBalanceSelector } = useIndexerInfos({});
 
   const [withdrawIbcData, setWithdrawIbcData] = useState<WithdrawIbcData>();
   const [inputValue, setInputValue] = useState<string>("");
 
+  const assets: readonly Asset[] = getAssetList().tokens;
+  const asset = assets.find((asset) => asset.name === withdrawIbcModalOpen.asset);
+  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.denom ?? ""));
+
   useEffect(() => {
     (async function updateFromToken() {
-      if (!withdrawIbcModalOpen.asset || !address) return;
+      if (!asset || !address) return;
 
-      const asset = await getAsset(withdrawIbcModalOpen.asset);
       const nativeBalance = await getNativeBalance(address, asset.name);
-      const ibcBalance = await getIbcBalance(address, asset.name);
 
       const withdrawIbcData: WithdrawIbcData = {
         nativeChain: {
@@ -67,7 +73,7 @@ export default function WithdrawIbcModal() {
       };
       setWithdrawIbcData(withdrawIbcData);
     })();
-  }, [address, withdrawIbcModalOpen.asset]);
+  }, [address, asset, ibcBalance?.amount]);
 
   async function submitWithdrawIbc() {
     // TODO get data from rest api and use keplr or cosmostation as needed
