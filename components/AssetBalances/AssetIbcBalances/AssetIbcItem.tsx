@@ -2,14 +2,17 @@
 
 import { Box, Button, Flex, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import { useSetRecoilState } from "recoil";
-import { AssetWithBalance } from "..";
+import { AssetIbcWithBalance } from ".";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
+import { microamountToAmount } from "../../../utils/tokens";
 
 interface AssetIbcItemProps {
-  readonly assetDetails: AssetWithBalance;
+  readonly assetDetails: AssetIbcWithBalance;
 }
 
-export default function AssetIbcItem({ assetDetails: { name, img, balance, denom } }: AssetIbcItemProps) {
+export default function AssetIbcItem({
+  assetDetails: { name, logoURI, balance, decimals },
+}: AssetIbcItemProps) {
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
 
@@ -56,7 +59,7 @@ export default function AssetIbcItem({ assetDetails: { name, img, balance, denom
             mr={4}
             overflow="hidden"
           >
-            <Image alt={`${name} logo`} src={img} width="100%" />
+            <Image alt={`${name} logo`} src={logoURI} width="100%" />
           </Box>
           <Text fontSize="lg" mr={4}>
             {name}
@@ -74,10 +77,7 @@ export default function AssetIbcItem({ assetDetails: { name, img, balance, denom
         <Text display={{ base: "block", md: "none" }}>IBC Balance</Text>
         <Box w="full" textAlign="end">
           <Text fontSize="lg" mb={0.5}>
-            {balance}
-          </Text>
-          <Text fontSize="lg" opacity={0.7}>
-            {denom}
+            {microamountToAmount(balance, decimals)}
           </Text>
         </Box>
       </GridItem>
@@ -90,14 +90,22 @@ export default function AssetIbcItem({ assetDetails: { name, img, balance, denom
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
-          <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
-            IBC Deposit
-          </Button>
-          <Button fontSize="sm" onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}>
-            IBC Withdraw
-          </Button>
-        </Flex>
+        {name !== "JUNOX" ? (
+          <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
+            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
+              IBC Deposit
+            </Button>
+            <Button
+              fontSize="sm"
+              disabled={balance === "0"}
+              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}
+            >
+              IBC Withdraw
+            </Button>
+          </Flex>
+        ) : (
+          <Text>—</Text>
+        )}
       </GridItem>
     </Grid>
   );
