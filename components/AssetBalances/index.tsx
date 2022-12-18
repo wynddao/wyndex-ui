@@ -1,14 +1,9 @@
 "use client";
 
 import { Grid, GridItem, Stack } from "@chakra-ui/react";
-import { Asset } from "../../utils/types";
 import AssetCw20Balances from "./AssetCw20Balances";
 import AssetIbcBalances from "./AssetIbcBalances";
 import AssetsRecapGallery from "./AssetsRecapGallery";
-
-export interface AssetWithBalance extends Asset {
-  readonly balance: string;
-}
 
 export default function AssetBalances() {
   return (

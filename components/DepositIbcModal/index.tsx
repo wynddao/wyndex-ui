@@ -17,99 +17,99 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { assets } from "chain-registry";
+import { Asset } from "@wynddao/asset-list";
 import { useEffect, useState } from "react";
-import { IoWallet } from "react-icons/io5";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../state";
 import { depositIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { getAsset, getIbcBalance, getNativeBalance } from "../../utils";
+import { getNativeBalance } from "../../utils";
+import { getAssetList } from "../../utils/getAssetList";
+import { microamountToAmount } from "../../utils/tokens";
 
-interface fromTokenType {
-  name: string;
-  address: string;
-  availableBalance: string;
-  ibcBalance: string;
-}
-
-interface toTokenType {
-  name: string;
-  address: string;
+interface DepositIbcData {
+  readonly nativeChain?: {
+    readonly tokenName?: string;
+    readonly userAddress?: string;
+    readonly balance?: string;
+  };
+  readonly ibcChain?: {
+    readonly tokenName?: string;
+    readonly userAddress?: string;
+    readonly balance?: string;
+  };
 }
 
 export default function DepositIbcModal() {
+  const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { address } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
+  const { ibcBalanceSelector } = useIndexerInfos({});
 
-  const [fromToken, setFromToken] = useState<fromTokenType>({
-    name: "",
-    address: "",
-    availableBalance: "",
-    ibcBalance: "",
-  });
-  const [toToken, setToToken] = useState<toTokenType>({
-    name: "",
-    address: "",
-  });
+  const [depositIbcData, setDepositIbcData] = useState<DepositIbcData>();
   const [inputValue, setInputValue] = useState<string>("");
 
-  const icon = useBreakpointValue({
-    base: RiArrowDownFill,
-    md: RiArrowRightFill,
-  });
+  const assets: readonly Asset[] = getAssetList().tokens;
+  const asset = assets.find((asset) => asset.name === depositIbcModalOpen.asset);
+  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.denom ?? ""));
 
   useEffect(() => {
     (async function updateFromToken() {
-      if (!depositIbcModalOpen.asset || !address) return;
+      if (!asset || !address) return;
 
-      const asset = await getAsset(depositIbcModalOpen.asset);
       const nativeBalance = await getNativeBalance(address, asset.name);
-      const ibcBalance = await getIbcBalance(address, asset.name);
 
-      const fromToken: fromTokenType = {
-        name: asset.name,
-        address: asset.contractAddress || "",
-        availableBalance: nativeBalance?.amount ?? "0",
-        ibcBalance: ibcBalance?.amount ?? "0",
+      const depositIbcData: DepositIbcData = {
+        nativeChain: {
+          tokenName: asset.name,
+          userAddress: address, // TODO load address from native chain using keplr/cosmostation
+          balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
+        },
+        ibcChain: {
+          tokenName: "IBC/" + asset.name,
+          userAddress: address,
+          balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
+        },
       };
-      setFromToken(fromToken);
+      setDepositIbcData(depositIbcData);
     })();
-  }, [address, depositIbcModalOpen.asset]);
+  }, [address, asset, ibcBalance?.amount]);
 
-  useEffect(() => {
-    const getShuffledArr = (arr: any[]) => {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const rand = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[rand]] = [arr[rand], arr[i]];
-      }
-      return arr;
-    };
-    const defaultArray = [
-      ..."abcdefghijklmnopqrstuvwxyz".toUpperCase().split(""),
-      ..."abcdefghijklmnopqrstuvwxyz".split(""),
-      ..."0123456789".split(""),
-    ];
-    const getRandomLetter = (name: string) => {
-      let randomLetter = getShuffledArr(defaultArray).toString().replace(",", "").slice(0, 32);
-      return name.replace(/[\-[\s[\.]/g, "") + randomLetter;
-    };
-    const assetList = assets
-      .map(({ assets }) => assets.values())
-      .map((iterator) => {
-        for (const value of iterator) {
-          return {
-            name: value.name,
-            address: getRandomLetter(value.name).replace(/,/gm, ""),
-          };
-        }
-      });
-    const getToToken = getShuffledArr([...assetList])[0];
+  async function submitDepositIbc() {
+    // TODO get data from rest api and use keplr or cosmostation as needed
+    /* if (!address) return;
 
-    setToToken({
-      name: getToToken.name,
-      address: getToToken.address,
-    });
-  }, []);
+      try {
+        const chosenDenom = "uosmo";
+        const chainName = "Osmosis Testnet";
+        const chainEndpoint = "https://rpc-test.osmosis.zone:443";
+        const keplrWallet = new KeplrExtensionWallet(
+          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
+          { [chainName]: { rpc: [chainEndpoint] } },
+        );
+
+        const keplrClient = await keplrWallet.fetchClient();
+        const { address: chosenAddress } = await keplrClient.getAccount("osmo-test-4");
+
+        const signer = keplrClient.client.getOfflineSigner("osmo-test-4");
+        const client = await SigningStargateClient.connectWithSigner(chainEndpoint, signer, {
+          gasPrice: GasPrice.fromString("0.05uosmo"),
+        });
+        const res = await client.sendIbcTokens(
+          chosenAddress,
+          address,
+          { denom: chosenDenom, amount: "15" },
+          "transfer",
+          "channel-1111",
+          undefined,
+          1670938601,
+          "auto",
+        );
+        console.log({ res });
+      } catch (error) {
+        console.error({ error });
+      } */
+  }
 
   return (
     <Modal
@@ -119,7 +119,13 @@ export default function DepositIbcModal() {
       isCentered={true}
     >
       <ModalOverlay />
-      <ModalContent maxW={{ md: "2xl" }} borderRadius="2xl" p={6} mx={2}>
+      <ModalContent
+        maxW={{ md: "2xl" }}
+        borderRadius="2xl"
+        p={6}
+        mx={2}
+        bgColor="var(--chakra-colors-chakra-body-bg)"
+      >
         <ModalHeader fontSize="2xl" fontWeight="bold" p={0} mb={6}>
           Deposit IBC Asset
         </ModalHeader>
@@ -144,7 +150,7 @@ export default function DepositIbcModal() {
               color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={fromToken.address || "(native)"}
+              title={depositIbcData?.nativeChain?.userAddress}
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -155,7 +161,7 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {fromToken.name}
+              {depositIbcData?.nativeChain?.tokenName}
             </Text>
           </GridItem>
           <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
@@ -172,7 +178,7 @@ export default function DepositIbcModal() {
               color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={toToken.address || "(native)"}
+              title={depositIbcData?.ibcChain?.userAddress}
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -183,18 +189,18 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {toToken.name}
+              {depositIbcData?.ibcChain?.tokenName}
             </Text>
           </GridItem>
         </Grid>
         <Text fontSize="xl" fontWeight="bold" mb={3}>
           Amount To Deposit
         </Text>
-        <Box borderRadius="2xl" border="1px solid" borderColor="orange.300" px={4} py={6} mb={12}>
+        <Box borderRadius="2xl" border="1px solid" borderColor="wynd.neutral.800" px={4} py={6} mb={12}>
           <Text fontWeight="semibold" mr={4} mb={3}>
             Available balance:&ensp;
-            <Text as="span" color={"wynd.cyan.400"}>
-              {fromToken.availableBalance}&ensp;{fromToken.name}
+            <Text as="span" color={"wynd.cyan.500"}>
+              {depositIbcData?.nativeChain?.balance}&ensp;{depositIbcData?.nativeChain?.tokenName}
             </Text>
           </Text>
           <NumberInput
@@ -205,7 +211,7 @@ export default function DepositIbcModal() {
             value={inputValue}
             bg={"wynd"}
             min={0}
-            max={parseFloat(fromToken.availableBalance)}
+            max={parseFloat(depositIbcData?.nativeChain?.balance ?? "0")}
             onChange={(value) => setInputValue(value)}
           >
             <NumberInputField fontWeight="semibold" letterSpacing="wide" />
@@ -213,11 +219,11 @@ export default function DepositIbcModal() {
               position="absolute"
               zIndex={5}
               right={4}
-              colorScheme="primary"
+              colorScheme="gray"
               size="xs"
               ml={2}
               _focus={{ outline: "none" }}
-              onClick={() => setInputValue(fromToken.availableBalance)}
+              onClick={() => setInputValue(depositIbcData?.nativeChain?.balance ?? "0")}
             >
               MAX
             </Button>
@@ -225,12 +231,17 @@ export default function DepositIbcModal() {
         </Box>
         <Button
           h={14}
-          colorScheme="primary"
-          leftIcon={<IoWallet />}
-          w="full"
-          isDisabled={inputValue === "0" || inputValue === "" ? true : false}
+          colorScheme="gray"
+          isDisabled={
+            inputValue === "0" ||
+            inputValue === "" ||
+            parseFloat(inputValue) > (depositIbcData?.nativeChain?.balance ?? 0)
+              ? true
+              : false
+          }
+          onClick={submitDepositIbc}
         >
-          Connect Wallet
+          Deposit
         </Button>
       </ModalContent>
     </Modal>

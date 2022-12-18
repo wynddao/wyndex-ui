@@ -1,39 +1,33 @@
 "use client";
 
 import { Box, Grid, GridItem, Input, Stack, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
-import { useEffect, useState } from "react";
-import { AssetWithBalance } from "..";
-import { getAssets, getIbcBalances } from "../../../utils";
+import { Asset, IBCAsset } from "@wynddao/asset-list";
+import { useState } from "react";
+import { useIndexerInfos } from "../../../state";
+import { getAssetList } from "../../../utils/getAssetList";
 import AssetIbcItem from "./AssetIbcItem";
 
-export default function AssetIbcBalances() {
-  const { address, getCosmWasmClient } = useWallet();
+export type AssetIbcWithBalance = IBCAsset & {
+  readonly balance: string;
+};
 
-  const [assets, setAssets] = useState<readonly AssetWithBalance[]>([]);
+export default function AssetIbcBalances() {
+  const { ibcBalances } = useIndexerInfos({ fetchIbcBalances: true });
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    (async function updateAssets() {
-      const client = await getCosmWasmClient();
-      if (!client || !address) return;
+  const assets: readonly Asset[] = getAssetList().tokens;
+  const ibcAssets = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
 
-      const assets = await getAssets();
-      const ibcBalances = await getIbcBalances(address);
-      const ibcAssets = assets.filter((asset) => asset.tokenType !== "cw20");
+  const assetsWithBalance: AssetIbcWithBalance[] = ibcAssets.map((asset): AssetIbcWithBalance => {
+    const balance = ibcBalances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
+    return { ...asset, balance };
+  });
 
-      const assetsWithBalance: AssetWithBalance[] = ibcAssets.map((asset): AssetWithBalance => {
-        const balance = ibcBalances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
-      });
-
-      setAssets(assetsWithBalance);
-    })();
-  }, [address, getCosmWasmClient]);
-
-  const searchedAssets = assets.filter((asset) =>
+  const searchedAssets = assetsWithBalance.filter((asset) =>
     asset.name.toLowerCase().includes(searchText.toLowerCase()),
   );
+
+  const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
 
   return (
     <Box bg={"wynd.neutral.100"} p={8}>
@@ -91,7 +85,7 @@ export default function AssetIbcBalances() {
         boxShadow={{ lg: "base" }}
         spacing={{ base: 4, lg: 0 }}
       >
-        {searchedAssets.map((assetDetails, i) => (
+        {sortedAssets.map((assetDetails, i) => (
           <AssetIbcItem key={i} assetDetails={assetDetails} />
         ))}
       </Stack>

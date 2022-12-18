@@ -1,39 +1,33 @@
 "use client";
 
 import { Box, Grid, GridItem, Input, Stack, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
-import { useEffect, useState } from "react";
-import { AssetWithBalance } from "..";
-import { getAssets, getCw20Balances } from "../../../utils";
+import { Asset, CW20Asset } from "@wynddao/asset-list";
+import { useState } from "react";
+import { useIndexerInfos } from "../../../state";
+import { getAssetList } from "../../../utils/getAssetList";
 import AssetCw20Item from "./AssetCw20Item";
 
-export default function AssetCw20Balances() {
-  const { address, getCosmWasmClient } = useWallet();
+export type AssetCw20WithBalance = CW20Asset & {
+  readonly balance: string;
+};
 
-  const [assets, setAssets] = useState<readonly AssetWithBalance[]>([]);
+export default function AssetCw20Balances() {
+  const { cw20Balances } = useIndexerInfos({ fetchIbcBalances: true });
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    (async function updateAssets() {
-      const client = await getCosmWasmClient();
-      if (!client || !address) return;
+  const assets: readonly Asset[] = getAssetList().tokens;
+  const cw20Assets = assets.filter((asset): asset is CW20Asset => asset.tags === "cw20");
 
-      const assets = await getAssets();
-      const cw20Balances = await getCw20Balances(address);
-      const cw20Assets = assets.filter((asset) => asset.tokenType === "cw20");
+  const assetsWithBalance: AssetCw20WithBalance[] = cw20Assets.map((asset): AssetCw20WithBalance => {
+    const balance = cw20Balances.find((balance) => balance.address === asset.token_address)?.balance ?? "0";
+    return { ...asset, balance };
+  });
 
-      const assetsWithBalance: AssetWithBalance[] = cw20Assets.map((asset): AssetWithBalance => {
-        const balance = cw20Balances.find((coin) => coin.denom === asset.denom)?.amount ?? "0";
-        return { ...asset, balance };
-      });
-
-      setAssets(assetsWithBalance);
-    })();
-  }, [address, getCosmWasmClient]);
-
-  const searchedAssets = assets.filter((asset) =>
+  const searchedAssets = assetsWithBalance.filter((asset) =>
     asset.name.toLowerCase().includes(searchText.toLowerCase()),
   );
+
+  const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
 
   return (
     <Box bg={"wynd.neutral.100"} p={8}>
@@ -90,7 +84,7 @@ export default function AssetCw20Balances() {
         boxShadow={{ lg: "base" }}
         spacing={{ base: 4, lg: 0 }}
       >
-        {searchedAssets.map((assetDetails, i) => (
+        {sortedAssets.map((assetDetails, i) => (
           <AssetCw20Item key={i} assetDetails={assetDetails} />
         ))}
       </Stack>

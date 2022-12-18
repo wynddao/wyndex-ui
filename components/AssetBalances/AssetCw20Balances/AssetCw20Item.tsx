@@ -15,20 +15,21 @@ import {
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { FiCopy } from "react-icons/fi";
-import { AssetWithBalance } from "..";
+import { AssetCw20WithBalance } from ".";
+import { microamountToAmount } from "../../../utils/tokens";
 
 interface AssetCw20ItemProps {
-  readonly assetDetails: AssetWithBalance;
+  readonly assetDetails: AssetCw20WithBalance;
 }
 
 export default function AssetCw20Item({
-  assetDetails: { name, img, balance, denom, contractAddress },
+  assetDetails: { name, logoURI, balance, decimals, token_address },
 }: AssetCw20ItemProps) {
   const { onCopy, hasCopied, setValue } = useClipboard("");
 
   useEffect(() => {
-    setValue(contractAddress || "");
-  }, [contractAddress, setValue]);
+    setValue(token_address || "");
+  }, [token_address, setValue]);
 
   return (
     <Grid
@@ -73,21 +74,29 @@ export default function AssetCw20Item({
             mr={4}
             overflow="hidden"
           >
-            <Image alt={`${name} logo`} src={img} width="100%" />
+            <Image alt={`${name} logo`} src={logoURI} width="100%" />
           </Box>
-          <Text fontSize="lg" mr={4}>
-            {name}
-          </Text>
-          {contractAddress ? (
-            <Tooltip label={hasCopied ? "Copied!" : "Copy token address"}>
-              <Tag size="md" variant="outline" minW="fit-content" sx={{ cursor: "pointer" }} onClick={onCopy}>
-                <TagLabel sx={{ overflow: "hidden", whiteSpace: "nowrap", direction: "rtl" }}>
-                  {contractAddress.slice(-5) + "…"}
-                </TagLabel>
-                <TagRightIcon as={FiCopy} />
-              </Tag>
-            </Tooltip>
-          ) : null}
+          <Box>
+            <Text fontSize="lg" mr={4}>
+              {name}
+            </Text>
+            {token_address ? (
+              <Tooltip label={hasCopied ? "Copied!" : "Copy token address"}>
+                <Tag
+                  size="md"
+                  variant="outline"
+                  minW="fit-content"
+                  sx={{ cursor: "pointer" }}
+                  onClick={onCopy}
+                >
+                  <TagLabel sx={{ overflow: "hidden", whiteSpace: "nowrap", direction: "rtl" }}>
+                    {token_address.slice(-5) + "…"}
+                  </TagLabel>
+                  <TagRightIcon as={FiCopy} />
+                </Tag>
+              </Tooltip>
+            ) : null}
+          </Box>
         </Flex>
       </GridItem>
       <GridItem
@@ -101,10 +110,7 @@ export default function AssetCw20Item({
         <Text display={{ base: "block", md: "none" }}>Balance</Text>
         <Box w="full" textAlign="end">
           <Text fontSize="lg" mb={0.5}>
-            {balance}
-          </Text>
-          <Text fontSize="lg" opacity={0.7}>
-            {denom}
+            {microamountToAmount(balance, decimals)}
           </Text>
         </Box>
       </GridItem>

@@ -2232,10 +2232,10 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
 
-"@wynddao/asset-list@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/@wynddao/asset-list/-/asset-list-0.0.6.tgz"
-  integrity sha512-495jCGLSPEoRtDUZXzoUvvwF/gw6JwgBD8CyhXCWqZGYgKGhLHhT9ahWoSLAyDjRMNZg6CU0TEd03Ffqb2DK6A==
+"@wynddao/asset-list@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.8.tgz#692e0ac64e681d908e379c9db5ba71548884faae"
+  integrity sha512-hHitRlyPYBhfKlyR4U1Ys2xV4MqJNQO/rtncTybcIbW+gDQfJAMaIC1jqGuZo7mK0pcpN8vVU3TtOCkzxkFUMA==
 
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"
