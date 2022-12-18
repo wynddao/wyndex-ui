@@ -18,7 +18,11 @@ import TokenName from "../TokenName";
 import ManageLiquidityModal from "./ManageLiquidityModal";
 import druid from "./assets/druid.png";
 import Image from "next/image";
-import { microdenomToDenom } from "../../utils/tokens";
+import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
+import { useState } from "react";
+import { useCw20UserInfos, useIndexerInfos } from "../../state";
+import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
+import { getAssetPrice } from "../../utils/assets";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -26,7 +30,41 @@ interface PoolHeaderProps {
   readonly walletAddress: string;
 }
 
-const LinkUndecorated = chakra(Link, { baseStyle: { _hover: { textDecoration: "none" } } });
+interface PoolHeaderUserProps {
+  chainData: PoolResponse;
+  pairData: PairInfo;
+  tokenPrice1: any;
+  tokenPrice2: any;
+  walletAddress: string;
+}
+
+function PoolHeaderUserInfo({
+  chainData,
+  pairData,
+  tokenPrice1,
+  tokenPrice2,
+  walletAddress,
+}: PoolHeaderUserProps) {
+  const wyndexStake = pairData.staking_addr;
+  //@ts-ignore
+  const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress);
+  const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
+
+  // TODO Add currently unstaking amounts
+  const allStakesSum = allStakes.reduce((acc: number, obj) => {
+    return acc + Number(obj.stake);
+  }, 0);
+
+  const totalTokens = allStakesSum + Number(lpBalance);
+
+  const myShare = totalTokens / Number(chainData.total_share);
+
+  const myFiatShare =
+    myShare * Number(microamountToAmount(chainData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
+    myShare * Number(microamountToAmount(chainData.assets[0].amount, 6)) * tokenPrice2.priceInUsd;
+
+  return <span>{myFiatShare.toFixed(2)} $</span>;
+}
 
 export default function PoolHeader({ chainData, pairData, walletAddress }: PoolHeaderProps) {
   const { onOpen, isOpen, onClose } = useDisclosure();
@@ -39,6 +77,20 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
       return <TokenName key={index} address={assetInfo.token} />;
     }
   });
+
+  // Get Token prices
+  const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
+
+  const tokenPrice1 = getAssetPrice(chainData.assets[0].info, assetPrices);
+
+  const tokenPrice2 = getAssetPrice(chainData.assets[1].info, assetPrices);
+
+  // calculating users share with all locked tokens and available tokens
+  // by the total share of the LP token
+
+  const totalFiatShares =
+    Number(microamountToAmount(chainData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
+    Number(microamountToAmount(chainData.assets[1].amount, 6)) * tokenPrice2.priceInUsd;
 
   return (
     <>
@@ -68,7 +120,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
               Pool Liquidity
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span>23M USDC</span>
+              <span>{totalFiatShares.toFixed(2)} $</span>
             </Text>
           </GridItem>
           <GridItem>
@@ -81,11 +133,24 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
           </GridItem>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"} mb={1}>
-              My Bounded Amount
+              My Shares:
             </Text>
-            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span>23M USDC</span>
-            </Text>
+
+            {walletAddress ? (
+              <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
+                <PoolHeaderUserInfo
+                  chainData={chainData}
+                  pairData={pairData}
+                  tokenPrice1={tokenPrice1}
+                  tokenPrice2={tokenPrice2}
+                  walletAddress={walletAddress}
+                />
+              </Text>
+            ) : (
+              <Text fontSize={{ base: "xl", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
+                <span>Not connected</span>
+              </Text>
+            )}
           </GridItem>
         </SimpleGrid>
         <Show breakpoint="(min-width: 1077px)">
@@ -97,7 +162,13 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
           />
         </Show>
       </Box>
-      <ManageLiquidityModal walletAddress={walletAddress} poolData={chainData} data={pairData} isOpen={isOpen} onClose={onClose} />
+      <ManageLiquidityModal
+        walletAddress={walletAddress}
+        poolData={chainData}
+        data={pairData}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </>
   );
 }

@@ -32,6 +32,7 @@ interface ManageBoundingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   tokenName: any;
+  tokenSymbol: any;
   stake: StakedResponse;
   higherDuration: BondingPeriodInfo | undefined;
   lowerDuration: BondingPeriodInfo | undefined;
@@ -39,9 +40,17 @@ interface ManageBoundingsModalProps {
 }
 
 export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
-  const { isOpen, onClose, tokenName, stake, higherDuration, lowerDuration, wyndexStakeAddress } = props;
+  const {
+    isOpen,
+    onClose,
+    tokenName,
+    stake,
+    higherDuration,
+    lowerDuration,
+    wyndexStakeAddress,
+    tokenSymbol,
+  } = props;
   const { address: walletAddress } = useWallet();
-  const { colorMode } = useColorMode();
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("0");
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
@@ -70,7 +79,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     }
     mode.push("unstake");
     return (
-      <>
+      <Flex flexDirection="column" justifyContent="center" alignItems="center">
         <Text align="center" marginTop={5} marginBottom={2} fontSize="xl">
           What do you want to do?
         </Text>
@@ -86,7 +95,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             );
           })}
         </VStack>
-      </>
+      </Flex>
     );
   };
 
@@ -156,14 +165,14 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     switch (selectedMode) {
       case "unstake":
         return (
-          <p>
-            You{"'"}re about to unstake {amount} {tokenName}!
-          </p>
+          <Text fontSize="large">
+            You{"'"}re about to unstake {amount} {tokenSymbol}!
+          </Text>
         );
       case "bondDown":
         return (
           <p>
-            You{"'"}re about to re-bond {amount} {tokenName} from a duration of{" "}
+            You{"'"}re about to re-bond {amount} {tokenSymbol} from a duration of{" "}
             {secondsToDays(stake.unbonding_period)} days to a lower duration of {/* @ts-ignore */}
             {secondsToDays(lowerDuration?.unbonding_period)} days!
           </p>
@@ -171,7 +180,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "bondUp":
         return (
           <p>
-            You{"'"}re about to re-bond {amount} {tokenName} from a duration of{" "}
+            You{"'"}re about to re-bond {amount} {tokenSymbol} from a duration of{" "}
             {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
             {secondsToDays(higherDuration?.unbonding_period)} days!
           </p>
@@ -182,9 +191,9 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   };
 
   const ResultContent = () => (
-    <Box marginY={5}>
+    <Flex marginY={5} justifyContent="center" alignItems="center">
       <ResultInnerContent />
-    </Box>
+    </Flex>
   );
 
   const steps = [
@@ -258,12 +267,12 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       isCentered={true}
     >
       <ModalOverlay />
-      <ModalContent h={450}>
+      <ModalContent h={450} bgColor="wynd.base.subBg">
         <ModalHeader>Manage Bonding</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex flexDir="column" width="100%">
-            <Steps colorScheme={"orange"} activeStep={activeStep}>
+            <Steps colorScheme={"cyan"} activeStep={activeStep}>
               {steps.map(({ label, content }) => (
                 <Step label={label} key={label}>
                   {content}

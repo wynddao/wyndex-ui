@@ -7,9 +7,10 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
+import { getAssetPrice } from "../../utils/assets";
 
 export default function Pools() {
-  const { pools, userPools } = useIndexerInfos({ fetchPoolData: true });
+  const { pools, userPools, assetPrices } = useIndexerInfos({ fetchPoolData: true });
 
   type AssetInfoIndexer =
     | {
@@ -71,6 +72,35 @@ export default function Pools() {
             )}
           </>
         ),
+      },
+    ),
+    columnHelper.accessor(
+      (row) => {
+        return [
+          {
+            value: row.assets[0],
+          },
+          {
+            value: row.assets[1],
+          },
+        ];
+      },
+      {
+        id: "tvl",
+        header: "TVL",
+        cell: (props) => {
+          const tokenPrice1 = getAssetPrice(props.getValue()[0].value, assetPrices);
+          const tokenPrice2 = getAssetPrice(props.getValue()[1].value, assetPrices);
+          return (
+            <>
+              {Number(
+                tokenPrice1.priceInUsd * Number(microamountToAmount(props.getValue()[0].value.amount, 6)) +
+                  tokenPrice2.priceInUsd * Number(microamountToAmount(props.getValue()[1].value.amount, 6)),
+              ).toFixed(2)}{" "}
+              $
+            </>
+          );
+        },
       },
     ),
     columnHelper.accessor(

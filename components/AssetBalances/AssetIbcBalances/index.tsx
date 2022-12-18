@@ -30,7 +30,7 @@ export default function AssetIbcBalances() {
   const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
 
   return (
-    <Box bg={"wynd.neutral.100"} p={8}>
+    <Box p={8} pt={0}>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
         IBC Assets
       </Text>
@@ -42,11 +42,12 @@ export default function AssetIbcBalances() {
         columnGap={{ base: 4 }}
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.neutral.200"}
-        color={"wynd.neutral.800"}
+        bg={"wynd.base.sidebar"}
         borderRadius="md"
         borderBottomLeftRadius={0}
         borderBottomRightRadius={0}
+        borderColor="wynd.base.sidebar"
+        borderWidth="medium"
         boxShadow="base"
         py={2}
         px={4}
@@ -68,8 +69,9 @@ export default function AssetIbcBalances() {
         columnGap={{ base: 4 }}
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.neutral.300"}
         color={"wynd.neutral.900"}
+        borderColor="wynd.base.sidebar"
+        borderWidth="1px"
         boxShadow="base"
         py={2}
         px={4}
@@ -84,6 +86,8 @@ export default function AssetIbcBalances() {
         borderTopRightRadius={0}
         boxShadow={{ lg: "base" }}
         spacing={{ base: 4, lg: 0 }}
+        borderColor="wynd.base.sidebar"
+        borderWidth="1px"
       >
         {sortedAssets.map((assetDetails, i) => (
           <AssetIbcItem key={i} assetDetails={assetDetails} />

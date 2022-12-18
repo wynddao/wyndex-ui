@@ -90,7 +90,8 @@ export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }
                   return (
                     <Tr key={i}>
                       <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days Unbonding</Td>
-                      <Td fontWeight="semibold">20% @TODO</Td>
+                      {/* TODO */}
+                      <Td fontWeight="semibold">20%</Td>
                       <Td fontWeight="semibold">
                         {microamountToAmount(stake, 6)} {tokenSymbol}
                       </Td>
@@ -137,6 +138,7 @@ export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }
           lowerDuration={prevDuration}
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
+          tokenSymbol={tokenSymbol}
           tokenName={tokenName}
           stake={activeStake}
         />

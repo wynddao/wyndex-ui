@@ -124,7 +124,7 @@ export default function DepositIbcModal() {
         borderRadius="2xl"
         p={6}
         mx={2}
-        bgColor="var(--chakra-colors-chakra-body-bg)"
+        bgColor="wynd.base.subBg"
       >
         <ModalHeader fontSize="2xl" fontWeight="bold" p={0} mb={6}>
           Deposit IBC Asset

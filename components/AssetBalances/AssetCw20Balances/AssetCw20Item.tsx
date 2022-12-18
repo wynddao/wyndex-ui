@@ -40,21 +40,12 @@ export default function AssetCw20Item({
       columnGap={{ base: 4 }}
       fontWeight="semibold"
       alignItems="center"
-      bg={{
-        base: "wynd.neutral.300",
-        lg: "wynd.neutral.300",
-      }}
       border={{ base: "1px solid", lg: "none" }}
-      borderColor={"wynd.neutral.200"}
+      borderColor={"wynd.base.sidebar"}
       borderRadius={{ base: "lg", lg: "none" }}
-      _odd={{
-        bg: {
-          lg: "wynd.neutral.200",
-        },
-      }}
       _notLast={{
         borderBottom: "1px solid",
-        borderBottomColor: "wynd.neutral.200",
+        borderBottomColor: "wynd.base.sidebar",
       }}
       p={4}
     >

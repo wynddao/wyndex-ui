@@ -5,6 +5,7 @@ import { useState } from "react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
+import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
@@ -57,8 +58,12 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
                         p={0.5}
                         mr={4}
                       >
-                        {/* TODO */}
-                        <Image alt="Token 1 logo" src="https://via.placeholder.com/300" />
+                        <AssetImage
+                          asset={
+                            //  @ts-ignore
+                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native_token
+                          }
+                        />
                       </Box>
                       <Box>
                         <Text fontSize="3xl" fontWeight="extrabold"></Text>

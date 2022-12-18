@@ -1,5 +1,7 @@
 import { asset_list } from "@chain-registry/osmosis";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
+import { string } from "zod";
+import { AssetInfo } from "../state/clients/types/WyndexFactory.types";
 const handleRandomCase = (text: string) =>
   text
     .split("")
@@ -32,4 +34,36 @@ export const getAssetInfo = (item: Asset) => {
 
 export const getDenom = (item: Asset): string => {
   return item.tags.includes("native") ? item.denom.slice(1) : item.denom;
+};
+type AssetInfoIndexer =
+  | {
+      token: string;
+      amount: string;
+    }
+  | {
+      native_token: string;
+      amount: string;
+    };
+
+interface GetAssetPriceResponse {
+  token?: string;
+  juno_price: string;
+  priceInEur: number;
+  priceInUsd: number;
+}
+
+export const getAssetPrice = (
+  asset: AssetInfo | AssetInfoIndexer,
+  assetPrices: any[],
+): GetAssetPriceResponse => {
+  const price = assetPrices.find((el: any) => {
+    const assetName = asset.hasOwnProperty("token")
+      ? // @ts-ignore
+        asset.token
+      : // @ts-ignore
+        asset.native_token;
+    return el.asset == assetName;
+  });
+
+  return price ?? { juno_price: 0, priceInEur: 0, priceInUsd: 0 };
 };

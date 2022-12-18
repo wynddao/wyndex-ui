@@ -9,6 +9,7 @@ import wyndLogoBlack from "../../public/logo-black.svg";
 import wyndLogoWhite from "../../public/logo-white.svg";
 import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem from "./NavItem";
+import OnRampButton from "./OnRampButton";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 const LinkItems: readonly LinkItemProps[] = [
@@ -55,8 +56,11 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         gap={{ base: 1, lg: 2 }}
         p={{ base: "4" }}
       >
+        {/* 
         <ThemeSwitcher />
+        */}
         <ConnectWalletButton />
+        <OnRampButton />
       </Flex>
     </Flex>
   );
