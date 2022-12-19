@@ -11,30 +11,37 @@ import {
   ListItem,
   Text,
 } from "@chakra-ui/react";
-import React, { useRef, useState } from "react";
-import { Asset, assetList, CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import React, { useMemo, useRef, useState } from "react";
+import { Asset } from "@wynddao/asset-list";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
+import { getAssetList } from "../../../utils/getAssetList";
 
 interface IProps {
-  selectedAsset: Asset | IBCAsset | CW20Asset;
-  setAsset: (asset: Asset | IBCAsset | CW20Asset) => void;
+  selectedAsset: Asset;
+  setAsset: (asset: Asset) => void;
 }
 
 const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [filter, setFilter] = useState<string>("");
   const dropdownRef = useRef(null);
 
   useClickAway(dropdownRef, () => setOpen(false));
 
-  const changeAsset = (asset: Asset | IBCAsset | CW20Asset) => {
+  const assets = useMemo(
+    () => getAssetList().tokens.filter(({ name }) => name.toLowerCase().includes(filter.toLowerCase())),
+    [filter],
+  );
+
+  const changeAsset = (asset: Asset) => {
     setAsset(asset);
     setOpen(false);
   };
 
-  const AssetsLi = assetList.tokens.map((asset) => {
+  const AssetsLi = assets.map((asset) => {
     return (
       <ListItem
         key={asset.name}
@@ -55,7 +62,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset }) => {
   });
 
   return (
-    <Box position="relative">
+    <Box position="relative" ref={dropdownRef}>
       <Button
         as={motion.button}
         whileTap={{ scale: 0.95 }}
@@ -111,7 +118,13 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset }) => {
           <InputLeftElement pointerEvents="none">
             <Icon as={IoSearch} w="1rem" h="1rem" color={"wynd.neutral.900"} />
           </InputLeftElement>
-          <Input placeholder="search..." borderRadius="md" bg="wynd.base.subBg" border="none" />
+          <Input
+            placeholder="search..."
+            borderRadius="md"
+            bg="wynd.base.subBg"
+            border="none"
+            onChange={({ target }) => setFilter(target.value)}
+          />
         </InputGroup>
         <List
           overflowY="scroll"

@@ -2,7 +2,8 @@ import { Flex, Icon } from "@chakra-ui/react";
 import React from "react";
 import { BsHexagon, BsHexagonFill } from "react-icons/bs";
 import { CgArrowsExchangeV } from "react-icons/cg";
-
+import { motion } from "framer-motion";
+import GradientIcon from "./GradientIcon";
 interface IProps {
   swapTokens: () => void;
 }
@@ -13,25 +14,25 @@ const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
       className="swap-toggle-icon"
       justify="center"
       align="center"
-      boxShadow="base"
       margin={{ base: "-1.5rem 0 -3.5rem 0", lg: "2rem -2rem 0 -2rem" }}
       transform={{ lg: "rotate(90deg)" }}
       transition="all ease-in 0.5s"
     >
       <Flex
+        as={motion.button}
         position="relative"
-        as="button"
         zIndex={2}
-        color={"wynd.alpha.700"}
         onClick={swapTokens}
         justify="center"
         align="center"
+        whileTap={{ scale: 0.95 }}
       >
+        <GradientIcon />
         <Icon
           as={BsHexagonFill}
           w={{ base: 12, sm: 16 }}
           h={{ base: 12, sm: 16 }}
-          color={"wynd.neutral.600"}
+          fill="url(#wynd-gradient)"
         />
         <Icon
           position="absolute"
@@ -42,7 +43,8 @@ const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
           as={BsHexagon}
           w={{ base: 12, sm: 16 }}
           h={{ base: 12, sm: 16 }}
-          color={"wynd.alpha.200"}
+          color={"wynd.gray.900"}
+          opacity="50%"
         />
         <Icon
           position="absolute"
@@ -52,7 +54,8 @@ const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
           w={{ base: 8, sm: 12 }}
           h={{ base: 8, sm: 12 }}
           as={CgArrowsExchangeV}
-          color={"wynd.alpha.200"}
+          opacity="50%"
+          color={"wynd.gray.900"}
         />
       </Flex>
     </Flex>
