@@ -42,7 +42,6 @@ export const executeClient = selectorFamily<WyndexStakeClient | undefined, Execu
     ({ get }) => {
       const client = get(signingCosmWasmStargateClientAtom);
       if (!client) return;
-      //@ts-ignore
       return new WyndexStakeClient(client, sender, contractAddress);
     },
   dangerouslyAllowMutability: true,

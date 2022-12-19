@@ -12,7 +12,6 @@ export const executeClient = selectorFamily<CustomClient | undefined, ExecuteCli
     ({ get }) => {
       const client = get(signingCosmWasmStargateClientAtom);
       if (!client) return;
-      //@ts-ignore
       return new CustomClient(client, sender);
     },
   dangerouslyAllowMutability: true,
