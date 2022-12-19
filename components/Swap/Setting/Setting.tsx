@@ -1,3 +1,4 @@
+import React, { useRef, useState } from "react";
 import {
   Button,
   Icon,
@@ -7,26 +8,29 @@ import {
   PopoverTrigger,
   Text,
   useDisclosure,
-  useRadioGroup,
-  Grid,
   Box,
+  Flex,
 } from "@chakra-ui/react";
-import { useRef } from "react";
 import { BsHexagon, BsHexagonFill, BsExclamationCircleFill } from "react-icons/bs";
 import { RiSettings4Fill } from "react-icons/ri";
 
 import RadioTag from "./RadioTag";
 
-export default function Setting() {
+interface IProps {
+  slippage: number;
+  setSlippage: (slippage: number) => void;
+}
+
+const Settings: React.FC<IProps> = ({ slippage, setSlippage }) => {
   const { onToggle, onClose, isOpen } = useDisclosure();
   const initialFocusRef = useRef(null);
-  const options = ["1%", "3%", "5%", "2.5%"];
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: "setting",
-    defaultValue: "1%",
-    onChange: console.log, // eslint-disable-line
-  });
-  const group = getRootProps();
+  const options = ["1", "3", "5", "custom"];
+  const defaultOption = () => {
+    if (slippage === 1 || slippage === 3 || slippage === 5) {
+      return slippage.toString();
+    }
+    return "custom";
+  };
 
   return (
     <Popover isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef}>
@@ -66,25 +70,17 @@ export default function Setting() {
             Slippage tolerance&ensp;
             <Icon as={BsExclamationCircleFill} color="wynd.cyan.600" />
           </Box>
-          <Grid templateColumns={{ base: "1fr 1fr", sm: "repeat(4, 1fr)" }} gap={4} {...group}>
+          <Flex width="100%" justifyContent="space-between" gap={2}>
             {options.map((value) => {
-              const radio = getRadioProps({ value });
               return (
-                <RadioTag
-                  key={value}
-                  value={value}
-                  isDisabled={value === "2.5%" ? true : false}
-                  {...radio}
-                  __focus={{ boxShadow: "wynd.cyan.500" }}
-                  transition="all linear 0.5s"
-                >
-                  {value}
-                </RadioTag>
+                <RadioTag key={value} value={value} setSlippage={setSlippage} selected={defaultOption()} />
               );
             })}
-          </Grid>
+          </Flex>
         </PopoverBody>
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default Settings;
