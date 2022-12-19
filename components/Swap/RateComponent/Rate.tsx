@@ -4,8 +4,8 @@ import { useSimulateOperationInfos } from "../../../state/hooks/useSimulateOpera
 import { BiTransfer } from "react-icons/bi";
 
 import React from "react";
-import { CW20Asset, IBCAsset, Asset } from "@wynddao/asset-list";
-import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens";
+import { Asset } from "@wynddao/asset-list";
+import { microamountToAmount } from "../../../utils/tokens";
 import { getDenom } from "../../../utils/assets";
 
 interface IProps {
