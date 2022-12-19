@@ -54,6 +54,10 @@ export default function ConnectWalletButton() {
       justifyContent="center"
       gap="0.5rem"
       display="flex"
+      bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+      _hover={{
+        bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+      }}
     >
       <Icon fontSize="lg" as={FiCreditCard} />
       <Text fontSize="lg">Connect wallet</Text>

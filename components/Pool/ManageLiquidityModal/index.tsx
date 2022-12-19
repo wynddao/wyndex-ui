@@ -41,7 +41,7 @@ export default function ManageLiquidity({
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent bgColor="wynd.base.subBg">
         <ModalHeader>Manage Liquidity</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -59,11 +59,7 @@ export default function ManageLiquidity({
             </TabList>
             <TabPanels>
               <TabPanel p={0}>
-                <AddLiquidity
-                  data={data}
-                  refreshBalance={refreshBalance}
-                  onClose={onClose}
-                />
+                <AddLiquidity data={data} poolData={poolData} refreshBalance={refreshBalance} onClose={onClose} />
               </TabPanel>
               <TabPanel>
                 <RemoveLiquidity

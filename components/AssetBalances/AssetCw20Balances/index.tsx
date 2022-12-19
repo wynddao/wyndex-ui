@@ -30,7 +30,7 @@ export default function AssetCw20Balances() {
   const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
 
   return (
-    <Box bg={"wynd.neutral.100"} p={8}>
+    <Box p={8} pt={0}>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
         CW20 Assets
       </Text>
@@ -42,7 +42,7 @@ export default function AssetCw20Balances() {
         columnGap={{ base: 4 }}
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.neutral.200"}
+        bg={"wynd.base.sidebar"}
         color={"wynd.neutral.800"}
         borderRadius="md"
         borderBottomLeftRadius={0}
@@ -68,9 +68,10 @@ export default function AssetCw20Balances() {
         columnGap={{ base: 4 }}
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.neutral.300"}
         color={"wynd.neutral.900"}
         boxShadow="base"
+        borderColor="wynd.base.sidebar"
+        borderWidth="1px"
         py={2}
         px={4}
       >
@@ -83,6 +84,8 @@ export default function AssetCw20Balances() {
         borderTopRightRadius={0}
         boxShadow={{ lg: "base" }}
         spacing={{ base: 4, lg: 0 }}
+        borderColor="wynd.base.sidebar"
+        borderWidth="1px"
       >
         {sortedAssets.map((assetDetails, i) => (
           <AssetCw20Item key={i} assetDetails={assetDetails} />

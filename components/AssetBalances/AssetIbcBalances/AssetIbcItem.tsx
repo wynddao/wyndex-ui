@@ -25,21 +25,17 @@ export default function AssetIbcItem({
       columnGap={{ base: 4 }}
       fontWeight="semibold"
       alignItems="center"
-      bg={{
-        base: "wynd.neutral.300",
-        lg: "wynd.neutral.300",
-      }}
       border={{ base: "1px solid", lg: "none" }}
       borderColor={"wynd.neutral.200"}
       borderRadius={{ base: "lg", lg: "none" }}
       _odd={{
         bg: {
-          lg: "wynd.neutral.200",
+          lg: "wynd.base.subBg",
         },
       }}
       _notLast={{
         borderBottom: "1px solid",
-        borderBottomColor: "wynd.neutral.200",
+        borderBottomColor: "wynd.base.sidebar",
       }}
       p={4}
     >

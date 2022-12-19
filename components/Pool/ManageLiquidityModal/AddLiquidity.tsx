@@ -25,7 +25,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
 import { CustomHooks, useToast } from "../../../state";
-import { Asset as WyndAsset, PairInfo } from "../../../state/clients/types/WyndexPair.types";
+import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
 
@@ -61,13 +61,13 @@ export default function AddLiquidity({
   data: pairData,
   onClose,
   refreshBalance,
+  poolData: chainData,
 }: {
   data: PairInfo;
   onClose: () => void;
   refreshBalance: () => void;
+  poolData: PoolResponse;
 }) {
-  const { colorMode } = useColorMode();
-
   const poolData: DataType[] = pairData.asset_infos.map((asset) => {
     return {
       img: "https://via.placeholder.com/300",
@@ -276,16 +276,36 @@ export default function AddLiquidity({
                         size="xs"
                         _focus={{ outline: "none" }}
                         onClick={() => {
+                          const val = microamountToAmount(balances[i] ?? "", 6) || "0";
                           const getVal = tokenInputValue.map(
                             ({ id, value: defaultVal, contract: contractDefault }) => {
+                              const thisEl = chainData.assets.find((el) =>
+                                el.info.hasOwnProperty("token")
+                                  ? // @ts-ignore
+                                    el.info.token === denom
+                                  : // @ts-ignore
+                                    el.info.native_token === denom,
+                              );
+                              const otherEl = chainData.assets.find((el) =>
+                                el.info.hasOwnProperty("token")
+                                  ? // @ts-ignore
+                                    el.info.token !== denom
+                                  : // @ts-ignore
+                                    el.info.native_token !== denom,
+                              );
+                              const ratio = Number(thisEl?.amount || "0") / Number(otherEl?.amount || "0");
                               if (id === denom) {
                                 return {
                                   id: id,
-                                  value: microamountToAmount(balances[i] ?? "", 6) || "0",
+                                  value: val,
                                   contract: contractAddress || undefined,
                                 };
                               }
-                              return { id: id, value: defaultVal, contract: contractDefault };
+                              return {
+                                id: id,
+                                value: (Number(val) / ratio).toFixed(6),
+                                contract: contractDefault,
+                              };
                             },
                           );
                           setTokenInputValue(getVal);
@@ -303,6 +323,21 @@ export default function AddLiquidity({
                       onChange={(val) => {
                         const getVal = tokenInputValue.map(
                           ({ id, value: defaultVal, contract: contractDefault }) => {
+                            const thisEl = chainData.assets.find((el) =>
+                              el.info.hasOwnProperty("token")
+                                ? // @ts-ignore
+                                  el.info.token === denom
+                                : // @ts-ignore
+                                  el.info.native_token === denom,
+                            );
+                            const otherEl = chainData.assets.find((el) =>
+                              el.info.hasOwnProperty("token")
+                                ? // @ts-ignore
+                                  el.info.token !== denom
+                                : // @ts-ignore
+                                  el.info.native_token !== denom,
+                            );
+                            const ratio = Number(thisEl?.amount || "0") / Number(otherEl?.amount || "0");
                             if (id === denom) {
                               return {
                                 id: id,
@@ -310,7 +345,11 @@ export default function AddLiquidity({
                                 contract: contractAddress || undefined,
                               };
                             }
-                            return { id: id, value: defaultVal, contract: contractDefault };
+                            return {
+                              id: id,
+                              value: (Number(val) / ratio).toFixed(6),
+                              contract: contractDefault,
+                            };
                           },
                         );
                         setTokenInputValue(getVal);
@@ -325,30 +364,15 @@ export default function AddLiquidity({
           );
         })}
       </Stack>
-      <Flex
-        flexDirection={{ base: "column", sm: "row" }}
-        justify="space-between"
-        textAlign={{ base: "end", sm: "start" }}
-        bg={"wynd.neutral.100"}
-        borderRadius="lg"
-        border="1px solid"
-        borderColor={"wynd.alpha.900"}
-        p={4}
-        mb={6}
-      >
-        <Text fontWeight="semibold">Price impact</Text>
-        <Text>-</Text>
-      </Flex>
-      <Flex justify="center" mb={6}>
-        <Alert status="error" borderRadius="md" w="fit-content">
-          <AlertIcon />
-          <AlertTitle>Amount is zero</AlertTitle>
-        </Alert>
-      </Flex>
       <Box px={{ sm: 12 }}>
         <Button
           onClick={() => prodiveLiquidity()}
-          isDisabled={tokenInputValue.filter(({ value }) => value !== "0").length > 0 ? false : true}
+          isDisabled={
+            !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
+            (tokenInputValue.filter(
+              ({ value }, index) => Number(value) > Number(microamountToAmount(balances[index], 6)),
+            ).length > 0)
+          }
           w="full"
           size="lg"
           h={{ base: 12, sm: 14 }}

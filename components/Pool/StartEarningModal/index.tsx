@@ -51,8 +51,8 @@ export default function StartEarningModal(props: StartEarningModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Start Earning</ModalHeader>
+      <ModalContent bgColor="wynd.base.subBg">
+        <ModalHeader>Start WYNNING!</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex
@@ -123,12 +123,13 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                     {...radio}
                     isChecked={unbonding_period.toString() === value}
                   >
-                    <Flex justifyContent="space-between">
-                      <Text as="p" align="left">
+                    <Flex>
+                      <Text as="p" flex="0.7" >
                         {secondsToDays(unbonding_period)} Days
                       </Text>
-                      <Text as="p" align="right">
-                        20% APR (@TODO)
+                      <Text as="p">
+                        {/* TODO */}
+                        APR: <strong>20%</strong>
                       </Text>
                     </Flex>
                   </RadioCard>
