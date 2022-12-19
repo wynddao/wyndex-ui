@@ -1,8 +1,10 @@
 import { ChainRecord } from "@cosmos-kit/core";
+import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { selector, selectorFamily } from "recoil";
 import { CHAIN_RPC_ENDPOINT, cosmWasmClientRouter, cosmWasmStargateClientRouter } from "../../../utils";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
+import { balanceSelector } from "./clients/cw20";
 
 export const cosmWasmClientSelector = selector({
   key: "cosmWasmClient",
@@ -41,5 +43,22 @@ export const coinByDenomSelector = selectorFamily<
       } catch {
         return { denom: "", amount: "0" };
       }
+    },
+});
+
+export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: Readonly<Asset> }>({
+  key: "getBalanceByAsset",
+  get:
+    ({ address, asset }) =>
+    async ({ get }) => {
+      if (!address) return { amount: "0", denom: asset.denom };
+      if (asset.tags.includes("cw20")) {
+        const { balance } = get(
+          balanceSelector({ contractAddress: (asset as CW20Asset).token_address, params: [{ address }] }),
+        );
+        return { amount: balance, denom: asset.denom } as Coin;
+      }
+      const client = get(cosmWasmStargateClientSelector);
+      return await client.getBalance(address, asset.denom);
     },
 });

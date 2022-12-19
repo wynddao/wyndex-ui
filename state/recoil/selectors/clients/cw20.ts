@@ -39,7 +39,6 @@ export const executeClient = selectorFamily<Cw20Client | undefined, ExecuteClien
       const client = get(signingCosmWasmStargateClientAtom);
 
       if (!client) return;
-      //@ts-ignore
       return new Cw20Client(client, sender, contractAddress);
     },
   dangerouslyAllowMutability: true,

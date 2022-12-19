@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoaded(true);

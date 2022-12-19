@@ -3,12 +3,19 @@
 import { Flex, FlexProps, Icon, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconType } from "react-icons";
 
-import { LinkItemProps } from ".";
+export interface LinkItemProps {
+  readonly name: string;
+  readonly to: string;
+  readonly icon: IconType;
+  readonly isExternalLink?: boolean;
+}
 
-type NavItemProps = LinkItemProps & FlexProps;
+import React from "react";
+import { CgExternal } from "react-icons/cg";
 
-export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) {
+const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExternalLink, ...restProps }) => {
   const pathname = usePathname();
 
   // Set styles for active link and children routes, but avoid Dashboard being always styled
@@ -29,43 +36,56 @@ export default function NavItem({ to, icon, name, ...restProps }: NavItemProps) 
         fontSize={{ base: "16" }}
         cursor="pointer"
         transition="all linear .5s"
-        _hover={
-          isLinkActive
-            ? {
-                bg: "wynd.gray.200",
-              }
-            : { bg: "wynd.gray.200" }
-        }
+        _hover={{ bg: "wynd.gray.300" }}
         {...restProps}
+        justifyContent="space-between"
       >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="1rem"
-            as={icon}
+        <Flex align="center">
+          {icon && (
+            <Icon
+              mr="4"
+              fontSize="1rem"
+              as={icon}
+              sx={
+                isLinkActive
+                  ? {
+                      color: "wynd.cyan.500",
+                    }
+                  : undefined
+              }
+            />
+          )}
+          <Text
             sx={
               isLinkActive
                 ? {
-                    color: "wynd.cyan.500",
+                    bgGradient: "linear(to-l, wynd.green.500, wynd.cyan.500)",
+                    bgClip: "text",
+                    fontWeight: "extrabold",
+                  }
+                : undefined
+            }
+          >
+            {name}
+          </Text>
+        </Flex>
+        {isExternalLink && (
+          <Icon
+            mr="4"
+            fontSize="1rem"
+            as={CgExternal}
+            sx={
+              isLinkActive
+                ? {
+                    color: "wynd.green.500",
                   }
                 : undefined
             }
           />
         )}
-        <Text
-          sx={
-            isLinkActive
-              ? {
-                  bgGradient: "linear(to-l, wynd.green.500, wynd.cyan.500)",
-                  bgClip: "text",
-                  fontWeight: "extrabold",
-                }
-              : undefined
-          }
-        >
-          {name}
-        </Text>
       </Flex>
     </Link>
   );
-}
+};
+
+export default NavItem;

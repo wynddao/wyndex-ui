@@ -11,14 +11,18 @@ export const useSimulateOperationInfos = (
   offerAmount: string,
   operations: SwapOperation[],
 ): UseSimulateOperationInfosResponse => {
-  const simulatedOperation = useRecoilValue(
-    WyndexMultiHopSelectors.simulateSwapOperationsSelector({
-      contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
-      params: [{ offerAmount, operations, referral: false }],
-    }),
-  ).amount;
+  try {
+    const response = useRecoilValue(
+      WyndexMultiHopSelectors.simulateSwapOperationsSelector({
+        contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
+        params: [{ offerAmount, operations, referral: false }],
+      }),
+    );
 
-  return {
-    simulatedOperation,
-  };
+    return {
+      simulatedOperation: response.amount,
+    };
+  } catch (err) {
+    return { simulatedOperation: "0" };
+  }
 };

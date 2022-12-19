@@ -1,10 +1,13 @@
 import { Coin } from "cosmwasm";
 
-export function microamountToAmount(amount: number | string, decimals: number): string {
+export function microamountToAmount(amount: number | string, decimals: number, fixed?: number): string {
   if (typeof amount === "string") {
     amount = Number(amount);
   }
   amount = amount / Math.pow(10, decimals);
+  if (fixed) {
+    return isNaN(amount) ? "0" : String(amount.toFixed(fixed));
+  }
   return isNaN(amount) ? "0" : String(amount);
 }
 

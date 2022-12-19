@@ -1,21 +1,23 @@
-import { Box, Divider, Flex, Icon, Skeleton, Stack, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Flex, Icon, Text } from "@chakra-ui/react";
 import { SwapOperation } from "../../../state/clients/types/WyndexMultiHop.types";
 import { useSimulateOperationInfos } from "../../../state/hooks/useSimulateOperationInfos";
 import { BiTransfer } from "react-icons/bi";
 
 import React from "react";
-import { CW20Asset, IBCAsset, Asset } from "@wynddao/asset-list";
+import { Asset } from "@wynddao/asset-list";
+import { microamountToAmount } from "../../../utils/tokens";
+import { getDenom } from "../../../utils/assets";
 
 interface IProps {
-  fromToken: Asset | IBCAsset | CW20Asset;
-  toToken: Asset | IBCAsset | CW20Asset;
-  tokenInputValue: string;
-  operations: SwapOperation[];
+  fromToken: Asset;
+  toToken: Asset;
+  expectedAmount: string;
+  inputAmount: string;
+  slippage: number;
 }
 
-const Rate: React.FC<IProps> = ({ fromToken, toToken, tokenInputValue, operations }) => {
-  const { simulatedOperation } = useSimulateOperationInfos("1000000", operations);
+const Rate: React.FC<IProps> = ({ fromToken, toToken, expectedAmount, inputAmount, slippage }) => {
+  const estimatedSlippage = ((100 - slippage) / 100) * Number(expectedAmount);
   return (
     <Flex
       bg="whiteAlpha.100"
@@ -30,45 +32,32 @@ const Rate: React.FC<IProps> = ({ fromToken, toToken, tokenInputValue, operation
       gap="1rem"
       alignItems="center"
     >
-      <Flex
-        w="full"
-        justify="space-between"
-        fontWeight="bold"
-        fontSize={{ md: "lg" }}
-        color={"wynd.gray.800"}
-      >
+      <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Rate</Text>
         <Text>
-          1 {fromToken.denom.slice(1)} ≈ 0.222 {toToken.denom.slice(1)}
+          {inputAmount} {getDenom(fromToken)} ≈ {microamountToAmount(expectedAmount, toToken.decimals, 6)}{" "}
+          {getDenom(toToken)}
         </Text>
       </Flex>
-      <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ md: "lg" }}>
+      <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Swap Route</Text>
         <Text display="flex" gap="0.5rem" justifyContent="center" alignItems="center">
-          {fromToken.name}
+          {getDenom(fromToken)}
           <Icon as={BiTransfer} w="1rem" h="1rem" color={"wynd.base.text"} />
-          {toToken.name}
+          {getDenom(toToken)}
         </Text>
       </Flex>
-      <Flex
-        w="full"
-        justify="space-between"
-        fontWeight="bold"
-        fontSize={{ md: "lg" }}
-        color={"wynd.gray.800"}
-      >
+      <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Swap Fee</Text>
-        <Text>@TODO</Text>
+        <Text>@CONTRACT</Text>
       </Flex>
-      <Flex
-        w="full"
-        justify="space-between"
-        fontWeight="bold"
-        fontSize={{ md: "lg" }}
-        color={"wynd.alpha.900"}
-      >
+      <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
-        <Text>@TODO</Text>
+        <Text>@CONTRACT</Text>
+      </Flex>
+      <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
+        <Text color={"wynd.neutral.500"}>Minimum received amount</Text>
+        <Text>{microamountToAmount(estimatedSlippage, toToken.decimals, 6)}</Text>
       </Flex>
     </Flex>
   );

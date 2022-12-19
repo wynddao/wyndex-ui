@@ -3,16 +3,10 @@
 import { Box, Drawer, DrawerContent, Flex, useDisclosure } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
-import { IconType } from "react-icons";
+
 import { CHAIN_NAME } from "../../utils";
 import Hamburguer from "./Hamburguer";
 import SidebarContent from "./SidebarContent";
-
-export interface LinkItemProps {
-  readonly name: string;
-  readonly to: string;
-  readonly icon: IconType;
-}
 
 interface SidebarProps {
   readonly children: React.ReactNode;
@@ -32,11 +26,8 @@ export default function Sidebar({ children }: SidebarProps) {
         onClose={() => onClose}
         display={{ base: "none", md: "flex" }}
         width={{ base: 0, md: 60 }}
-        position="fixed"
-      />
-      <Box
-        display={{ base: "none", md: "flex" }}
-        width={{ base: 0, md: 60 }}
+        position="sticky"
+        top="0"
       />
       <Drawer
         autoFocus={false}

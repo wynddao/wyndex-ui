@@ -97,9 +97,10 @@ export const lightColors = {
       },
     },
     base: {
-      background: "#FAF8F9",
-      subBg: "#f5f5f5",
-      text: "#4F4F4F",
+      background: "#E2E9F2",
+      subBg: "#E2E9F2",
+      sidebar: "#6b7280",
+      text: "#EEEEEE",
     },
     black: "#1A1A1A",
     white: "#FFFFFF",
@@ -204,7 +205,7 @@ export const darkColors = {
       },
     },
     base: {
-      background: "#2F2C71",
+      background: "#131222",
       subBg: "#131222",
       sidebar: "#100B16",
       sidebarHover: "#0d111b",
