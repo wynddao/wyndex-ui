@@ -63,6 +63,15 @@ export const useIndexerInfos = ({
       params: [walletAddress, microdenom],
     });
 
+  const userFiat = useRecoilValue(
+    fetchCw20Balances
+      ? IndexerSelectors.userFiatSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+          params: [walletAddress || ""],
+        })
+      : constSelector({ availableBalanceInUsd: 0, lockedBalanceInUsd: 0 }),
+  );
+
   return {
     pools,
     userPools,
@@ -71,5 +80,6 @@ export const useIndexerInfos = ({
     ibcBalanceSelector,
     cw20Balances,
     cw20BalanceSelector,
+    userFiat,
   };
 };
