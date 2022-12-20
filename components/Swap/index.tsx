@@ -11,14 +11,14 @@ import FromToken from "./FromToComponent/FromToken";
 import Rate from "./RateComponent/Rate";
 import Setting from "./Setting/Setting";
 import ToToken from "./FromToComponent/ToToken";
-import { Asset } from "@wynddao/asset-list";
+import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { getAssetList } from "../../utils/getAssetList";
 import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
 import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
-import { toast } from "react-hot-toast";
-import { useRecoilValue } from "recoil";
-import { getBalanceByAsset } from "../../state";
-import { TxError } from "../../utils/txError";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
+import { getBalanceByAsset, useToast } from "../../state";
+import { useSend } from "../../state/hooks/clients/Cw20";
+import { toBase64, toUtf8 } from "cosmwasm";
 
 const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -32,21 +32,56 @@ const Swap: React.FC = () => {
   const { address: walletAddress, connect, isWalletConnected } = useWallet();
   const [operations, setOperations] = useState<SwapOperation[]>([]);
   const [inputAmount, setInputAmount] = useState<string>("1");
-  const [loading, setLoading] = useState<boolean>(false);
   const [slippage, setSlippage] = useState<number>(1);
+  const { txToast, isTxLoading } = useToast();
   const balance = useRecoilValue(getBalanceByAsset({ address: walletAddress as string, asset: fromToken }));
+  const refreshBalance = useRecoilRefresher_UNSTABLE(
+    getBalanceByAsset({ address: walletAddress as string, asset: fromToken }),
+  );
 
   const { simulatedOperation } = useSimulateOperationInfos(
     amountToMicroamount(inputAmount, fromToken.decimals),
     operations,
   );
 
-  const doSwap = useExecuteSwapOperations({
+  const swapNative = useExecuteSwapOperations({
     contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
-    sender: walletAddress ?? "",
+    sender: walletAddress || "",
   });
 
-  const swapTokens = () => {
+  const sendCW20 = useSend({
+    contractAddress: (fromToken as CW20Asset).token_address || "",
+    sender: walletAddress || "",
+  });
+
+  const swap = useCallback(async () => {
+    const spread = (slippage / 100).toString();
+
+    if (fromToken.tags.includes("cw20")) {
+      return await sendCW20({
+        amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(),
+        contract: MULTI_HOP_CONTRACT_ADDRESS,
+        msg: toBase64(
+          toUtf8(JSON.stringify({ execute_swap_operations: { operations, max_spread: spread } })),
+        ),
+      });
+    }
+
+    return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
+      { amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(), denom: fromToken.denom },
+    ]);
+  }, [
+    fromToken.decimals,
+    fromToken.denom,
+    fromToken.tags,
+    inputAmount,
+    operations,
+    sendCW20,
+    slippage,
+    swapNative,
+  ]);
+
+  const swapTokenPosition = () => {
     setFromToken(toToken);
     setToToken(fromToken);
   };
@@ -65,35 +100,22 @@ const Swap: React.FC = () => {
     }
   }, [fromToken, toToken]);
 
-  const onClick = useCallback(async () => {
-    if (loading) return;
+  const handlerSwap = useCallback(async () => {
+    if (isTxLoading) return;
     if (walletAddress) {
-      setLoading(true);
-      try {
-        await doSwap({ operations }, "auto", undefined, [
-          { amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(), denom: fromToken.denom },
-        ]);
-      } catch (err) {
-        toast.error(`Error: ${new TxError(err as string).pretty()}`, {
-          id: "tx.error",
-          style: {
-            background: "var(--chakra-colors-chakra-body-bg)",
-            color: "var(--chakra-colors-chakra-body-text)",
-          },
-        });
-      }
-      setLoading(false);
+      await txToast(swap);
+      refreshBalance();
     } else {
       connect();
     }
-  }, [connect, doSwap, fromToken, inputAmount, loading, operations, walletAddress]);
+  }, [connect, isTxLoading, refreshBalance, swap, txToast, walletAddress]);
 
   const buttonText = useMemo(() => {
-    if (loading) return "";
+    if (isTxLoading) return "";
     if (!walletAddress) return "Connect Wallet";
     if (inputAmount > microamountToAmount(balance.amount, fromToken.decimals)) return "Insufficient Amount";
     if (walletAddress) return "Swap";
-  }, [balance, fromToken, inputAmount, loading, walletAddress]);
+  }, [balance.amount, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
 
   return (
     <Flex
@@ -108,22 +130,28 @@ const Swap: React.FC = () => {
       </Box>
       <Box display="flex" flexFlow={{ base: "column", lg: "row" }} gap="1rem" position="relative">
         <FromToken
+          toToken={toToken}
           fromToken={fromToken}
           setFromToken={setFromToken}
           inputAmount={inputAmount}
           setInputAmount={setInputAmount}
           balance={balance}
         />
-        <SwapIcon swapTokens={swapTokens} />
-        <ToToken toToken={toToken} setToToken={setToToken} expectedAmount={simulatedOperation} />
+        <SwapIcon swapTokens={swapTokenPosition} />
+        <ToToken
+          fromToken={fromToken}
+          toToken={toToken}
+          setToToken={setToToken}
+          expectedAmount={simulatedOperation}
+        />
       </Box>
       <Button
         h={{ base: 12, lg: 16 }}
         w="full"
         bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-        onClick={onClick}
+        onClick={handlerSwap}
         disabled={
-          !loading &&
+          !isTxLoading &&
           isWalletConnected &&
           inputAmount > microamountToAmount(balance.amount, fromToken.decimals)
         }
@@ -142,7 +170,7 @@ const Swap: React.FC = () => {
           cursor: "initial",
         }}
       >
-        {loading && (
+        {isTxLoading && (
           <Image
             alt="Wynd logo"
             src="/logo-white-no-text.svg"
