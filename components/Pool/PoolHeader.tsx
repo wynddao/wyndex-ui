@@ -23,6 +23,7 @@ import { useState } from "react";
 import { useCw20UserInfos, useIndexerInfos } from "../../state";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { getAssetPrice } from "../../utils/assets";
+import { formatCurrency } from "../../utils/currency";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -33,18 +34,11 @@ interface PoolHeaderProps {
 interface PoolHeaderUserProps {
   chainData: PoolResponse;
   pairData: PairInfo;
-  tokenPrice1: any;
-  tokenPrice2: any;
+  totalFiatShares: any;
   walletAddress: string;
 }
 
-function PoolHeaderUserInfo({
-  chainData,
-  pairData,
-  tokenPrice1,
-  tokenPrice2,
-  walletAddress,
-}: PoolHeaderUserProps) {
+function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddress }: PoolHeaderUserProps) {
   const wyndexStake = pairData.staking_addr;
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress);
@@ -59,11 +53,9 @@ function PoolHeaderUserInfo({
 
   const myShare = totalTokens / Number(chainData.total_share);
 
-  const myFiatShare =
-    myShare * Number(microamountToAmount(chainData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
-    myShare * Number(microamountToAmount(chainData.assets[0].amount, 6)) * tokenPrice2.priceInUsd;
+  const myFiatShare = myShare * totalFiatShares;
 
-  return <span>{myFiatShare.toFixed(2)} $</span>;
+  return <span>{formatCurrency.format(myFiatShare)}</span>;
 }
 
 export default function PoolHeader({ chainData, pairData, walletAddress }: PoolHeaderProps) {
@@ -120,7 +112,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
               Pool Liquidity
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span>{totalFiatShares.toFixed(2)} $</span>
+              <span>{formatCurrency.format(totalFiatShares)} </span>
             </Text>
           </GridItem>
           <GridItem>
@@ -141,8 +133,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
                 <PoolHeaderUserInfo
                   chainData={chainData}
                   pairData={pairData}
-                  tokenPrice1={tokenPrice1}
-                  tokenPrice2={tokenPrice2}
+                  totalFiatShares={totalFiatShares}
                   walletAddress={walletAddress}
                 />
               </Text>

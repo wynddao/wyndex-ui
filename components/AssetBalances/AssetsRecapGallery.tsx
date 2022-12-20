@@ -2,8 +2,8 @@
 
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { useEffect, useState } from "react";
-import { getAssetsRecap } from "../../utils";
+import { useIndexerInfos } from "../../state";
+import { formatCurrency } from "../../utils/currency";
 
 export interface AssetsRecap {
   readonly total: string;
@@ -12,17 +12,8 @@ export interface AssetsRecap {
 }
 
 export default function AssetsRecapGallery() {
-  const { address, getCosmWasmClient } = useWallet();
-  const [assetsRecap, setAssetsRecap] = useState<AssetsRecap>();
-
-  useEffect(() => {
-    (async function updateAssetsRecap() {
-      if (!address) return;
-
-      const assetsRecap = await getAssetsRecap(address);
-      setAssetsRecap(assetsRecap);
-    })();
-  }, [address, getCosmWasmClient]);
+  const { address: walletAddress } = useWallet();
+  const { userFiat } = useIndexerInfos({ fetchCw20Balances: true });
 
   return (
     <>
@@ -44,7 +35,9 @@ export default function AssetsRecapGallery() {
             Total Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {assetsRecap?.total || "—"}
+            {walletAddress
+              ? formatCurrency.format(userFiat.availableBalanceInUsd + userFiat.lockedBalanceInUsd)
+              : "-"}
           </Text>
         </Box>
         <Box py={{ md: 2 }}>
@@ -52,7 +45,7 @@ export default function AssetsRecapGallery() {
             Locked Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {assetsRecap?.locked || "—"}
+            {walletAddress ? formatCurrency.format(userFiat.lockedBalanceInUsd) : "-"}
           </Text>
         </Box>
         <Box py={{ md: 2 }}>
@@ -60,7 +53,7 @@ export default function AssetsRecapGallery() {
             Available Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {assetsRecap?.available || "—"}
+            {walletAddress ? formatCurrency.format(userFiat.availableBalanceInUsd) : "-"}
           </Text>
         </Box>
       </Grid>

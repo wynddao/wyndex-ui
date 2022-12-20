@@ -12,6 +12,11 @@ export interface Cw20BalanceResponse {
   readonly balance: string;
 }
 
+export interface UserFiatResponse {
+  readonly availableBalanceInUsd: number;
+  readonly lockedBalanceInUsd: number;
+}
+
 export interface IndexerQueryClientReadOnlyInterface {
   apiUrl: string;
   pools: () => Promise<any>;
@@ -38,6 +43,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
 
   userPools = async (walletAddress: string): Promise<any> => {
     const res = await fetch(`${this.apiUrl}/pools/user/${walletAddress}`);
+    return await res.json();
+  };
+
+  userFiat = async (walletAddress: string): Promise<any> => {
+    const res = await fetch(`${this.apiUrl}/assets/prices/${walletAddress}`);
     return await res.json();
   };
 

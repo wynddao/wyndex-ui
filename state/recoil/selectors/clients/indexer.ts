@@ -1,6 +1,6 @@
 import { Coin } from "cosmwasm";
 import { selectorFamily } from "recoil";
-import { Cw20BalanceResponse, IndexerQueryClient } from "../../../clients/Indexer.client";
+import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
 
 type QueryClientParams = {
   apiUrl: string;
@@ -90,6 +90,21 @@ export const cw20BalancesSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.cw20Balances(...params);
+    },
+});
+
+export const userFiatSelector = selectorFamily<
+  UserFiatResponse,
+  QueryClientParams & {
+    params: Parameters<IndexerQueryClient["userFiat"]>;
+  }
+>({
+  key: "indexerFiatBalances",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.userFiat(...params);
     },
 });
 
