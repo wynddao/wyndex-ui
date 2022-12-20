@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, NumberInput, NumberInputField, Text, useRadio, UseRadioProps } from "@chakra-ui/react";
+import React, { ChangeEvent, useState } from "react";
+import { Box, NumberInput, NumberInputField, Text } from "@chakra-ui/react";
 
 interface IProps {
   selected: string;
@@ -16,6 +16,17 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
       setSlippage(Number(value));
     }
   };
+
+  const handlerCustomVal = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const value = Number(target.value);
+    setSlippage(value);
+    setCustomVal(target.value);
+    if (value > 50) {
+      setSlippage(50);
+      setCustomVal("50");
+    }
+  };
+
   return (
     <Box
       onClick={onClick}
@@ -38,11 +49,8 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
           justifyContent="center"
         >
           <NumberInputField
-            onChange={({ target }) => {
-              setSlippage(Number(target.value));
-              setCustomVal(target.value);
-            }}
-            value={2.5}
+            onChange={handlerCustomVal}
+            value={customVal}
             maxW="fit-content"
             minW="2rem"
             padding={0}
