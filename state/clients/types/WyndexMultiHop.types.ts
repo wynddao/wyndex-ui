@@ -36,25 +36,18 @@ export type ExecuteMsg =
 export type Uint128 = string;
 export type Binary = string;
 export type Decimal = string;
-export type SwapOperation =
-  | {
-      native_swap: {
-        ask_denom: string;
-        offer_denom: string;
-      };
-    }
-  | {
-      wyndex_swap: {
-        ask_asset_info: AssetInfo;
-        offer_asset_info: AssetInfo;
-      };
-    };
+export type SwapOperation = {
+  wyndex_swap: {
+    ask_asset_info: AssetInfo;
+    offer_asset_info: AssetInfo;
+  };
+};
 export type AssetInfo =
   | {
       token: string;
     }
   | {
-      native_token: string;
+      native: string;
     };
 export interface Cw20ReceiveMsg {
   amount: Uint128;
@@ -76,6 +69,22 @@ export type QueryMsg =
 export interface ConfigResponse {
   wyndex_factory: string;
 }
+export type AssetInfoValidated =
+  | {
+      token: Addr;
+    }
+  | {
+      native: string;
+    };
+export type Addr = string;
 export interface SimulateSwapOperationsResponse {
   amount: Uint128;
+  commission_amounts: AssetValidated[];
+  referral_amount: AssetValidated;
+  spread: Decimal;
+  spread_amounts: AssetValidated[];
+}
+export interface AssetValidated {
+  amount: Uint128;
+  info: AssetInfoValidated;
 }
