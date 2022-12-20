@@ -71,7 +71,7 @@ const Swap: React.FC = () => {
       setLoading(true);
       try {
         await doSwap({ operations }, "auto", undefined, [
-          { amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(), denom: "ujunox" },
+          { amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(), denom: fromToken.denom },
         ]);
       } catch (err) {
         toast.error(`Error: ${new TxError(err as string).pretty()}`, {
