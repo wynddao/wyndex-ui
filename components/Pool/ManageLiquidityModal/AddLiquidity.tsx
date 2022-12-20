@@ -72,7 +72,7 @@ export default function AddLiquidity({
     return {
       img: "https://via.placeholder.com/300",
       // @ts-ignore
-      denom: asset.hasOwnProperty("native_token") ? asset.native_token : asset.token,
+      denom: asset.hasOwnProperty("native") ? asset.native : asset.token,
       // @ts-ignore
       contractAddress: asset.hasOwnProperty("token") ? asset.token : undefined,
       // @ts-ignore
@@ -81,7 +81,7 @@ export default function AddLiquidity({
         <TokenName symbol={true} address={asset.token} />
       ) : (
         // @ts-ignore
-        <span>{microdenomToDenom(asset.native_token)}</span>
+        <span>{microdenomToDenom(asset.native)}</span>
       ),
       show: true,
     };
@@ -112,7 +112,7 @@ export default function AddLiquidity({
     const b = balance.map(async (e, i) => {
       if (e === undefined) {
         // @ts-ignore
-        return await getNativeTokenBalance(walletAddress || "", pairData.asset_infos[i].native_token);
+        return await getNativeTokenBalance(walletAddress || "", pairData.asset_infos[i].native);
       }
       return e;
     });
@@ -127,7 +127,7 @@ export default function AddLiquidity({
       .map((token): WyndAsset => {
         return {
           amount: amountToMicroamount(token.value, 6),
-          info: token.contract ? { token: token.contract } : { native_token: token.id },
+          info: token.contract ? { token: token.contract } : { native: token.id },
         };
       });
     // @ts-ignore
@@ -284,14 +284,14 @@ export default function AddLiquidity({
                                   ? // @ts-ignore
                                     el.info.token === denom
                                   : // @ts-ignore
-                                    el.info.native_token === denom,
+                                    el.info.native === denom,
                               );
                               const otherEl = chainData.assets.find((el) =>
                                 el.info.hasOwnProperty("token")
                                   ? // @ts-ignore
                                     el.info.token !== denom
                                   : // @ts-ignore
-                                    el.info.native_token !== denom,
+                                    el.info.native !== denom,
                               );
                               const ratio = Number(thisEl?.amount || "0") / Number(otherEl?.amount || "0");
                               if (id === denom) {
@@ -328,14 +328,14 @@ export default function AddLiquidity({
                                 ? // @ts-ignore
                                   el.info.token === denom
                                 : // @ts-ignore
-                                  el.info.native_token === denom,
+                                  el.info.native === denom,
                             );
                             const otherEl = chainData.assets.find((el) =>
                               el.info.hasOwnProperty("token")
                                 ? // @ts-ignore
                                   el.info.token !== denom
                                 : // @ts-ignore
-                                  el.info.native_token !== denom,
+                                  el.info.native !== denom,
                             );
                             const ratio = Number(thisEl?.amount || "0") / Number(otherEl?.amount || "0");
                             if (id === denom) {
@@ -347,7 +347,7 @@ export default function AddLiquidity({
                             }
                             return {
                               id: id,
-                              value: (Number(val) / ratio).toFixed(6),
+                              value: defaultVal,
                               contract: contractDefault,
                             };
                           },

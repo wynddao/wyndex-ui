@@ -4,6 +4,7 @@ import {
   AdminResponse,
   AllStakedResponse,
   StakedResponse,
+  AnnualizedRewardsResponse,
   BondingInfoResponse,
   ClaimsResponse,
   DelegatedResponse,
@@ -171,6 +172,20 @@ export const bondingInfoSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.bondingInfo(...params);
+    },
+});
+export const annualizedRewardsSelector = selectorFamily<
+  AnnualizedRewardsResponse,
+  QueryClientParams & {
+    params: Parameters<WyndexStakeQueryClient["annualizedRewards"]>;
+  }
+>({
+  key: "wyndexStakeAnnualizedRewards",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.annualizedRewards(...params);
     },
 });
 export const withdrawableRewardsSelector = selectorFamily<

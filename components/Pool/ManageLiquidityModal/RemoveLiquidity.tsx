@@ -86,7 +86,7 @@ export default function RemoveLiquidity({
                 <TokenName symbol={true} address={asset.info.token} />
               ) : (
                 //@ts-ignore
-                <span>{microdenomToDenom(asset.info.native_token)}</span>
+                <span>{microdenomToDenom(asset.info.native)}</span>
               )}
             </Text>
           </Box>

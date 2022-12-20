@@ -18,7 +18,7 @@ export default function Pools() {
         amount: string;
       }
     | {
-        native_token: string;
+        native: string;
         amount: string;
       };
 
@@ -42,14 +42,14 @@ export default function Pools() {
       (row) => {
         return [
           {
-            type: row.assets[0].hasOwnProperty("token") ? "token" : "native_token",
+            type: row.assets[0].hasOwnProperty("token") ? "token" : "native",
             // @ts-ignore
-            value: row.assets[0].hasOwnProperty("token") ? row.assets[0].token : row.assets[0].native_token,
+            value: row.assets[0].hasOwnProperty("token") ? row.assets[0].token : row.assets[0].native,
           },
           {
-            type: row.assets[1].hasOwnProperty("token") ? "token" : "native_token",
+            type: row.assets[1].hasOwnProperty("token") ? "token" : "native",
             // @ts-ignore
-            value: row.assets[1].hasOwnProperty("token") ? row.assets[1].token : row.assets[1].native_token,
+            value: row.assets[1].hasOwnProperty("token") ? row.assets[1].token : row.assets[1].native,
           },
         ];
       },
@@ -59,13 +59,13 @@ export default function Pools() {
         filterFn: "auto",
         cell: (props) => (
           <>
-            {props.getValue()[0].type === "native_token" ? (
+            {props.getValue()[0].type === "native" ? (
               <span>{`${microdenomToDenom(props.getValue()[0].value)}`}</span>
             ) : (
               <TokenName address={props.getValue()[0].value} />
             )}
             {" / "}
-            {props.getValue()[1].type === "native_token" ? (
+            {props.getValue()[1].type === "native" ? (
               <span>{`${microdenomToDenom(props.getValue()[1].value)}`}</span>
             ) : (
               <TokenName address={props.getValue()[1].value} />
@@ -107,15 +107,15 @@ export default function Pools() {
       (row) => {
         return [
           {
-            type: row.assets[0].hasOwnProperty("token") ? "token" : "native_token",
+            type: row.assets[0].hasOwnProperty("token") ? "token" : "native",
             // @ts-ignore
-            value: row.assets[0].hasOwnProperty("token") ? row.assets[0].token : row.assets[0].native_token,
+            value: row.assets[0].hasOwnProperty("token") ? row.assets[0].token : row.assets[0].native,
             amount: row.assets[0].amount,
           },
           {
-            type: row.assets[1].hasOwnProperty("token") ? "token" : "native_token",
+            type: row.assets[1].hasOwnProperty("token") ? "token" : "native",
             // @ts-ignore
-            value: row.assets[1].hasOwnProperty("token") ? row.assets[1].token : row.assets[1].native_token,
+            value: row.assets[1].hasOwnProperty("token") ? row.assets[1].token : row.assets[1].native,
             amount: row.assets[1].amount,
           },
         ];
@@ -126,14 +126,14 @@ export default function Pools() {
         cell: (props) => (
           <>
             {microamountToAmount(props.getValue()[0].amount, 6)}{" "}
-            {props.getValue()[0].type === "native_token" ? (
+            {props.getValue()[0].type === "native" ? (
               <span>{`${microdenomToDenom(props.getValue()[0].value)}`}</span>
             ) : (
               <TokenName symbol={true} address={props.getValue()[0].value} />
             )}
             {" / "}
             {microamountToAmount(props.getValue()[1].amount, 6)}{" "}
-            {props.getValue()[1].type === "native_token" ? (
+            {props.getValue()[1].type === "native" ? (
               <span>{`${microdenomToDenom(props.getValue()[1].value)}`}</span>
             ) : (
               <TokenName symbol={true} address={props.getValue()[1].value} />

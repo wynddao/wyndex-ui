@@ -3,9 +3,11 @@ import { Coin, StdFee } from "@cosmjs/amino";
 import {
   PairType,
   PairConfig,
+  FeeConfig,
   AssetInfo,
   Binary,
   PartialStakeConfig,
+  DistributionFlow,
   ArrayOfPairType,
   ConfigResponse,
   FeeInfoResponse,
@@ -97,9 +99,11 @@ export interface WyndexFactoryInterface extends WyndexFactoryReadOnlyInterface {
   updateConfig: (
     {
       feeAddress,
+      onlyOwnerCanCreatePairs,
       tokenCodeId,
     }: {
       feeAddress?: string;
+      onlyOwnerCanCreatePairs?: boolean;
       tokenCodeId?: number;
     },
     fee?: number | StdFee | "auto",
@@ -122,11 +126,25 @@ export interface WyndexFactoryInterface extends WyndexFactoryReadOnlyInterface {
       initParams,
       pairType,
       stakingConfig,
+      totalFeeBps,
     }: {
       assetInfos: AssetInfo[];
       initParams?: Binary;
       pairType: PairType;
       stakingConfig?: PartialStakeConfig;
+      totalFeeBps?: number;
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
+  updatePairFees: (
+    {
+      assetInfos,
+      feeConfig,
+    }: {
+      assetInfos: AssetInfo[];
+      feeConfig: FeeConfig;
     },
     fee?: number | StdFee | "auto",
     memo?: string,
@@ -170,6 +188,42 @@ export interface WyndexFactoryInterface extends WyndexFactoryReadOnlyInterface {
     memo?: string,
     funds?: Coin[],
   ) => Promise<ExecuteResult>;
+  createPairAndDistributionFlows: (
+    {
+      assetInfos,
+      distributionFlows,
+      initParams,
+      pairType,
+      stakingConfig,
+      totalFeeBps,
+    }: {
+      assetInfos: AssetInfo[];
+      distributionFlows: DistributionFlow[];
+      initParams?: Binary;
+      pairType: PairType;
+      stakingConfig?: PartialStakeConfig;
+      totalFeeBps?: number;
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
+  createDistributionFlow: (
+    {
+      asset,
+      assetInfos,
+      rewardDuration,
+      rewards,
+    }: {
+      asset: AssetInfo;
+      assetInfos: AssetInfo[];
+      rewardDuration: number;
+      rewards: number[][];
+    },
+    fee?: number | StdFee | "auto",
+    memo?: string,
+    funds?: Coin[],
+  ) => Promise<ExecuteResult>;
 }
 export class WyndexFactoryClient extends WyndexFactoryQueryClient implements WyndexFactoryInterface {
   client: SigningCosmWasmClient;
@@ -184,19 +238,24 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
     this.updateConfig = this.updateConfig.bind(this);
     this.updatePairConfig = this.updatePairConfig.bind(this);
     this.createPair = this.createPair.bind(this);
+    this.updatePairFees = this.updatePairFees.bind(this);
     this.deregister = this.deregister.bind(this);
     this.proposeNewOwner = this.proposeNewOwner.bind(this);
     this.dropOwnershipProposal = this.dropOwnershipProposal.bind(this);
     this.claimOwnership = this.claimOwnership.bind(this);
     this.markAsMigrated = this.markAsMigrated.bind(this);
+    this.createPairAndDistributionFlows = this.createPairAndDistributionFlows.bind(this);
+    this.createDistributionFlow = this.createDistributionFlow.bind(this);
   }
 
   updateConfig = async (
     {
       feeAddress,
+      onlyOwnerCanCreatePairs,
       tokenCodeId,
     }: {
       feeAddress?: string;
+      onlyOwnerCanCreatePairs?: boolean;
       tokenCodeId?: number;
     },
     fee: number | StdFee | "auto" = "auto",
@@ -209,6 +268,7 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
       {
         update_config: {
           fee_address: feeAddress,
+          only_owner_can_create_pairs: onlyOwnerCanCreatePairs,
           token_code_id: tokenCodeId,
         },
       },
@@ -246,11 +306,13 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
       initParams,
       pairType,
       stakingConfig,
+      totalFeeBps,
     }: {
       assetInfos: AssetInfo[];
       initParams?: Binary;
       pairType: PairType;
       stakingConfig?: PartialStakeConfig;
+      totalFeeBps?: number;
     },
     fee: number | StdFee | "auto" = "auto",
     memo?: string,
@@ -265,6 +327,33 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
           init_params: initParams,
           pair_type: pairType,
           staking_config: stakingConfig,
+          total_fee_bps: totalFeeBps,
+        },
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  updatePairFees = async (
+    {
+      assetInfos,
+      feeConfig,
+    }: {
+      assetInfos: AssetInfo[];
+      feeConfig: FeeConfig;
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_pair_fees: {
+          asset_infos: assetInfos,
+          fee_config: feeConfig,
         },
       },
       fee,
@@ -369,6 +458,76 @@ export class WyndexFactoryClient extends WyndexFactoryQueryClient implements Wyn
       {
         mark_as_migrated: {
           pairs,
+        },
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  createPairAndDistributionFlows = async (
+    {
+      assetInfos,
+      distributionFlows,
+      initParams,
+      pairType,
+      stakingConfig,
+      totalFeeBps,
+    }: {
+      assetInfos: AssetInfo[];
+      distributionFlows: DistributionFlow[];
+      initParams?: Binary;
+      pairType: PairType;
+      stakingConfig?: PartialStakeConfig;
+      totalFeeBps?: number;
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        create_pair_and_distribution_flows: {
+          asset_infos: assetInfos,
+          distribution_flows: distributionFlows,
+          init_params: initParams,
+          pair_type: pairType,
+          staking_config: stakingConfig,
+          total_fee_bps: totalFeeBps,
+        },
+      },
+      fee,
+      memo,
+      funds,
+    );
+  };
+  createDistributionFlow = async (
+    {
+      asset,
+      assetInfos,
+      rewardDuration,
+      rewards,
+    }: {
+      asset: AssetInfo;
+      assetInfos: AssetInfo[];
+      rewardDuration: number;
+      rewards: number[][];
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        create_distribution_flow: {
+          asset,
+          asset_infos: assetInfos,
+          reward_duration: rewardDuration,
+          rewards,
         },
       },
       fee,

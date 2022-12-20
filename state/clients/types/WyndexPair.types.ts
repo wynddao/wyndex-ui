@@ -3,22 +3,26 @@ export type AssetInfo =
       token: string;
     }
   | {
-      native_token: string;
+      native: string;
     };
 export type Binary = string;
 export type Uint128 = string;
 export interface InstantiateMsg {
   asset_infos: AssetInfo[];
   factory_addr: string;
+  fee_config: FeeConfig;
   init_params?: Binary | null;
   staking_config: StakeConfig;
   token_code_id: number;
+  trading_starts: number;
+}
+export interface FeeConfig {
+  protocol_fee_bps: number;
+  total_fee_bps: number;
 }
 export interface StakeConfig {
-  admin: string;
   max_distributions: number;
   min_bond: Uint128;
-  reward_duration: number;
   staking_code_id: number;
   tokens_per_power: Uint128;
   unbonding_periods: number[];
@@ -48,6 +52,11 @@ export type ExecuteMsg =
   | {
       update_config: {
         params: Binary;
+      };
+    }
+  | {
+      update_fees: {
+        fee_config: FeeConfig;
       };
     }
   | {
@@ -120,7 +129,7 @@ export type AssetInfoValidated =
       token: Addr;
     }
   | {
-      native_token: string;
+      native: string;
     };
 export interface CumulativePricesResponse {
   assets: AssetValidated[];
@@ -144,6 +153,7 @@ export type PairType =
 export interface PairInfo {
   asset_infos: AssetInfoValidated[];
   contract_addr: Addr;
+  fee_config: FeeConfig;
   liquidity_token: Addr;
   pair_type: PairType;
   staking_addr: Addr;
@@ -160,6 +170,7 @@ export interface ReverseSimulationResponse {
 export type ArrayOfAssetValidated = AssetValidated[];
 export interface SimulationResponse {
   commission_amount: Uint128;
+  referral_amount: Uint128;
   return_amount: Uint128;
   spread_amount: Uint128;
 }

@@ -28,7 +28,7 @@ export const getAssetInfo = (item: Asset) => {
         token: (item as CW20Asset).token_address,
       }
     : {
-        native_token: item.denom,
+        native: item.denom,
       };
 };
 
@@ -41,7 +41,7 @@ type AssetInfoIndexer =
       amount: string;
     }
   | {
-      native_token: string;
+      native: string;
       amount: string;
     };
 
@@ -61,7 +61,7 @@ export const getAssetPrice = (
       ? // @ts-ignore
         asset.token
       : // @ts-ignore
-        asset.native_token;
+        asset.native;
     return el.asset == assetName;
   });
 

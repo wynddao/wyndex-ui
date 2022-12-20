@@ -7,6 +7,7 @@ import {
   AdminResponse,
   AllStakedResponse,
   StakedResponse,
+  AnnualizedRewardsResponse,
   BondingInfoResponse,
   ClaimsResponse,
   DelegatedResponse,
@@ -35,6 +36,7 @@ export interface WyndexStakeReadOnlyInterface {
   rewardsPower: ({ address }: { address: string }) => Promise<RewardsPowerResponse>;
   admin: () => Promise<AdminResponse>;
   bondingInfo: () => Promise<BondingInfoResponse>;
+  annualizedRewards: () => Promise<AnnualizedRewardsResponse>;
   withdrawableRewards: ({ owner }: { owner: string }) => Promise<WithdrawableRewardsResponse>;
   distributedRewards: () => Promise<DistributedRewardsResponse>;
   undistributedRewards: () => Promise<WithdrawableRewardsResponse>;
@@ -64,6 +66,7 @@ export class WyndexStakeQueryClient implements WyndexStakeReadOnlyInterface {
     this.rewardsPower = this.rewardsPower.bind(this);
     this.admin = this.admin.bind(this);
     this.bondingInfo = this.bondingInfo.bind(this);
+    this.annualizedRewards = this.annualizedRewards.bind(this);
     this.withdrawableRewards = this.withdrawableRewards.bind(this);
     this.distributedRewards = this.distributedRewards.bind(this);
     this.undistributedRewards = this.undistributedRewards.bind(this);
@@ -130,6 +133,11 @@ export class WyndexStakeQueryClient implements WyndexStakeReadOnlyInterface {
   bondingInfo = async (): Promise<BondingInfoResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       bonding_info: {},
+    });
+  };
+  annualizedRewards = async (): Promise<AnnualizedRewardsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      annualized_rewards: {},
     });
   };
   withdrawableRewards = async ({ owner }: { owner: string }): Promise<WithdrawableRewardsResponse> => {

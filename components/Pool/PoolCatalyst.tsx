@@ -82,7 +82,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                         <AssetImage
                           asset={
                             //  @ts-ignore
-                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native_token
+                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native
                           }
                         />
                       </Box>
@@ -94,7 +94,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                             <TokenName address={asset.info.token} />
                           ) : (
                             // @ts-ignore
-                            microdenomToDenom(asset.info.native_token)
+                            microdenomToDenom(asset.info.native)
                           )}
                         </Text>
                       </Box>
