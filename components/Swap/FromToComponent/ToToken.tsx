@@ -1,18 +1,19 @@
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import { Asset, assetList, CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import { Asset } from "@wynddao/asset-list";
 
-import React, { useState } from "react";
+import React from "react";
 import { getDenom } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 
 interface IProps {
+  fromToken: Asset;
   toToken: Asset;
   setToToken: (asset: Asset) => void;
   expectedAmount: string;
 }
 
-const ToToken: React.FC<IProps> = ({ toToken, setToToken, expectedAmount }) => {
+const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmount }) => {
   return (
     <Box flex="1">
       <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }} textAlign="right">
@@ -30,7 +31,11 @@ const ToToken: React.FC<IProps> = ({ toToken, setToToken, expectedAmount }) => {
         justifyContent="end"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <AssetSelector selectedAsset={toToken} setAsset={setToToken} />
+          <AssetSelector
+            selectedAsset={toToken}
+            setAsset={setToToken}
+            hiddenTokens={[fromToken.name.toLowerCase(), toToken.name.toLowerCase()]}
+          />
           <Flex flexFlow="column" position="relative">
             <Flex alignItems="center" gap="0.5rem">
               <Text textTransform="uppercase">

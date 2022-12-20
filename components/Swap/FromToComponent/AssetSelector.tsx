@@ -22,9 +22,10 @@ import { getAssetList } from "../../../utils/getAssetList";
 interface IProps {
   selectedAsset: Asset;
   setAsset: (asset: Asset) => void;
+  hiddenTokens?: string[];
 }
 
-const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset }) => {
+const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens = [] }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const dropdownRef = useRef(null);
@@ -32,8 +33,12 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset }) => {
   useClickAway(dropdownRef, () => setOpen(false));
 
   const assets = useMemo(
-    () => getAssetList().tokens.filter(({ name }) => name.toLowerCase().includes(filter.toLowerCase())),
-    [filter],
+    () =>
+      getAssetList().tokens.filter(({ name }) => {
+        if (hiddenTokens.includes(name.toLowerCase())) return false;
+        return name.toLowerCase().includes(filter.toLowerCase());
+      }),
+    [filter, hiddenTokens],
   );
 
   const changeAsset = (asset: Asset) => {
@@ -104,7 +109,6 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset }) => {
         width="100%"
         borderRadius="lg"
         transform={open ? "scale(1)" : "scale(0)"}
-        initial={false}
         transition="all linear 0.2s"
         maxH="15rem"
         display="flex"
