@@ -47,7 +47,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                           ? //  @ts-ignore
                             pool.value.pair_info.asset_infos[0].token
                           : //  @ts-ignore
-                            pool.value.pair_info.asset_infos[0].native_token
+                            pool.value.pair_info.asset_infos[0].native
                       }
                     />
                   </Box>
@@ -69,7 +69,7 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                           ? //  @ts-ignore
                             pool.value.pair_info.asset_infos[1].token
                           : //  @ts-ignore
-                            pool.value.pair_info.asset_infos[1].native_token
+                            pool.value.pair_info.asset_infos[1].native
                       }
                     />
                   </Box>
@@ -79,11 +79,11 @@ export default function PoolsCard({ poolsData }: PoolsCardProps) {
                     {pool.value.pair_info.asset_infos.map((assetInfo: any, index: number) => {
                       const divider = index === 0 ? " / " : null;
 
-                      if (assetInfo.hasOwnProperty("native_token")) {
+                      if (assetInfo.hasOwnProperty("native")) {
                         return (
                           <span key={index}>
                             {/* @ts-ignore */}
-                            {microdenomToDenom(assetInfo.native_token)}
+                            {microdenomToDenom(assetInfo.native)}
                             {divider}
                           </span>
                         );

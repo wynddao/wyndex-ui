@@ -47,7 +47,7 @@ export class CustomClient extends Cw20QueryClient {
           funds,
         },
       ];
-    } else if (assets.find((asset) => asset.info.hasOwnProperty("native_token"))) {
+    } else if (assets.find((asset) => asset.info.hasOwnProperty("native"))) {
       msgs = [
         {
           //@ts-ignore

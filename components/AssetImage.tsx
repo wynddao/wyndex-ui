@@ -31,9 +31,9 @@ export default function AssetImage(props: AssetImageOptions) {
       address = asset.token;
     } else {
       // @ts-ignore
-      address = asset.native_token;
+      address = asset.native;
       // @ts-ignore
-      if (asset.native_token.toUpperCase().startWith("IBC/")) {
+      if (asset.native.toUpperCase().startWith("IBC/")) {
         type = "ibc";
       } else {
         type = "native";

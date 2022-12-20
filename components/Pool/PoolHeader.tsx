@@ -61,9 +61,9 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
 export default function PoolHeader({ chainData, pairData, walletAddress }: PoolHeaderProps) {
   const { onOpen, isOpen, onClose } = useDisclosure();
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
-    if (assetInfo.hasOwnProperty("native_token")) {
+    if (assetInfo.hasOwnProperty("native")) {
       // @ts-ignore
-      return <span key={index}>{microdenomToDenom(assetInfo.native_token)}</span>;
+      return <span key={index}>{microdenomToDenom(assetInfo.native)}</span>;
     } else {
       // @ts-ignore
       return <TokenName key={index} address={assetInfo.token} />;
