@@ -18,7 +18,15 @@ import { useToast } from "../../state/hooks";
 import PendingUnbondingsTable from "./PendingUnbondingsTable";
 import { microamountToAmount } from "../../utils/tokens";
 
-export default function LiquidityMining({ pairData }: { pairData: PairInfo }) {
+interface LiquidityMiningOptions {
+  apr: {
+    unbonding_period: number;
+    apr: number;
+  }[];
+  pairData: PairInfo;
+}
+
+export default function LiquidityMining({ pairData, apr }: LiquidityMiningOptions) {
   const wyndexStake = pairData.staking_addr;
   const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
@@ -98,11 +106,12 @@ export default function LiquidityMining({ pairData }: { pairData: PairInfo }) {
             </Flex>
           </Flex>
         </Box>
-        <UnboundingsGrid stakeAddress={wyndexStake} />
+        <UnboundingsGrid stakeAddress={wyndexStake} apr={apr} />
         <BoundingsTable
           tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
           tokenSymbol={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
           stakeContract={wyndexStake}
+          apr={apr}
         />
         <PendingBoundingsTable
           wyndexStake={wyndexStake}
@@ -119,6 +128,7 @@ export default function LiquidityMining({ pairData }: { pairData: PairInfo }) {
           tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
           onClose={() => setIsModalOpen(false)}
           bondingInfos={infos}
+          apr={apr}
         />
       </Box>
     </>

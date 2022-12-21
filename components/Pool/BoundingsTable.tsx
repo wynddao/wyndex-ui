@@ -25,13 +25,18 @@ import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { secondsToDays } from "../../utils/time";
 import { microamountToAmount } from "../../utils/tokens";
 import ManageBoundingsModal from "./ManageBoundingsModal";
+import { getApr } from "./util/apr";
 interface BoundingsTableProps {
   readonly stakeContract: string;
   tokenName: any;
   tokenSymbol: any;
+  apr: {
+    unbonding_period: number;
+    apr: number;
+  }[];
 }
 
-export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }: BoundingsTableProps) {
+export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol, apr }: BoundingsTableProps) {
   const tableHeaders = ["Bonded Tier", "Current APR", "Amount", "Action"];
   const { address } = useWallet();
   const { infos } = useStakeInfos(stakeContract);
@@ -90,8 +95,7 @@ export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol }
                   return (
                     <Tr key={i}>
                       <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days Unbonding</Td>
-                      {/* TODO */}
-                      <Td fontWeight="semibold">20%</Td>
+                      <Td fontWeight="semibold">{getApr(apr, unbonding_period)}</Td>
                       <Td fontWeight="semibold">
                         {microamountToAmount(stake, 6)} {tokenSymbol}
                       </Td>

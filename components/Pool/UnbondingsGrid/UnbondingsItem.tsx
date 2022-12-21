@@ -1,13 +1,19 @@
 import { Box, GridItem, ScaleFade, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import { AnnualizedReward } from "../../../state/clients/types/WyndexStake.types";
 import { secondsToDays } from "../../../utils/time";
+import { getApr } from "../util/apr";
 
-export default function UnbondingsItem({ unbonding_period }: { unbonding_period: number }) {
-  const [visibleHover, setVisibleHover] = useState<boolean>(false);
-
-  const handleMouseEnter = () => setVisibleHover(true);
-  const handleMouseLeave = () => setVisibleHover(false);
-
+export default function UnbondingsItem({
+  unbonding_period,
+  apr,
+}: {
+  unbonding_period: number;
+  apr: {
+    unbonding_period: number;
+    apr: number;
+  }[];
+}) {
   return (
     <GridItem pos="relative">
       <Box
@@ -18,46 +24,14 @@ export default function UnbondingsItem({ unbonding_period }: { unbonding_period:
         borderRadius="xl"
         py={6}
         px={8}
-        onMouseEnter={handleMouseEnter}
       >
         <Text fontWeight="bold" fontSize="2xl">
           {secondsToDays(unbonding_period)} Days
         </Text>
         <Text fontWeight="bold" fontSize="xl">
-          {/* TODO */}
-          20% APR
+          {getApr(apr, unbonding_period)}
         </Text>
       </Box>
-      {visibleHover && (
-        <ScaleFade
-          style={{ position: "absolute", top: 0, width: "100%" }}
-          initialScale={0.9}
-          in={visibleHover}
-        >
-          <Box
-            bgImage={"/images/Vector3.png"}
-            bgPos="right"
-            bgRepeat="no-repeat"
-            bgColor={"wynd.base.subBg"}
-            borderRadius="xl"
-            borderColor={"wynd.base.sideBar"}
-            borderWidth={2}
-            py={6}
-            px={8}
-            pos="absolute"
-            top={0}
-            width={"100%"}
-            onMouseLeave={handleMouseLeave}
-          >
-            <Text fontWeight="bold" fontSize="2xl">
-              Incetives
-            </Text>
-            <Text fontWeight="bold" fontSize="xl" display="inline">
-              +1% @TODO
-            </Text>
-          </Box>
-        </ScaleFade>
-      )}
     </GridItem>
   );
 }
