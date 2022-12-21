@@ -12,7 +12,7 @@ export class TxError extends Error {
 
     // Support new cases
     if (msg.includes("contract: ")) return this.formatContractErr(msg);
-    if (msg.includes("exceeds max spread limit")) return "Operation exceeds max spread limit.";
+    if (msg.includes("exceeds max spread limit")) return "The operation has exceeded the slippage limit";
 
     return "Something wen't wrong";
   }
