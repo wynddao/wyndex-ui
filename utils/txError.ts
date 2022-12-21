@@ -6,7 +6,6 @@ export class TxError extends Error {
 
   pretty() {
     const parsedMsg = this.parser();
-    console.log(parsedMsg[0]);
     if (!Array.isArray(parsedMsg)) return parsedMsg;
     const [msg] = parsedMsg;
 
