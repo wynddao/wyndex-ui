@@ -347,7 +347,7 @@ export default function AddLiquidity({
                             }
                             return {
                               id: id,
-                              value: defaultVal,
+                              value: (Number(val) / ratio).toFixed(6),
                               contract: contractDefault,
                             };
                           },
