@@ -2,13 +2,20 @@ import { Flex, Icon } from "@chakra-ui/react";
 import React from "react";
 import { BsHexagon, BsHexagonFill } from "react-icons/bs";
 import { CgArrowsExchangeV } from "react-icons/cg";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import GradientIcon from "./GradientIcon";
 interface IProps {
   swapTokens: () => void;
 }
 
 const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
+  const controls = useAnimation();
+
+  const handlerClick = () => {
+    controls.start({ rotate: 360, transition: { duration: 0.5 }, transitionEnd: { rotate: 0 } });
+    swapTokens();
+  };
+
   return (
     <Flex
       className="swap-toggle-icon"
@@ -20,9 +27,10 @@ const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
     >
       <Flex
         as={motion.button}
+        animate={controls}
         position="relative"
         zIndex={2}
-        onClick={swapTokens}
+        onClick={handlerClick}
         justify="center"
         align="center"
         whileTap={{ scale: 0.95 }}

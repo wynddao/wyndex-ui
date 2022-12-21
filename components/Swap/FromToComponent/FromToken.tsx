@@ -7,6 +7,7 @@ import { microamountToAmount } from "../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 
 interface IProps {
+  toToken: Asset;
   fromToken: Asset;
   setFromToken: (asset: Asset) => void;
   inputAmount: string;
@@ -14,7 +15,14 @@ interface IProps {
   balance: Coin;
 }
 
-const FromToken: React.FC<IProps> = ({ fromToken, setFromToken, inputAmount, setInputAmount, balance }) => {
+const FromToken: React.FC<IProps> = ({
+  toToken,
+  fromToken,
+  setFromToken,
+  inputAmount,
+  setInputAmount,
+  balance,
+}) => {
   return (
     <Box flex="1" minH="120px">
       <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }}>
@@ -55,7 +63,11 @@ const FromToken: React.FC<IProps> = ({ fromToken, setFromToken, inputAmount, set
           </Button>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
-          <AssetSelector selectedAsset={fromToken} setAsset={setFromToken} />
+          <AssetSelector
+            selectedAsset={fromToken}
+            setAsset={setFromToken}
+            hiddenTokens={[toToken.name.toLowerCase(), fromToken.name.toLowerCase()]}
+          />
           <Flex flexFlow="column" position="relative">
             <Flex alignItems="center" gap="0.5rem">
               <Input
