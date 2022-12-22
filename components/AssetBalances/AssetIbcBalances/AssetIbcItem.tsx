@@ -88,13 +88,13 @@ export default function AssetIbcItem({
       >
         {tags === "ibc" ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
-            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: chain_id })}>
+            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: chain_id })}>
               IBC Deposit
             </Button>
             <Button
               fontSize="sm"
               disabled={balance === "0"}
-              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: chain_id })}
+              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, chainId: chain_id })}
             >
               IBC Withdraw
             </Button>
