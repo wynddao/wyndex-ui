@@ -137,7 +137,9 @@ export default function WithdrawIbcModal() {
           "auto", // Error auto gas, but no auto is used
         ),
       );
-
+      
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshIbcBalances();
       setWithdrawIbcModalOpen({ isOpen: false });
     } catch (error) {
