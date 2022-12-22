@@ -3,11 +3,9 @@
 import {
   Box,
   Button,
-  chakra,
   Flex,
   GridItem,
   Heading,
-  Link,
   Show,
   SimpleGrid,
   Text,
@@ -18,17 +16,15 @@ import TokenName from "../TokenName";
 import ManageLiquidityModal from "./ManageLiquidityModal";
 import druid from "./assets/druid.png";
 import Image from "next/image";
-import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
-import { useState } from "react";
+import { microdenomToDenom } from "../../utils/tokens";
 import { useCw20UserInfos, useIndexerInfos } from "../../state";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { getAssetPrice } from "../../utils/assets";
 import { formatCurrency } from "../../utils/currency";
-
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
   readonly walletAddress: string;
+  readonly totalInFiat: number;
 }
 
 interface PoolHeaderUserProps {
@@ -42,6 +38,7 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
   const wyndexStake = pairData.staking_addr;
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress);
+
   const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
 
   // TODO Add currently unstaking amounts
@@ -50,15 +47,12 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
   }, 0);
 
   const totalTokens = allStakesSum + Number(lpBalance);
-
   const myShare = totalTokens / Number(chainData.total_share);
-
   const myFiatShare = myShare * totalFiatShares;
-
   return <span>{formatCurrency.format(myFiatShare)}</span>;
 }
 
-export default function PoolHeader({ chainData, pairData, walletAddress }: PoolHeaderProps) {
+export default function PoolHeader({ chainData, pairData, walletAddress, totalInFiat }: PoolHeaderProps) {
   const { onOpen, isOpen, onClose } = useDisclosure();
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native")) {
@@ -69,20 +63,6 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
       return <TokenName key={index} address={assetInfo.token} />;
     }
   });
-
-  // Get Token prices
-  const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-
-  const tokenPrice1 = getAssetPrice(chainData.assets[0].info, assetPrices);
-
-  const tokenPrice2 = getAssetPrice(chainData.assets[1].info, assetPrices);
-
-  // calculating users share with all locked tokens and available tokens
-  // by the total share of the LP token
-
-  const totalFiatShares =
-    Number(microamountToAmount(chainData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
-    Number(microamountToAmount(chainData.assets[1].amount, 6)) * tokenPrice2.priceInUsd;
 
   return (
     <>
@@ -112,7 +92,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
               Pool Liquidity
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span>{formatCurrency.format(totalFiatShares)} </span>
+              <span>{formatCurrency.format(totalInFiat)} </span>
             </Text>
           </GridItem>
           <GridItem>
@@ -133,7 +113,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress }: PoolH
                 <PoolHeaderUserInfo
                   chainData={chainData}
                   pairData={pairData}
-                  totalFiatShares={totalFiatShares}
+                  totalFiatShares={totalInFiat}
                   walletAddress={walletAddress}
                 />
               </Text>

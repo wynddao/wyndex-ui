@@ -1,9 +1,9 @@
 import { useWallet } from "@cosmos-kit/react";
-import { usePairInfos, usePoolInfos } from "../../state";
-import { AssetInfo } from "../../state/clients/types/WyndexFactory.types";
+import { useIndexerInfos, usePairInfos } from "../../state";
 import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
-import { getAssetInfo } from "../../utils/assets";
-import { Pair } from "../../utils/types";
+import { useStakeInfos } from "../../state/hooks/useStakeInfos";
+import { getAssetPrice } from "../../utils/assets";
+import { microamountToAmount } from "../../utils/tokens";
 import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
 import PoolCatalystSimple from "./PoolCatalystSimple";
@@ -19,15 +19,57 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
   const { address: walletAddress } = useWallet();
   const { pair } = usePairInfos(assetInfo);
 
+  // Get Token prices
+  const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
+  const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
+  const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);
+
+  // Calculate total share in USD
+  const totalFiatShares =
+    Number(microamountToAmount(poolData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
+    Number(microamountToAmount(poolData.assets[1].amount, 6)) * tokenPrice2.priceInUsd;
+
+  // Value of one LP token in $
+  const lpTokenValue = (1 / Number(microamountToAmount(poolData.total_share, 6))) * totalFiatShares;
+
+  // Value of APR token per LP token
+  const { apr } = useStakeInfos(pair.staking_addr);
+
+  // Loop through APR for every unbonding time to calculat the % of each reward and add it up
+  const aprCalculated = apr.map((bucket) => {
+    let value = 0;
+
+    // Loop for through reward in bucket
+    bucket[1].map((reward) => {
+      const price = getAssetPrice(reward.info, assetPrices);
+      value += Number(reward.amount) * price.priceInUsd;
+    });
+
+    return {
+      unbonding_period: bucket[0],
+      // Calculate APR by that
+      apr: value > 0 ? value / lpTokenValue : 0,
+    };
+  });
+
   return (
     <>
-      <PoolHeader walletAddress={walletAddress || ""} chainData={poolData} pairData={pair} />
+      <PoolHeader
+        totalInFiat={totalFiatShares}
+        walletAddress={walletAddress || ""}
+        chainData={poolData}
+        pairData={pair}
+      />
       {walletAddress ? (
         <PoolCatalyst chainData={poolData} pairData={pair} />
       ) : (
         <PoolCatalystSimple chainData={poolData} />
       )}
-      {walletAddress ? <LiquidityMining pairData={pair} /> : <UnboundingsGrid stakeAddress={pair.staking_addr} />}
+      {walletAddress ? (
+        <LiquidityMining pairData={pair} apr={aprCalculated}/>
+      ) : (
+        <UnboundingsGrid stakeAddress={pair.staking_addr} apr={aprCalculated} />
+      )}
     </>
   );
 }

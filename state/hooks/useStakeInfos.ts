@@ -1,12 +1,13 @@
 import { useWallet } from "@cosmos-kit/react";
 import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
-import { BondingPeriodInfo, Claim } from "../clients/types/WyndexStake.types";
+import { AnnualizedReward, BondingPeriodInfo, Claim } from "../clients/types/WyndexStake.types";
 import { WyndexStakeSelectors } from "../recoil";
 
 interface UseStakeInfosResponse {
   infos: BondingPeriodInfo[];
   pendingUnstaking: Claim[];
   refreshPendingUnstaking: () => void;
+  apr: [number, AnnualizedReward[]][];
 }
 
 export const useStakeInfos = (
@@ -35,6 +36,13 @@ export const useStakeInfos = (
       : constSelector({ claims: [] }),
   )?.claims;
 
+  const { rewards: apr } = useRecoilValue(
+    WyndexStakeSelectors.annualizedRewardsSelector({
+      contractAddress: stakeContract,
+      params: [],
+    }),
+  );
+
   const refreshPendingUnstaking = useRecoilRefresher_UNSTABLE(
     fetchPersonal
       ? WyndexStakeSelectors.claimsSelector({
@@ -52,5 +60,6 @@ export const useStakeInfos = (
     infos,
     pendingUnstaking,
     refreshPendingUnstaking,
+    apr,
   };
 };

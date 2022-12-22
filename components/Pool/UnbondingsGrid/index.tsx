@@ -7,9 +7,13 @@ import UnbondingsItem from "./UnbondingsItem";
 
 interface UnboundingsGridProps {
   stakeAddress: string;
+  apr: {
+    unbonding_period: number;
+    apr: number;
+  }[];
 }
 
-export default function UnboundingsGrid({ stakeAddress }: UnboundingsGridProps) {
+export default function UnboundingsGrid({ stakeAddress, apr }: UnboundingsGridProps) {
   const { infos } = useStakeInfos(stakeAddress);
   const { address: walletAddress } = useWallet();
 
@@ -31,7 +35,7 @@ export default function UnboundingsGrid({ stakeAddress }: UnboundingsGridProps) 
       )}
       <SimpleGrid columns={{ md: 2, lg: 4 }} gap={8} p={4} pb={12}>
         {infos.map(({ unbonding_period }, i) => {
-          return <UnbondingsItem key={i} unbonding_period={unbonding_period} />;
+          return <UnbondingsItem key={i} unbonding_period={unbonding_period} apr={apr} />;
         })}
       </SimpleGrid>
     </>

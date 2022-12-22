@@ -24,6 +24,7 @@ import { BondingPeriodInfo } from "../../../state/clients/types/WyndexStake.type
 import { secondsToDays } from "../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens";
 import RadioCard from "../../RadioCard";
+import { getApr } from "../util/apr";
 
 interface StartEarningModalProps {
   isOpen: boolean;
@@ -32,10 +33,14 @@ interface StartEarningModalProps {
   tokenName: any;
   bondingInfos: BondingPeriodInfo[];
   doStake: (amount: number, duration: number) => void;
+  apr: {
+    unbonding_period: number;
+    apr: number;
+  }[];
 }
 
 export default function StartEarningModal(props: StartEarningModalProps) {
-  const { isOpen, onClose, balance, tokenName, bondingInfos, doStake } = props;
+  const { isOpen, onClose, balance, tokenName, bondingInfos, doStake, apr } = props;
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
   const [amount, setAmount] = useState<string>("0");
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -124,12 +129,11 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                     isChecked={unbonding_period.toString() === value}
                   >
                     <Flex>
-                      <Text as="p" flex="0.7" >
+                      <Text as="p" flex="0.7">
                         {secondsToDays(unbonding_period)} Days
                       </Text>
                       <Text as="p">
-                        {/* TODO */}
-                        APR: <strong>20%</strong>
+                        APR: <strong>{getApr(apr, unbonding_period)}</strong>
                       </Text>
                     </Flex>
                   </RadioCard>
