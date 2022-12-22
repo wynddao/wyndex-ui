@@ -17,107 +17,53 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
-import { KeplrClient, KeplrExtensionWallet } from "@cosmos-kit/keplr";
 import { useWallet } from "@cosmos-kit/react";
 import { Asset, IBCAsset } from "@wynddao/asset-list";
-import { CosmWasmClient } from "cosmwasm";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import { useIndexerInfos, useToast } from "../../state";
 import { depositIbcModalAtom } from "../../state/recoil/atoms/modal";
+import { getTransferIbcData } from "../../state/recoil/selectors/ibc";
+import { getNativeKeplrData } from "../../state/recoil/selectors/keplr";
 import { ChainInfo, chainInfos } from "../../utils/chaindata/keplr/chainInfos";
 import { getAssetList } from "../../utils/getAssetList";
-import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
-
-interface DepositIbcData {
-  readonly nativeChain?: {
-    readonly tokenName?: string;
-    readonly userAddress?: string;
-    readonly balance?: string;
-  };
-  readonly ibcChain?: {
-    readonly tokenName?: string;
-    readonly userAddress?: string;
-    readonly balance?: string;
-  };
-}
+import { amountToMicroamount } from "../../utils/tokens";
 
 export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { txToast } = useToast();
   const { address } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
-  const { ibcBalanceSelector, refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
+  const { refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
+
+  const loadableKeplrData = useRecoilValueLoadable(
+    getNativeKeplrData({ chainId: depositIbcModalOpen.chainId }),
+  );
+  const loadableTransferIbcData = useRecoilValueLoadable(
+    getTransferIbcData({
+      chainId: depositIbcModalOpen.chainId,
+      address,
+      nativeAddress: loadableKeplrData.state === "hasValue" ? loadableKeplrData.contents.nativeAddress : null,
+    }),
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [depositIbcData, setDepositIbcData] = useState<DepositIbcData>();
   const [inputValue, setInputValue] = useState<string>("");
-  const [keplrClient, setKeplrClient] = useState<KeplrClient>();
-  const [nativeAddress, setNativeAddress] = useState<string>("");
 
+  const chainInfo: ChainInfo | undefined = chainInfos[depositIbcModalOpen.chainId || ""];
   const assets: readonly Asset[] = getAssetList().tokens;
   const ibcAssets: readonly IBCAsset[] = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
-  const asset = ibcAssets.find((asset) => asset.chain_id === depositIbcModalOpen.asset);
-
-  const chainInfo: ChainInfo | undefined = chainInfos[asset?.chain_id || ""];
-  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.juno_denom ?? ""));
-
-  useEffect(() => {
-    (async function updateKeplrClientAndAddress() {
-      if (!chainInfo) return;
-
-      try {
-        const keplrWallet = new KeplrExtensionWallet(
-          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
-          { [chainInfo.chainName]: { rpc: [chainInfo.rpc] } },
-        );
-        const keplrClient = await keplrWallet.fetchClient();
-        setKeplrClient(keplrClient);
-
-        await keplrClient.client.experimentalSuggestChain(chainInfo);
-
-        const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
-        setNativeAddress(nativeAddress);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, [chainInfo]);
-
-  useEffect(() => {
-    (async function updateFromToken() {
-      if (!chainInfo || !asset || !address || !nativeAddress) return;
-
-      try {
-        const cwClient = await CosmWasmClient.connect(chainInfo.rpc);
-        const nativeBalance = await cwClient.getBalance(nativeAddress, asset.denom);
-
-        const depositIbcData: DepositIbcData = {
-          nativeChain: {
-            tokenName: asset.name,
-            userAddress: nativeAddress,
-            balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
-          },
-          ibcChain: {
-            tokenName: "IBC/" + asset.name,
-            userAddress: address,
-            balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
-          },
-        };
-        setDepositIbcData(depositIbcData);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, [address, asset, chainInfo, ibcBalance?.amount, nativeAddress]);
+  const asset = ibcAssets.find((asset) => asset.chain_id === depositIbcModalOpen.chainId);
 
   async function submitDepositIbc() {
+    if (loadableKeplrData.state === "hasValue" && !loadableKeplrData.contents.nativeAddress) return;
+    const { keplrClient, nativeAddress } = loadableKeplrData.contents;
+
     if (!keplrClient || !chainInfo || !asset || !address || !nativeAddress || !inputValue) return;
 
-    setIsSubmitting(true);
-
     try {
+      setIsSubmitting(true);
       const signer = keplrClient.getOfflineSigner(chainInfo.chainId);
       const gasPrice = GasPrice.fromString(
         String(
@@ -143,8 +89,10 @@ export default function DepositIbcModal() {
         ),
       );
 
-      refreshIbcBalances();
       setDepositIbcModalOpen({ isOpen: false });
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
+      refreshIbcBalances();
     } catch (error) {
       console.error({ error });
     } finally {
@@ -185,7 +133,11 @@ export default function DepositIbcModal() {
               color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={depositIbcData?.nativeChain?.userAddress}
+              title={
+                loadableTransferIbcData.state === "hasValue"
+                  ? loadableTransferIbcData.contents.nativeChain?.userAddress
+                  : "loading address..."
+              }
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -196,7 +148,9 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {depositIbcData?.nativeChain?.tokenName}
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.tokenName
+                : "loading token..."}
             </Text>
           </GridItem>
           <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
@@ -213,7 +167,11 @@ export default function DepositIbcModal() {
               color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={depositIbcData?.ibcChain?.userAddress}
+              title={
+                loadableTransferIbcData.state === "hasValue"
+                  ? loadableTransferIbcData.contents.ibcChain?.userAddress
+                  : "loading address..."
+              }
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -224,7 +182,9 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {depositIbcData?.ibcChain?.tokenName}
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.ibcChain?.tokenName
+                : "loading token..."}
             </Text>
           </GridItem>
         </Grid>
@@ -235,7 +195,13 @@ export default function DepositIbcModal() {
           <Text fontWeight="semibold" mr={4} mb={3}>
             Available balance:&ensp;
             <Text as="span" color={"wynd.cyan.500"}>
-              {depositIbcData?.nativeChain?.balance}&ensp;{depositIbcData?.nativeChain?.tokenName}
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.balance
+                : "loading balance..."}
+              &ensp;
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.tokenName
+                : "loading token..."}
             </Text>
           </Text>
           <NumberInput
@@ -246,7 +212,11 @@ export default function DepositIbcModal() {
             value={inputValue}
             bg={"wynd"}
             min={0}
-            max={parseFloat(depositIbcData?.nativeChain?.balance ?? "0")}
+            max={parseFloat(
+              loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.balance ?? "0"
+                : "0",
+            )}
             onChange={(value) => setInputValue(value)}
           >
             <NumberInputField fontWeight="semibold" letterSpacing="wide" />
@@ -258,7 +228,11 @@ export default function DepositIbcModal() {
               size="xs"
               ml={2}
               _focus={{ outline: "none" }}
-              onClick={() => setInputValue(depositIbcData?.nativeChain?.balance ?? "0")}
+              onClick={() =>
+                loadableTransferIbcData.state === "hasValue"
+                  ? setInputValue(loadableTransferIbcData.contents.nativeChain?.balance ?? "0")
+                  : () => {}
+              }
             >
               MAX
             </Button>
@@ -271,7 +245,8 @@ export default function DepositIbcModal() {
           isDisabled={
             inputValue === "0" ||
             inputValue === "" ||
-            parseFloat(inputValue) > (depositIbcData?.nativeChain?.balance ?? 0)
+            (loadableTransferIbcData.state === "hasValue" &&
+              parseFloat(inputValue) > (loadableTransferIbcData.contents.nativeChain?.balance ?? 0))
               ? true
               : false
           }
