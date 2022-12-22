@@ -31,6 +31,23 @@ const signerOptions = {
         };
     }
   },
+  signingStargate: (chain: Chain) => {
+    // return corresponding cosmwasm options or undefined
+    switch (chain.chain_name) {
+      case "osmosis":
+        return {
+          gasPrice: GasPrice.fromString("0.0025uosmo"),
+        };
+      case "juno":
+        return {
+          gasPrice: GasPrice.fromString("0.0025ujuno"),
+        };
+      case "junotestnet":
+        return {
+          gasPrice: GasPrice.fromString("0.0050ujunox"),
+        };
+    }
+  },
 } as SignerOptions;
 
 export default function Providers({ children }: { children: React.ReactNode }) {

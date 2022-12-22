@@ -134,7 +134,7 @@ export default function WithdrawIbcModal() {
           asset.juno_channel,
           undefined,
           OneDayFromNowInSeconds,
-          50000, // Error auto gas, but no auto is used
+          "auto", // Error auto gas, but no auto is used
         ),
       );
 
