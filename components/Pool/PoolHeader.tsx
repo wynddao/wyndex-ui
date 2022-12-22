@@ -20,6 +20,7 @@ import { microdenomToDenom } from "../../utils/tokens";
 import { useCw20UserInfos, useIndexerInfos } from "../../state";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { formatCurrency } from "../../utils/currency";
+import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
@@ -41,12 +42,18 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
 
   const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
 
-  // TODO Add currently unstaking amounts
+  //  Add currently unstaking amounts
+  const { pendingUnstaking } = useStakeInfos(pairData.staking_addr, true);
+
+  const unstakesSum = pendingUnstaking.reduce((acc, obj) => {
+    return acc + Number(obj.amount);
+  }, 0);
+
   const allStakesSum = allStakes.reduce((acc: number, obj) => {
     return acc + Number(obj.stake);
   }, 0);
 
-  const totalTokens = allStakesSum + Number(lpBalance);
+  const totalTokens = unstakesSum + allStakesSum + Number(lpBalance);
   const myShare = totalTokens / Number(chainData.total_share);
   const myFiatShare = myShare * totalFiatShares;
   return <span>{formatCurrency.format(myFiatShare)}</span>;

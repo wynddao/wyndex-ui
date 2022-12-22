@@ -221,36 +221,42 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     switch (selectedMode) {
       case "bondDown": {
         txToast(async () => {
-          await doRebond({
+          const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: lowerDuration?.unbonding_period || 0,
             tokens: amountToMicroamount(amount, 6),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
+          onClose();
+          return res;
         });
         break;
       }
       case "bondUp": {
         txToast(async () => {
-          await doRebond({
+          const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: higherDuration?.unbonding_period || 0,
             tokens: amountToMicroamount(amount, 6),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
+          onClose();
+          return res;
         });
         break;
       }
       case "unstake": {
         txToast(async () => {
-          await doUnbond({
+          const res = await doUnbond({
             tokens: amountToMicroamount(amount, 6),
             unbondingPeriod: stake.unbonding_period,
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
+          onClose();
+          return res;
         });
       }
     }

@@ -56,15 +56,13 @@ export default function RemoveLiquidity({
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshBalance();
-
       return result;
     });
   };
   return (
     <Box>
       <Text fontSize={{ base: "xl", sm: "xl" }} fontWeight="semibold" textAlign="center">
-        {/* TODO */}
-        UJUN-TTOK-LP
+        <TokenName address={pairData.liquidity_token} />
       </Text>
       <Text fontSize={{ base: "5xl", sm: "7xl" }} fontWeight="bold" textAlign="center">
         {Number(microamountToAmount((removeValue / 100) * availableTokens, 6)).toFixed(6)}
