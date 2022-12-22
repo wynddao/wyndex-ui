@@ -13,7 +13,7 @@ export class TxError extends Error {
     if (msg.includes("contract: ")) return this.formatContractErr(msg);
     if (msg.includes("exceeds max spread limit")) return "The operation has exceeded the slippage limit";
 
-    return "Something wen't wrong";
+    return "Something went wrong";
   }
 
   parser() {
@@ -27,7 +27,7 @@ export class TxError extends Error {
       return match[1];
     }
 
-    return "Something wen't wrong";
+    return "Something went wrong";
   }
 
   private formatContractErr(msg: string): string {
