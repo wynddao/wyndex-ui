@@ -16,16 +16,19 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
+import { KeplrClient, KeplrExtensionWallet } from "@cosmos-kit/keplr";
 import { useWallet } from "@cosmos-kit/react";
-import { Asset } from "@wynddao/asset-list";
+import { Asset, IBCAsset } from "@wynddao/asset-list";
+import { CosmWasmClient } from "cosmwasm";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useIndexerInfos } from "../../state";
+import { useIndexerInfos, useToast } from "../../state";
 import { depositIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { getNativeBalance } from "../../utils";
+import { ChainInfo, chainInfos } from "../../utils/chaindata/keplr/chainInfos";
 import { getAssetList } from "../../utils/getAssetList";
-import { microamountToAmount } from "../../utils/tokens";
+import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
 
 interface DepositIbcData {
   readonly nativeChain?: {
@@ -42,73 +45,111 @@ interface DepositIbcData {
 
 export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
+  const { txToast } = useToast();
   const { address } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
-  const { ibcBalanceSelector } = useIndexerInfos({});
+  const { ibcBalanceSelector, refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [depositIbcData, setDepositIbcData] = useState<DepositIbcData>();
   const [inputValue, setInputValue] = useState<string>("");
+  const [keplrClient, setKeplrClient] = useState<KeplrClient>();
+  const [nativeAddress, setNativeAddress] = useState<string>("");
 
   const assets: readonly Asset[] = getAssetList().tokens;
-  const asset = assets.find((asset) => asset.name === depositIbcModalOpen.asset);
-  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.denom ?? ""));
+  const ibcAssets: readonly IBCAsset[] = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
+  const asset = ibcAssets.find((asset) => asset.chain_id === depositIbcModalOpen.asset);
+
+  const chainInfo: ChainInfo | undefined = chainInfos[asset?.chain_id || ""];
+  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.juno_denom ?? ""));
+
+  useEffect(() => {
+    (async function updateKeplrClientAndAddress() {
+      if (!chainInfo) return;
+
+      try {
+        const keplrWallet = new KeplrExtensionWallet(
+          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
+          { [chainInfo.chainName]: { rpc: [chainInfo.rpc] } },
+        );
+        const keplrClient = await keplrWallet.fetchClient();
+        setKeplrClient(keplrClient);
+
+        await keplrClient.client.experimentalSuggestChain(chainInfo);
+
+        const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
+        setNativeAddress(nativeAddress);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [chainInfo]);
 
   useEffect(() => {
     (async function updateFromToken() {
-      if (!asset || !address) return;
-
-      const nativeBalance = await getNativeBalance(address, asset.name);
-
-      const depositIbcData: DepositIbcData = {
-        nativeChain: {
-          tokenName: asset.name,
-          userAddress: address, // TODO load address from native chain using keplr/cosmostation
-          balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
-        },
-        ibcChain: {
-          tokenName: "IBC/" + asset.name,
-          userAddress: address,
-          balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
-        },
-      };
-      setDepositIbcData(depositIbcData);
-    })();
-  }, [address, asset, ibcBalance?.amount]);
-
-  async function submitDepositIbc() {
-    // TODO get data from rest api and use keplr or cosmostation as needed
-    /* if (!address) return;
+      if (!chainInfo || !asset || !address || !nativeAddress) return;
 
       try {
-        const chosenDenom = "uosmo";
-        const chainName = "Osmosis Testnet";
-        const chainEndpoint = "https://rpc-test.osmosis.zone:443";
-        const keplrWallet = new KeplrExtensionWallet(
-          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
-          { [chainName]: { rpc: [chainEndpoint] } },
-        );
+        const cwClient = await CosmWasmClient.connect(chainInfo.rpc);
+        const nativeBalance = await cwClient.getBalance(nativeAddress, asset.denom);
 
-        const keplrClient = await keplrWallet.fetchClient();
-        const { address: chosenAddress } = await keplrClient.getAccount("osmo-test-4");
-
-        const signer = keplrClient.client.getOfflineSigner("osmo-test-4");
-        const client = await SigningStargateClient.connectWithSigner(chainEndpoint, signer, {
-          gasPrice: GasPrice.fromString("0.05uosmo"),
-        });
-        const res = await client.sendIbcTokens(
-          chosenAddress,
-          address,
-          { denom: chosenDenom, amount: "15" },
-          "transfer",
-          "channel-1111",
-          undefined,
-          1670938601,
-          "auto",
-        );
-        console.log({ res });
+        const depositIbcData: DepositIbcData = {
+          nativeChain: {
+            tokenName: asset.name,
+            userAddress: nativeAddress,
+            balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
+          },
+          ibcChain: {
+            tokenName: "IBC/" + asset.name,
+            userAddress: address,
+            balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
+          },
+        };
+        setDepositIbcData(depositIbcData);
       } catch (error) {
-        console.error({ error });
-      } */
+        console.error(error);
+      }
+    })();
+  }, [address, asset, chainInfo, ibcBalance?.amount, nativeAddress]);
+
+  async function submitDepositIbc() {
+    if (!keplrClient || !chainInfo || !asset || !address || !nativeAddress || !inputValue) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const signer = keplrClient.getOfflineSigner(chainInfo.chainId);
+      const gasPrice = GasPrice.fromString(
+        String(
+          chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === asset.denom)?.gasPriceStep
+            ?.average,
+        ) + asset.denom,
+      );
+      const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer, { gasPrice });
+
+      const coinToSend = { denom: asset.denom, amount: amountToMicroamount(inputValue, asset.decimals) };
+      const OneDayFromNowInSeconds = Math.floor(Date.now() / 1000) + 86400;
+
+      await txToast(() =>
+        client.sendIbcTokens(
+          nativeAddress,
+          address,
+          coinToSend,
+          "transfer",
+          asset.channel,
+          undefined,
+          OneDayFromNowInSeconds,
+          "auto",
+        ),
+      );
+
+      refreshIbcBalances();
+      setDepositIbcModalOpen({ isOpen: false });
+    } catch (error) {
+      console.error({ error });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -119,13 +160,7 @@ export default function DepositIbcModal() {
       isCentered={true}
     >
       <ModalOverlay />
-      <ModalContent
-        maxW={{ md: "2xl" }}
-        borderRadius="2xl"
-        p={6}
-        mx={2}
-        bgColor="wynd.base.subBg"
-      >
+      <ModalContent maxW={{ md: "2xl" }} borderRadius="2xl" p={6} mx={2} bgColor="wynd.base.subBg">
         <ModalHeader fontSize="2xl" fontWeight="bold" p={0} mb={6}>
           Deposit IBC Asset
         </ModalHeader>
@@ -232,6 +267,7 @@ export default function DepositIbcModal() {
         <Button
           h={14}
           colorScheme="gray"
+          isLoading={isSubmitting}
           isDisabled={
             inputValue === "0" ||
             inputValue === "" ||
