@@ -16,16 +16,20 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { KeplrClient, KeplrExtensionWallet } from "@cosmos-kit/keplr";
 import { useWallet } from "@cosmos-kit/react";
-import { Asset } from "@wynddao/asset-list";
+import { Asset, IBCAsset } from "@wynddao/asset-list";
+import { CosmWasmClient } from "cosmwasm";
+import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useIndexerInfos } from "../../state";
+import { useIndexerInfos, useToast } from "../../state";
 import { withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
 import { getNativeBalance } from "../../utils";
+import { ChainInfo, chainInfos } from "../../utils/chaindata/keplr/chainInfos";
 import { getAssetList } from "../../utils/getAssetList";
-import { microamountToAmount } from "../../utils/tokens";
+import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
 
 interface WithdrawIbcData {
   readonly nativeChain?: {
@@ -42,73 +46,105 @@ interface WithdrawIbcData {
 
 export default function WithdrawIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
-  const { address } = useWallet();
+  const { txToast } = useToast();
+  const { address, getSigningStargateClient } = useWallet();
   const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalAtom);
-  const { ibcBalanceSelector } = useIndexerInfos({});
+  const { ibcBalanceSelector, refreshIbcBalances } = useIndexerInfos({});
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [withdrawIbcData, setWithdrawIbcData] = useState<WithdrawIbcData>();
   const [inputValue, setInputValue] = useState<string>("");
+  const [keplrClient, setKeplrClient] = useState<KeplrClient>();
+  const [nativeAddress, setNativeAddress] = useState<string>("");
 
   const assets: readonly Asset[] = getAssetList().tokens;
-  const asset = assets.find((asset) => asset.name === withdrawIbcModalOpen.asset);
-  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.denom ?? ""));
+  const ibcAssets: readonly IBCAsset[] = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
+  const asset = ibcAssets.find((asset) => asset.chain_id === withdrawIbcModalOpen.asset);
+
+  const chainInfo: ChainInfo | undefined = chainInfos[asset?.chain_id || ""];
+  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.juno_denom ?? ""));
+
+  useEffect(() => {
+    (async function updateKeplrClientAndAddress() {
+      if (!chainInfo) return;
+
+      try {
+        const keplrWallet = new KeplrExtensionWallet(
+          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
+          { [chainInfo.chainName]: { rpc: [chainInfo.rpc] } },
+        );
+        const keplrClient = await keplrWallet.fetchClient();
+        setKeplrClient(keplrClient);
+
+        await keplrClient.client.experimentalSuggestChain(chainInfo);
+
+        const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
+        setNativeAddress(nativeAddress);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [chainInfo]);
 
   useEffect(() => {
     (async function updateFromToken() {
-      if (!asset || !address) return;
-
-      const nativeBalance = await getNativeBalance(address, asset.name);
-
-      const withdrawIbcData: WithdrawIbcData = {
-        nativeChain: {
-          tokenName: asset.name,
-          userAddress: address, // TODO load address from native chain using keplr/cosmostation
-          balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
-        },
-        ibcChain: {
-          tokenName: "IBC/" + asset.name,
-          userAddress: address,
-          balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
-        },
-      };
-      setWithdrawIbcData(withdrawIbcData);
-    })();
-  }, [address, asset, ibcBalance?.amount]);
-
-  async function submitWithdrawIbc() {
-    // TODO get data from rest api and use keplr or cosmostation as needed
-    /* if (!address) return;
+      if (!chainInfo || !asset || !address || !nativeAddress) return;
 
       try {
-        const chosenDenom = "uosmo";
-        const chainName = "Osmosis Testnet";
-        const chainEndpoint = "https://rpc-test.osmosis.zone:443";
-        const keplrWallet = new KeplrExtensionWallet(
-          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
-          { [chainName]: { rpc: [chainEndpoint] } },
-        );
+        const cwClient = await CosmWasmClient.connect(chainInfo.rpc);
+        const nativeBalance = await cwClient.getBalance(nativeAddress, asset.denom);
 
-        const keplrClient = await keplrWallet.fetchClient();
-        const { address: chosenAddress } = await keplrClient.getAccount("osmo-test-4");
-
-        const signer = keplrClient.client.getOfflineSigner("osmo-test-4");
-        const client = await SigningStargateClient.connectWithSigner(chainEndpoint, signer, {
-          gasPrice: GasPrice.fromString("0.05uosmo"),
-        });
-        const res = await client.sendIbcTokens(
-          chosenAddress,
-          address,
-          { denom: chosenDenom, amount: "15" },
-          "transfer",
-          "channel-1111",
-          undefined,
-          1670938601,
-          "auto",
-        );
-        console.log({ res });
+        const withdrawIbcData: WithdrawIbcData = {
+          nativeChain: {
+            tokenName: asset.name,
+            userAddress: nativeAddress,
+            balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
+          },
+          ibcChain: {
+            tokenName: "IBC/" + asset.name,
+            userAddress: address,
+            balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
+          },
+        };
+        setWithdrawIbcData(withdrawIbcData);
       } catch (error) {
-        console.error({ error });
-      } */
+        console.error(error);
+      }
+    })();
+  }, [address, asset, chainInfo, ibcBalance?.amount, nativeAddress]);
+
+  async function submitWithdrawIbc() {
+    if (!keplrClient || !chainInfo || !asset || !address || !nativeAddress || !inputValue) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const client = await getSigningStargateClient();
+      if (!client) return;
+
+      const coinToSend = { denom: asset.juno_denom, amount: amountToMicroamount(inputValue, asset.decimals) };
+      const OneDayFromNowInSeconds = Math.floor(Date.now() / 1000) + 86400;
+
+      await txToast(() =>
+        client.sendIbcTokens(
+          address,
+          nativeAddress,
+          coinToSend,
+          "transfer",
+          asset.juno_channel,
+          undefined,
+          OneDayFromNowInSeconds,
+          50000, // Error auto gas, but no auto is used
+        ),
+      );
+
+      refreshIbcBalances();
+      setWithdrawIbcModalOpen({ isOpen: false });
+    } catch (error) {
+      console.error({ error });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -232,6 +268,7 @@ export default function WithdrawIbcModal() {
         <Button
           h={14}
           colorScheme="gray"
+          isLoading={isSubmitting}
           isDisabled={
             inputValue === "0" ||
             inputValue === "" ||
