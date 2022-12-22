@@ -26,7 +26,7 @@
     "@keplr-wallet/crypto": "^0.11.17",
     "@tanstack/match-sorter-utils": "^8.7.2",
     "@tanstack/react-table": "^8.7.3",
-    "@wynddao/asset-list": "^0.0.8",
+    "@wynddao/asset-list": "^0.0.11",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.8",
