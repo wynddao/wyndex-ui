@@ -6,6 +6,7 @@ import { useState } from "react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
+import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
@@ -24,16 +25,22 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
 
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress);
-  const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
 
-  // TODO Add currently unstaking amounts
+  //  Add currently unstaking amounts
+  const { pendingUnstaking } = useStakeInfos(pairData.staking_addr, true);
+
+  const unstakesSum = pendingUnstaking.reduce((acc, obj) => {
+    return acc + Number(obj.amount);
+  }, 0);
+
   const allStakesSum = allStakes.reduce((acc, obj) => {
     return acc + Number(obj.stake);
   }, 0);
 
   // calculating users share with all locked tokens and available tokens
   // by the total share of the LP token
-  const totalTokens = allStakesSum + Number(lpBalance);
+  const totalTokens = unstakesSum + allStakesSum + Number(lpBalance);
   const myShare = totalTokens / Number(chainData.total_share);
 
   return (

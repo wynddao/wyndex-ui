@@ -1,6 +1,5 @@
 "use client";
 import { Box, Text } from "@chakra-ui/react";
-import { useFactoryInfos } from "../../state/hooks/useFactoryInfos";
 import { DataTable } from "./DataTable";
 import PoolsCard from "./PoolsCard";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -8,6 +7,8 @@ import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
 import { getAssetPrice } from "../../utils/assets";
+import { formatCurrency } from "../../utils/currency";
+import MaxApr from "./MaxApr";
 
 export default function Pools() {
   const { pools, userPools, assetPrices } = useIndexerInfos({ fetchPoolData: true });
@@ -93,16 +94,24 @@ export default function Pools() {
           const tokenPrice2 = getAssetPrice(props.getValue()[1].value, assetPrices);
           return (
             <>
-              {Number(
-                tokenPrice1.priceInUsd * Number(microamountToAmount(props.getValue()[0].value.amount, 6)) +
-                  tokenPrice2.priceInUsd * Number(microamountToAmount(props.getValue()[1].value.amount, 6)),
-              ).toFixed(2)}{" "}
-              $
+              {formatCurrency.format(
+                Number(
+                  tokenPrice1.priceInUsd * Number(microamountToAmount(props.getValue()[0].value.amount, 6)) +
+                    tokenPrice2.priceInUsd * Number(microamountToAmount(props.getValue()[1].value.amount, 6)),
+                ),
+              )}
             </>
           );
         },
       },
     ),
+    columnHelper.accessor((row) => row.address, {
+      id: "apr",
+      header: "APR",
+      cell: (props) => {
+        return <MaxApr poolAddress={props.getValue()} />;
+      },
+    }),
     columnHelper.accessor(
       (row) => {
         return [
@@ -158,7 +167,7 @@ export default function Pools() {
           My Pools
         </Text>
 
-        <PoolsCard poolsData={userPools} />
+        <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
       </Box>
       <DataTable columns={columns} data={data} />
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
