@@ -203,50 +203,6 @@ export const chainInfos: Record<string, ChainInfo> = {
       },
     ],
   },
-  "osmo-test-4": {
-    rpc: "https://rpc.osmo-test.ccvalidators.com",
-    rest: "https://osmosistest-lcd.quickapi.com",
-    chainId: "osmo-test-4",
-    chainName: "osmosistestnet",
-    stakeCurrency: {
-      coinDenom: "osmo",
-      coinMinimalDenom: "uosmo",
-      coinDecimals: 6,
-    },
-    bip44: { coinType: 118 },
-    bech32Config: {
-      bech32PrefixAccAddr: "osmo",
-      bech32PrefixAccPub: "osmo",
-      bech32PrefixValAddr: "osmo",
-      bech32PrefixValPub: "osmo",
-      bech32PrefixConsAddr: "osmo",
-      bech32PrefixConsPub: "osmo",
-    },
-    currencies: [
-      {
-        coinDenom: "osmo",
-        coinMinimalDenom: "uosmo",
-        coinDecimals: 6,
-      },
-      {
-        coinDenom: "ion",
-        coinMinimalDenom: "uion",
-        coinDecimals: 6,
-      },
-    ],
-    feeCurrencies: [
-      {
-        coinDenom: "osmo",
-        coinMinimalDenom: "uosmo",
-        coinDecimals: 6,
-        gasPriceStep: {
-          low: 0,
-          average: 0.025,
-          high: 0.04,
-        },
-      },
-    ],
-  },
   "uni-5": {
     rpc: "https://rpc.uni.junonetwork.io",
     rest: "https://api.uni.junonetwork.io",
