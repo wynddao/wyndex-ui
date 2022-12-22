@@ -1,5 +1,5 @@
 import { useWallet } from "@cosmos-kit/react";
-import { constSelector, useRecoilValue } from "recoil";
+import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { INDEXER_API_ENDPOINT } from "../../utils";
 import { IndexerSelectors } from "../recoil";
 
@@ -39,11 +39,14 @@ export const useIndexerInfos = ({
     }),
   );
 
-  const ibcBalances = useRecoilValue(
-    fetchIbcBalances
-      ? IndexerSelectors.ibcBalancesSelector({ apiUrl: INDEXER_API_ENDPOINT, params: [walletAddress] })
-      : constSelector([]),
-  );
+  const ibcBalancesSelector = IndexerSelectors.ibcBalancesSelector({
+    apiUrl: INDEXER_API_ENDPOINT,
+    params: [walletAddress],
+  });
+
+  const ibcBalances = useRecoilValue(fetchIbcBalances ? ibcBalancesSelector : constSelector([]));
+
+  const refreshIbcBalances = useRecoilRefresher_UNSTABLE(ibcBalancesSelector);
 
   const ibcBalanceSelector = (microdenom: string) =>
     IndexerSelectors.ibcBalanceSelector({
@@ -77,6 +80,7 @@ export const useIndexerInfos = ({
     userPools,
     assetPrices,
     ibcBalances,
+    refreshIbcBalances,
     ibcBalanceSelector,
     cw20Balances,
     cw20BalanceSelector,
