@@ -117,7 +117,7 @@ export default function AddLiquidity({
       return e;
     });
     Promise.all(b).then((res) => setBalances(res));
-  }, []);
+  }, [balance, pairData.asset_infos, walletAddress]);
 
   const prodiveLiquidity = async () => {
     const assets = tokenInputValue
