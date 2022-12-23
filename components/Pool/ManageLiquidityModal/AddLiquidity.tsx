@@ -68,7 +68,7 @@ export default function AddLiquidity({
   refreshBalance: () => void;
   poolData: PoolResponse;
 }) {
-  const poolData: DataType[] = pairData.asset_infos.map((asset) => {
+  const poolData: readonly DataType[] = pairData.asset_infos.map((asset) => {
     return {
       img: "https://via.placeholder.com/300",
       // @ts-ignore
@@ -89,7 +89,6 @@ export default function AddLiquidity({
 
   const { address: walletAddress } = useWallet();
 
-  const [data, setData] = useState<DataType[]>(poolData);
   const [balances, setBalances] = useState<string[]>([]);
 
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
@@ -161,7 +160,7 @@ export default function AddLiquidity({
   return (
     <>
       <Stack spacing={2} mb={6}>
-        {poolData.map(({ denom, img, show, contractAddress, name }, i) => {
+        {poolData.map(({ denom, show, contractAddress, name }, i) => {
           return (
             show && (
               <Box position="relative" key={`box-${name}-${i}`}>
@@ -197,7 +196,7 @@ export default function AddLiquidity({
                             px={{ base: 2, sm: 4 }}
                             py={4}
                             onClick={() => {
-                              data.map(({ denom }, i) => {
+                              poolData.map(({ denom }, i) => {
                                 if (optionLabel === denom) {
                                   setSingle({
                                     selectedIndex: i,
@@ -238,7 +237,7 @@ export default function AddLiquidity({
                       _hover={{ cursor: single.isSingle && "pointer" }}
                       onClick={() =>
                         setOpenPop({
-                          optionsIndex: data.filter((_, index) => index !== i),
+                          optionsIndex: poolData.filter((_, index) => index !== i),
                           isOpen: !openPop.isOpen,
                         })
                       }
