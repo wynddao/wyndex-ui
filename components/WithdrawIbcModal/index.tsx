@@ -99,13 +99,7 @@ export default function WithdrawIbcModal() {
       isCentered={true}
     >
       <ModalOverlay />
-      <ModalContent
-        maxW={{ md: "2xl" }}
-        borderRadius="2xl"
-        p={6}
-        mx={2}
-        bgColor="var(--chakra-colors-chakra-body-bg)"
-      >
+      <ModalContent maxW={{ md: "2xl" }} borderRadius="2xl" p={6} mx={2} bgColor="wynd.base.subBg">
         <ModalHeader fontSize="2xl" fontWeight="bold" p={0} mb={6}>
           Withdraw IBC Asset
         </ModalHeader>
