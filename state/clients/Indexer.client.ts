@@ -1,5 +1,6 @@
 import { Coin } from "cosmwasm";
-import { AssetInfo, AssetInfoValidated } from "./types/WyndexFactory.types";
+import { RequestAssetPrice } from "../../utils/assets";
+import { AssetInfo } from "./types/WyndexFactory.types";
 import { SwapOperation } from "./types/WyndexMultiHop.types";
 
 interface IbcBalanceResponse {
@@ -63,7 +64,7 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     return await res.json();
   };
 
-  assetPrices = async (): Promise<any> => {
+  assetPrices = async (): Promise<RequestAssetPrice[]> => {
     const res = await fetch(`${this.apiUrl}/assets/prices`);
     return await res.json();
   };

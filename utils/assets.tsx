@@ -49,7 +49,7 @@ type AssetInfoIndexer =
       amount: string;
     };
 
-interface RequestAssetPrice {
+export interface RequestAssetPrice {
   asset: string;
   priceInJuno: string;
   priceInEur: number;
