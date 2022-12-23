@@ -1,8 +1,0 @@
-{
-  "name": "JUNOX",
-  "tokenType": "native",
-  "img": "https://app.osmosis.zone/_next/image?url=%2Ftokens%2Fjuno.svg&w=64&q=75",
-  "denom": "ujunox",
-  "decimals": 6,
-  "chain": "junotestnet"
-}
