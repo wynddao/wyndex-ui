@@ -3,7 +3,7 @@ export const formatCurrency = (currency: string, amount: string) => {
     style: "currency",
     currency: currency,
     currencyDisplay: "narrowSymbol",
-    minimumFractionDigits: 4,
+    minimumFractionDigits: 2,
   }).format(Number(amount));
 };
 

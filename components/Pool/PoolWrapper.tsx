@@ -9,6 +9,8 @@ import PoolCatalyst from "./PoolCatalyst";
 import PoolCatalystSimple from "./PoolCatalystSimple";
 import PoolHeader from "./PoolHeader";
 import UnboundingsGrid from "./UnbondingsGrid";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
+import { useRecoilValue } from "recoil";
 
 interface PoolWrapperOptions {
   poolData: PoolResponse;
@@ -18,6 +20,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
   const assetInfo = [poolData.assets[0].info, poolData.assets[1].info];
   const { address: walletAddress } = useWallet();
   const { pair } = usePairInfos(assetInfo);
+  const currency = useRecoilValue(currencyAtom);
 
   // Get Token prices
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
@@ -26,8 +29,10 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
 
   // Calculate total share in USD
   const totalFiatShares =
-    Number(microamountToAmount(poolData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
-    Number(microamountToAmount(poolData.assets[1].amount, 6)) * tokenPrice2.priceInUsd;
+    Number(microamountToAmount(poolData.assets[0].amount, 6)) *
+      (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) +
+    Number(microamountToAmount(poolData.assets[1].amount, 6)) *
+      (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur);
 
   // Value of one LP token in $
   const lpTokenValue = (1 / Number(microamountToAmount(poolData.total_share, 6))) * totalFiatShares;
@@ -42,7 +47,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += Number(reward.amount) * price.priceInUsd;
+      value += Number(reward.amount) * (currency === "USD" ? price.priceInUsd : price.priceInEur);
     });
 
     return {
@@ -66,7 +71,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
         <PoolCatalystSimple chainData={poolData} />
       )}
       {walletAddress ? (
-        <LiquidityMining pairData={pair} apr={aprCalculated}/>
+        <LiquidityMining pairData={pair} apr={aprCalculated} />
       ) : (
         <UnboundingsGrid stakeAddress={pair.staking_addr} apr={aprCalculated} />
       )}

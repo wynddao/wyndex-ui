@@ -7,6 +7,8 @@ import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 import MaxApr from "./MaxApr";
+import { useRecoilValue } from "recoil";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
 
 interface PoolsCardProps {
   readonly poolsData: readonly any[];
@@ -160,16 +162,20 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
 }
 
 export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCardProps) {
+  const currency = useRecoilValue(currencyAtom);
   const items = poolsData.map((pool, index) => {
     const poolD = allPools[pool.address];
     const tokenPrice1 = getAssetPrice(poolD[0], assetPrices);
     const tokenPrice2 = getAssetPrice(poolD[1], assetPrices);
 
-    const tvl = formatCurrencyStatic.format(
+    const tvl = formatCurrency(
+      currency,
       Number(
-        tokenPrice1.priceInUsd * Number(microamountToAmount(poolD[0].amount, 6)) +
-          tokenPrice2.priceInUsd * Number(microamountToAmount(poolD[1].amount, 6)),
-      ),
+        (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) *
+          Number(microamountToAmount(poolD[0].amount, 6)) +
+          (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur) *
+            Number(microamountToAmount(poolD[1].amount, 6)),
+      ).toString(),
     );
     return (
       <div key={index}>
