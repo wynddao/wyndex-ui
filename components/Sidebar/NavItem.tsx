@@ -44,7 +44,7 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
           {icon && (
             <Icon
               mr="4"
-              fontSize="1rem"
+              fontSize={{ base: "1rem", lg: "20px" }}
               as={icon}
               sx={
                 isLinkActive
@@ -72,7 +72,7 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
         {isExternalLink && (
           <Icon
             mr="4"
-            fontSize="1rem"
+            fontSize={{ base: "1rem", lg: "20px" }}
             as={CgExternal}
             sx={
               isLinkActive
