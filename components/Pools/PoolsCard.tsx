@@ -85,7 +85,7 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
                   return (
                     <span key={index}>
                       {/* @ts-ignore */}
-                      {microdenomToDenom(assetInfo.native)}
+                      {microdenomToDenom(getNativeIbcTokenDenom(assetInfo.native))}
                       {divider}
                     </span>
                   );
