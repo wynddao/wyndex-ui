@@ -1,12 +1,8 @@
 "use client";
 
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
-  Checkbox,
   Flex,
   IconButton,
   Image,
@@ -18,21 +14,19 @@ import {
   PopoverTrigger,
   Stack,
   Text,
-  Tooltip,
-  useColorMode,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { Coin } from "cosmwasm";
 import { useEffect, useState } from "react";
-import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import { CustomHooks, useToast } from "../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
-import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
 
-import { useAvailableTokens } from "./useAvailableTokens";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { getNativeTokenBalance } from "../../../utils/wallet";
 import AssetImage from "../../AssetImage";
+import { useAvailableTokens } from "./useAvailableTokens";
 interface inputType {
   id: string;
   value: string;
@@ -68,7 +62,7 @@ export default function AddLiquidity({
   refreshBalance: () => void;
   poolData: PoolResponse;
 }) {
-  const poolData: DataType[] = pairData.asset_infos.map((asset) => {
+  const poolData: readonly DataType[] = pairData.asset_infos.map((asset) => {
     return {
       img: "https://via.placeholder.com/300",
       // @ts-ignore
@@ -89,7 +83,6 @@ export default function AddLiquidity({
 
   const { address: walletAddress } = useWallet();
 
-  const [data, setData] = useState<DataType[]>(poolData);
   const [balances, setBalances] = useState<string[]>([]);
 
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
@@ -117,7 +110,7 @@ export default function AddLiquidity({
       return e;
     });
     Promise.all(b).then((res) => setBalances(res));
-  }, []);
+  }, [balance, pairData.asset_infos, walletAddress]);
 
   const prodiveLiquidity = async () => {
     const assets = tokenInputValue
@@ -161,7 +154,7 @@ export default function AddLiquidity({
   return (
     <>
       <Stack spacing={2} mb={6}>
-        {poolData.map(({ denom, img, show, contractAddress, name }, i) => {
+        {poolData.map(({ denom, show, contractAddress, name }, i) => {
           return (
             show && (
               <Box position="relative" key={`box-${name}-${i}`}>
@@ -197,7 +190,7 @@ export default function AddLiquidity({
                             px={{ base: 2, sm: 4 }}
                             py={4}
                             onClick={() => {
-                              data.map(({ denom }, i) => {
+                              poolData.map(({ denom }, i) => {
                                 if (optionLabel === denom) {
                                   setSingle({
                                     selectedIndex: i,
@@ -238,7 +231,7 @@ export default function AddLiquidity({
                       _hover={{ cursor: single.isSingle && "pointer" }}
                       onClick={() =>
                         setOpenPop({
-                          optionsIndex: data.filter((_, index) => index !== i),
+                          optionsIndex: poolData.filter((_, index) => index !== i),
                           isOpen: !openPop.isOpen,
                         })
                       }
@@ -369,9 +362,9 @@ export default function AddLiquidity({
           onClick={() => prodiveLiquidity()}
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
-            (tokenInputValue.filter(
+            tokenInputValue.filter(
               ({ value }, index) => Number(value) > Number(microamountToAmount(balances[index], 6)),
-            ).length > 0)
+            ).length > 0
           }
           w="full"
           size="lg"
