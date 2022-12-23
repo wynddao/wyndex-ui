@@ -28,6 +28,12 @@ export type RequestSwap = {
   readonly askAsset: AssetInfo;
   readonly offerAsset: AssetInfo;
 };
+export interface AssetPriceResponse {
+  readonly asset: string;
+  readonly priceInJuno: string;
+  readonly priceInEur: number;
+  readonly priceInUsd: number;
+}
 
 export interface IndexerQueryClientReadOnlyInterface {
   apiUrl: string;
@@ -63,7 +69,7 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     return await res.json();
   };
 
-  assetPrices = async (): Promise<any> => {
+  assetPrices = async (): Promise<readonly AssetPriceResponse[]> => {
     const res = await fetch(`${this.apiUrl}/assets/prices`);
     return await res.json();
   };

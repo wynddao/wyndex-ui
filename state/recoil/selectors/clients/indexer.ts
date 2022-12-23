@@ -1,6 +1,11 @@
 import { Coin } from "cosmwasm";
 import { selectorFamily } from "recoil";
-import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
+import {
+  AssetPriceResponse,
+  Cw20BalanceResponse,
+  IndexerQueryClient,
+  UserFiatResponse,
+} from "../../../clients/Indexer.client";
 import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
 
 type QueryClientParams = {
@@ -41,7 +46,7 @@ export const userPoolsSelector = selectorFamily<
     },
 });
 
-export const assetPricesSelector = selectorFamily<any, QueryClientParams>({
+export const assetPricesSelector = selectorFamily<readonly AssetPriceResponse[], QueryClientParams>({
   key: "indexerPrices",
   get:
     ({ ...queryClientParams }) =>
