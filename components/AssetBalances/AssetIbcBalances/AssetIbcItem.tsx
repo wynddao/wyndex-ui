@@ -11,7 +11,7 @@ interface AssetIbcItemProps {
 }
 
 export default function AssetIbcItem({
-  assetDetails: { name, logoURI, balance, decimals },
+  assetDetails: { name, logoURI, balance, decimals, tags, chain_id },
 }: AssetIbcItemProps) {
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
@@ -86,15 +86,15 @@ export default function AssetIbcItem({
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        {name !== "Juno" ? (
+        {tags === "ibc" ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
-            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, asset: name })}>
+            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: chain_id })}>
               IBC Deposit
             </Button>
             <Button
               fontSize="sm"
               disabled={balance === "0"}
-              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, asset: name })}
+              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, chainId: chain_id })}
             >
               IBC Withdraw
             </Button>

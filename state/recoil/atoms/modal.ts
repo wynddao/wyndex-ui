@@ -2,7 +2,7 @@ import { atom } from "recoil";
 
 interface IbcModalState {
   readonly isOpen: boolean;
-  readonly asset?: string | null;
+  readonly chainId?: string | null;
 }
 
 export const depositIbcModalAtom = atom<IbcModalState>({

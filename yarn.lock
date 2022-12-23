@@ -2248,10 +2248,10 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
 
-"@wynddao/asset-list@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.8.tgz#692e0ac64e681d908e379c9db5ba71548884faae"
-  integrity sha512-hHitRlyPYBhfKlyR4U1Ys2xV4MqJNQO/rtncTybcIbW+gDQfJAMaIC1jqGuZo7mK0pcpN8vVU3TtOCkzxkFUMA==
+"@wynddao/asset-list@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.12.tgz#8075fcf3046c093461dd17d8672755f938c531e1"
+  integrity sha512-11h9UJOGyNkMGLjvbAiLCIYbuoOthMAA52ayUoZ22qEsCQ8LCPtiSm13erlGUh1tssuikqA7o5XtWS6w7CNhhw==
 
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"

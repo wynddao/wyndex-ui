@@ -16,99 +16,88 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
 import { useWallet } from "@cosmos-kit/react";
-import { Asset } from "@wynddao/asset-list";
-import { useEffect, useState } from "react";
+import { Asset, IBCAsset } from "@wynddao/asset-list";
+import { useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { useIndexerInfos } from "../../state";
+import { useRecoilState, useRecoilValueLoadable } from "recoil";
+import { useIndexerInfos, useToast } from "../../state";
 import { depositIbcModalAtom } from "../../state/recoil/atoms/modal";
-import { getNativeBalance } from "../../utils";
+import { getTransferIbcData } from "../../state/recoil/selectors/ibc";
+import { getNativeKeplrData } from "../../state/recoil/selectors/keplr";
+import { ChainInfo, chainInfos } from "../../utils/chaindata/keplr/chainInfos";
 import { getAssetList } from "../../utils/getAssetList";
-import { microamountToAmount } from "../../utils/tokens";
-
-interface DepositIbcData {
-  readonly nativeChain?: {
-    readonly tokenName?: string;
-    readonly userAddress?: string;
-    readonly balance?: string;
-  };
-  readonly ibcChain?: {
-    readonly tokenName?: string;
-    readonly userAddress?: string;
-    readonly balance?: string;
-  };
-}
+import { amountToMicroamount } from "../../utils/tokens";
 
 export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
+  const { txToast } = useToast();
   const { address } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
-  const { ibcBalanceSelector } = useIndexerInfos({});
+  const { refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
 
-  const [depositIbcData, setDepositIbcData] = useState<DepositIbcData>();
+  const loadableKeplrData = useRecoilValueLoadable(
+    getNativeKeplrData({ chainId: depositIbcModalOpen.chainId }),
+  );
+  const loadableTransferIbcData = useRecoilValueLoadable(
+    getTransferIbcData({
+      chainId: depositIbcModalOpen.chainId,
+      address,
+      nativeAddress: loadableKeplrData.state === "hasValue" ? loadableKeplrData.contents.nativeAddress : null,
+    }),
+  );
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
 
+  const chainInfo: ChainInfo | undefined = chainInfos[depositIbcModalOpen.chainId || ""];
   const assets: readonly Asset[] = getAssetList().tokens;
-  const asset = assets.find((asset) => asset.name === depositIbcModalOpen.asset);
-  const ibcBalance = useRecoilValue(ibcBalanceSelector(asset?.denom ?? ""));
-
-  useEffect(() => {
-    (async function updateFromToken() {
-      if (!asset || !address) return;
-
-      const nativeBalance = await getNativeBalance(address, asset.name);
-
-      const depositIbcData: DepositIbcData = {
-        nativeChain: {
-          tokenName: asset.name,
-          userAddress: address, // TODO load address from native chain using keplr/cosmostation
-          balance: microamountToAmount(nativeBalance?.amount ?? 0, asset.decimals),
-        },
-        ibcChain: {
-          tokenName: "IBC/" + asset.name,
-          userAddress: address,
-          balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
-        },
-      };
-      setDepositIbcData(depositIbcData);
-    })();
-  }, [address, asset, ibcBalance?.amount]);
+  const ibcAssets: readonly IBCAsset[] = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
+  const asset = ibcAssets.find((asset) => asset.chain_id === depositIbcModalOpen.chainId);
 
   async function submitDepositIbc() {
-    // TODO get data from rest api and use keplr or cosmostation as needed
-    /* if (!address) return;
+    if (loadableKeplrData.state === "hasValue" && !loadableKeplrData.contents.nativeAddress) return;
+    const { keplrClient, nativeAddress } = loadableKeplrData.contents;
 
-      try {
-        const chosenDenom = "uosmo";
-        const chainName = "Osmosis Testnet";
-        const chainEndpoint = "https://rpc-test.osmosis.zone:443";
-        const keplrWallet = new KeplrExtensionWallet(
-          { name: "keplr-extension", prettyName: "Keplr", mode: "extension", mobileDisabled: true },
-          { [chainName]: { rpc: [chainEndpoint] } },
-        );
+    if (!keplrClient || !chainInfo || !asset || !address || !nativeAddress || !inputValue) return;
 
-        const keplrClient = await keplrWallet.fetchClient();
-        const { address: chosenAddress } = await keplrClient.getAccount("osmo-test-4");
+    try {
+      setIsSubmitting(true);
+      const signer = keplrClient.getOfflineSigner(chainInfo.chainId);
+      const gasPrice = GasPrice.fromString(
+        String(
+          chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === asset.denom)?.gasPriceStep
+            ?.average,
+        ) + asset.denom,
+      );
+      const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer, { gasPrice });
 
-        const signer = keplrClient.client.getOfflineSigner("osmo-test-4");
-        const client = await SigningStargateClient.connectWithSigner(chainEndpoint, signer, {
-          gasPrice: GasPrice.fromString("0.05uosmo"),
-        });
-        const res = await client.sendIbcTokens(
-          chosenAddress,
+      const coinToSend = { denom: asset.denom, amount: amountToMicroamount(inputValue, asset.decimals) };
+      const OneDayFromNowInSeconds = Math.floor(Date.now() / 1000) + 86400;
+
+      await txToast(() =>
+        client.sendIbcTokens(
+          nativeAddress,
           address,
-          { denom: chosenDenom, amount: "15" },
+          coinToSend,
           "transfer",
-          "channel-1111",
+          asset.channel,
           undefined,
-          1670938601,
+          OneDayFromNowInSeconds,
           "auto",
-        );
-        console.log({ res });
-      } catch (error) {
-        console.error({ error });
-      } */
+        ),
+      );
+
+      setDepositIbcModalOpen({ isOpen: false });
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
+      refreshIbcBalances();
+    } catch (error) {
+      console.error({ error });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -119,13 +108,7 @@ export default function DepositIbcModal() {
       isCentered={true}
     >
       <ModalOverlay />
-      <ModalContent
-        maxW={{ md: "2xl" }}
-        borderRadius="2xl"
-        p={6}
-        mx={2}
-        bgColor="wynd.base.subBg"
-      >
+      <ModalContent maxW={{ md: "2xl" }} borderRadius="2xl" p={6} mx={2} bgColor="wynd.base.subBg">
         <ModalHeader fontSize="2xl" fontWeight="bold" p={0} mb={6}>
           Deposit IBC Asset
         </ModalHeader>
@@ -150,7 +133,11 @@ export default function DepositIbcModal() {
               color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={depositIbcData?.nativeChain?.userAddress}
+              title={
+                loadableTransferIbcData.state === "hasValue"
+                  ? loadableTransferIbcData.contents.nativeChain?.userAddress
+                  : "loading address..."
+              }
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -161,7 +148,9 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {depositIbcData?.nativeChain?.tokenName}
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.tokenName
+                : "loading token..."}
             </Text>
           </GridItem>
           <GridItem display="flex" justifyContent="center" alignItems="center" p={2}>
@@ -178,7 +167,11 @@ export default function DepositIbcModal() {
               color={"wynd.neutral.800"}
               whiteSpace="break-spaces"
               overflow="hidden"
-              title={depositIbcData?.ibcChain?.userAddress}
+              title={
+                loadableTransferIbcData.state === "hasValue"
+                  ? loadableTransferIbcData.contents.ibcChain?.userAddress
+                  : "loading address..."
+              }
               _before={{
                 content: "attr(title)",
                 width: "50%",
@@ -189,7 +182,9 @@ export default function DepositIbcModal() {
                 direction: "rtl",
               }}
             >
-              {depositIbcData?.ibcChain?.tokenName}
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.ibcChain?.tokenName
+                : "loading token..."}
             </Text>
           </GridItem>
         </Grid>
@@ -200,7 +195,13 @@ export default function DepositIbcModal() {
           <Text fontWeight="semibold" mr={4} mb={3}>
             Available balance:&ensp;
             <Text as="span" color={"wynd.cyan.500"}>
-              {depositIbcData?.nativeChain?.balance}&ensp;{depositIbcData?.nativeChain?.tokenName}
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.balance
+                : "loading balance..."}
+              &ensp;
+              {loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.tokenName
+                : "loading token..."}
             </Text>
           </Text>
           <NumberInput
@@ -211,7 +212,11 @@ export default function DepositIbcModal() {
             value={inputValue}
             bg={"wynd"}
             min={0}
-            max={parseFloat(depositIbcData?.nativeChain?.balance ?? "0")}
+            max={parseFloat(
+              loadableTransferIbcData.state === "hasValue"
+                ? loadableTransferIbcData.contents.nativeChain?.balance ?? "0"
+                : "0",
+            )}
             onChange={(value) => setInputValue(value)}
           >
             <NumberInputField fontWeight="semibold" letterSpacing="wide" />
@@ -223,7 +228,11 @@ export default function DepositIbcModal() {
               size="xs"
               ml={2}
               _focus={{ outline: "none" }}
-              onClick={() => setInputValue(depositIbcData?.nativeChain?.balance ?? "0")}
+              onClick={() =>
+                loadableTransferIbcData.state === "hasValue"
+                  ? setInputValue(loadableTransferIbcData.contents.nativeChain?.balance ?? "0")
+                  : () => {}
+              }
             >
               MAX
             </Button>
@@ -232,10 +241,12 @@ export default function DepositIbcModal() {
         <Button
           h={14}
           colorScheme="gray"
+          isLoading={isSubmitting}
           isDisabled={
             inputValue === "0" ||
             inputValue === "" ||
-            parseFloat(inputValue) > (depositIbcData?.nativeChain?.balance ?? 0)
+            (loadableTransferIbcData.state === "hasValue" &&
+              parseFloat(inputValue) > (loadableTransferIbcData.contents.nativeChain?.balance ?? 0))
               ? true
               : false
           }
