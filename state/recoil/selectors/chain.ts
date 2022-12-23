@@ -1,5 +1,5 @@
 import { ChainRecord } from "@cosmos-kit/core";
-import { Asset, CW20Asset } from "@wynddao/asset-list";
+import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { selector, selectorFamily } from "recoil";
 import { CHAIN_RPC_ENDPOINT, cosmWasmClientRouter, cosmWasmStargateClientRouter } from "../../../utils";
@@ -59,6 +59,9 @@ export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: 
         return { amount: balance, denom: asset.denom } as Coin;
       }
       const client = get(cosmWasmStargateClientSelector);
-      return await client.getBalance(address, asset.denom);
+      return await client.getBalance(
+        address,
+        asset.hasOwnProperty("juno_denom") ? (asset as IBCAsset).juno_denom : asset.denom,
+      );
     },
 });
