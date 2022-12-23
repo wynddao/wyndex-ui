@@ -241,6 +241,18 @@ export default function DepositIbcModal() {
         <Button
           h={14}
           colorScheme="gray"
+          bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+          _hover={{
+            bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+            ":disabled": {
+              bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+              cursor: "initial",
+            },
+          }}
+          _disabled={{
+            bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+            cursor: "initial",
+          }}
           isLoading={isSubmitting}
           isDisabled={
             inputValue === "0" ||
