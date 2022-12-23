@@ -15,8 +15,14 @@ export interface Cw20BalanceResponse {
 }
 
 export interface UserFiatResponse {
-  readonly availableBalanceInUsd: number;
-  readonly lockedBalanceInUsd: number;
+  readonly availableBalance: {
+    usd: number;
+    eur: number;
+  };
+  readonly lockedBalance: {
+    usd: number;
+    eur: number;
+  };
 }
 export type RequestSwap = {
   readonly askAsset: AssetInfo;

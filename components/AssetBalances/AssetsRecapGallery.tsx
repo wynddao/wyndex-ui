@@ -39,7 +39,13 @@ export default function AssetsRecapGallery() {
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
             {walletAddress
-              ? formatCurrency(currency, `${userFiat.availableBalanceInUsd + userFiat.lockedBalanceInUsd}`)
+              ? formatCurrency(
+                  currency,
+                  `${
+                    (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
+                    (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur)
+                  }`,
+                )
               : "-"}
           </Text>
         </Box>
@@ -48,7 +54,12 @@ export default function AssetsRecapGallery() {
             Locked Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress ? formatCurrency(currency, `${userFiat.lockedBalanceInUsd}`) : "-"}
+            {walletAddress
+              ? formatCurrency(
+                  currency,
+                  `${currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur}`,
+                )
+              : "-"}
           </Text>
         </Box>
         <Box py={{ md: 2 }}>
@@ -56,7 +67,12 @@ export default function AssetsRecapGallery() {
             Available Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress ? formatCurrency(currency, `${userFiat.availableBalanceInUsd}`) : "-"}
+            {walletAddress
+              ? formatCurrency(
+                  currency,
+                  `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
+                )
+              : "-"}
           </Text>
         </Box>
       </Grid>
