@@ -2,7 +2,9 @@
 
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../state";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { formatCurrency } from "../../utils/currency";
 
 export interface AssetsRecap {
@@ -14,6 +16,7 @@ export interface AssetsRecap {
 export default function AssetsRecapGallery() {
   const { address: walletAddress } = useWallet();
   const { userFiat } = useIndexerInfos({ fetchCw20Balances: true });
+  const currency = useRecoilValue(currencyAtom);
 
   return (
     <>
@@ -36,7 +39,7 @@ export default function AssetsRecapGallery() {
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
             {walletAddress
-              ? formatCurrency.format(userFiat.availableBalanceInUsd + userFiat.lockedBalanceInUsd)
+              ? formatCurrency(currency, `${userFiat.availableBalanceInUsd + userFiat.lockedBalanceInUsd}`)
               : "-"}
           </Text>
         </Box>
@@ -45,7 +48,7 @@ export default function AssetsRecapGallery() {
             Locked Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress ? formatCurrency.format(userFiat.lockedBalanceInUsd) : "-"}
+            {walletAddress ? formatCurrency(currency, `${userFiat.lockedBalanceInUsd}`) : "-"}
           </Text>
         </Box>
         <Box py={{ md: 2 }}>
@@ -53,7 +56,7 @@ export default function AssetsRecapGallery() {
             Available Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress ? formatCurrency.format(userFiat.availableBalanceInUsd) : "-"}
+            {walletAddress ? formatCurrency(currency, `${userFiat.availableBalanceInUsd}`) : "-"}
           </Text>
         </Box>
       </Grid>

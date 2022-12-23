@@ -16,11 +16,14 @@ import TokenName from "../TokenName";
 import ManageLiquidityModal from "./ManageLiquidityModal";
 import druid from "./assets/druid.png";
 import Image from "next/image";
-import { microdenomToDenom } from "../../utils/tokens";
+import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import { useCw20UserInfos, useIndexerInfos } from "../../state";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { formatCurrency } from "../../utils/currency";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
+import { useRecoilValue } from "recoil";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
+
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
@@ -41,6 +44,7 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress);
 
   const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const currency = useRecoilValue(currencyAtom);
 
   //  Add currently unstaking amounts
   const { pendingUnstaking } = useStakeInfos(pairData.staking_addr, true);
@@ -56,11 +60,13 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
   const totalTokens = unstakesSum + allStakesSum + Number(lpBalance);
   const myShare = totalTokens / Number(chainData.total_share);
   const myFiatShare = myShare * totalFiatShares;
-  return <span>{formatCurrency.format(myFiatShare)}</span>;
+
+  return <span>{formatCurrency(currency, `${myFiatShare}`)}</span>;
 }
 
 export default function PoolHeader({ chainData, pairData, walletAddress, totalInFiat }: PoolHeaderProps) {
   const { onOpen, isOpen, onClose } = useDisclosure();
+  const currency = useRecoilValue(currencyAtom);
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native")) {
       // @ts-ignore
@@ -99,7 +105,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress, totalIn
               Pool Liquidity
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span>{formatCurrency.format(totalInFiat)} </span>
+              <span>{formatCurrency(currency, `${totalInFiat}`)} </span>
             </Text>
           </GridItem>
           <GridItem>
