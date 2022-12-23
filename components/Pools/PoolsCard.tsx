@@ -1,7 +1,7 @@
 "use client";
 import { Box, Divider, Flex, Grid, GridItem, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import Link from "next/link";
-import { getAssetPrice } from "../../utils/assets";
+import { getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
 import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
@@ -133,14 +133,14 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
               {poolD[0].hasOwnProperty("token") ? (
                 <TokenName symbol={true} address={poolD[0].token}></TokenName>
               ) : (
-                microdenomToDenom(poolD[0].native)
+                microdenomToDenom(getNativeIbcTokenDenom(poolD[0].native))
               )}
               <br />
               {Number(microamountToAmount(poolD[1].amount, 6)).toFixed(0)}{" "}
               {poolD[1].hasOwnProperty("token") ? (
                 <TokenName symbol={true} address={poolD[1].token}></TokenName>
               ) : (
-                microdenomToDenom(poolD[1].native)
+                microdenomToDenom(getNativeIbcTokenDenom(poolD[0].native))
               )}
             </Text>
           </GridItem>
