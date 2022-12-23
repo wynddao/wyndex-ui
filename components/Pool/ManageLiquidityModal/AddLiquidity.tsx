@@ -1,12 +1,8 @@
 "use client";
 
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
-  Checkbox,
   Flex,
   IconButton,
   Image,
@@ -18,21 +14,19 @@ import {
   PopoverTrigger,
   Stack,
   Text,
-  Tooltip,
-  useColorMode,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { Coin } from "cosmwasm";
 import { useEffect, useState } from "react";
-import { IoIosArrowDown, IoMdInformationCircle } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import { CustomHooks, useToast } from "../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
-import { Coin } from "cosmwasm";
 import TokenName from "../../TokenName";
 
-import { useAvailableTokens } from "./useAvailableTokens";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { getNativeTokenBalance } from "../../../utils/wallet";
 import AssetImage from "../../AssetImage";
+import { useAvailableTokens } from "./useAvailableTokens";
 interface inputType {
   id: string;
   value: string;
@@ -368,9 +362,9 @@ export default function AddLiquidity({
           onClick={() => prodiveLiquidity()}
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
-            (tokenInputValue.filter(
+            tokenInputValue.filter(
               ({ value }, index) => Number(value) > Number(microamountToAmount(balances[index], 6)),
-            ).length > 0)
+            ).length > 0
           }
           w="full"
           size="lg"
