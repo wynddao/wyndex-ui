@@ -15,8 +15,17 @@ export interface AssetsRecap {
 
 export default function AssetsRecapGallery() {
   const { address: walletAddress } = useWallet();
-  const { userFiat } = useIndexerInfos({ fetchCw20Balances: true });
+  const { userFiat, assetPrices } = useIndexerInfos({ fetchCw20Balances: true });
   const currency = useRecoilValue(currencyAtom);
+
+  const junoAssetPrice = assetPrices.find((el) => el.asset === "ujunox");
+  const junoPrice = currency === "USD" ? junoAssetPrice?.priceInUsd : junoAssetPrice?.priceInEur;
+  const junoPriceFormatted = formatCurrency(currency, String(junoPrice ?? "0"));
+  const wyndexAssetPrice = assetPrices.find(
+    (el) => el.asset === "juno1xpnyc3w4zhnr3pgjh8xt8xy3r2jv95gmy044r6ysffwqkqpeyz4qewg57y",
+  );
+  const wyndexPrice = currency === "USD" ? wyndexAssetPrice?.priceInUsd : wyndexAssetPrice?.priceInEur;
+  const wyndexPriceFormatted = formatCurrency(currency, String(wyndexPrice ?? "0"));
 
   return (
     <>
@@ -73,6 +82,43 @@ export default function AssetsRecapGallery() {
                   `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
                 )
               : "-"}
+          </Text>
+        </Box>
+      </Grid>
+      <Grid
+        templateColumns={{
+          base: "repeat(2, 1fr)",
+          md: "repeat(3, 1fr)",
+        }}
+        maxW="4xl"
+        gap={6}
+        px={8}
+        py={4}
+      >
+        <Box py={{ md: 2 }}>
+          <Text fontWeight="semibold" opacity={0.7}>
+            JUNOX Price
+          </Text>
+          <Text
+            fontSize={{ base: "3xl", md: "4xl" }}
+            fontWeight="extrabold"
+            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+            bgClip="text"
+          >
+            {junoPriceFormatted}
+          </Text>
+        </Box>
+        <Box py={{ md: 2 }}>
+          <Text fontWeight="semibold" opacity={0.7}>
+            WYNDEX Price
+          </Text>
+          <Text
+            fontSize={{ base: "3xl", md: "4xl" }}
+            fontWeight="extrabold"
+            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+            bgClip="text"
+          >
+            {wyndexPriceFormatted}
           </Text>
         </Box>
       </Grid>
