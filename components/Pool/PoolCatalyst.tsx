@@ -8,6 +8,7 @@ import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
+import { getNativeIbcTokenDenom } from "../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
@@ -101,7 +102,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                             <TokenName address={asset.info.token} />
                           ) : (
                             // @ts-ignore
-                            microdenomToDenom(asset.info.native)
+                            microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))
                           )}
                         </Text>
                       </Box>

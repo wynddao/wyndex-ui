@@ -23,6 +23,7 @@ import { formatCurrency } from "../../utils/currency";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
+import { getNativeIbcTokenDenom } from "../../utils/assets";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -70,7 +71,7 @@ export default function PoolHeader({ chainData, pairData, walletAddress, totalIn
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native")) {
       // @ts-ignore
-      return <span key={index}>{microdenomToDenom(assetInfo.native)}</span>;
+      return <span key={index}>{microdenomToDenom(getNativeIbcTokenDenom(assetInfo.native))}</span>;
     } else {
       // @ts-ignore
       return <TokenName key={index} address={assetInfo.token} />;

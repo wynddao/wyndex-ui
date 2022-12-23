@@ -6,7 +6,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
-import { getAssetPrice } from "../../utils/assets";
+import { getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
 import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
 import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
@@ -64,13 +64,13 @@ export default function Pools() {
         cell: (props) => (
           <>
             {props.getValue()[0].type === "native" ? (
-              <span>{`${microdenomToDenom(props.getValue()[0].value)}`}</span>
+              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[0].value))}`}</span>
             ) : (
               <TokenName address={props.getValue()[0].value} />
             )}
             {" / "}
             {props.getValue()[1].type === "native" ? (
-              <span>{`${microdenomToDenom(props.getValue()[1].value)}`}</span>
+              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[1].value))}`}</span>
             ) : (
               <TokenName address={props.getValue()[1].value} />
             )}
@@ -142,14 +142,14 @@ export default function Pools() {
           <>
             {microamountToAmount(props.getValue()[0].amount, 6)}{" "}
             {props.getValue()[0].type === "native" ? (
-              <span>{`${microdenomToDenom(props.getValue()[0].value)}`}</span>
+              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[0].value))}`}</span>
             ) : (
               <TokenName symbol={true} address={props.getValue()[0].value} />
             )}
             {" / "}
             {microamountToAmount(props.getValue()[1].amount, 6)}{" "}
             {props.getValue()[1].type === "native" ? (
-              <span>{`${microdenomToDenom(props.getValue()[1].value)}`}</span>
+              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[1].value))}`}</span>
             ) : (
               <TokenName symbol={true} address={props.getValue()[1].value} />
             )}
