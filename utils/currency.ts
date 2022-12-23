@@ -6,3 +6,8 @@ export const formatCurrency = (currency: string, amount: string) => {
     minimumFractionDigits: 4,
   }).format(Number(amount));
 };
+
+export const formatCurrencyStatic = new Intl.NumberFormat(undefined, {
+  style: "currency",
+  currency: "USD",
+});

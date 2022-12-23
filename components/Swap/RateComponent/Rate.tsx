@@ -1,11 +1,5 @@
-import { Flex, Icon, Text } from "@chakra-ui/react";
-import {
-  SimulateSwapOperationsResponse,
-  SwapOperation,
-} from "../../../state/clients/types/WyndexMultiHop.types";
-import { useSimulateOperationInfos } from "../../../state/hooks/useSimulateOperationInfos";
-import { BiTransfer } from "react-icons/bi";
-
+import { Flex, Text } from "@chakra-ui/react";
+import { SimulateSwapOperationsResponse } from "../../../state/clients/types/WyndexMultiHop.types";
 import React, { useMemo } from "react";
 import { Asset } from "@wynddao/asset-list";
 import { microamountToAmount } from "../../../utils/tokens";

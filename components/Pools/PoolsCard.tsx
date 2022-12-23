@@ -2,7 +2,7 @@
 import { Box, Divider, Flex, Grid, GridItem, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { getAssetPrice } from "../../utils/assets";
-import { formatCurrency } from "../../utils/currency";
+import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
@@ -165,7 +165,7 @@ export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCar
     const tokenPrice1 = getAssetPrice(poolD[0], assetPrices);
     const tokenPrice2 = getAssetPrice(poolD[1], assetPrices);
 
-    const tvl = formatCurrency.format(
+    const tvl = formatCurrencyStatic.format(
       Number(
         tokenPrice1.priceInUsd * Number(microamountToAmount(poolD[0].amount, 6)) +
           tokenPrice2.priceInUsd * Number(microamountToAmount(poolD[1].amount, 6)),
