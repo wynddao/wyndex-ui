@@ -28,6 +28,7 @@ export default function Sidebar({ children }: SidebarProps) {
         width={{ base: 0, md: 60 }}
         position="sticky"
         top="0"
+        zIndex="1"
       />
       <Drawer
         autoFocus={false}
