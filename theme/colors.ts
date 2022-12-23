@@ -210,6 +210,7 @@ export const darkColors = {
       sidebar: "#100B16",
       sidebarHover: "#0d111b",
       text: "#F2F2F2",
+      popoverSettings: "#3F3266",
     },
     black: "#FFFFFF",
     white: "#1A1A1A",

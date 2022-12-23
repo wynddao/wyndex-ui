@@ -1,23 +1,43 @@
-import { Flex, Icon, Text } from "@chakra-ui/react";
-import { SwapOperation } from "../../../state/clients/types/WyndexMultiHop.types";
-import { useSimulateOperationInfos } from "../../../state/hooks/useSimulateOperationInfos";
-import { BiTransfer } from "react-icons/bi";
-
-import React from "react";
+import { Flex, Text } from "@chakra-ui/react";
+import { SimulateSwapOperationsResponse } from "../../../state/clients/types/WyndexMultiHop.types";
+import React, { useMemo } from "react";
 import { Asset } from "@wynddao/asset-list";
 import { microamountToAmount } from "../../../utils/tokens";
-import { getDenom } from "../../../utils/assets";
+import { getAssetPriceByCurrency, getDenom } from "../../../utils/assets";
+import { useRecoilValue } from "recoil";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { useIndexerInfos } from "../../../state";
+import { formatCurrency } from "../../../utils/currency";
+import SwapRoute from "./SwapRoute";
 
 interface IProps {
   fromToken: Asset;
   toToken: Asset;
-  expectedAmount: string;
+  simulatedOperation: SimulateSwapOperationsResponse;
   inputAmount: string;
   slippage: number;
+  route: { from: string | undefined; to: string | undefined }[];
 }
 
-const Rate: React.FC<IProps> = ({ fromToken, toToken, expectedAmount, inputAmount, slippage }) => {
-  const estimatedSlippage = ((100 - slippage) / 100) * Number(expectedAmount);
+const Rate: React.FC<IProps> = ({ fromToken, toToken, simulatedOperation, inputAmount, slippage, route }) => {
+  const minimumReceived = ((100 - slippage) / 100) * Number(simulatedOperation.amount);
+  const currency = useRecoilValue(currencyAtom);
+  const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
+
+  const totalFee = useMemo(
+    () =>
+      simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
+        const price = getAssetPriceByCurrency(currency, info, assetPrices);
+        return acc + price * Number(amount);
+      }, 0),
+    [assetPrices, currency, simulatedOperation.commission_amounts],
+  );
+
+  const minSlippage = useMemo(
+    () => (+Number(simulatedOperation.spread).toFixed(4) * 100).toFixed(2),
+    [simulatedOperation.spread],
+  );
+
   return (
     <Flex
       bg="whiteAlpha.100"
@@ -35,29 +55,31 @@ const Rate: React.FC<IProps> = ({ fromToken, toToken, expectedAmount, inputAmoun
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Rate</Text>
         <Text>
-          {inputAmount} {getDenom(fromToken)} ≈ {microamountToAmount(expectedAmount, toToken.decimals, 6)}{" "}
-          {getDenom(toToken)}
+          {inputAmount}{" "}
+          <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
+            {getDenom(fromToken)}
+          </Text>{" "}
+          ≈ {microamountToAmount(simulatedOperation.amount, toToken.decimals, 6)}{" "}
+          <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
+            {getDenom(toToken)}
+          </Text>
         </Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Swap Route</Text>
-        <Text display="flex" gap="0.5rem" justifyContent="center" alignItems="center">
-          {getDenom(fromToken)}
-          <Icon as={BiTransfer} w="1rem" h="1rem" color={"wynd.base.text"} />
-          {getDenom(toToken)}
-        </Text>
+        <SwapRoute route={route} />
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Swap Fee</Text>
-        <Text>@CONTRACT</Text>
+        <Text>{formatCurrency(currency, microamountToAmount(totalFee, fromToken.decimals, 6))}</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
-        <Text>@CONTRACT</Text>
+        <Text>{minSlippage} %</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Minimum received amount</Text>
-        <Text>{microamountToAmount(estimatedSlippage, toToken.decimals, 6)}</Text>
+        <Text>{microamountToAmount(minimumReceived, toToken.decimals, 6)}</Text>
       </Flex>
     </Flex>
   );

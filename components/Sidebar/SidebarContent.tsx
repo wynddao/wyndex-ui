@@ -1,14 +1,16 @@
 "use client";
 
-import { Box, BoxProps, CloseButton, Flex, Icon } from "@chakra-ui/react";
+import { Box, BoxProps, CloseButton, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiActivity, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { ThemeModes, useTheme } from "../../providers/ThemeProvider";
 import wyndLogoBlack from "../../public/logo-black.svg";
 import wyndLogoWhite from "../../public/logo-white.svg";
+import GradientIcon from "../Swap/FromToComponent/GradientIcon";
 import ConnectWalletButton from "./ConnectWalletButton";
-import OnRampButton from "./OnRampButton";
 import NavItem, { LinkItemProps } from "./NavItem";
+import OnRampButton from "./OnRamp/OnRampButton";
+import Settings from "./Options/Settings";
 
 const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
@@ -57,9 +59,11 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         direction="column"
         alignItems="center"
         justifyContent="center"
-        gap={{ base: 1, lg: 2 }}
+        gap={{ base: 2 }}
         p={{ base: "4" }}
       >
+        <GradientIcon id="settingsGradient" gradient1="#AFEFBD" gradient2="#75E4F9" />
+        <Settings />
         <ConnectWalletButton />
         <OnRampButton />
       </Flex>

@@ -35,12 +35,12 @@ const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
         align="center"
         whileTap={{ scale: 0.95 }}
       >
-        <GradientIcon />
+        <GradientIcon id="swap-icon-gradient" gradient1="#389270" gradient2="#0E67AA" />
         <Icon
           as={BsHexagonFill}
           w={{ base: 12, sm: 16 }}
           h={{ base: 12, sm: 16 }}
-          fill="url(#wynd-gradient)"
+          fill="url(#swap-icon-gradient)"
         />
         <Icon
           position="absolute"

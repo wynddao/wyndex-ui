@@ -7,11 +7,14 @@ import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
 import { getAssetPrice } from "../../utils/assets";
-import { formatCurrency } from "../../utils/currency";
+import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
 import MaxApr from "./MaxApr";
+import { useRecoilValue } from "recoil";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
 
 export default function Pools() {
   const { pools, userPools, assetPrices } = useIndexerInfos({ fetchPoolData: true });
+  const currency = useRecoilValue(currencyAtom);
 
   type AssetInfoIndexer =
     | {
@@ -94,11 +97,14 @@ export default function Pools() {
           const tokenPrice2 = getAssetPrice(props.getValue()[1].value, assetPrices);
           return (
             <>
-              {formatCurrency.format(
+              {formatCurrency(
+                currency,
                 Number(
-                  tokenPrice1.priceInUsd * Number(microamountToAmount(props.getValue()[0].value.amount, 6)) +
-                    tokenPrice2.priceInUsd * Number(microamountToAmount(props.getValue()[1].value.amount, 6)),
-                ),
+                  (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) *
+                    Number(microamountToAmount(props.getValue()[0].value.amount, 6)) +
+                    (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur) *
+                      Number(microamountToAmount(props.getValue()[1].value.amount, 6)),
+                ).toString(),
               )}
             </>
           );

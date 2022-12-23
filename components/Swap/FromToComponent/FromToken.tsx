@@ -2,9 +2,13 @@ import React from "react";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
-import { getDenom } from "../../../utils/assets";
+import { getDenom, getAmountByPrice } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
+import { useRecoilValue } from "recoil";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { useIndexerInfos } from "../../../state";
+import { formatCurrency } from "../../../utils/currency";
 
 interface IProps {
   toToken: Asset;
@@ -23,6 +27,10 @@ const FromToken: React.FC<IProps> = ({
   setInputAmount,
   balance,
 }) => {
+  const currency = useRecoilValue(currencyAtom);
+  const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
+  const price = getAmountByPrice(inputAmount, currency, fromToken, assetPrices);
+
   return (
     <Box flex="1" minH="120px">
       <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }}>
@@ -85,7 +93,7 @@ const FromToken: React.FC<IProps> = ({
               <Text textTransform="uppercase">{getDenom(fromToken)}</Text>
             </Flex>
             <Text position="absolute" right="0" bottom="-6px" fontSize="xs" color="wynd.neutral.500">
-              ≈$ @indexer
+              ≈ {formatCurrency(currency, `${price.toFixed(6)}`)}
             </Text>
           </Flex>
         </Flex>

@@ -1,7 +1,9 @@
 import { asset_list } from "@chain-registry/osmosis";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
-import { string } from "zod";
 import { AssetInfo } from "../state/clients/types/WyndexFactory.types";
+import { Currency } from "../state/recoil/atoms/settings";
+import { getAssetList } from "./getAssetList";
+
 const handleRandomCase = (text: string) =>
   text
     .split("")
@@ -35,6 +37,7 @@ export const getAssetInfo = (item: Asset) => {
 export const getDenom = (item: Asset): string => {
   return item.tags.includes("native") ? item.denom.slice(1) : item.denom;
 };
+
 type AssetInfoIndexer =
   | {
       token: string;
@@ -45,18 +48,18 @@ type AssetInfoIndexer =
       amount: string;
     };
 
-interface GetAssetPriceResponse {
-  token?: string;
-  juno_price: string;
+interface RequestAssetPrice {
+  asset: string;
+  priceInJuno: string;
   priceInEur: number;
   priceInUsd: number;
 }
 
 export const getAssetPrice = (
   asset: AssetInfo | AssetInfoIndexer,
-  assetPrices: any[],
-): GetAssetPriceResponse => {
-  const price = assetPrices.find((el: any) => {
+  assetPrices: RequestAssetPrice[],
+): RequestAssetPrice => {
+  const price = assetPrices.find((el: RequestAssetPrice) => {
     const assetName = asset.hasOwnProperty("token")
       ? // @ts-ignore
         asset.token
@@ -64,6 +67,39 @@ export const getAssetPrice = (
         asset.native;
     return el.asset == assetName;
   });
+  return price ?? { asset: "0", priceInJuno: "0", priceInEur: 0, priceInUsd: 0 };
+};
 
-  return price ?? { juno_price: 0, priceInEur: 0, priceInUsd: 0 };
+export const getAssetPriceByCurrency = (
+  currency: Currency,
+  asset: AssetInfo | AssetInfoIndexer,
+  assetPrices: RequestAssetPrice[],
+): number => {
+  const price = getAssetPrice(asset, assetPrices);
+  if (currency === "USD") return price.priceInUsd;
+  if (currency === "EUR") return price.priceInEur;
+  return 0;
+};
+
+export const getAmountByPrice = (
+  amount: string,
+  currency: Currency,
+  asset: Asset,
+  assetPrices: RequestAssetPrice[],
+): number => {
+  const assetInfo = getAssetInfo(asset);
+  const price = getAssetPrice(assetInfo, assetPrices);
+  if (currency === "USD") return Number(amount) * price.priceInUsd;
+  if (currency === "EUR") return Number(amount) * price.priceInEur;
+  return 0;
+};
+
+export const getAssetByTokenAddr = (tokenAddr: string): Asset | undefined => {
+  const assetList = getAssetList();
+  return assetList.tokens.find((a) => a.token_address === tokenAddr);
+};
+
+export const getAssetByDenom = (denom: string): Asset => {
+  const assetList = getAssetList();
+  return assetList.tokens.find((a) => a.denom === denom) || ({} as Asset);
 };

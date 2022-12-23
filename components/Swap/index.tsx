@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { SwapOperation } from "../../state/clients/types/WyndexMultiHop.types";
 import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
-import { getAssetInfo } from "../../utils/assets";
+import { getAssetByTokenAddr, getAssetInfo } from "../../utils/assets";
 import SwapIcon from "./FromToComponent/SwapIcon";
 import FromToken from "./FromToComponent/FromToken";
 import Rate from "./RateComponent/Rate";
@@ -16,9 +16,10 @@ import { getAssetList } from "../../utils/getAssetList";
 import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
 import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
-import { getBalanceByAsset, useToast } from "../../state";
+import { getBalanceByAsset, useIndexerInfos, useToast } from "../../state";
 import { useSend } from "../../state/hooks/clients/Cw20";
 import { toBase64, toUtf8 } from "cosmwasm";
+import { getRouteByOperations } from "../../utils/getRouteByOperations";
 
 const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -30,11 +31,16 @@ const Swap: React.FC = () => {
   const [fromToken, setFromToken] = useState<Asset>(assetList.tokens[3]);
   const [toToken, setToToken] = useState<Asset>(assetList.tokens[1]);
   const { address: walletAddress, connect, isWalletConnected } = useWallet();
-  const [operations, setOperations] = useState<SwapOperation[]>([]);
   const [inputAmount, setInputAmount] = useState<string>("1");
   const [slippage, setSlippage] = useState<number>(1);
   const { txToast, isTxLoading } = useToast();
   const balance = useRecoilValue(getBalanceByAsset({ address: walletAddress as string, asset: fromToken }));
+  const { swapOperationRoutes } = useIndexerInfos({});
+
+  const operations = useRecoilValue(
+    swapOperationRoutes({ askAsset: getAssetInfo(fromToken), offerAsset: getAssetInfo(toToken) }),
+  );
+
   const refreshBalance = useRecoilRefresher_UNSTABLE(
     getBalanceByAsset({ address: walletAddress as string, asset: fromToken }),
   );
@@ -86,20 +92,6 @@ const Swap: React.FC = () => {
     setToToken(fromToken);
   };
 
-  useEffect(() => {
-    if (fromToken && toToken) {
-      const operation: SwapOperation[] = [
-        {
-          wyndex_swap: {
-            ask_asset_info: getAssetInfo(toToken as Asset),
-            offer_asset_info: getAssetInfo(fromToken as Asset),
-          },
-        },
-      ];
-      setOperations(operation);
-    }
-  }, [fromToken, toToken]);
-
   const handlerSwap = useCallback(async () => {
     if (isTxLoading) return;
     if (walletAddress) {
@@ -142,7 +134,7 @@ const Swap: React.FC = () => {
           fromToken={fromToken}
           toToken={toToken}
           setToToken={setToToken}
-          expectedAmount={simulatedOperation}
+          expectedAmount={simulatedOperation.amount}
         />
       </Box>
       <Button
@@ -187,8 +179,9 @@ const Swap: React.FC = () => {
           fromToken={fromToken}
           logo-black-no-text
           toToken={toToken}
-          expectedAmount={simulatedOperation}
+          simulatedOperation={simulatedOperation}
           inputAmount={inputAmount}
+          route={getRouteByOperations(operations)}
         />
       )}
     </Flex>

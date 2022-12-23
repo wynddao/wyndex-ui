@@ -1,4 +1,6 @@
 import { Coin } from "cosmwasm";
+import { AssetInfo, AssetInfoValidated } from "./types/WyndexFactory.types";
+import { SwapOperation } from "./types/WyndexMultiHop.types";
 
 interface IbcBalanceResponse {
   readonly address: string;
@@ -13,9 +15,19 @@ export interface Cw20BalanceResponse {
 }
 
 export interface UserFiatResponse {
-  readonly availableBalanceInUsd: number;
-  readonly lockedBalanceInUsd: number;
+  readonly availableBalance: {
+    usd: number;
+    eur: number;
+  };
+  readonly lockedBalance: {
+    usd: number;
+    eur: number;
+  };
 }
+export type RequestSwap = {
+  readonly askAsset: AssetInfo;
+  readonly offerAsset: AssetInfo;
+};
 
 export interface IndexerQueryClientReadOnlyInterface {
   apiUrl: string;
@@ -54,6 +66,18 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
   assetPrices = async (): Promise<any> => {
     const res = await fetch(`${this.apiUrl}/assets/prices`);
     return await res.json();
+  };
+
+  swapOperation = async (reqOperation: RequestSwap): Promise<SwapOperation[]> => {
+    const res = await fetch(`${this.apiUrl}/swap`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqOperation),
+    });
+    return (await res.json()) as SwapOperation[];
   };
 
   ibcBalances = async (walletAddress: string | undefined): Promise<readonly Coin[]> => {
