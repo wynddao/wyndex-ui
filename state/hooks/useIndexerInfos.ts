@@ -72,7 +72,7 @@ export const useIndexerInfos = ({
           apiUrl: INDEXER_API_ENDPOINT,
           params: [walletAddress || ""],
         })
-      : constSelector({ availableBalanceInUsd: 0, lockedBalanceInUsd: 0 }),
+      : constSelector({ availableBalance: { eur: 0, usd: 0 }, lockedBalance: { eur: 0, usd: 0 } }),
   );
 
   const swapOperationRoutes = (reqOperation: RequestSwap) => {
