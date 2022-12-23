@@ -1,11 +1,10 @@
-"use client";
+"use client";;
 import { Box, Button, Flex, Image, keyframes } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { SwapOperation } from "../../state/clients/types/WyndexMultiHop.types";
+import React, { useCallback, useMemo, useState } from "react";
 import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
-import { getAssetByTokenAddr, getAssetInfo } from "../../utils/assets";
+import { getAssetInfo } from "../../utils/assets";
 import SwapIcon from "./FromToComponent/SwapIcon";
 import FromToken from "./FromToComponent/FromToken";
 import Rate from "./RateComponent/Rate";
@@ -38,7 +37,7 @@ const Swap: React.FC = () => {
   const { swapOperationRoutes } = useIndexerInfos({});
 
   const operations = useRecoilValue(
-    swapOperationRoutes({ askAsset: getAssetInfo(fromToken), offerAsset: getAssetInfo(toToken) }),
+    swapOperationRoutes({ askAsset: getAssetInfo(toToken), offerAsset: getAssetInfo(fromToken) }),
   );
 
   const refreshBalance = useRecoilRefresher_UNSTABLE(
