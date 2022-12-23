@@ -1,8 +1,8 @@
 import { useWallet } from "@cosmos-kit/react";
 import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { INDEXER_API_ENDPOINT } from "../../utils";
+import { RequestSwap } from "../clients/Indexer.client";
 import { IndexerSelectors } from "../recoil";
-
 interface UseIndexerInfos {
   fetchPoolData?: boolean;
   fetchIbcBalances?: boolean;
@@ -75,6 +75,14 @@ export const useIndexerInfos = ({
       : constSelector({ availableBalanceInUsd: 0, lockedBalanceInUsd: 0 }),
   );
 
+  const swapOperationRoutes = (reqOperation: RequestSwap) => {
+    return IndexerSelectors.swapRouteSelector({
+      apiUrl: INDEXER_API_ENDPOINT,
+      params: [reqOperation],
+    });
+  };
+
+  // TODO: type each returned property to avoid errors
   return {
     pools,
     userPools,
@@ -85,5 +93,6 @@ export const useIndexerInfos = ({
     cw20Balances,
     cw20BalanceSelector,
     userFiat,
+    swapOperationRoutes,
   };
 };

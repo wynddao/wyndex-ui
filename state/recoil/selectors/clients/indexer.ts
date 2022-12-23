@@ -1,6 +1,7 @@
 import { Coin } from "cosmwasm";
 import { selectorFamily } from "recoil";
 import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
+import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
 
 type QueryClientParams = {
   apiUrl: string;
@@ -118,5 +119,22 @@ export const cw20BalanceSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.cw20Balance(...params);
+    },
+});
+
+export const swapRouteSelector = selectorFamily<
+  SwapOperation[],
+  QueryClientParams & { params: Readonly<Parameters<IndexerQueryClient["swapOperation"]>> }
+>({
+  key: "indexerRouteSwap",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      try {
+        const client = get(queryClient(queryClientParams));
+        return await client.swapOperation(...params);
+      } catch (err) {
+        return [];
+      }
     },
 });
