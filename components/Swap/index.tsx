@@ -105,7 +105,8 @@ const Swap: React.FC = () => {
   const buttonText = useMemo(() => {
     if (isTxLoading) return "";
     if (!walletAddress) return "Connect Wallet";
-    if (inputAmount > microamountToAmount(balance.amount, fromToken.decimals)) return "Insufficient Amount";
+    if (Number(inputAmount) > Number(microamountToAmount(balance.amount, fromToken.decimals)))
+      return "Insufficient Amount";
     if (walletAddress) return "Swap";
   }, [balance.amount, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
 
@@ -145,7 +146,7 @@ const Swap: React.FC = () => {
         disabled={
           !isTxLoading &&
           isWalletConnected &&
-          inputAmount > microamountToAmount(balance.amount, fromToken.decimals)
+          Number(inputAmount) > Number(microamountToAmount(balance.amount, fromToken.decimals))
         }
         bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
