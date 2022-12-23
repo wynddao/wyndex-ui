@@ -1,4 +1,8 @@
-export const formatCurrency = new Intl.NumberFormat(undefined, {
-  style: "currency",
-  currency: "USD",
-});
+export const formatCurrency = (currency: string, amount: string) => {
+  return new Intl.NumberFormat(navigator.language, {
+    style: "currency",
+    currency: currency,
+    currencyDisplay: "narrowSymbol",
+    minimumFractionDigits: 4,
+  }).format(Number(amount));
+};
