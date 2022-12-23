@@ -1,5 +1,5 @@
 import { asset_list } from "@chain-registry/osmosis";
-import { Asset, CW20Asset } from "@wynddao/asset-list";
+import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { AssetInfo } from "../state/clients/types/WyndexFactory.types";
 import { Currency } from "../state/recoil/atoms/settings";
 import { getAssetList } from "./getAssetList";
@@ -30,7 +30,8 @@ export const getAssetInfo = (item: Asset) => {
         token: (item as CW20Asset).token_address,
       }
     : {
-        native: item.denom,
+        // Take juno denom if available
+        native: item.hasOwnProperty("juno_denom") ? (item as IBCAsset).juno_denom : item.denom,
       };
 };
 
@@ -101,7 +102,7 @@ export const getAssetByTokenAddr = (tokenAddr: string): Asset | undefined => {
 
 export const getAssetByDenom = (denom: string): Asset => {
   const assetList = getAssetList();
-  return assetList.tokens.find((a) => a.denom === denom) || ({} as Asset);
+  return assetList.tokens.find((a) => a.denom === denom || a.juno_denom === denom) || ({} as Asset);
 };
 
 export const getNativeIbcTokenDenom = (denom: string) =>

@@ -15,11 +15,11 @@ const SwapRoute: React.FC<IProps> = ({ route }) => {
           return (
             <React.Fragment key={`routeEl-${i}`}>
               <Text textTransform="uppercase" color="wynd.gray.600" fontSize="xs">
-                {getDenom(getAssetByDenom(from as string))}
+                {getAssetByDenom(from as string).name}
               </Text>
               <Icon as={BsArrowRightShort} fontSize="lg" />
               <Text textTransform="uppercase" color="wynd.gray.600" fontSize="xs">
-                {getDenom(getAssetByDenom(to as string))}
+                {getAssetByDenom(to as string).name}
               </Text>
             </React.Fragment>
           );

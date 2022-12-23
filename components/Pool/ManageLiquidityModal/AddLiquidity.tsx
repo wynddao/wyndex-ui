@@ -28,6 +28,7 @@ import { getNativeTokenBalance } from "../../../utils/wallet";
 import AssetImage from "../../AssetImage";
 import { useAvailableTokens } from "./useAvailableTokens";
 import { getNativeIbcTokenDenom } from "../../../utils/assets";
+import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 interface inputType {
   id: string;
   value: string;
@@ -83,6 +84,7 @@ export default function AddLiquidity({
   });
 
   const { address: walletAddress } = useWallet();
+  const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
 
   const [balances, setBalances] = useState<string[]>([]);
 
@@ -135,15 +137,23 @@ export default function AddLiquidity({
           };
         }
       });
+
+    // Funds must be sorted as of
+    // https://github.com/cosmos/cosmos-sdk/blob/579121912172e1bd4069a50ad1a988c22a15dfe4/types/coin.go#L255-L257
+    if (funds) {
+      funds.sort((a, b) => (a.denom > b.denom ? 1 : b.denom > a.denom ? -1 : 0));
+    }
+
     await txToast(doProvideLiquidity, {
       pairContractAddress: pairData.contract_addr,
       assets: assets,
       funds,
     });
-    onClose();
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
+    refreshBondings();
     refreshBalance();
+    onClose();
   };
 
   return (
@@ -335,7 +345,7 @@ export default function AddLiquidity({
                             }
                             return {
                               id: id,
-                              value: defaultVal,
+                              value: (Number(val) / ratio).toFixed(6),
                               contract: contractDefault,
                             };
                           },
