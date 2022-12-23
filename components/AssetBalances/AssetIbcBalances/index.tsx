@@ -19,10 +19,11 @@ export default function AssetIbcBalances() {
   const ibcAssets = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
 
   const assetsWithBalance: AssetIbcWithBalance[] = ibcAssets.map((asset): AssetIbcWithBalance => {
-    const balance = ibcBalances.find((coin) => coin.denom === asset.juno_denom)?.amount ?? "0";
+    const balance =
+      ibcBalances.find((coin) => coin.denom === asset.juno_denom || coin.denom === asset.denom)?.amount ??
+      "0";
     return { ...asset, balance };
   });
-
   const searchedAssets = assetsWithBalance.filter((asset) =>
     asset.name.toLowerCase().includes(searchText.toLowerCase()),
   );
