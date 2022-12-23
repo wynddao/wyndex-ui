@@ -6,7 +6,7 @@ import WithdrawIbcModal from "../components/WithdrawIbcModal";
 
 export default function Page() {
   return (
-    <Box p="4">
+    <Box p="4" bgImage={"/images/Vector2Bg.png"} bgRepeat={"repeat"} bgSize={600}>
       <AssetBalances />
       <DepositIbcModal />
       <WithdrawIbcModal />
