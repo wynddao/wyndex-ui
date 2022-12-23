@@ -16,6 +16,7 @@ import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { Cw20Hooks, useCw20UserInfos, useToast, WyndexPairHooks } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
+import { getNativeIbcTokenDenom } from "../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import TokenName from "../../TokenName";
 
@@ -84,7 +85,7 @@ export default function RemoveLiquidity({
                 <TokenName symbol={true} address={asset.info.token} />
               ) : (
                 //@ts-ignore
-                <span>{microdenomToDenom(asset.info.native)}</span>
+                <span>{microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))}</span>
               )}
             </Text>
           </Box>

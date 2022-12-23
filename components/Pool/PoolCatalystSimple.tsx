@@ -4,6 +4,7 @@ import { Box, Button, Collapse, Flex, Image, SimpleGrid, Text } from "@chakra-ui
 import { useState } from "react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
+import { getNativeIbcTokenDenom } from "../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
@@ -73,7 +74,7 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
                             <TokenName address={asset.info.token} />
                           ) : (
                             // @ts-ignore
-                            microdenomToDenom(asset.info.native)
+                            microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))
                           )}
                         </Text>
                       </Box>

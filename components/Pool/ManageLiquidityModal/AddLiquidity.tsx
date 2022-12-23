@@ -27,6 +27,7 @@ import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../
 import { getNativeTokenBalance } from "../../../utils/wallet";
 import AssetImage from "../../AssetImage";
 import { useAvailableTokens } from "./useAvailableTokens";
+import { getNativeIbcTokenDenom } from "../../../utils/assets";
 interface inputType {
   id: string;
   value: string;
@@ -75,7 +76,7 @@ export default function AddLiquidity({
         <TokenName symbol={true} address={asset.token} />
       ) : (
         // @ts-ignore
-        <span>{microdenomToDenom(asset.native)}</span>
+        <span>{microdenomToDenom(getNativeIbcTokenDenom(asset.native))}</span>
       ),
       show: true,
     };
@@ -134,12 +135,6 @@ export default function AddLiquidity({
           };
         }
       });
-    console.log({
-      pairContractAddress: pairData.contract_addr,
-      assets: assets,
-      funds,
-    });
-
     await txToast(doProvideLiquidity, {
       pairContractAddress: pairData.contract_addr,
       assets: assets,
@@ -340,7 +335,7 @@ export default function AddLiquidity({
                             }
                             return {
                               id: id,
-                              value: (Number(val) / ratio).toFixed(6),
+                              value: defaultVal,
                               contract: contractDefault,
                             };
                           },

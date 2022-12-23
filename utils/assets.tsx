@@ -103,3 +103,8 @@ export const getAssetByDenom = (denom: string): Asset => {
   const assetList = getAssetList();
   return assetList.tokens.find((a) => a.denom === denom) || ({} as Asset);
 };
+
+export const getNativeIbcTokenDenom = (denom: string) =>
+  (denom.toLowerCase().startsWith("ibc")
+    ? getAssetList().tokens.find((a) => a.juno_denom === denom)?.denom
+    : denom) || "";
