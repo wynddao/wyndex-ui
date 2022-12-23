@@ -9,6 +9,7 @@ import TokenName from "../TokenName";
 import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
+import MyShares from "./MyShares";
 
 interface PoolsCardProps {
   readonly poolsData: readonly any[];
@@ -85,7 +86,7 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
                   return (
                     <span key={index}>
                       {/* @ts-ignore */}
-                      {microdenomToDenom(assetInfo.native)}
+                      {microdenomToDenom(getNativeIbcTokenDenom(assetInfo.native))}
                       {divider}
                     </span>
                   );
@@ -149,10 +150,7 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
               My Shares
             </Text>
             <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
-              <Skeleton>
-                TODO <br />
-              </Skeleton>
-              <Skeleton mt={1}>TODO</Skeleton>
+              <MyShares poolAddress={pool.address} />
             </Text>
           </GridItem>
         </Grid>
