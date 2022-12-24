@@ -36,6 +36,7 @@ export default function RemoveLiquidity({
   refreshBalance: () => void;
 }) {
   const [removeValue, setRemoveValue] = useState(35);
+  const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
 
   const doSend = Cw20Hooks.useSend({
@@ -46,6 +47,7 @@ export default function RemoveLiquidity({
   const { txToast } = useToast();
 
   const recieve = async () => {
+    setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
       const result = await doSend({
         amount: ((removeValue / 100) * availableTokens).toFixed(0).toString(),
@@ -53,12 +55,13 @@ export default function RemoveLiquidity({
         contract: pairData.contract_addr,
       });
 
-      onClose();
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
+      onClose();
       refreshBalance();
       return result;
     });
+    setLoading(false);
   };
   return (
     <Box>
@@ -121,6 +124,8 @@ export default function RemoveLiquidity({
           w="full"
           size="lg"
           h={{ base: 12, sm: 14 }}
+          isLoading={loading}
+          loadingText={"Executing"}
         >
           Remove Liquidity
         </Button>

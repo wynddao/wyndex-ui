@@ -53,6 +53,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const { address: walletAddress } = useWallet();
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("0");
+  const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
@@ -213,11 +214,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   });
 
   const doExecute = async () => {
-    console.log({
-      bondFrom: stake.unbonding_period,
-      bondTo: lowerDuration?.unbonding_period || 0,
-      tokens: Number(amountToMicroamount(amount, 6)).toFixed(5).toString(),
-    });
+    setLoading(true);
     switch (selectedMode) {
       case "bondDown": {
         txToast(async () => {
@@ -260,6 +257,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
         });
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -303,6 +301,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
                     activeStep === 1 &&
                     (Number(amount) === 0 || Number(amountToMicroamount(amount, 6)) > Number(stake.stake))
                   }
+                  isLoading={loading}
+                  loadingText={"Executing"}
                 >
                   {activeStep === steps.length - 1 ? "Execute" : "Next"}
                 </Button>

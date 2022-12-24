@@ -37,10 +37,11 @@ interface StartEarningModalProps {
     unbonding_period: number;
     apr: number;
   }[];
+  loading: boolean;
 }
 
 export default function StartEarningModal(props: StartEarningModalProps) {
-  const { isOpen, onClose, balance, tokenName, bondingInfos, doStake, apr } = props;
+  const { isOpen, onClose, balance, tokenName, bondingInfos, doStake, apr, loading } = props;
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
   const [amount, setAmount] = useState<string>("0");
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -147,6 +148,8 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           </Alert>
           <Box px={{ sm: 12 }} marginY={5}>
             <Button
+              isLoading={loading}
+              loadingText={"Executing"}
               onClick={() => doStake(Number(amountToMicroamount(amount, 6)), Number(value))}
               isDisabled={
                 Number(amountToMicroamount(amount, 6)) <= 0 ||

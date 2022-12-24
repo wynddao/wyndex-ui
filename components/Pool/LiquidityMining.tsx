@@ -31,6 +31,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
   const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
   const { infos } = useStakeInfos(wyndexStake);
   const { refreshBondings } = useUserStakeInfos(wyndexStake, walletAddress || "");
@@ -40,6 +41,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
   });
 
   const doStake = async (amount: number, duration: number) => {
+    setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
       const result = await stake({
         amount: amount.toString(),
@@ -54,6 +56,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
       refreshBalance();
       return result;
     });
+    setLoading(false);
   };
 
   return (
@@ -129,6 +132,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
           onClose={() => setIsModalOpen(false)}
           bondingInfos={infos}
           apr={apr}
+          loading={loading}
         />
       </Box>
     </>

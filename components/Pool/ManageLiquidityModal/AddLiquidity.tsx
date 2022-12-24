@@ -87,6 +87,7 @@ export default function AddLiquidity({
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
 
   const [balances, setBalances] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
     id: label,
@@ -116,6 +117,7 @@ export default function AddLiquidity({
   }, [balance, pairData.asset_infos, walletAddress]);
 
   const prodiveLiquidity = async () => {
+    setLoading(true);
     const assets = tokenInputValue
       .filter((token) => {
         return token.value !== "0";
@@ -143,17 +145,20 @@ export default function AddLiquidity({
     if (funds) {
       funds.sort((a, b) => (a.denom > b.denom ? 1 : b.denom > a.denom ? -1 : 0));
     }
-
-    await txToast(doProvideLiquidity, {
-      pairContractAddress: pairData.contract_addr,
-      assets: assets,
-      funds,
+    await txToast(async () => {
+      const res = await doProvideLiquidity({
+        pairContractAddress: pairData.contract_addr,
+        assets: assets,
+        funds,
+      });
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
+      refreshBondings();
+      refreshBalance();
+      onClose();
+      return res;
     });
-    // New balances will not appear until the next block.
-    await new Promise((resolve) => setTimeout(resolve, 6500));
-    refreshBondings();
-    refreshBalance();
-    onClose();
+    setLoading(false);
   };
 
   return (
@@ -374,6 +379,8 @@ export default function AddLiquidity({
           w="full"
           size="lg"
           h={{ base: 12, sm: 14 }}
+          isLoading={loading}
+          loadingText={"Executing"}
         >
           Add Liquidity
         </Button>
