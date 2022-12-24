@@ -85,11 +85,36 @@ export default function AssetIbcItem({
       >
         {tags === "ibc" ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
-            <Button fontSize="sm" onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: chain_id })}>
+            <Button
+              fontSize="sm"
+              bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+              _hover={{
+                bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                ":disabled": {
+                  bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+                  cursor: "initial",
+                },
+              }}
+              _disabled={{
+                bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+                cursor: "initial",
+              }}
+              onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: chain_id })}
+            >
               IBC Deposit
             </Button>
             <Button
               fontSize="sm"
+              _hover={{
+                ":disabled": {
+                  bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+                  cursor: "initial",
+                },
+              }}
+              _disabled={{
+                bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+                cursor: "initial",
+              }}
               disabled={balance === "0"}
               onClick={() => setWithdrawIbcModalOpen({ isOpen: true, chainId: chain_id })}
             >
