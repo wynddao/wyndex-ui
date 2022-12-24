@@ -17,7 +17,7 @@ const ThemeContext = createContext<IThemeContext | null>(null);
 
 const ThemeProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const [theme, setTheme] = useLocalStorage<ThemeModes>("themeColor");
-  const themeConfig = useMemo(() => (theme === ThemeModes.dark ? darkTheme : lightTheme), [theme]);
+  const themeConfig = useMemo(() => darkTheme, []);
 
   const switchTheme = useCallback(() => {
     setTheme(theme === ThemeModes.dark ? ThemeModes.light : ThemeModes.dark);
