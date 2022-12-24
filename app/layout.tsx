@@ -5,6 +5,7 @@ import Providers from "./providers";
 import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
+import ToSModal from "../components/ToSModal";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Providers>
             <Toaster />
             <Sidebar>{children}</Sidebar>
+            <ToSModal />
           </Providers>
         ) : (
           <Loader />
