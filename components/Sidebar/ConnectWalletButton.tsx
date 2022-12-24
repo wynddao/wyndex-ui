@@ -21,7 +21,16 @@ export default function ConnectWalletButton() {
   }, [address, setValue]);
 
   return isWalletConnected && loadableBalance ? (
-    <Button as={Box} pr={0} w="full" h="auto">
+    <Button
+      bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+      _hover={{
+        bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+      }}
+      as={Box}
+      pr={0}
+      w="full"
+      h="auto"
+    >
       <Flex alignItems="center" justifyContent="space-between" gap={2} w="full">
         <Icon fontSize="1.25em" as={FiCreditCard} />
         <Box fontSize="sm">
@@ -34,12 +43,12 @@ export default function ConnectWalletButton() {
         </Box>
         <Flex direction="column">
           <Tooltip label={hasCopied ? "Copied!" : "Copy wallet address"}>
-            <Button onClick={onCopy} sx={{ padding: 0 }} size="xs">
+            <Button bgColor={"wynd.base.sidebar"} border={"1px solid"} _hover={{ border: "wynd.base.sidebar"}} onClick={onCopy} sx={{ padding: 0, margin: 1 }} size="xs">
               <Icon fontSize="1em" as={FiCopy} />
             </Button>
           </Tooltip>
           <Tooltip label="Disconnect wallet">
-            <Button onClick={disconnect} sx={{ padding: 0 }} size="xs">
+            <Button bgColor={"wynd.base.sidebar"} borderColor={"white"} _hover={{ border: "wynd.base.sidebar"}} border={"1px solid"} onClick={disconnect} sx={{ padding: 0, margin: 1 }} size="xs">
               <Icon fontSize="1em" as={VscDebugDisconnect} />
             </Button>
           </Tooltip>

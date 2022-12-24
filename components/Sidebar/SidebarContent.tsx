@@ -1,10 +1,8 @@
-"use client";
-
+"use client";;
 import { Box, BoxProps, CloseButton, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiActivity, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
-import { ThemeModes, useTheme } from "../../providers/ThemeProvider";
-import wyndLogoBlack from "../../public/logo-black.svg";
+import { useTheme } from "../../providers/ThemeProvider";
 import wyndLogoWhite from "../../public/logo-white.svg";
 import GradientIcon from "../Swap/FromToComponent/GradientIcon";
 import ConnectWalletButton from "./ConnectWalletButton";
@@ -39,7 +37,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         <Flex h="20" alignItems="center" mx="4" justifyContent="space-between">
           <Image
             alt="Wynd logo"
-            src={theme === ThemeModes.dark ? wyndLogoWhite : wyndLogoBlack}
+            src={wyndLogoWhite}
             sizes="100vw"
             style={{ width: "100%", height: "auto", maxWidth: 128, maxHeight: 38 }}
           />

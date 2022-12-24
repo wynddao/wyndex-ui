@@ -6,7 +6,7 @@ export default function OnRampButton() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   return (
     <>
-      <Button py={8} onClick={() => setModalOpen(true)} whiteSpace="unset" w="100%">
+      <Button backgroundColor={"wynd.base.subBg"} _hover={{ backgroundColor: "wynd.grey.700"}} py={8} onClick={() => setModalOpen(true)} whiteSpace="unset" w="100%">
         <Text fontSize="xs" display="inline">
           Need more crypto?{" "}
         </Text>{" "}
