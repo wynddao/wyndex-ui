@@ -1,7 +1,7 @@
 import { AssetList } from "@chain-registry/types";
 export const testnet_assets: AssetList = {
   $schema: "../../assetlist.schema.json",
-  chain_name: "junotestnet",
+  chain_name: "junotestnet1",
   assets: [
     {
       description: "The native token of JUNO Chain",
@@ -18,7 +18,7 @@ export const testnet_assets: AssetList = {
       base: "ujunox",
       name: "Juno Testnet",
       display: "junox",
-      symbol: "JUNO",
+      symbol: "JUNOX",
       logo_URIs: {
         png: "https://raw.githubusercontent.com/cosmos/chain-registry/master/testnets/junotestnet/images/juno.png",
         svg: "https://raw.githubusercontent.com/cosmos/chain-registry/master/testnets/junotestnet/images/juno.svg",

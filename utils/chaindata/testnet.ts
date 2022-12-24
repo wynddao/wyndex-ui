@@ -1,7 +1,7 @@
 import { Chain } from "@chain-registry/types";
 export const testnet: Chain = {
   $schema: "../../chain.schema.json",
-  chain_name: "junotestnet",
+  chain_name: "junotestnet1",
   status: "live",
   network_type: "testnet",
   pretty_name: "Juno Testnet",

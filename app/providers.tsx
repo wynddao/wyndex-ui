@@ -25,7 +25,7 @@ const signerOptions = {
         return {
           gasPrice: GasPrice.fromString("0.0025ujuno"),
         };
-      case "junotestnet":
+      case "junotestnet1":
         return {
           gasPrice: GasPrice.fromString("0.0050ujunox"),
         };
@@ -42,7 +42,7 @@ const signerOptions = {
         return {
           gasPrice: GasPrice.fromString("0.0025ujuno"),
         };
-      case "junotestnet":
+      case "junotestnet1":
         return {
           gasPrice: GasPrice.fromString("0.0050ujunox"),
         };
@@ -59,6 +59,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           assetLists={[...assets, junoAssets]}
           wallets={[...keplrWallet, ...cosmostationWallets, ...leapwallets]}
           signerOptions={signerOptions}
+          endpointOptions={{
+            junotestnet1: {
+              rpc: ["https://juno-uni-5.mib.tech/"],
+              rest: ["https://juno-testnet-api.polkachu.com/"],
+            },
+          }}
         >
           <InnerWalletProvider>{children}</InnerWalletProvider>
         </WalletProvider>
