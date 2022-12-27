@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { WyndexStakeHooks } from "../../../state";
 import { BondingPeriodInfo, StakedResponse } from "../../../state/clients/types/WyndexStake.types";
 import { useToast } from "../../../state/hooks";
@@ -101,6 +101,14 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   };
 
   const ChooseAmountContent = () => {
+    const inputRef = useRef(null);
+    useEffect(() => {
+      if (inputRef.current) {
+        console.log(inputRef.current);
+        // @ts-ignore
+        inputRef.current.focus();
+      }
+    }, []);
     return (
       <Flex
         key={1}
@@ -152,10 +160,11 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bg={"wynd.alpha.50"}
             min={0}
             value={amount}
+            key="amount"
             max={roundForExecution(Number(microamountToAmount(stake.stake, 6)))}
             onChange={(e) => setAmount(e)}
           >
-            <NumberInputField textAlign="end" pr={4} />
+            <NumberInputField ref={inputRef} textAlign="end" pr={4} />
           </NumberInput>
         </Box>
       </Flex>
@@ -217,7 +226,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     setLoading(true);
     switch (selectedMode) {
       case "bondDown": {
-        txToast(async () => {
+        await txToast(async () => {
           const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: lowerDuration?.unbonding_period || 0,
@@ -225,13 +234,15 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
+          reset();
+          setAmount("0");
           onClose();
           return res;
         });
         break;
       }
       case "bondUp": {
-        txToast(async () => {
+        await txToast(async () => {
           const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: higherDuration?.unbonding_period || 0,
@@ -239,19 +250,23 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
+          reset();
+          setAmount("0");
           onClose();
           return res;
         });
         break;
       }
       case "unstake": {
-        txToast(async () => {
+        await txToast(async () => {
           const res = await doUnbond({
             tokens: amountToMicroamount(amount, 6),
             unbondingPeriod: stake.unbonding_period,
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
+          reset();
+          setAmount("0");
           onClose();
           return res;
         });
@@ -264,9 +279,9 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={() => {
-        onClose();
         reset();
         setAmount("0");
+        onClose();
       }}
       isCentered={true}
     >
