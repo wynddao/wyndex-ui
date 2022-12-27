@@ -60,7 +60,6 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
         gap={{ base: 2 }}
         p={{ base: "4" }}
       >
-        <GradientIcon id="settingsGradient" gradient1="#AFEFBD" gradient2="#75E4F9" />
         <Settings />
         <ConnectWalletButton />
         <OnRampButton />
