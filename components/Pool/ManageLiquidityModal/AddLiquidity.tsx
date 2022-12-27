@@ -113,8 +113,10 @@ export default function AddLiquidity({
       }
       return e;
     });
+
     Promise.all(b).then((res) => setBalances(res));
-  }, [balance, pairData.asset_infos, walletAddress]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pairData.asset_infos, walletAddress]);
 
   const prodiveLiquidity = async () => {
     setLoading(true);
