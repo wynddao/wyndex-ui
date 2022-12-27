@@ -93,11 +93,13 @@ export default function PoolHeader({ chainData, pairData, walletAddress, totalIn
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
             Pool: {pairNames[0]} / {pairNames[1]}
           </Heading>
-          <Flex align="center" wrap="wrap">
-            <Button onClick={onOpen} m={2} ml={0} mr={{ md: 4 }}>
-              Add/Remove Liquidity
-            </Button>
-          </Flex>
+          {walletAddress && (
+            <Flex align="center" wrap="wrap">
+              <Button onClick={onOpen} m={2} ml={0} mr={{ md: 4 }}>
+                Add/Remove Liquidity
+              </Button>
+            </Flex>
+          )}
         </Flex>
 
         <SimpleGrid columns={{ md: 2 }} gap={{ base: 2, md: 4 }} maxW={{ lg: "50%" }}>
