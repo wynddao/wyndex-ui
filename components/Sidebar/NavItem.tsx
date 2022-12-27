@@ -26,7 +26,7 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
   const isLinkActive = isExactlyDashboard || isCurrentLinkPathname;
 
   return (
-    <Link href={to} style={{ textDecoration: "none" }}>
+    <Link href={to} target={to.startsWith("http") ? "_blank" : "_self"} style={{ textDecoration: "none" }}>
       <Flex
         align="center"
         p={{ base: "4" }}
