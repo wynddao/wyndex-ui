@@ -112,19 +112,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
   };
 
   cw20Balances = async (walletAddress: string | undefined): Promise<readonly Cw20BalanceResponse[]> => {
-    try {
-      if (!walletAddress) throw new Error("walletAddress needs to be set");
-
-      const res = await fetch(`${this.apiUrl}/assets/cw20/${walletAddress}`);
-      const cw20BalancesResponses: readonly Cw20BalanceResponse[] = await res.json();
-
-      const fetchError = String((cw20BalancesResponses as any).error);
-      if (fetchError) throw new Error(fetchError);
-
-      return cw20BalancesResponses;
-    } catch {
-      return [];
-    }
+    if (!walletAddress) return [];
+    const res = await fetch(`${this.apiUrl}/assets/cw20/${walletAddress}`);
+    const cw20BalancesResponses: readonly Cw20BalanceResponse[] = await res.json();
+    console.log(cw20BalancesResponses);
+    return cw20BalancesResponses;
   };
 
   // TODO use single balance query instead of querying all

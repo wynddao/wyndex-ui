@@ -12,7 +12,7 @@ export type AssetCw20WithBalance = CW20Asset & {
 };
 
 export default function AssetCw20Balances() {
-  const { cw20Balances } = useIndexerInfos({ fetchIbcBalances: true });
+  const { cw20Balances } = useIndexerInfos({ fetchCw20Balances: true });
   const [searchText, setSearchText] = useState("");
 
   const assets: readonly Asset[] = getAssetList().tokens;
@@ -28,6 +28,8 @@ export default function AssetCw20Balances() {
   );
 
   const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
+
+  console.log(cw20Balances);
 
   return (
     <Box p={8} pt={0}>

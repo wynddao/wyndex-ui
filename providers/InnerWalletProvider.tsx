@@ -10,8 +10,10 @@ const InnerWalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // Save client in recoil atom so it can be used by selectors.
   useEffect(() => {
     const loadClient = async () => {
-      const client = await getSigningCosmWasmClient();
-      setSigningCosmWasmClient(client);
+      if (address) {
+        const client = await getSigningCosmWasmClient();
+        setSigningCosmWasmClient(client);
+      }
     };
     loadClient();
   }, [setSigningCosmWasmClient, getSigningCosmWasmClient, address]);
