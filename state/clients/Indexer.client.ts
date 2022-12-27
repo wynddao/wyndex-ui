@@ -115,7 +115,6 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     if (!walletAddress) return [];
     const res = await fetch(`${this.apiUrl}/assets/cw20/${walletAddress}`);
     const cw20BalancesResponses: readonly Cw20BalanceResponse[] = await res.json();
-    console.log(cw20BalancesResponses);
     return cw20BalancesResponses;
   };
 

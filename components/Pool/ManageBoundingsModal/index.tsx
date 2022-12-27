@@ -104,7 +104,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     const inputRef = useRef(null);
     useEffect(() => {
       if (inputRef.current) {
-        console.log(inputRef.current);
         // @ts-ignore
         inputRef.current.focus();
       }

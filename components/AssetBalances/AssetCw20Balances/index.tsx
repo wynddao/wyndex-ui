@@ -29,8 +29,6 @@ export default function AssetCw20Balances() {
 
   const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
 
-  console.log(cw20Balances);
-
   return (
     <Box p={8} pt={0}>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
