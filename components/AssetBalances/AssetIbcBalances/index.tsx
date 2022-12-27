@@ -33,7 +33,7 @@ export default function AssetIbcBalances() {
   return (
     <Box p={8} pt={0}>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
-        IBC Assets
+        IBC & Native Assets
       </Text>
       <Grid
         position="sticky"
