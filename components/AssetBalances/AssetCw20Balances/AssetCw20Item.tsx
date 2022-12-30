@@ -6,6 +6,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  IconButton,
   Image,
   Tag,
   TagLabel,
@@ -14,20 +15,28 @@ import {
   Tooltip,
   useClipboard,
 } from "@chakra-ui/react";
+import { Asset } from "@wynddao/asset-list";
 import { useEffect } from "react";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FiCopy } from "react-icons/fi";
 import { AssetCw20WithBalance } from ".";
 import { microamountToAmount } from "../../../utils/tokens";
 
 interface AssetCw20ItemProps {
   readonly assetDetails: AssetCw20WithBalance;
+  addFav: (asset: Asset) => void;
+  removeFav: (asset: Asset) => void;
+  isFav: boolean;
 }
 
 export default function AssetCw20Item({
   assetDetails: { name, logoURI, balance, decimals, token_address, tags },
+  addFav,
+  removeFav,
+  isFav,
 }: AssetCw20ItemProps) {
   const { onCopy, hasCopied, setValue } = useClipboard("");
-
+  const assetDetails = { name, logoURI, balance, decimals, token_address, tags };
   useEffect(() => {
     setValue(token_address || "");
   }, [token_address, setValue]);
@@ -54,6 +63,31 @@ export default function AssetCw20Item({
     >
       <GridItem colSpan={{ base: 2, md: 1 }}>
         <Flex justify={{ base: "center", md: "start" }} align="center">
+          <Box mr={3}>
+            {isFav ? (
+              <Tooltip label="Remove from favourites">
+                <IconButton
+                  variant="outline"
+                  colorScheme="teal"
+                  aria-label="Remove Fav"
+                  icon={<AiFillStar />}
+                  /* @ts-ignore */
+                  onClick={() => removeFav(assetDetails)}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip label="Add to favourites">
+                <IconButton
+                  variant="outline"
+                  colorScheme="teal"
+                  aria-label="Add Fav"
+                  icon={<AiOutlineStar />}
+                  /* @ts-ignore */
+                  onClick={() => addFav(assetDetails)}
+                />
+              </Tooltip>
+            )}
+          </Box>
           <Box
             w={{ base: 14, lg: 16 }}
             h={{ base: 14, lg: 16 }}

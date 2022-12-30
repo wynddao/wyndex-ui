@@ -13,7 +13,15 @@ export type AssetIbcWithBalance = IBCAsset & {
   readonly balance: string;
 };
 
-export default function AssetIbcBalances() {
+export default function AssetIbcBalances({
+  addFav,
+  removeFav,
+  favList,
+}: {
+  addFav: (asset: Asset) => void;
+  removeFav: (asset: Asset) => void;
+  favList: Asset[];
+}) {
   const { ibcBalances, cw20Balances } = useIndexerInfos({ fetchIbcBalances: true, fetchCw20Balances: true });
   const [searchText, setSearchText] = useState("");
 
@@ -39,7 +47,24 @@ export default function AssetIbcBalances() {
     asset.name.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  const sortedAssets = searchedAssets.sort((a, b) => parseFloat(b.balance) - parseFloat(a.balance));
+  const sortedAssets = searchedAssets.sort((a, b) => {
+    const isFirstFav = favList.find((el) => el.name === a.name) ? true : false;
+    const isSecondFav = favList.find((el) => el.name === b.name) ? true : false;
+
+    if (isFirstFav === isSecondFav) {
+      return parseFloat(b.balance) - parseFloat(a.balance);
+    }
+
+    if (isFirstFav && !isSecondFav) {
+      return -1;
+    }
+
+    if (!isFirstFav && isSecondFav) {
+      return 1;
+    }
+
+    return parseFloat(b.balance) - parseFloat(a.balance);
+  });
 
   return (
     <Box p={8} pt={0}>
@@ -103,9 +128,21 @@ export default function AssetIbcBalances() {
       >
         {sortedAssets.map((assetDetails, i) =>
           assetDetails.tags == "native" || assetDetails.tags === "ibc" ? (
-            <AssetIbcItem key={i} assetDetails={assetDetails as AssetIbcWithBalance} />
+            <AssetIbcItem
+              isFav={favList.find((el) => el.name == assetDetails.name) ? true : false}
+              addFav={addFav}
+              removeFav={removeFav}
+              key={i}
+              assetDetails={assetDetails as AssetIbcWithBalance}
+            />
           ) : (
-            <AssetCw20Item key={i} assetDetails={assetDetails as AssetCw20WithBalance} />
+            <AssetCw20Item
+              isFav={favList.find((el) => el.name == assetDetails.name) ? true : false}
+              addFav={addFav}
+              removeFav={removeFav}
+              key={i}
+              assetDetails={assetDetails as AssetCw20WithBalance}
+            />
           ),
         )}
       </Stack>
