@@ -1,6 +1,5 @@
 "use client";
 import { Box, keyframes } from "@chakra-ui/react";
-import "./index.css";
 import { usePrefersReducedMotion } from "@chakra-ui/react";
 import { useState } from "react";
 
