@@ -1,10 +1,12 @@
 "use client";
 
 import { Box, Grid, GridItem, Input, Stack, Text } from "@chakra-ui/react";
-import { Asset, IBCAsset } from "@wynddao/asset-list";
+import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { useState } from "react";
 import { useIndexerInfos } from "../../../state";
 import { getAssetList } from "../../../utils/getAssetList";
+import { AssetCw20WithBalance } from "../AssetCw20Balances";
+import AssetCw20Item from "../AssetCw20Balances/AssetCw20Item";
 import AssetIbcItem from "./AssetIbcItem";
 
 export type AssetIbcWithBalance = IBCAsset & {
@@ -12,18 +14,27 @@ export type AssetIbcWithBalance = IBCAsset & {
 };
 
 export default function AssetIbcBalances() {
-  const { ibcBalances } = useIndexerInfos({ fetchIbcBalances: true });
+  const { ibcBalances, cw20Balances } = useIndexerInfos({ fetchIbcBalances: true, fetchCw20Balances: true });
   const [searchText, setSearchText] = useState("");
 
   const assets: readonly Asset[] = getAssetList().tokens;
   const ibcAssets = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
 
-  const assetsWithBalance: AssetIbcWithBalance[] = ibcAssets.map((asset): AssetIbcWithBalance => {
+  const bankAssetsWithBalance: AssetIbcWithBalance[] = ibcAssets.map((asset): AssetIbcWithBalance => {
     const balance =
       ibcBalances.find((coin) => coin.denom === asset.juno_denom || coin.denom === asset.denom)?.amount ??
       "0";
     return { ...asset, balance };
   });
+  const cw20Assets = assets.filter((asset): asset is CW20Asset => asset.tags === "cw20");
+
+  const cw20AssetsWithBalance: AssetCw20WithBalance[] = cw20Assets.map((asset): AssetCw20WithBalance => {
+    const balance = cw20Balances.find((balance) => balance.address === asset.token_address)?.balance ?? "0";
+    return { ...asset, balance };
+  });
+
+  const assetsWithBalance = [...bankAssetsWithBalance, ...cw20AssetsWithBalance];
+
   const searchedAssets = assetsWithBalance.filter((asset) =>
     asset.name.toLowerCase().includes(searchText.toLowerCase()),
   );
@@ -33,7 +44,7 @@ export default function AssetIbcBalances() {
   return (
     <Box p={8} pt={0}>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
-        IBC & Native Assets
+        My Assets
       </Text>
       <Grid
         position="sticky"
@@ -78,7 +89,7 @@ export default function AssetIbcBalances() {
         px={4}
       >
         <GridItem>Asset / Chain</GridItem>
-        <GridItem textAlign="end">IBC Balance</GridItem>
+        <GridItem textAlign="end">Balance</GridItem>
         <GridItem textAlign="end">Actions</GridItem>
       </Grid>
       <Stack
@@ -90,9 +101,13 @@ export default function AssetIbcBalances() {
         borderColor="wynd.base.sidebar"
         borderWidth="1px"
       >
-        {sortedAssets.map((assetDetails, i) => (
-          <AssetIbcItem key={i} assetDetails={assetDetails} />
-        ))}
+        {sortedAssets.map((assetDetails, i) =>
+          assetDetails.tags == "native" || assetDetails.tags === "ibc" ? (
+            <AssetIbcItem key={i} assetDetails={assetDetails as AssetIbcWithBalance} />
+          ) : (
+            <AssetCw20Item key={i} assetDetails={assetDetails as AssetCw20WithBalance} />
+          ),
+        )}
       </Stack>
     </Box>
   );

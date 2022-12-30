@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Badge,
   Box,
   Flex,
   Grid,
@@ -23,7 +24,7 @@ interface AssetCw20ItemProps {
 }
 
 export default function AssetCw20Item({
-  assetDetails: { name, logoURI, balance, decimals, token_address },
+  assetDetails: { name, logoURI, balance, decimals, token_address, tags },
 }: AssetCw20ItemProps) {
   const { onCopy, hasCopied, setValue } = useClipboard("");
 
@@ -35,7 +36,7 @@ export default function AssetCw20Item({
     <Grid
       templateColumns={{
         base: "1fr 1fr",
-        xl: "repeat(2, minmax(12rem, 1fr))",
+        xl: "repeat(3, minmax(12rem, 1fr))",
       }}
       columnGap={{ base: 4 }}
       fontWeight="semibold"
@@ -90,12 +91,15 @@ export default function AssetCw20Item({
               </Tooltip>
             ) : null}
           </Box>
+          <Box>
+            <Badge ml={4}>{tags}</Badge>
+          </Box>
         </Flex>
       </GridItem>
       <GridItem
         colSpan={{ base: 2, md: 1 }}
         display="flex"
-        alignItems={{ base: "center", md: "end" }}
+        alignItems={{ base: "center" }}
         py={{ base: 2, md: 0 }}
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}

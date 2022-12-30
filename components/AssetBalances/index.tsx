@@ -13,9 +13,6 @@ export default function AssetBalances() {
         <GridItem colSpan={2}>
           <AssetIbcBalances />
         </GridItem>
-        <GridItem>
-          <AssetCw20Balances />
-        </GridItem>
       </Grid>
     </Stack>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Flex, Grid, GridItem, Image, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import { useSetRecoilState } from "recoil";
 import { AssetIbcWithBalance } from ".";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
@@ -57,6 +57,7 @@ export default function AssetIbcItem({
           <Text fontSize="lg" mr={4}>
             {name}
           </Text>
+          <Badge>{tags}</Badge>
         </Flex>
       </GridItem>
       <GridItem
