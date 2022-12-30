@@ -15,7 +15,7 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
   { name: "Governance", to: "https://app.wynddao.com", icon: FiUsers, isExternalLink: true },
-  { name: "Mystery Box", to: "/mystery-box", icon: FiPackage },
+  { name: "Upcoming...", to: "/mystery-box", icon: FiPackage },
 ];
 
 interface SidebarContentProps extends BoxProps {
