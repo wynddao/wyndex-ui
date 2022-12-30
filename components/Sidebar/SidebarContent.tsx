@@ -23,7 +23,6 @@ interface SidebarContentProps extends BoxProps {
 }
 
 export default function SidebarContent({ onClose, ...restProps }: SidebarContentProps) {
-  const { theme } = useTheme();
   return (
     <Flex
       flexDirection="column"
