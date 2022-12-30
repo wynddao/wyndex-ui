@@ -10,6 +10,5 @@ export const getRouteByOperations = (operations: SwapOperation[]) => {
         from: wyndex_swap.offer_asset_info.hasOwnProperty("token") ? getAssetByTokenAddr(from)?.denom : from,
         to: wyndex_swap.ask_asset_info.hasOwnProperty("token") ? getAssetByTokenAddr(to)?.denom : to,
       };
-    })
-    .reverse();
+    });
 };
