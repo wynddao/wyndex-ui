@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  Badge,
   Box,
   Flex,
   Grid,
   GridItem,
+  IconButton,
   Image,
   Tag,
   TagLabel,
@@ -13,20 +15,28 @@ import {
   Tooltip,
   useClipboard,
 } from "@chakra-ui/react";
+import { Asset } from "@wynddao/asset-list";
 import { useEffect } from "react";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FiCopy } from "react-icons/fi";
 import { AssetCw20WithBalance } from ".";
 import { microamountToAmount } from "../../../utils/tokens";
 
 interface AssetCw20ItemProps {
   readonly assetDetails: AssetCw20WithBalance;
+  addFav: (asset: Asset) => void;
+  removeFav: (asset: Asset) => void;
+  isFav: boolean;
 }
 
 export default function AssetCw20Item({
-  assetDetails: { name, logoURI, balance, decimals, token_address },
+  assetDetails: { name, logoURI, balance, decimals, token_address, tags },
+  addFav,
+  removeFav,
+  isFav,
 }: AssetCw20ItemProps) {
   const { onCopy, hasCopied, setValue } = useClipboard("");
-
+  const assetDetails = { name, logoURI, balance, decimals, token_address, tags };
   useEffect(() => {
     setValue(token_address || "");
   }, [token_address, setValue]);
@@ -35,7 +45,7 @@ export default function AssetCw20Item({
     <Grid
       templateColumns={{
         base: "1fr 1fr",
-        xl: "repeat(2, minmax(12rem, 1fr))",
+        xl: "repeat(3, minmax(12rem, 1fr))",
       }}
       columnGap={{ base: 4 }}
       fontWeight="semibold"
@@ -53,6 +63,31 @@ export default function AssetCw20Item({
     >
       <GridItem colSpan={{ base: 2, md: 1 }}>
         <Flex justify={{ base: "center", md: "start" }} align="center">
+          <Box mr={3}>
+            {isFav ? (
+              <Tooltip label="Remove from favourites">
+                <IconButton
+                  variant="outline"
+                  colorScheme="teal"
+                  aria-label="Remove Fav"
+                  icon={<AiFillStar />}
+                  /* @ts-ignore */
+                  onClick={() => removeFav(assetDetails)}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip label="Add to favourites">
+                <IconButton
+                  variant="outline"
+                  colorScheme="teal"
+                  aria-label="Add Fav"
+                  icon={<AiOutlineStar />}
+                  /* @ts-ignore */
+                  onClick={() => addFav(assetDetails)}
+                />
+              </Tooltip>
+            )}
+          </Box>
           <Box
             w={{ base: 14, lg: 16 }}
             h={{ base: 14, lg: 16 }}
@@ -90,12 +125,15 @@ export default function AssetCw20Item({
               </Tooltip>
             ) : null}
           </Box>
+          <Box>
+            <Badge ml={4}>{tags}</Badge>
+          </Box>
         </Flex>
       </GridItem>
       <GridItem
         colSpan={{ base: 2, md: 1 }}
         display="flex"
-        alignItems={{ base: "center", md: "end" }}
+        alignItems={{ base: "center" }}
         py={{ base: 2, md: 0 }}
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}

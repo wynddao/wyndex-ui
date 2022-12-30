@@ -1,6 +1,9 @@
 "use client";
 
-import { Box, Button, Flex, Grid, GridItem, Image, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Grid, GridItem, IconButton, Image, Text, Tooltip } from "@chakra-ui/react";
+import { Asset } from "@wynddao/asset-list";
+import { IBCAsset, NativeAsset } from "@wynddao/asset-list/build/types";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { useSetRecoilState } from "recoil";
 import { AssetIbcWithBalance } from ".";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
@@ -8,14 +11,20 @@ import { microamountToAmount } from "../../../utils/tokens";
 
 interface AssetIbcItemProps {
   readonly assetDetails: AssetIbcWithBalance;
+  addFav: (asset: Asset) => void;
+  removeFav: (asset: Asset) => void;
+  isFav: boolean;
 }
 
 export default function AssetIbcItem({
   assetDetails: { name, logoURI, balance, decimals, tags, chain_id },
+  addFav,
+  removeFav,
+  isFav,
 }: AssetIbcItemProps) {
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
-
+  const assetDetails = { name, logoURI, balance, decimals, tags, chain_id };
   return (
     <Grid
       templateColumns={{
@@ -38,6 +47,31 @@ export default function AssetIbcItem({
     >
       <GridItem colSpan={{ base: 2, md: 1 }}>
         <Flex justify={{ base: "center", md: "start" }} align="center">
+          <Box mr={3}>
+            {isFav ? (
+              <Tooltip label="Remove from favourites">
+                <IconButton
+                  variant="outline"
+                  colorScheme="teal"
+                  aria-label="Remove Fav"
+                  icon={<AiFillStar />}
+                  /* @ts-ignore */
+                  onClick={() => removeFav(assetDetails)}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip label="Add to favourites">
+                <IconButton
+                  variant="outline"
+                  colorScheme="teal"
+                  aria-label="Add fav"
+                  icon={<AiOutlineStar />}
+                  /* @ts-ignore */
+                  onClick={() => addFav(assetDetails)}
+                />
+              </Tooltip>
+            )}
+          </Box>
           <Box
             w={{ base: 14, lg: 16 }}
             h={{ base: 14, lg: 16 }}
@@ -57,6 +91,7 @@ export default function AssetIbcItem({
           <Text fontSize="lg" mr={4}>
             {name}
           </Text>
+          <Badge>{tags}</Badge>
         </Flex>
       </GridItem>
       <GridItem

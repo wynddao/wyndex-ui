@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { Box, BoxProps, CloseButton, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiActivity, FiPackage, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
@@ -14,8 +14,8 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
+  { name: "Gauges", to: "https://app.wynddao.com/gauges", icon: FiUsers, isExternalLink: true },
   { name: "Governance", to: "https://app.wynddao.com", icon: FiUsers, isExternalLink: true },
-  { name: "Mystery Box", to: "/mystery-box", icon: FiPackage },
 ];
 
 interface SidebarContentProps extends BoxProps {
@@ -23,7 +23,6 @@ interface SidebarContentProps extends BoxProps {
 }
 
 export default function SidebarContent({ onClose, ...restProps }: SidebarContentProps) {
-  const { theme } = useTheme();
   return (
     <Flex
       flexDirection="column"

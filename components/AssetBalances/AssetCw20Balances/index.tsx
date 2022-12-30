@@ -87,9 +87,6 @@ export default function AssetCw20Balances() {
         borderColor="wynd.base.sidebar"
         borderWidth="1px"
       >
-        {sortedAssets.map((assetDetails, i) => (
-          <AssetCw20Item key={i} assetDetails={assetDetails} />
-        ))}
       </Stack>
     </Box>
   );
