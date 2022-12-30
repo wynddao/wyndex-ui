@@ -23,7 +23,7 @@ const Rate: React.FC<IProps> = ({ fromToken, toToken, simulatedOperation, inputA
   const minimumReceived = ((100 - slippage) / 100) * Number(simulatedOperation.amount);
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-
+  console.log(route);
   const totalFee = useMemo(
     () =>
       simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
