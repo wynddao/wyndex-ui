@@ -21,8 +21,7 @@ const SwapIcon: React.FC<IProps> = ({ swapTokens }) => {
       className="swap-toggle-icon"
       justify="center"
       align="center"
-      margin={{ base: "-1.5rem 0 -3.5rem 0", lg: "2rem -2rem 0 -2rem" }}
-      transform={{ lg: "rotate(90deg)" }}
+      margin={{ base: "-1.5rem 0 -3.5rem 0", lg: "-1rem -2rem -1rem -2rem" }}
       transition="all ease-in 0.5s"
     >
       <Flex

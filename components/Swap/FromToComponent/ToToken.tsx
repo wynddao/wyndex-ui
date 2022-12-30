@@ -16,9 +16,6 @@ interface IProps {
 const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmount }) => {
   return (
     <Box flex="1">
-      <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }} textAlign="right">
-        To
-      </Text>
       <Box
         p={4}
         borderRadius="lg"
@@ -30,6 +27,9 @@ const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmo
         minHeight="120px"
         justifyContent="end"
       >
+        <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }} textAlign="left">
+          To
+        </Text>
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector
             selectedAsset={toToken}

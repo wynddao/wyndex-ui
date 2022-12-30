@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { Box, Button, Flex, Image, keyframes } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -115,12 +115,12 @@ const Swap: React.FC = () => {
       flexFlow="column"
       w="full"
       p={{ base: 4, sm: 6 }}
-      maxWidth="1200px"
+      maxWidth="780px"
     >
       <Box zIndex={100} alignSelf="end">
         <Setting slippage={slippage} setSlippage={setSlippage} />
       </Box>
-      <Box display="flex" flexFlow={{ base: "column", lg: "row" }} gap="1rem" position="relative">
+      <Box display="flex" flexFlow={{ base: "column" }} gap={{ base: 1, lg: 0 }} position="relative">
         <FromToken
           toToken={toToken}
           fromToken={fromToken}

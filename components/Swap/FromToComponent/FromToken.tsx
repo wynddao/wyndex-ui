@@ -33,9 +33,6 @@ const FromToken: React.FC<IProps> = ({
 
   return (
     <Box flex="1" minH="120px">
-      <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }}>
-        From
-      </Text>
       <Box
         p={4}
         borderRadius="lg"
@@ -45,30 +42,35 @@ const FromToken: React.FC<IProps> = ({
         pr={{ lg: "2rem" }}
         className="swap-from"
       >
-        <Flex gap="0.5rem" alignSelf="end" alignItems="center" justifyContent="center">
-          <Text color="wynd.neutral.500" textTransform="uppercase" fontSize="xs">
-            Available {microamountToAmount(balance.amount, fromToken.decimals)} {getDenom(fromToken)}
+        <Flex justifyContent="space-between">
+          <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }}>
+            From
           </Text>
-          <Button
-            variant="ghost"
-            fontSize="xs"
-            textTransform="uppercase"
-            size="xs"
-            onClick={() => setInputAmount(microamountToAmount(balance.amount, fromToken.decimals))}
-          >
-            Max
-          </Button>
-          <Button
-            variant="ghost"
-            fontSize="xs"
-            textTransform="uppercase"
-            size="xs"
-            onClick={() =>
-              setInputAmount(microamountToAmount(Number(balance.amount) / 2, fromToken.decimals))
-            }
-          >
-            Half
-          </Button>
+          <Flex gap="0.5rem" alignSelf="end" alignItems="center" justifyContent="center">
+            <Text color="wynd.neutral.500" textTransform="uppercase" fontSize="xs">
+              Available {microamountToAmount(balance.amount, fromToken.decimals)} {getDenom(fromToken)}
+            </Text>
+            <Button
+              variant="ghost"
+              fontSize="xs"
+              textTransform="uppercase"
+              size="xs"
+              onClick={() => setInputAmount(microamountToAmount(balance.amount, fromToken.decimals))}
+            >
+              Max
+            </Button>
+            <Button
+              variant="ghost"
+              fontSize="xs"
+              textTransform="uppercase"
+              size="xs"
+              onClick={() =>
+                setInputAmount(microamountToAmount(Number(balance.amount) / 2, fromToken.decimals))
+              }
+            >
+              Half
+            </Button>
+          </Flex>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector
