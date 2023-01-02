@@ -24,6 +24,7 @@ import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { getNativeIbcTokenDenom } from "../../utils/assets";
+import Head from "next/head";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -80,6 +81,10 @@ export default function PoolHeader({ chainData, pairData, walletAddress, totalIn
 
   return (
     <>
+      <Head>
+        {/* TODO: Pool Title */}
+        <title>WYND DEX | Pool</title>
+      </Head>
       <Box
         bg={"wynd.base.sidebar"}
         bgImage="url('/images/Vector.png')"
