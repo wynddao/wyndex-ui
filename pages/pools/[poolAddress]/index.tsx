@@ -1,11 +1,8 @@
 import Pool from "../../../components/Pool";
+import { useRouter } from "next/router";
 
-interface PoolPageProps {
-  readonly params: {
-    readonly poolAddress: string;
-  };
-}
-
-export default function Page({ params }: PoolPageProps) {
-  return <Pool poolAddress={params.poolAddress} />;
+export default function Page() {
+  const router = useRouter();
+  const { poolAddress } = router.query;
+  return <Pool poolAddress={poolAddress as string} />;
 }
