@@ -7,7 +7,7 @@ export default function Page() {
       <Head>
         <title>WYND DEX | Pool Overview</title>
       </Head>
-      <Pools />;
+      <Pools />
     </>
   );
 }
