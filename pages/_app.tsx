@@ -3,7 +3,7 @@
 import Sidebar from "../components/Sidebar";
 import Providers from "../providers/providers";
 import { Toaster } from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import ToSModal from "../components/ToSModal";
 import { AppProps } from "next/app";
@@ -21,7 +21,9 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
       <Providers>
         <Toaster />
         <Sidebar>
-          <Component {...pageProps} />
+          <Suspense fallback={<Loader />}>
+            <Component {...pageProps} />
+          </Suspense>
         </Sidebar>
         <ToSModal />
       </Providers>
