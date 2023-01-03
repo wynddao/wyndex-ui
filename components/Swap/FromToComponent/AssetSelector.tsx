@@ -11,7 +11,7 @@ import {
   ListItem,
   Text,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useTransition } from "react";
 import { Asset } from "@wynddao/asset-list";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
@@ -29,6 +29,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
   const [open, setOpen] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const dropdownRef = useRef(null);
+  const [isPending, startTransition] = useTransition();
 
   useClickAway(dropdownRef, () => setOpen(false));
 
@@ -42,8 +43,10 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
   );
 
   const changeAsset = (asset: Asset) => {
-    setAsset(asset);
-    setOpen(false);
+    startTransition(() => {
+      setAsset(asset);
+      setOpen(false);
+    });
   };
 
   const AssetsLi = assets.map((asset) => {

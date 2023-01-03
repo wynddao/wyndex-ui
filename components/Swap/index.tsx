@@ -1,7 +1,7 @@
 "use client";
 import { Box, Button, Flex, Image, keyframes } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useTransition } from "react";
 import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
 import { getAssetInfo } from "../../utils/assets";
@@ -35,6 +35,7 @@ const Swap: React.FC = () => {
   const { txToast, isTxLoading } = useToast();
   const balance = useRecoilValue(getBalanceByAsset({ address: walletAddress as string, asset: fromToken }));
   const { swapOperationRoutes } = useIndexerInfos({});
+  const [isPending, startTransition] = useTransition();
 
   const operations = useRecoilValue(
     swapOperationRoutes({ askAsset: getAssetInfo(toToken), offerAsset: getAssetInfo(fromToken) }),
@@ -87,8 +88,10 @@ const Swap: React.FC = () => {
   ]);
 
   const swapTokenPosition = () => {
-    setFromToken(toToken);
-    setToToken(fromToken);
+    startTransition(() => {
+      setFromToken(toToken);
+      setToToken(fromToken);
+    });
   };
 
   const handlerSwap = useCallback(async () => {
