@@ -1,30 +1,19 @@
-"use client";
-
 import { Badge, Box, Button, Flex, Grid, GridItem, IconButton, Image, Text, Tooltip } from "@chakra-ui/react";
-import { Asset } from "@wynddao/asset-list";
-import { IBCAsset, NativeAsset } from "@wynddao/asset-list/build/types";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { useSetRecoilState } from "recoil";
-import { AssetIbcWithBalance } from ".";
-import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
-import { microamountToAmount } from "../../../utils/tokens";
+import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
+import { microamountToAmount } from "../../utils/tokens";
+import { ExtendedAsset } from "./utils";
 
-interface AssetIbcItemProps {
-  readonly assetDetails: AssetIbcWithBalance;
-  addFav: (asset: Asset) => void;
-  removeFav: (asset: Asset) => void;
-  isFav: boolean;
+interface AssetBalanceItemProps {
+  readonly asset: ExtendedAsset;
+  readonly toggleFav: () => void;
 }
 
-export default function AssetIbcItem({
-  assetDetails: { name, logoURI, balance, decimals, tags, chain_id },
-  addFav,
-  removeFav,
-  isFav,
-}: AssetIbcItemProps) {
+export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemProps) {
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
-  const assetDetails = { name, logoURI, balance, decimals, tags, chain_id };
+
   return (
     <Grid
       templateColumns={{
@@ -48,29 +37,15 @@ export default function AssetIbcItem({
       <GridItem colSpan={{ base: 2, md: 1 }}>
         <Flex justify={{ base: "center", md: "start" }} align="center">
           <Box mr={3}>
-            {isFav ? (
-              <Tooltip label="Remove from favourites">
-                <IconButton
-                  variant="outline"
-                  colorScheme="teal"
-                  aria-label="Remove Fav"
-                  icon={<AiFillStar />}
-                  /* @ts-ignore */
-                  onClick={() => removeFav(assetDetails)}
-                />
-              </Tooltip>
-            ) : (
-              <Tooltip label="Add to favourites">
-                <IconButton
-                  variant="outline"
-                  colorScheme="teal"
-                  aria-label="Add fav"
-                  icon={<AiOutlineStar />}
-                  /* @ts-ignore */
-                  onClick={() => addFav(assetDetails)}
-                />
-              </Tooltip>
-            )}
+            <Tooltip label={asset.isFav ? "Remove from favourites" : "Add to favourites"}>
+              <IconButton
+                variant="outline"
+                colorScheme="teal"
+                aria-label={asset.isFav ? "Remove Fav" : "Add fav"}
+                icon={asset.isFav ? <AiFillStar /> : <AiOutlineStar />}
+                onClick={() => toggleFav()}
+              />
+            </Tooltip>
           </Box>
           <Box
             w={{ base: 14, lg: 16 }}
@@ -86,12 +61,12 @@ export default function AssetIbcItem({
             mr={4}
             overflow="hidden"
           >
-            <Image alt={`${name} logo`} src={logoURI} width="100%" />
+            <Image alt={`${asset.name} logo`} src={asset.logoURI} width="100%" />
           </Box>
           <Text fontSize="lg" mr={4}>
-            {name}
+            {asset.name}
           </Text>
-          <Badge>{tags}</Badge>
+          <Badge>{asset.tags}</Badge>
         </Flex>
       </GridItem>
       <GridItem
@@ -105,7 +80,7 @@ export default function AssetIbcItem({
         <Text display={{ base: "block", md: "none" }}>IBC Balance</Text>
         <Box w="full" textAlign="end">
           <Text fontSize="lg" mb={0.5}>
-            {microamountToAmount(balance, decimals)}
+            {microamountToAmount(asset.balance, asset.decimals)}
           </Text>
         </Box>
       </GridItem>
@@ -118,7 +93,7 @@ export default function AssetIbcItem({
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        {tags === "ibc" ? (
+        {asset.tags === "ibc" ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
             <Button
               fontSize="sm"
@@ -134,7 +109,7 @@ export default function AssetIbcItem({
                 bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
                 cursor: "initial",
               }}
-              onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: chain_id })}
+              onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: asset.chain_id })}
             >
               IBC Deposit
             </Button>
@@ -150,8 +125,8 @@ export default function AssetIbcItem({
                 bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
                 cursor: "initial",
               }}
-              disabled={balance === "0"}
-              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, chainId: chain_id })}
+              disabled={asset.balance === "0"}
+              onClick={() => setWithdrawIbcModalOpen({ isOpen: true, chainId: asset.chain_id })}
             >
               IBC Withdraw
             </Button>
