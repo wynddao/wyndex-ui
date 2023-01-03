@@ -30,6 +30,7 @@ const FromToken: React.FC<IProps> = ({
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const price = getAmountByPrice(inputAmount, currency, fromToken, assetPrices);
+  const isJuno = fromToken.denom === "ujunox" || fromToken.denom === "ujuno";
 
   return (
     <Box flex="1" minH="120px">
@@ -55,7 +56,14 @@ const FromToken: React.FC<IProps> = ({
               fontSize="xs"
               textTransform="uppercase"
               size="xs"
-              onClick={() => setInputAmount(microamountToAmount(balance.amount, fromToken.decimals))}
+              onClick={() =>
+                setInputAmount(
+                  microamountToAmount(
+                    isJuno ? Number(balance.amount) - 50000 : balance.amount,
+                    fromToken.decimals,
+                  ),
+                )
+              }
             >
               Max
             </Button>

@@ -137,6 +137,7 @@ const Swap: React.FC = () => {
           fromToken={fromToken}
           toToken={toToken}
           setToToken={setToToken}
+          inputAmount={inputAmount}
           expectedAmount={simulatedOperation.amount}
         />
       </Box>

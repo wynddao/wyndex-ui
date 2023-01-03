@@ -2,7 +2,11 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 
 import React from "react";
-import { getDenom } from "../../../utils/assets";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../../state";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { getAmountByPrice, getDenom } from "../../../utils/assets";
+import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 
@@ -11,9 +15,22 @@ interface IProps {
   toToken: Asset;
   setToToken: (asset: Asset) => void;
   expectedAmount: string;
+  inputAmount: string;
 }
 
-const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmount }) => {
+const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmount, inputAmount }) => {
+  const currency = useRecoilValue(currencyAtom);
+  const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
+  const price = getAmountByPrice(
+    (Number(expectedAmount) / 1000000).toString(),
+    currency,
+    toToken,
+    assetPrices,
+  );
+  const priceFrom = getAmountByPrice(Number(inputAmount).toString(), currency, fromToken, assetPrices);
+
+  const impact = 100 - (price / priceFrom) * 100;
+
   return (
     <Box flex="1">
       <Box
@@ -40,6 +57,9 @@ const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmo
             <Flex alignItems="center" gap="0.5rem">
               <Text textTransform="uppercase">
                 ≈ {microamountToAmount(expectedAmount, toToken.decimals, 6)} {getDenom(toToken)}
+              </Text>
+              <Text position="absolute" right="0" bottom="-4" fontSize="xs" color="wynd.neutral.500">
+                ≈ {formatCurrency(currency, `${price.toFixed(6)}`)} (-{impact.toFixed(2)} %)
               </Text>
             </Flex>
           </Flex>
