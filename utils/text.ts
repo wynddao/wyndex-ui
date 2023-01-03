@@ -9,7 +9,7 @@ export const renderUnboundingText = (
 ): string => {
   switch (text) {
     case "unstake":
-      return "Unstake your tokens";
+      return "Unbond your tokens";
     case "bondDown":
       return `Decrease your bonding duration from ${secondsToDays(stake.unbonding_period)} days to
         ${lowerDuration?.unbonding_period && secondsToDays(lowerDuration?.unbonding_period)} days`;

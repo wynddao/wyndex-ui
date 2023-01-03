@@ -12,7 +12,6 @@ import {
   NumberInputField,
   Stack,
   Text,
-  useColorMode,
   useRadioGroup,
   VStack,
 } from "@chakra-ui/react";
@@ -175,24 +174,38 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "unstake":
         return (
           <Text fontSize="large">
-            You{"'"}re about to unstake {amount} {tokenSymbol}!
+            You{"'"}re about to unbond {amount} {tokenSymbol}!
           </Text>
         );
       case "bondDown":
         return (
-          <p>
-            You{"'"}re about to re-bond {amount} {tokenSymbol} from a duration of{" "}
-            {secondsToDays(stake.unbonding_period)} days to a lower duration of {/* @ts-ignore */}
-            {secondsToDays(lowerDuration?.unbonding_period)} days!
-          </p>
+          <Stack>
+            <p>
+              You{"'"}re about to rebond {amount} {tokenSymbol} from a duration of{" "}
+              {secondsToDays(stake.unbonding_period)} days to a lower duration of{" "}
+              {secondsToDays(lowerDuration?.unbonding_period ?? 0)} days!
+            </p>
+            <p>
+              If executed, this means that your liquidity will take a minimum of{" "}
+              {secondsToDays(lowerDuration?.unbonding_period ?? 0)} days to become liquid once you decide to
+              rebond or unbond
+            </p>
+          </Stack>
         );
       case "bondUp":
         return (
-          <p>
-            You{"'"}re about to re-bond {amount} {tokenSymbol} from a duration of{" "}
-            {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
-            {secondsToDays(higherDuration?.unbonding_period)} days!
-          </p>
+          <Stack>
+            <p>
+              You{"'"}re about to rebond {amount} {tokenSymbol} from a duration of{" "}
+              {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
+              {secondsToDays(higherDuration?.unbonding_period)} days!
+            </p>
+            <p>
+              If executed, this means that your liquidity will take a minimum of{" "}
+              {secondsToDays(higherDuration?.unbonding_period ?? 0)} days to become liquid once you decide to
+              rebond or unbond
+            </p>
+          </Stack>
         );
       default:
         return null;
