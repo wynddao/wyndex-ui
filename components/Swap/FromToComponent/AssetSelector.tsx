@@ -11,13 +11,15 @@ import {
   ListItem,
   Text,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef, useState, useTransition } from "react";
+import React, { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Asset } from "@wynddao/asset-list";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import { getAssetList } from "../../../utils/getAssetList";
+import { useIndexerInfos } from "../../../state";
+import { microamountToAmount } from "../../../utils/tokens";
 
 interface IProps {
   selectedAsset: Asset;
@@ -30,6 +32,8 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
   const [filter, setFilter] = useState<string>("");
   const dropdownRef = useRef(null);
   const [isPending, startTransition] = useTransition();
+  const { ibcBalances, cw20Balances } = useIndexerInfos({ fetchIbcBalances: true, fetchCw20Balances: true });
+  const [assetsWithBalances, setAssetsWithBalances] = useState<(Asset & { balance: number })[]>([]);
 
   useClickAway(dropdownRef, () => setOpen(false));
 
@@ -49,7 +53,21 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
     });
   };
 
-  const AssetsLi = assets.map((asset) => {
+  useEffect(() => {
+    const assetWithBalances = assets.map((asset) => {
+      const balance =
+        asset.tags === "cw20"
+          ? cw20Balances.find((el) => el.address === asset.token_address)?.balance ?? 0
+          : ibcBalances.find((el) => el.denom === asset.juno_denom || el.denom === asset.denom)?.amount ?? 0;
+
+      return { ...asset, balance: Number(balance) };
+    });
+
+    assetWithBalances.sort((a, b) => (a.balance > b.balance ? -1 : 1));
+    setAssetsWithBalances(assetWithBalances);
+  }, [assets, cw20Balances, ibcBalances]);
+
+  const AssetsLi = assetsWithBalances.map((asset) => {
     return (
       <ListItem
         key={asset.name}
@@ -59,10 +77,15 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
         _hover={{ background: "whiteAlpha.200", cursor: "pointer" }}
         borderRadius="lg"
       >
-        <Flex alignItems="center" justifyContent="start" gap="0.5rem">
-          <Image alt={asset.name} src={asset.logoURI} w="2rem" h="2rem" />
-          <Text fontWeight="bold" fontSize="md" textTransform="capitalize">
-            {asset.name.toLowerCase()}
+        <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
+          <Flex alignItems="center">
+            <Image alt={asset.name} src={asset.logoURI} w="2rem" h="2rem" />
+            <Text ml={2} fontWeight="bold" fontSize="md" textTransform="capitalize">
+              {asset.name.toLowerCase()}
+            </Text>
+          </Flex>
+          <Text ml={4} fontSize="xs" color="wynd.neutral.500">
+            {microamountToAmount(asset.balance, 6)}
           </Text>
         </Flex>
       </ListItem>
@@ -109,7 +132,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
         position="absolute"
         left="0"
         mt="0.5rem"
-        width="100%"
+        width="150%"
         borderRadius="lg"
         transform={open ? "scale(1)" : "scale(0)"}
         transition="all linear 0.2s"
@@ -118,7 +141,6 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
         alignItems="center"
         flexFlow="column"
         gap="1rem"
-        maxWidth="fit-content"
         ref={dropdownRef}
       >
         <InputGroup size="sm">
