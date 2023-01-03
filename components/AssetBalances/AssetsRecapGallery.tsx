@@ -1,5 +1,3 @@
-"use client";
-
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useRecoilValue } from "recoil";
@@ -60,7 +58,7 @@ export default function AssetsRecapGallery() {
         </Box>
         <Box py={{ md: 2 }}>
           <Text fontWeight="semibold" opacity={0.7}>
-            Locked Assets
+            Bonded Assets
           </Text>
           <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
             {walletAddress
