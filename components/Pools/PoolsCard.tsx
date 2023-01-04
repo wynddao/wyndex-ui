@@ -1,5 +1,5 @@
 "use client";
-import { Box, Divider, Flex, Grid, GridItem, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
+import { Box, Divider, Flex, Grid, GridItem, Text, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
 import { getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
 import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
@@ -10,6 +10,7 @@ import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import MyShares from "./MyShares";
+import Carousel from "../Carousel";
 
 interface PoolsCardProps {
   readonly poolsData: readonly any[];
@@ -17,7 +18,7 @@ interface PoolsCardProps {
   readonly assetPrices: any[];
 }
 
-function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD: any; tvl: string }) {
+function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD: any; tvl: string }) {
   return (
     <Link key={index} href={`/pools/${pool.address}`}>
       <Box
@@ -85,7 +86,6 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
                 if (assetInfo.hasOwnProperty("native")) {
                   return (
                     <span key={index}>
-                      {/* @ts-ignore */}
                       {microdenomToDenom(getNativeIbcTokenDenom(assetInfo.native))}
                       {divider}
                     </span>
@@ -93,7 +93,6 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
                 } else {
                   return (
                     <span key={index}>
-                      {/* @ts-ignore */}
                       <TokenName address={assetInfo.token} />
                       {divider}
                     </span>
@@ -104,9 +103,9 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
             <Text fontWeight="bold" color={"wynd.neutral.600"} wordBreak="break-word"></Text>
           </Flex>
         </Flex>
-        <Grid templateColumns={{ lg: "1fr 1fr" }} gap={{ base: 2, md: 4 }}>
+        <Grid templateColumns={"1fr 1fr"} gap={{ base: 2, md: 4 }}>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.600"}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
               APR
             </Text>
             <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
@@ -114,18 +113,18 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.600"}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
               TVL
             </Text>
             <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
               {tvl}
             </Text>
           </GridItem>
-          <GridItem colSpan={{ lg: 2 }}>
+          <GridItem colSpan={2}>
             <Divider borderColor={"wynd.cyan.300"} />
           </GridItem>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.600"}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
               Liquidity
             </Text>
 
@@ -146,7 +145,7 @@ function CarouselCard({ index, pool, poolD, tvl }: { index: number; pool: any; p
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.600"}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
               My Shares
             </Text>
             <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
@@ -175,16 +174,21 @@ export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCar
             Number(microamountToAmount(poolD[1].amount, 6)),
       ).toString(),
     );
+
     return (
       <div key={index}>
-        <CarouselCard tvl={tvl} pool={pool} poolD={poolD} index={index} />
+        <PoolCard tvl={tvl} pool={pool} poolD={poolD} index={index} />
       </div>
     );
   });
 
-  return (
-    <SimpleGrid columns={{ sm: 1, md: 2, lg: 3, xl: 4 }} gap={4} mb={8}>
-      {items}
-    </SimpleGrid>
-  );
+  const slides =
+    useBreakpointValue({
+      base: 1,
+      lg: 2,
+      xl: 3,
+      "2xl": 4,
+    }) || 1;
+
+  return <Carousel numOfSlides={slides}>{items}</Carousel>;
 }
