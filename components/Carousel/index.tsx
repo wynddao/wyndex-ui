@@ -5,13 +5,18 @@ import "@splidejs/splide/css/sea-green";
 
 interface IProps {
   numOfSlides: number;
-  initialSlide?: number;
-  withDots?: boolean;
 }
 
-const Carousel: React.FC<PropsWithChildren<IProps>> = ({ children, numOfSlides, initialSlide, withDots }) => {
+const Carousel: React.FC<PropsWithChildren<IProps>> = ({ children, numOfSlides }) => {
   const child = Children.toArray(children);
 
+  if (!child.length) return <></>;
+  if (child.length <= numOfSlides)
+    return (
+      <Box mb={8} gap="1rem" display="grid" gridTemplateColumns={`repeat(${numOfSlides},1fr)`}>
+        {children}
+      </Box>
+    );
   return (
     <Box my={8}>
       <Splide hasTrack={false} options={{ rewind: true, gap: "1rem", perPage: numOfSlides }}>
