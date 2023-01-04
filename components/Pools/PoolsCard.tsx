@@ -125,7 +125,7 @@ function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD
           </GridItem>
           <GridItem>
             <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
-              Liquidity
+              Total Liquidity
             </Text>
 
             <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
