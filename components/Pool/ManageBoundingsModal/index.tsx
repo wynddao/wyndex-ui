@@ -51,7 +51,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   } = props;
   const { address: walletAddress } = useWallet();
   const [selectedMode, setSelectedMode] = useState<string>("");
-  const [amount, setAmount] = useState<string>("0");
+  const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -156,7 +156,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           <NumberInput
             alignItems="center"
             bg={"wynd.alpha.50"}
-            min={0}
             value={amount}
             key="amount"
             max={roundForExecution(Number(microamountToAmount(stake.stake, 6)))}
@@ -174,14 +173,14 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "unstake":
         return (
           <Text fontSize="large">
-            You{"'"}re about to unbond {amount} {tokenSymbol}!
+            You{"'"}re about to unbond {amount || "0"} {tokenSymbol}!
           </Text>
         );
       case "bondDown":
         return (
           <Stack>
             <p>
-              You{"'"}re about to rebond {amount} {tokenSymbol} from a duration of{" "}
+              You{"'"}re about to rebond {amount || "0"} {tokenSymbol} from a duration of{" "}
               {secondsToDays(stake.unbonding_period)} days to a lower duration of{" "}
               {secondsToDays(lowerDuration?.unbonding_period ?? 0)} days!
             </p>
@@ -196,7 +195,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
         return (
           <Stack>
             <p>
-              You{"'"}re about to rebond {amount} {tokenSymbol} from a duration of{" "}
+              You{"'"}re about to rebond {amount || "0"} {tokenSymbol} from a duration of{" "}
               {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
               {secondsToDays(higherDuration?.unbonding_period)} days!
             </p>
@@ -242,12 +241,12 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: lowerDuration?.unbonding_period || 0,
-            tokens: amountToMicroamount(amount, 6),
+            tokens: amountToMicroamount(amount || "0", 6),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
           reset();
-          setAmount("0");
+          setAmount("");
           onClose();
           return res;
         });
@@ -258,12 +257,12 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: higherDuration?.unbonding_period || 0,
-            tokens: amountToMicroamount(amount, 6),
+            tokens: amountToMicroamount(amount || "0", 6),
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
           reset();
-          setAmount("0");
+          setAmount("");
           onClose();
           return res;
         });
@@ -272,13 +271,13 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "unstake": {
         await txToast(async () => {
           const res = await doUnbond({
-            tokens: amountToMicroamount(amount, 6),
+            tokens: amountToMicroamount(amount || "0", 6),
             unbondingPeriod: stake.unbonding_period,
           });
           await new Promise((resolve) => setTimeout(resolve, 6500));
           refreshBondings();
           reset();
-          setAmount("0");
+          setAmount("");
           onClose();
           return res;
         });
@@ -292,7 +291,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       isOpen={isOpen}
       onClose={() => {
         reset();
-        setAmount("0");
+        setAmount("");
         onClose();
       }}
       isCentered={true}
@@ -326,7 +325,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
                   onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
                   isDisabled={
                     activeStep === 1 &&
-                    (Number(amount) === 0 || Number(amountToMicroamount(amount, 6)) > Number(stake.stake))
+                    (Number(amount || "0") <= 0 ||
+                      Number(amountToMicroamount(amount, 6)) > Number(stake.stake))
                   }
                   isLoading={loading}
                   loadingText={"Executing"}
