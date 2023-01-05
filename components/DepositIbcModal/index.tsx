@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Button,
@@ -64,7 +62,7 @@ export default function DepositIbcModal() {
 
     try {
       setIsSubmitting(true);
-      const signer = keplrClient.getOfflineSigner(chainInfo.chainId);
+      const signer = await keplrClient.getOfflineSigner(chainInfo.chainId);
       const gasPrice = GasPrice.fromString(
         String(
           chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === asset.denom)?.gasPriceStep
