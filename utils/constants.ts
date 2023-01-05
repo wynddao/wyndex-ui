@@ -5,3 +5,5 @@ export const MULTI_HOP_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_MULTI_HOP_CONT
 export const REST_API_ENDPOINT = process.env.NEXT_PUBLIC_REST_API_ENDPOINT || "";
 export const EXPLORER_URL = process.env.NEXT_PUBLIC_EXPLORER_URL || "";
 export const INDEXER_API_ENDPOINT = process.env.NEXT_PUBLIC_INDEXER_API_ENDPOINT || "";
+export const WYND_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_WYND_TOKEN_ADDRESS || "";
+export const FEE_DENOM = process.env.NEXT_PUBLIC_FEE_DENOM || "";

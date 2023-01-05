@@ -3,6 +3,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../state";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
+import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../utils";
 import { formatCurrency } from "../../utils/currency";
 
 export interface AssetsRecap {
@@ -16,12 +17,10 @@ export default function AssetsRecapGallery() {
   const { userFiat, assetPrices } = useIndexerInfos({ fetchCw20Balances: true });
   const currency = useRecoilValue(currencyAtom);
 
-  const junoAssetPrice = assetPrices.find((el) => el.asset === "ujunox");
+  const junoAssetPrice = assetPrices.find((el) => el.asset === FEE_DENOM);
   const junoPrice = currency === "USD" ? junoAssetPrice?.priceInUsd : junoAssetPrice?.priceInEur;
   const junoPriceFormatted = formatCurrency(currency, String(junoPrice ?? "0"));
-  const wyndexAssetPrice = assetPrices.find(
-    (el) => el.asset === "juno1xpnyc3w4zhnr3pgjh8xt8xy3r2jv95gmy044r6ysffwqkqpeyz4qewg57y",
-  );
+  const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice = currency === "USD" ? wyndexAssetPrice?.priceInUsd : wyndexAssetPrice?.priceInEur;
   const wyndexPriceFormatted = formatCurrency(currency, String(wyndexPrice ?? "0"));
 
@@ -108,7 +107,7 @@ export default function AssetsRecapGallery() {
         </Box>
         <Box py={{ md: 2 }}>
           <Text fontWeight="semibold" opacity={0.7}>
-            WYNDEX Price
+            WYND Price
           </Text>
           <Text
             fontSize={{ base: "3xl", md: "4xl" }}
