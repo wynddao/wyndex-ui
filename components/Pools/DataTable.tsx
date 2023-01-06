@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
   Table,
   Thead,
@@ -15,6 +15,9 @@ import {
   Select,
   Box,
   Input,
+  InputGroup,
+  InputLeftElement,
+  Icon,
 } from "@chakra-ui/react";
 import { RxTriangleDown, RxTriangleUp } from "react-icons/rx";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
@@ -27,12 +30,15 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
   FilterFn,
-  getFilteredRowModel
+  getFilteredRowModel,
+  ColumnFiltersState,
 } from "@tanstack/react-table";
 
-import { RankingInfo, rankItem, compareItems } from "@tanstack/match-sorter-utils";
+import { rankItem } from "@tanstack/match-sorter-utils";
 
 import { useRouter } from "next/navigation";
+import { IoSearch } from "react-icons/io5";
+import { getAssetByDenom, getAssetByTokenAddr, getNativeIbcTokenDenom } from "../../utils/assets";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
@@ -40,77 +46,101 @@ export type DataTableProps<Data extends object> = {
 };
 
 export function DataTable<Data extends object>({ data, columns }: DataTableProps<Data>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = React.useState<string>("");
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const router = useRouter();
   const handleRowClick = (row: any) => {
     router.push(`/pools/${row.original.address}`);
   };
 
-  const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
-    const itemRank = rankItem(row.getValue(columnId), value);
+  const fuzzyFilter: FilterFn<any> = (row, _, value) => {
+    const filter = value.toLowerCase();
+    const tokenPool = row.getValue("poolName") as { type: "token" | "native"; value: string }[];
+    const token1 =
+      tokenPool[0].type === "native"
+        ? getAssetByDenom(tokenPool[0].value)
+        : getAssetByTokenAddr(tokenPool[0].value);
+    const token2 =
+      tokenPool[1].type === "native"
+        ? getAssetByDenom(tokenPool[1].value)
+        : getAssetByTokenAddr(tokenPool[1].value);
 
-    // Store the itemRank info
-    addMeta({
-      itemRank,
-    });
-
-    // Return if the item should be filtered in/out
-    return itemRank.passed;
+    return token1?.name.toLowerCase().includes(filter)
+      ? true
+      : token2?.name.toLowerCase().includes(filter)
+      ? true
+      : false;
   };
 
-  const table = useReactTable(
-    {
-      columns,
-      data,
-      getCoreRowModel: getCoreRowModel(),
-      onSortingChange: setSorting,
-      getSortedRowModel: getSortedRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      filterFns: {
-        fuzzy: fuzzyFilter,
-      },
-      state: {
-        globalFilter,
-        sorting,
-      },
-      globalFilterFn: fuzzyFilter,
-      onGlobalFilterChange: setGlobalFilter,
-      getFilteredRowModel: getFilteredRowModel(),
+  const table = useReactTable({
+    columns,
+    data,
+    enableFilters: true,
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    filterFns: {
+      fuzzy: fuzzyFilter,
     },
-  );
+    state: {
+      globalFilter,
+      sorting,
+    },
+  });
 
   return (
     <>
-      <Flex alignItems={"center"} justifyContent={"space-between"}>
+      <Box my={4}>
         <Text
           fontSize="2xl"
           fontWeight="bold"
-          my={4}
           bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
           bgClip="text"
           display="inline-block"
         >
           All Pools
         </Text>
-        <Select
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => {
-            table.setPageSize(Number(e.target.value));
-          }}
-          variant="flushed"
-          display="inline-block"
-          w={200}
+        <Flex
+          gap="1rem"
+          flexFlow={{ base: "column", sm: "row" }}
+          alignItems={{ base: "start", sm: "center" }}
+          justifyContent="space-between"
         >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </Select>
-      </Flex>
+          <InputGroup size="sm">
+            <InputLeftElement pointerEvents="none">
+              <Icon as={IoSearch} w="1rem" h="1rem" color={"wynd.neutral.900"} />
+            </InputLeftElement>
+            <Input
+              placeholder="search..."
+              borderRadius="md"
+              bg="wynd.base.subBg"
+              border="none"
+              value={globalFilter}
+              onChange={({ target }) => setGlobalFilter(target.value)}
+            />
+          </InputGroup>
+          <Select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            variant="flushed"
+            display="inline-block"
+            w={200}
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </Select>
+        </Flex>
+      </Box>
       <Box borderRadius="lg" overflow="hidden">
         <Table variant="simple">
           <Thead>
