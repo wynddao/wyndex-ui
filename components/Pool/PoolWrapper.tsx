@@ -1,7 +1,9 @@
 import { useWallet } from "@cosmos-kit/react";
+import { useRecoilValue } from "recoil";
 import { useIndexerInfos, usePairInfos } from "../../state";
 import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { getAssetPrice } from "../../utils/assets";
 import { microamountToAmount } from "../../utils/tokens";
 import LiquidityMining from "./LiquidityMining";
@@ -9,8 +11,6 @@ import PoolCatalyst from "./PoolCatalyst";
 import PoolCatalystSimple from "./PoolCatalystSimple";
 import PoolHeader from "./PoolHeader";
 import UnboundingsGrid from "./UnbondingsGrid";
-import { currencyAtom } from "../../state/recoil/atoms/settings";
-import { useRecoilValue } from "recoil";
 
 interface PoolWrapperOptions {
   poolData: PoolResponse;
@@ -64,6 +64,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
         walletAddress={walletAddress || ""}
         chainData={poolData}
         pairData={pair}
+        apr={aprCalculated}
       />
       {walletAddress ? (
         <PoolCatalyst chainData={poolData} pairData={pair} />
