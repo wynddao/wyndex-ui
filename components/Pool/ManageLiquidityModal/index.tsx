@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Modal,
   ModalBody,
@@ -24,6 +22,7 @@ const tabName = ["Add Liquidity", "Remove Liquidity"];
 interface ManageLiquidityProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onOpenBondings: () => void;
   readonly data: PairInfo;
   readonly poolData: PoolResponse;
   readonly walletAddress: string;
@@ -32,6 +31,7 @@ interface ManageLiquidityProps {
 export default function ManageLiquidity({
   isOpen,
   onClose,
+  onOpenBondings,
   data,
   poolData,
   walletAddress,
@@ -59,7 +59,15 @@ export default function ManageLiquidity({
             </TabList>
             <TabPanels>
               <TabPanel p={0}>
-                <AddLiquidity data={data} poolData={poolData} refreshBalance={refreshBalance} onClose={onClose} />
+                <AddLiquidity
+                  data={data}
+                  poolData={poolData}
+                  refreshBalance={refreshBalance}
+                  onClose={() => {
+                    onClose();
+                    onOpenBondings();
+                  }}
+                />
               </TabPanel>
               <TabPanel>
                 <RemoveLiquidity
