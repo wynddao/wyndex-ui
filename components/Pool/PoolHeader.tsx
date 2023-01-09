@@ -172,7 +172,7 @@ export default function PoolHeader({
               Swap Fee
             </Text>
             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
-              <span>0.2%</span>
+              <span>{pairData.fee_config.total_fee_bps / 100}%</span>
             </Text>
           </GridItem>
           <GridItem>
