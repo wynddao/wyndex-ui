@@ -1,22 +1,20 @@
-"use client";
-
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
+import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { Cw20Hooks } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexPair.types";
+import { useToast } from "../../state/hooks";
 import { useCw20UserInfos } from "../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
+import { microamountToAmount } from "../../utils/tokens";
 import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
 import PendingBoundingsTable from "./PendingBoundingsTable";
+import PendingUnbondingsTable from "./PendingUnbondingsTable";
 import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnbondingsGrid";
-import { ExecuteResult } from "cosmwasm";
-import { useToast } from "../../state/hooks";
-import PendingUnbondingsTable from "./PendingUnbondingsTable";
-import { microamountToAmount } from "../../utils/tokens";
 
 interface LiquidityMiningOptions {
   apr: {
@@ -98,6 +96,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
                 <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
               </Text>
               <Button
+                disabled={lpBalance === "0"}
                 onClick={() => setIsModalOpen(true)}
                 bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
                 _hover={{
