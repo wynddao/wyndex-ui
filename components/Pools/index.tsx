@@ -2,15 +2,26 @@
 import { Box, Text } from "@chakra-ui/react";
 import { DataTable } from "./DataTable";
 import PoolsCard from "./PoolsCard";
-import { createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper, FilterFn } from "@tanstack/react-table";
 import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
-import { getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
-import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
+import {
+  getAssetByDenom,
+  getAssetByTokenAddr,
+  getAssetPrice,
+  getNativeIbcTokenDenom,
+} from "../../utils/assets";
+import { formatCurrency } from "../../utils/currency";
 import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
+
+declare module "@tanstack/table-core" {
+  interface FilterFns {
+    fuzzy: FilterFn<unknown>;
+  }
+}
 
 export default function Pools() {
   const { pools, userPools, assetPrices } = useIndexerInfos({ fetchPoolData: true });
@@ -61,16 +72,17 @@ export default function Pools() {
         id: "poolName",
         header: "Pool",
         filterFn: "auto",
+        enableColumnFilter: true,
         cell: (props) => (
           <>
             {props.getValue()[0].type === "native" ? (
-              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[0].value))}`}</span>
+              <span>{`${getAssetByDenom(props.getValue()[0].value)?.name}`}</span>
             ) : (
               <TokenName address={props.getValue()[0].value} />
             )}
             {" / "}
             {props.getValue()[1].type === "native" ? (
-              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[1].value))}`}</span>
+              <span>{`${getAssetByDenom(props.getValue()[1].value)?.name}`}</span>
             ) : (
               <TokenName address={props.getValue()[1].value} />
             )}

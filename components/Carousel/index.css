@@ -1,0 +1,15 @@
+.splide {
+  padding: 0 2em 2em !important;
+}
+
+.splide__arrows.custom .splide__arrow {
+  width: 1.5rem;
+}
+
+.splide__arrows.custom .splide__arrow--prev {
+  left: 0;
+}
+
+.splide__arrows.custom .splide__arrow--next {
+  right: 0;
+}
