@@ -11,7 +11,7 @@ import {
   ListItem,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Asset } from "@wynddao/asset-list";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
@@ -29,6 +29,7 @@ interface IProps {
 
 const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens = [] }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const filterRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useState<string>("");
   const dropdownRef = useRef(null);
   const [isPending, startTransition] = useTransition();
@@ -45,6 +46,11 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
       }),
     [filter, hiddenTokens],
   );
+
+  const handlerAssetSelector = useCallback(() => {
+    if (!open) filterRef.current?.focus();
+    setOpen(!open);
+  }, [open, filterRef]);
 
   const changeAsset = (asset: Asset) => {
     startTransition(() => {
@@ -97,7 +103,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
       <Button
         as={motion.button}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setOpen(!open)}
+        onClick={handlerAssetSelector}
         justifyContent="space-between"
         alignItems="center"
         display="flex"
@@ -148,6 +154,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
             <Icon as={IoSearch} w="1rem" h="1rem" color={"wynd.neutral.900"} />
           </InputLeftElement>
           <Input
+            ref={filterRef}
             placeholder="search..."
             borderRadius="md"
             bg="wynd.base.subBg"
