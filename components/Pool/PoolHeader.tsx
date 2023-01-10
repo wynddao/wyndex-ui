@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Button,
@@ -11,26 +9,33 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
-import TokenName from "../TokenName";
-import ManageLiquidityModal from "./ManageLiquidityModal";
-import druid from "./assets/druid.png";
+import { ExecuteResult } from "cosmwasm";
+import Head from "next/head";
 import Image from "next/image";
-import { microdenomToDenom } from "../../utils/tokens";
-import { useCw20UserInfos } from "../../state";
-import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { formatCurrency } from "../../utils/currency";
-import { useStakeInfos } from "../../state/hooks/useStakeInfos";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
+import { Cw20Hooks, useCw20UserInfos, useToast } from "../../state";
+import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
+import { useStakeInfos } from "../../state/hooks/useStakeInfos";
+import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { getNativeIbcTokenDenom } from "../../utils/assets";
-import Head from "next/head";
+import { formatCurrency } from "../../utils/currency";
+import { microdenomToDenom } from "../../utils/tokens";
+import TokenName from "../TokenName";
+import druid from "./assets/druid.png";
+import ManageLiquidityModal from "./ManageLiquidityModal";
+import StartEarningModal from "./StartEarningModal";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
   readonly walletAddress: string;
   readonly totalInFiat: number;
+  readonly apr: {
+    readonly unbonding_period: number;
+    readonly apr: number;
+  }[];
 }
 
 interface PoolHeaderUserProps {
@@ -66,9 +71,46 @@ function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddres
   return <span>{formatCurrency(currency, `${myFiatShare}`)}</span>;
 }
 
-export default function PoolHeader({ chainData, pairData, walletAddress, totalInFiat }: PoolHeaderProps) {
-  const { onOpen, isOpen, onClose } = useDisclosure();
+export default function PoolHeader({
+  chainData,
+  pairData,
+  walletAddress,
+  totalInFiat,
+  apr,
+}: PoolHeaderProps) {
+  const { txToast } = useToast();
+  const { onOpen: onOpenLiquidity, isOpen: isLiquidityOpen, onClose: onCloseLiquidity } = useDisclosure();
+  const { onOpen: onOpenBondings, isOpen: isBondingsOpen, onClose: onCloseBondings } = useDisclosure();
   const currency = useRecoilValue(currencyAtom);
+  const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const [loading, setLoading] = useState<boolean>(false);
+  const wyndexStake = pairData.staking_addr;
+  const { infos } = useStakeInfos(wyndexStake);
+  const { refreshBondings } = useUserStakeInfos(wyndexStake, walletAddress || "");
+  const stake = Cw20Hooks.useSend({
+    contractAddress: pairData.liquidity_token,
+    sender: walletAddress ?? "",
+  });
+
+  const doStake = async (amount: number, duration: number) => {
+    setLoading(true);
+    await txToast(async (): Promise<ExecuteResult> => {
+      const result = await stake({
+        amount: amount.toString(),
+        contract: wyndexStake,
+        msg: btoa(`{"delegate": { "unbonding_period": ${duration}}}`),
+      });
+      onCloseBondings();
+
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
+      refreshBondings();
+      refreshBalance();
+      return result;
+    });
+    setLoading(false);
+  };
+
   const pairNames = pairData.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native")) {
       // @ts-ignore
@@ -100,7 +142,16 @@ export default function PoolHeader({ chainData, pairData, walletAddress, totalIn
           </Heading>
           {walletAddress && (
             <Flex align="center" wrap="wrap">
-              <Button onClick={onOpen} m={2} ml={0} mr={{ md: 4 }}>
+              <Button
+                onClick={onOpenLiquidity}
+                m={2}
+                ml={0}
+                mr={{ md: 4 }}
+                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                _hover={{
+                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                }}
+              >
                 Add/Remove Liquidity
               </Button>
             </Flex>
@@ -158,8 +209,19 @@ export default function PoolHeader({ chainData, pairData, walletAddress, totalIn
         walletAddress={walletAddress}
         poolData={chainData}
         data={pairData}
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isLiquidityOpen}
+        onClose={onCloseLiquidity}
+        onOpenBondings={onOpenBondings}
+      />
+      <StartEarningModal
+        doStake={doStake}
+        isOpen={isBondingsOpen}
+        balance={Number(lpBalance)}
+        tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+        onClose={onCloseBondings}
+        bondingInfos={infos}
+        apr={apr}
+        loading={loading}
       />
     </>
   );
