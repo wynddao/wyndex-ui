@@ -20,67 +20,46 @@ import { motion, useAnimation } from "framer-motion";
 
 const Settings: React.FC = () => {
   const { onToggle, onClose, isOpen } = useDisclosure();
-  const controls = useAnimation();
   const initialFocusRef = useRef(null);
 
   const handlerClick = () => {
-    controls.start({ rotate: 90, transition: { duration: 0.2 }, transitionEnd: { rotate: 0 } });
     onToggle();
   };
 
   return (
     <>
-      <Popover isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef} placement="right-end">
+      <Popover isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef} placement="auto">
         <PopoverTrigger>
           <Box
             as={motion.button}
             alignSelf="start"
             className="general-settings"
-            animate={controls}
             _focus={{ boxShadow: "none" }}
             onClick={handlerClick}
-            whileHover={{
-              scale: 1.2,
-              transition: { type: "spring", stiffness: 400, damping: 10 },
-            }}
+            _hover={{ bg: "whiteAlpha.500" }}
             display="flex"
             alignItems="center"
             justifyContent="center"
-            position="absolute"
-            top={{ base: "initial", md: "3.5rem" }}
-            right={{ base: "initial", md: "-10px" }}
-            left={{ base: "1rem", md: "initial" }}
-            bottom={{ base: "9.5rem", md: "initial" }}
+            borderRadius="md"
+            bg="whiteAlpha.300"
+            py="1"
+            px="2"
             gap="0.5rem"
+            width="100%"
           >
-            <Icon
-              w={{ base: "32px", md: "24px" }}
-              h={{ base: "32px", md: "24px" }}
-              as={AiFillSetting}
-              bg="whiteAlpha.300"
-              borderRadius="full"
-              padding="2px"
-            />
+            <Icon w="24px" h="24px" as={AiFillSetting} padding="2px" />
+            <Text onClick={handlerClick} display={{ base: "inline-flex" }} fontWeight="xl">
+              Settings
+            </Text>
           </Box>
         </PopoverTrigger>
-        <Text
-          onClick={handlerClick}
-          display={{ base: "inline-flex", md: "none" }}
-          position="absolute"
-          left={{ base: "3.2rem", md: "initial" }}
-          bottom={{ base: "9.7rem", md: "initial" }}
-          fontWeight="xl"
-        >
-          Settings
-        </Text>
+
         <PopoverContent
           bg={"wynd.base.sidebar"}
           boxShadow="md"
-          right="-2px"
-          top="-4px"
           className="swap-popover"
-          border={{ base: "1px solid", md: "none" }}
-          borderColor={{ base: "wynd.gray.500", md: "none" }}
+          border={{ base: "1px solid" }}
+          borderColor={{ base: "whiteAlpha.300" }}
         >
           <PopoverHeader pt={4} fontWeight="bold" border="0" fontSize="xl">
             Settings
