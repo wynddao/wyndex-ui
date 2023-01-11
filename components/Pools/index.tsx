@@ -16,6 +16,7 @@ import { formatCurrency } from "../../utils/currency";
 import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
+import { useMemo } from "react";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -24,8 +25,18 @@ declare module "@tanstack/table-core" {
 }
 
 export default function Pools() {
-  const { pools, userPools, assetPrices } = useIndexerInfos({ fetchPoolData: true });
+  const { pools, userPools, assetPrices, ibcBalances, cw20Balances } = useIndexerInfos({
+    fetchPoolData: true,
+    fetchIbcBalances: true,
+    fetchCw20Balances: true,
+  });
+
   const currency = useRecoilValue(currencyAtom);
+
+  const userAssets = useMemo(
+    () => [...ibcBalances, ...cw20Balances].map((t: any) => t.denom || t.address),
+    [ibcBalances, cw20Balances],
+  );
 
   type AssetInfoIndexer =
     | {
@@ -187,7 +198,7 @@ export default function Pools() {
 
         <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
       </Box>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} userAssets={userAssets} />
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
     </Box>
   );
