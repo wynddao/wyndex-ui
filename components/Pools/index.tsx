@@ -93,15 +93,15 @@ export default function Pools() {
         cell: (props) => (
           <>
             {props.getValue()[0].type === "native" ? (
-              <span>{`${getAssetByDenom(props.getValue()[0].value)?.name}`}</span>
+              <span>{`${getAssetByDenom(props.getValue()[0].value)?.symbol}`}</span>
             ) : (
-              <TokenName address={props.getValue()[0].value} />
+              <TokenName symbol={true} address={props.getValue()[0].value} />
             )}
             {" / "}
             {props.getValue()[1].type === "native" ? (
-              <span>{`${getAssetByDenom(props.getValue()[1].value)?.name}`}</span>
+              <span>{`${getAssetByDenom(props.getValue()[1].value)?.symbol}`}</span>
             ) : (
-              <TokenName address={props.getValue()[1].value} />
+              <TokenName symbol={true} address={props.getValue()[1].value} />
             )}
           </>
         ),

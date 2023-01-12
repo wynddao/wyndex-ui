@@ -22,9 +22,10 @@ interface LiquidityMiningOptions {
     apr: number;
   }[];
   pairData: PairInfo;
+  pairNames: JSX.Element[];
 }
 
-export default function LiquidityMining({ pairData, apr }: LiquidityMiningOptions) {
+export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityMiningOptions) {
   const wyndexStake = pairData.staking_addr;
   const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
@@ -89,7 +90,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
                 color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
                 mb={2}
               >
-                Available LP tokens (<TokenName address={pairData.liquidity_token}></TokenName>)
+                Available LP tokens ({pairNames[0]} / {pairNames[1]})
               </Text>
               <Text fontSize="2xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
                 {microamountToAmount(lpBalance, 6)}{" "}
@@ -129,7 +130,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
           doStake={doStake}
           isOpen={isModalOpen}
           balance={Number(lpBalance)}
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+          pairNames={pairNames}
           onClose={() => setIsModalOpen(false)}
           bondingInfos={infos}
           apr={apr}

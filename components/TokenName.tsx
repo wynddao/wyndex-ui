@@ -9,5 +9,6 @@ interface TokenNameProps {
 export default function TokenName(props: TokenNameProps) {
   const { address, symbol } = props;
   const { tokenName, tokenSymbol } = useTokenInfo(address);
-  return <span>{symbol ? microdenomToDenom(tokenSymbol) : tokenName}</span>;
+  console.log(tokenSymbol);
+  return <span>{symbol ? tokenSymbol : tokenName}</span>;
 }

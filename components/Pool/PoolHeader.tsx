@@ -21,7 +21,6 @@ import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { getNativeIbcTokenDenom } from "../../utils/assets";
 import { formatCurrency } from "../../utils/currency";
-import { microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
 import druid from "./assets/druid.png";
 import ManageLiquidityModal from "./ManageLiquidityModal";
@@ -36,6 +35,7 @@ interface PoolHeaderProps {
     readonly unbonding_period: number;
     readonly apr: number;
   }[];
+  readonly pairNames: JSX.Element[];
 }
 
 interface PoolHeaderUserProps {
@@ -77,6 +77,7 @@ export default function PoolHeader({
   walletAddress,
   totalInFiat,
   apr,
+  pairNames,
 }: PoolHeaderProps) {
   const { txToast } = useToast();
   const { onOpen: onOpenLiquidity, isOpen: isLiquidityOpen, onClose: onCloseLiquidity } = useDisclosure();
@@ -111,16 +112,6 @@ export default function PoolHeader({
     setLoading(false);
   };
 
-  const pairNames = pairData.asset_infos.map((assetInfo, index) => {
-    if (assetInfo.hasOwnProperty("native")) {
-      // @ts-ignore
-      return <span key={index}>{microdenomToDenom(getNativeIbcTokenDenom(assetInfo.native))}</span>;
-    } else {
-      // @ts-ignore
-      return <TokenName key={index} address={assetInfo.token} />;
-    }
-  });
-
   return (
     <>
       <Head>
@@ -136,7 +127,7 @@ export default function PoolHeader({
         position="relative"
         overflow="hidden"
       >
-        <Flex align="center" wrap="wrap" mb={6}>
+        <Flex align="center" wrap="wrap" mb={7}>
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
             Pool: {pairNames[0]} / {pairNames[1]}
           </Heading>
@@ -144,9 +135,6 @@ export default function PoolHeader({
             <Flex align="center" wrap="wrap">
               <Button
                 onClick={onOpenLiquidity}
-                m={2}
-                ml={0}
-                mr={{ md: 4 }}
                 bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
                 _hover={{
                   bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
@@ -217,7 +205,7 @@ export default function PoolHeader({
         doStake={doStake}
         isOpen={isBondingsOpen}
         balance={Number(lpBalance)}
-        tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
+        pairNames={pairNames}
         onClose={onCloseBondings}
         bondingInfos={infos}
         apr={apr}

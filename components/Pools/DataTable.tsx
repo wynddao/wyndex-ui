@@ -64,9 +64,9 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
         ? getAssetByDenom(tokenPool[1].value)
         : getAssetByTokenAddr(tokenPool[1].value);
 
-    return token1?.name.toLowerCase().includes(filter)
+    return token1?.symbol.toLowerCase().includes(filter)
       ? true
-      : token2?.name.toLowerCase().includes(filter)
+      : token2?.symbol.toLowerCase().includes(filter)
       ? true
       : false;
   };
