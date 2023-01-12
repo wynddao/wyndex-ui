@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Button,
   Flex,
@@ -12,16 +10,20 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { useToast, WyndexStakeHooks } from "../../state";
-import { microamountToAmount, microcoinToCoin } from "../../utils/tokens";
+import { startTransition } from "react";
+import { useRecoilRefresher_UNSTABLE } from "recoil";
+import { useIndexerInfos, useToast, WyndexStakeHooks } from "../../state";
+import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
+import { microamountToAmount } from "../../utils/tokens";
 
-interface ManageLiquidityProps {
+interface UnclaimModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly totalUnstakingAvailable: number;
   readonly wyndexStakeAddress: string;
-  readonly refresh: () => void;
+  readonly refreshPendingUnstaking: () => void;
   readonly tokenSymbol: any;
+  readonly pairData: PairInfo;
 }
 
 export default function UnclaimModal({
@@ -29,10 +31,13 @@ export default function UnclaimModal({
   onClose,
   totalUnstakingAvailable,
   wyndexStakeAddress,
-  refresh,
+  refreshPendingUnstaking,
   tokenSymbol,
-}: ManageLiquidityProps) {
+  pairData,
+}: UnclaimModalProps) {
   const { address: walletAddress } = useWallet();
+  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
   const { txToast } = useToast();
   const doClaim = WyndexStakeHooks.useClaim({
     contractAddress: wyndexStakeAddress,
@@ -42,8 +47,17 @@ export default function UnclaimModal({
     await txToast(doClaim);
     onClose();
     // New balances will not appear until the next block.
-    await new Promise((resolve) => setTimeout(resolve, 6500));
-    refresh();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
+    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
+    //FIXME - This startTransition does not work
+    startTransition(() => {
+      refreshPairBalances();
+      refreshPendingUnstaking();
+
+      if (hasCw20) refreshCw20Balances();
+      if (hasNative) refreshIbcBalances();
+    });
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
