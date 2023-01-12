@@ -1,24 +1,23 @@
-"use client";
 import { Box, Button, Flex, Image, keyframes } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import React, { useCallback, useMemo, useState, useTransition } from "react";
-import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
-import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
-import { getAssetInfo } from "../../utils/assets";
-import SwapIcon from "./FromToComponent/SwapIcon";
-import FromToken from "./FromToComponent/FromToken";
-import Rate from "./RateComponent/Rate";
-import Setting from "./Setting/Setting";
-import ToToken from "./FromToComponent/ToToken";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
-import { getAssetList } from "../../utils/getAssetList";
-import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
-import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
+import { toBase64, toUtf8 } from "cosmwasm";
+import React, { startTransition, useCallback, useMemo, useState } from "react";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../state";
 import { useSend } from "../../state/hooks/clients/Cw20";
-import { toBase64, toUtf8 } from "cosmwasm";
+import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
+import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
+import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
+import { getAssetInfo } from "../../utils/assets";
+import { getAssetList } from "../../utils/getAssetList";
 import { getRouteByOperations } from "../../utils/getRouteByOperations";
+import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
+import FromToken from "./FromToComponent/FromToken";
+import SwapIcon from "./FromToComponent/SwapIcon";
+import ToToken from "./FromToComponent/ToToken";
+import Rate from "./RateComponent/Rate";
+import Setting from "./Setting/Setting";
 
 const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -33,16 +32,16 @@ const Swap: React.FC = () => {
   const [inputAmount, setInputAmount] = useState<string>("1");
   const [slippage, setSlippage] = useState<number>(1);
   const { txToast, isTxLoading } = useToast();
-  const balance = useRecoilValue(getBalanceByAsset({ address: walletAddress as string, asset: fromToken }));
-  const { swapOperationRoutes } = useIndexerInfos({});
-  const [isPending, startTransition] = useTransition();
+  const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const fromBalanceSelector = getBalanceByAsset({ address: walletAddress || "", asset: fromToken });
+  const fromBalance = useRecoilValue(fromBalanceSelector);
+  const refreshFromBalance = useRecoilRefresher_UNSTABLE(fromBalanceSelector);
+  const refreshToBalance = useRecoilRefresher_UNSTABLE(
+    getBalanceByAsset({ address: walletAddress || "", asset: toToken }),
+  );
 
   const operations = useRecoilValue(
     swapOperationRoutes({ askAsset: getAssetInfo(toToken), offerAsset: getAssetInfo(fromToken) }),
-  );
-
-  const refreshBalance = useRecoilRefresher_UNSTABLE(
-    getBalanceByAsset({ address: walletAddress as string, asset: fromToken }),
   );
 
   const { simulatedOperation } = useSimulateOperationInfos(
@@ -98,19 +97,44 @@ const Swap: React.FC = () => {
     if (isTxLoading) return;
     if (walletAddress) {
       await txToast(swap);
-      refreshBalance();
+
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      //FIXME - This startTransition does not work
+      startTransition(() => {
+        refreshFromBalance();
+        refreshToBalance();
+        if ("token_address" in fromToken || "token_address" in toToken) {
+          refreshCw20Balances();
+        }
+        if (!("token_address" in fromToken) && !("token_address" in toToken)) {
+          refreshIbcBalances();
+        }
+      });
     } else {
       connect();
     }
-  }, [connect, isTxLoading, refreshBalance, swap, txToast, walletAddress]);
+  }, [
+    connect,
+    fromToken,
+    isTxLoading,
+    refreshCw20Balances,
+    refreshFromBalance,
+    refreshIbcBalances,
+    refreshToBalance,
+    swap,
+    toToken,
+    txToast,
+    walletAddress,
+  ]);
 
   const buttonText = useMemo(() => {
     if (isTxLoading) return "";
     if (!walletAddress) return "Connect Wallet";
-    if (Number(inputAmount) > Number(microamountToAmount(balance.amount, fromToken.decimals)))
+    if (Number(inputAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
       return "Insufficient Amount";
     if (walletAddress) return "Swap";
-  }, [balance.amount, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
+  }, [fromBalance.amount, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
 
   return (
     <Flex
@@ -130,7 +154,7 @@ const Swap: React.FC = () => {
           setFromToken={setFromToken}
           inputAmount={inputAmount}
           setInputAmount={setInputAmount}
-          balance={balance}
+          balance={fromBalance}
         />
         <SwapIcon swapTokens={swapTokenPosition} />
         <ToToken
@@ -149,7 +173,7 @@ const Swap: React.FC = () => {
         disabled={
           !isTxLoading &&
           isWalletConnected &&
-          Number(inputAmount) > Number(microamountToAmount(balance.amount, fromToken.decimals))
+          Number(inputAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals))
         }
         bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
