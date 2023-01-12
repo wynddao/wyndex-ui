@@ -1,30 +1,19 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Thead,
-  Tr,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BsPatchCheckFill } from "react-icons/bs";
+import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
-import { secondsToDays } from "../../utils/time";
 import { microamountToAmount } from "../../utils/tokens";
 import UnclaimModal from "./UnclaimModal";
 
 interface PendingUnbondingsTableProps {
   stakeAddress: string;
   tokenName: any;
+  pairData: PairInfo;
 }
 
 export default function PendingUnbondingsTable(props: PendingUnbondingsTableProps) {
-  const { stakeAddress, tokenName } = props;
+  const { stakeAddress, tokenName, pairData } = props;
   const { pendingUnstaking, refreshPendingUnstaking } = useStakeInfos(stakeAddress, true);
   const [claimable, setClaimable] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -113,8 +102,9 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
         onClose={() => setModalOpen(false)}
         totalUnstakingAvailable={totalUnstakingAvaiable}
         wyndexStakeAddress={stakeAddress}
-        refresh={refreshPendingUnstaking}
+        refreshPendingUnstaking={refreshPendingUnstaking}
         tokenSymbol={tokenName}
+        pairData={pairData}
       />
     </>
   );

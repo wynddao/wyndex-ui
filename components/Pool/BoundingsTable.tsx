@@ -1,25 +1,8 @@
-"use client";
-
-import {
-  Box,
-  Button,
-  Flex,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Thead,
-  Tr,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useState } from "react";
-import {
-  BondingInfoResponse,
-  BondingPeriodInfo,
-  StakedResponse,
-} from "../../state/clients/types/WyndexStake.types";
+import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
+import { BondingPeriodInfo, StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
 import { secondsToDays } from "../../utils/time";
@@ -34,9 +17,16 @@ interface BoundingsTableProps {
     unbonding_period: number;
     apr: number;
   }[];
+  pairData: PairInfo;
 }
 
-export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol, apr }: BoundingsTableProps) {
+export default function BoundingsTable({
+  stakeContract,
+  tokenName,
+  tokenSymbol,
+  apr,
+  pairData,
+}: BoundingsTableProps) {
   const tableHeaders = ["Bonded Tier", "Current APR", "Amount", "Action"];
   const { address } = useWallet();
   const { infos } = useStakeInfos(stakeContract);
@@ -145,6 +135,7 @@ export default function BoundingsTable({ stakeContract, tokenName, tokenSymbol, 
           tokenSymbol={tokenSymbol}
           tokenName={tokenName}
           stake={activeStake}
+          pairData={pairData}
         />
       ) : null}
     </>

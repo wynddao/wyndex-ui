@@ -49,7 +49,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
       setIsModalOpen(false);
 
       // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 6500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       refreshBondings();
       refreshBalance();
       return result;
@@ -114,6 +114,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
           tokenSymbol={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
           stakeContract={wyndexStake}
           apr={apr}
+          pairData={pairData}
         />
         <PendingBoundingsTable
           wyndexStake={wyndexStake}
@@ -122,6 +123,7 @@ export default function LiquidityMining({ pairData, apr }: LiquidityMiningOption
         <PendingUnbondingsTable
           stakeAddress={wyndexStake}
           tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+          pairData={pairData}
         />
         <StartEarningModal
           doStake={doStake}

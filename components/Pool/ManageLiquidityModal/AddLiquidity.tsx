@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Button,
@@ -17,18 +15,17 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Coin } from "cosmwasm";
-import { useEffect, useState } from "react";
+import { startTransition, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { CustomHooks, useToast } from "../../../state";
+import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
-import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
-import { getNativeTokenBalance } from "../../../utils/wallet";
-import AssetImage from "../../AssetImage";
-import { useAvailableTokens } from "./useAvailableTokens";
-import { getNativeIbcTokenDenom } from "../../../utils/assets";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
+import { getNativeIbcTokenDenom } from "../../../utils/assets";
+import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
+import AssetImage from "../../AssetImage";
 interface inputType {
   id: string;
   value: string;
@@ -56,12 +53,12 @@ interface DataType {
 export default function AddLiquidity({
   data: pairData,
   onClose,
-  refreshBalance,
+  refreshLpBalance,
   poolData: chainData,
 }: {
   data: PairInfo;
   onClose: () => void;
-  refreshBalance: () => void;
+  refreshLpBalance: () => void;
   poolData: PoolResponse;
 }) {
   const poolData: readonly DataType[] = pairData.asset_infos.map((asset) => {
@@ -85,8 +82,8 @@ export default function AddLiquidity({
 
   const { address: walletAddress } = useWallet();
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
+  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
 
-  const [balances, setBalances] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
@@ -103,20 +100,9 @@ export default function AddLiquidity({
     sender: walletAddress || "",
   });
 
-  const balance = useAvailableTokens(pairData, walletAddress || "");
-
-  useEffect(() => {
-    const b = balance.map(async (e, i) => {
-      if (e === undefined) {
-        // @ts-ignore
-        return await getNativeTokenBalance(walletAddress || "", pairData.asset_infos[i].native);
-      }
-      return e;
-    });
-
-    Promise.all(b).then((res) => setBalances(res));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pairData.asset_infos, walletAddress]);
+  const pairBalancesSelector = assetInfosBalancesSelector(pairData.asset_infos);
+  const pairBalances = useRecoilValue(pairBalancesSelector);
+  const refreshPairBalances = useRecoilRefresher_UNSTABLE(pairBalancesSelector);
 
   const prodiveLiquidity = async () => {
     setLoading(true);
@@ -153,14 +139,23 @@ export default function AddLiquidity({
         assets: assets,
         funds,
       });
-      // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 6500));
-      refreshBondings();
-      refreshBalance();
       onClose();
       return res;
     });
     setLoading(false);
+    // New balances will not appear until the next block.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const hasCw20 = !!assets.find(({ info }) => "token" in info);
+    const hasNative = !!assets.find(({ info }) => "native" in info);
+    //FIXME - This startTransition does not work
+    startTransition(() => {
+      refreshPairBalances();
+      refreshBondings();
+      refreshLpBalance();
+
+      if (hasCw20) refreshCw20Balances();
+      if (hasNative) refreshIbcBalances();
+    });
   };
 
   return (
@@ -273,7 +268,7 @@ export default function AddLiquidity({
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available {microamountToAmount(balances[i] ?? "", 6)}
+                        Available {microamountToAmount(pairBalances[i] ?? "", 6)}
                         <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
@@ -281,7 +276,7 @@ export default function AddLiquidity({
                         size="xs"
                         _focus={{ outline: "none" }}
                         onClick={() => {
-                          const val = microamountToAmount(balances[i] ?? "", 6) || "0";
+                          const val = microamountToAmount(pairBalances[i] ?? "", 6) || "0";
                           const getVal = tokenInputValue.map(
                             ({ id, value: defaultVal, contract: contractDefault }) => {
                               const thisEl = chainData.assets.find((el) =>
@@ -324,7 +319,7 @@ export default function AddLiquidity({
                       value={tokenInputValue[i].value}
                       bg={"wynd.alpha.200"}
                       min={0}
-                      max={Number(balances[i])}
+                      max={Number(pairBalances[i])}
                       onChange={(val) => {
                         const getVal = tokenInputValue.map(
                           ({ id, value: defaultVal, contract: contractDefault }) => {
@@ -375,7 +370,7 @@ export default function AddLiquidity({
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
-              ({ value }, index) => Number(value) > Number(microamountToAmount(balances[index], 6)),
+              ({ value }, index) => Number(value) > Number(microamountToAmount(pairBalances[index], 6)),
             ).length > 0
           }
           w="full"
