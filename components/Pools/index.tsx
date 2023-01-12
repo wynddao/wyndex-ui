@@ -53,13 +53,20 @@ export default function Pools() {
     assets: AssetInfoIndexer[];
   };
 
-  const data: PoolListEntry[] = Object.keys(pools).map((poolAddress) => {
-    return {
-      address: poolAddress,
-      assets: pools[poolAddress],
-      unbondingPeriods: [1, 2, 3, 4],
-    };
-  });
+  const data: PoolListEntry[] = Object.keys(pools)
+    .map((poolAddress) => {
+      return {
+        address: poolAddress,
+        assets: pools[poolAddress],
+        unbondingPeriods: [1, 2, 3, 4],
+      };
+    })
+    .sort(({ assets }) => {
+      const [token1, token2] = assets as { native: string; token: string }[];
+      const t1 = token1.native || token1.token;
+      const t2 = token2.native || token2.token;
+      return userAssets.includes(t1) && userAssets.includes(t2) ? -1 : 1;
+    });
 
   const columnHelper = createColumnHelper<PoolListEntry>();
 
