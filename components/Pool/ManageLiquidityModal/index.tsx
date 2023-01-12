@@ -37,7 +37,7 @@ export default function ManageLiquidity({
   walletAddress,
 }: ManageLiquidityProps) {
   const [tabIndex, setTabIndex] = useState(0);
-  const { balance: lpBalance, refreshBalance } = useCw20UserInfos(data.liquidity_token);
+  const { balance: lpBalance, refreshBalance: refreshLpBalance } = useCw20UserInfos(data.liquidity_token);
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
@@ -62,7 +62,7 @@ export default function ManageLiquidity({
                 <AddLiquidity
                   data={data}
                   poolData={poolData}
-                  refreshBalance={refreshBalance}
+                  refreshLpBalance={refreshLpBalance}
                   onClose={() => {
                     onClose();
                     onOpenBondings();
@@ -71,7 +71,7 @@ export default function ManageLiquidity({
               </TabPanel>
               <TabPanel>
                 <RemoveLiquidity
-                  refreshBalance={refreshBalance}
+                  refreshLpBalance={refreshLpBalance}
                   poolData={poolData}
                   onClose={onClose}
                   pairData={data}
