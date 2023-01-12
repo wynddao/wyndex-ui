@@ -1,20 +1,19 @@
-"use client";
-
 import {
   Box,
   Button,
   Flex,
+  SimpleGrid,
   Slider,
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
   Text,
-  SimpleGrid,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
-import { useState } from "react";
-import { Cw20Hooks, useCw20UserInfos, useToast, WyndexPairHooks } from "../../../state";
+import { startTransition, useState } from "react";
+import { useRecoilRefresher_UNSTABLE } from "recoil";
+import { Cw20Hooks, useIndexerInfos, useToast } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { getNativeIbcTokenDenom } from "../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
@@ -27,17 +26,19 @@ export default function RemoveLiquidity({
   poolData,
   pairData,
   onClose,
-  refreshBalance,
+  refreshLpBalance,
 }: {
   availableTokens: number;
   poolData: PoolResponse;
   pairData: PairInfo;
   onClose: () => void;
-  refreshBalance: () => void;
+  refreshLpBalance: () => void;
 }) {
   const [removeValue, setRemoveValue] = useState(35);
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
+  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
 
   const doSend = Cw20Hooks.useSend({
     sender: walletAddress ?? "",
@@ -54,14 +55,22 @@ export default function RemoveLiquidity({
         msg: btoa(`{"withdraw_liquidity": { "assets": ${JSON.stringify(poolData.assets)}}}`),
         contract: pairData.contract_addr,
       });
-
-      // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 6500));
       onClose();
-      refreshBalance();
       return result;
     });
     setLoading(false);
+    // New balances will not appear until the next block.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
+    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
+    //FIXME - This startTransition does not work
+    startTransition(() => {
+      refreshPairBalances();
+      refreshLpBalance();
+
+      if (hasCw20) refreshCw20Balances();
+      if (hasNative) refreshIbcBalances();
+    });
   };
   return (
     <Box>
