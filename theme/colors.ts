@@ -132,6 +132,10 @@ export const darkColors = {
       200: "#0E67AA",
       100: "#084989",
       50: "#053471",
+      alpha: {
+        10: "rgba(28, 175, 237, 0.1)",
+        20: "rgba(28, 175, 237, 0.2)",
+      },
     },
     gray: {
       cultured: "#EEEEEE",

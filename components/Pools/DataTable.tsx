@@ -42,10 +42,11 @@ import { getAssetByDenom, getAssetByTokenAddr, getNativeIbcTokenDenom } from "..
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
+  userAssets: string[];
   columns: ColumnDef<Data, any>[];
 };
 
-export function DataTable<Data extends object>({ data, columns }: DataTableProps<Data>) {
+export function DataTable<Data extends object>({ data, columns, userAssets }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
@@ -174,23 +175,31 @@ export function DataTable<Data extends object>({ data, columns }: DataTableProps
             ))}
           </Thead>
           <Tbody>
-            {table.getRowModel().rows.map((row) => (
-              <Tr
-                key={row.id}
-                onClick={() => handleRowClick(row)}
-                _hover={{ cursor: "pointer", backgroundColor: "wynd.base.sidebarHover" }}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
-                  const meta: any = cell.column.columnDef.meta;
-                  return (
-                    <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Td>
-                  );
-                })}
-              </Tr>
-            ))}
+            {table.getRowModel().rows.map((row) => {
+              const [{ value: token1 }, { value: token2 }] = row.getValue("poolName") as { value: string }[];
+              const canBeProvider = userAssets.includes(token1) && userAssets.includes(token2);
+              return (
+                <Tr
+                  key={row.id}
+                  onClick={() => handleRowClick(row)}
+                  background={canBeProvider ? "wynd.cyan.alpha.20" : ""}
+                  cursor="pointer"
+                  _hover={{
+                    backgroundColor: canBeProvider ? "wynd.cyan.alpha.10" : "wynd.base.sidebarHover",
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+                    const meta: any = cell.column.columnDef.meta;
+                    return (
+                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
       </Box>
