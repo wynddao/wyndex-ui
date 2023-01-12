@@ -17,10 +17,12 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
+import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { WyndexStakeHooks } from "../../../state";
+import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
 import { BondingPeriodInfo, StakedResponse } from "../../../state/clients/types/WyndexStake.types";
-import { useToast } from "../../../state/hooks";
+import { useIndexerInfos, useToast } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { renderUnboundingText } from "../../../utils/text";
 import { secondsToDays } from "../../../utils/time";
@@ -36,6 +38,7 @@ interface ManageBoundingsModalProps {
   higherDuration: BondingPeriodInfo | undefined;
   lowerDuration: BondingPeriodInfo | undefined;
   wyndexStakeAddress: string;
+  pairData: PairInfo;
 }
 
 export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
@@ -48,12 +51,15 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     lowerDuration,
     wyndexStakeAddress,
     tokenSymbol,
+    pairData,
   } = props;
   const { address: walletAddress } = useWallet();
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
+  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
     onChange: (v) => {
@@ -243,8 +249,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bondTo: lowerDuration?.unbonding_period || 0,
             tokens: amountToMicroamount(amount || "0", 6),
           });
-          await new Promise((resolve) => setTimeout(resolve, 6500));
-          refreshBondings();
           reset();
           setAmount("");
           onClose();
@@ -259,8 +263,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bondTo: higherDuration?.unbonding_period || 0,
             tokens: amountToMicroamount(amount || "0", 6),
           });
-          await new Promise((resolve) => setTimeout(resolve, 6500));
-          refreshBondings();
           reset();
           setAmount("");
           onClose();
@@ -274,8 +276,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             tokens: amountToMicroamount(amount || "0", 6),
             unbondingPeriod: stake.unbonding_period,
           });
-          await new Promise((resolve) => setTimeout(resolve, 6500));
-          refreshBondings();
           reset();
           setAmount("");
           onClose();
@@ -284,6 +284,18 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       }
     }
     setLoading(false);
+    // New balances will not appear until the next block.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
+    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
+    //FIXME - This startTransition does not work
+    startTransition(() => {
+      refreshPairBalances();
+      refreshBondings();
+
+      if (hasCw20) refreshCw20Balances();
+      if (hasNative) refreshIbcBalances();
+    });
   };
 
   return (
