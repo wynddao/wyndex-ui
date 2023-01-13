@@ -148,6 +148,10 @@ export const darkColors = {
       300: "#5D4F7F",
       200: "#3F3266",
       100: "#2A1E54",
+      alpha: {
+        10: "rgba(127, 115, 152, 0.1)",
+        20: "rgba(127, 115, 152, 0.2)",
+      },
     },
     neutral: {
       900: "#fafafa",
