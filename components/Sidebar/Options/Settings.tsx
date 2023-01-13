@@ -36,12 +36,12 @@ const Settings: React.FC = () => {
             className="general-settings"
             _focus={{ boxShadow: "none" }}
             onClick={handlerClick}
-            _hover={{ bg: "whiteAlpha.500" }}
             display="flex"
             alignItems="center"
             justifyContent="center"
             borderRadius="md"
-            bg="whiteAlpha.300"
+            backgroundColor={"wynd.gray.alpha.20"}
+            _hover={{ backgroundColor: "wynd.gray.alpha.10" }}
             py="1"
             px="2"
             gap="0.5rem"

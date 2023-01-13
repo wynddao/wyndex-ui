@@ -30,26 +30,35 @@ export default function ConnectWalletButton() {
       pr={0}
       w="full"
       h="auto"
+      p={1}
     >
       <Flex alignItems="center" justifyContent="space-between" gap={2} w="full">
-        <Icon fontSize="1.25em" as={FiCreditCard} />
-        <Box fontSize="sm">
-          <Text>{username}</Text>
-          <Text>
-            {loadableBalance.state === "hasValue"
-              ? `${Number(loadableBalance.contents.amount).toFixed(2)} ${loadableBalance.contents.denom}`
-              : "0"}
-          </Text>
-        </Box>
+        <Flex alignItems="center" justifyContent="center" gap={4} pl="4">
+          <Icon fontSize="1.25em" as={FiCreditCard} />
+          <Box fontSize="sm">
+            <Text>{username}</Text>
+            <Text>
+              {loadableBalance.state === "hasValue"
+                ? `${Number(loadableBalance.contents.amount).toFixed(2)} ${loadableBalance.contents.denom}`
+                : "0"}
+            </Text>
+          </Box>
+        </Flex>
         <Flex direction="column">
           <Tooltip label={hasCopied ? "Copied!" : "Copy wallet address"}>
-            <Button bgColor={"wynd.base.sidebar"} border={"1px solid"} _hover={{ border: "wynd.base.sidebar"}} onClick={onCopy} sx={{ padding: 0, margin: 1 }} size="xs">
-              <Icon fontSize="1em" as={FiCopy} />
+            <Button bgColor={"wynd.gray.100"} onClick={onCopy} sx={{ padding: 0, margin: 1 }} size="xs" m={0}>
+              <Icon fontSize="xs" as={FiCopy} />
             </Button>
           </Tooltip>
           <Tooltip label="Disconnect wallet">
-            <Button bgColor={"wynd.base.sidebar"} borderColor={"white"} _hover={{ border: "wynd.base.sidebar"}} border={"1px solid"} onClick={disconnect} sx={{ padding: 0, margin: 1 }} size="xs">
-              <Icon fontSize="1em" as={VscDebugDisconnect} />
+            <Button
+              bgColor={"wynd.gray.100"}
+              onClick={disconnect}
+              sx={{ padding: 0, margin: 1 }}
+              size="xs"
+              m={0}
+            >
+              <Icon fontSize="xs" as={VscDebugDisconnect} />
             </Button>
           </Tooltip>
         </Flex>
