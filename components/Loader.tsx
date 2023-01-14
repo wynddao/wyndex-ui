@@ -11,7 +11,7 @@ export default function Loader() {
       <Flex
         bgColor={"#131222"}
         p={0}
-        width={"100vw"}
+        width={"100%"}
         height={"100vh"}
         alignItems={"center"}
         justifyContent={"center"}
