@@ -142,7 +142,7 @@ function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD
               {poolD[1].hasOwnProperty("token") ? (
                 <TokenName symbol={true} address={poolD[1].token}></TokenName>
               ) : (
-                microdenomToDenom(getNativeIbcTokenDenom(poolD[0].native))
+                microdenomToDenom(getNativeIbcTokenDenom(poolD[1].native))
               )}
             </Text>
           </GridItem>
