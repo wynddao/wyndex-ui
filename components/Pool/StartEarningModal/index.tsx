@@ -30,7 +30,6 @@ interface StartEarningModalProps {
   isOpen: boolean;
   onClose: () => void;
   balance: number;
-  tokenName: any;
   bondingInfos: BondingPeriodInfo[];
   doStake: (amount: number, duration: number) => void;
   apr: {
@@ -38,10 +37,11 @@ interface StartEarningModalProps {
     apr: number;
   }[];
   loading: boolean;
+  pairNames: JSX.Element[];
 }
 
 export default function StartEarningModal(props: StartEarningModalProps) {
-  const { isOpen, onClose, balance, tokenName, bondingInfos, doStake, apr, loading } = props;
+  const { isOpen, onClose, balance, pairNames, bondingInfos, doStake, apr, loading } = props;
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
   const [amount, setAmount] = useState<string>("0");
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -75,7 +75,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
             <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
               <Flex position="relative" align="center">
                 <Text fontWeight="bold" fontSize={{ base: "xl" }}>
-                  {tokenName}
+                  {pairNames[0]} / {pairNames[1]}
                 </Text>
               </Flex>
             </Flex>

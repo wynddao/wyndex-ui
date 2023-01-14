@@ -30,7 +30,9 @@ function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD
           cursor: "pointer",
           borderColor: "wynd.cyan.500",
         }}
-        bg={"wynd.base.sidebar"}
+        backgroundColor={"wynd.gray.alpha.10"}
+        backgroundImage={"url(/images/Vector2Bg.png)"}
+        backgroundPosition="right"
         p={4}
       >
         <Flex align="center" mb={4}>

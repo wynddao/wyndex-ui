@@ -4,8 +4,9 @@ import { useIndexerInfos, usePairInfos } from "../../state";
 import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
-import { getAssetPrice } from "../../utils/assets";
-import { microamountToAmount } from "../../utils/tokens";
+import { getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
+import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
+import TokenName from "../TokenName";
 import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
 import PoolCatalystSimple from "./PoolCatalystSimple";
@@ -26,6 +27,16 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
   const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);
+
+  const pairNames = pair.asset_infos.map((assetInfo, index) => {
+    if (assetInfo.hasOwnProperty("native")) {
+      // @ts-ignore
+      return <span key={index}>{microdenomToDenom(getNativeIbcTokenDenom(assetInfo.native))}</span>;
+    } else {
+      // @ts-ignore
+      return <TokenName symbol={true} key={index} address={assetInfo.token} />;
+    }
+  });
 
   // Calculate total share in USD
   const totalFiatShares =
@@ -65,6 +76,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
         chainData={poolData}
         pairData={pair}
         apr={aprCalculated}
+        pairNames={pairNames}
       />
       {walletAddress ? (
         <PoolCatalyst chainData={poolData} pairData={pair} />
@@ -72,7 +84,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
         <PoolCatalystSimple chainData={poolData} />
       )}
       {walletAddress ? (
-        <LiquidityMining pairData={pair} apr={aprCalculated} />
+        <LiquidityMining pairData={pair} apr={aprCalculated} pairNames={pairNames} />
       ) : (
         <UnboundingsGrid stakeAddress={pair.staking_addr} apr={aprCalculated} />
       )}

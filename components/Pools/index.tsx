@@ -1,22 +1,19 @@
 "use client";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { DataTable } from "./DataTable";
 import PoolsCard from "./PoolsCard";
 import { createColumnHelper, FilterFn } from "@tanstack/react-table";
 import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
-import {
-  getAssetByDenom,
-  getAssetByTokenAddr,
-  getAssetPrice,
-  getNativeIbcTokenDenom,
-} from "../../utils/assets";
+import { getAssetByDenom, getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
 import { formatCurrency } from "../../utils/currency";
 import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { useMemo } from "react";
+import { useWallet } from "@cosmos-kit/react";
+import { FiCreditCard } from "react-icons/fi";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -25,6 +22,8 @@ declare module "@tanstack/table-core" {
 }
 
 export default function Pools() {
+  const { connect, isWalletConnected } = useWallet();
+
   const { pools, userPools, assetPrices, ibcBalances, cw20Balances } = useIndexerInfos({
     fetchPoolData: true,
     fetchIbcBalances: true,
@@ -53,13 +52,20 @@ export default function Pools() {
     assets: AssetInfoIndexer[];
   };
 
-  const data: PoolListEntry[] = Object.keys(pools).map((poolAddress) => {
-    return {
-      address: poolAddress,
-      assets: pools[poolAddress],
-      unbondingPeriods: [1, 2, 3, 4],
-    };
-  });
+  const data: PoolListEntry[] = Object.keys(pools)
+    .map((poolAddress) => {
+      return {
+        address: poolAddress,
+        assets: pools[poolAddress],
+        unbondingPeriods: [1, 2, 3, 4],
+      };
+    })
+    .sort(({ assets }) => {
+      const [token1, token2] = assets as { native: string; token: string }[];
+      const t1 = token1.native || token1.token;
+      const t2 = token2.native || token2.token;
+      return userAssets.includes(t1) && userAssets.includes(t2) ? -1 : 1;
+    });
 
   const columnHelper = createColumnHelper<PoolListEntry>();
 
@@ -87,15 +93,15 @@ export default function Pools() {
         cell: (props) => (
           <>
             {props.getValue()[0].type === "native" ? (
-              <span>{`${getAssetByDenom(props.getValue()[0].value)?.name}`}</span>
+              <span>{`${getAssetByDenom(props.getValue()[0].value)?.symbol}`}</span>
             ) : (
-              <TokenName address={props.getValue()[0].value} />
+              <TokenName symbol={true} address={props.getValue()[0].value} />
             )}
             {" / "}
             {props.getValue()[1].type === "native" ? (
-              <span>{`${getAssetByDenom(props.getValue()[1].value)?.name}`}</span>
+              <span>{`${getAssetByDenom(props.getValue()[1].value)?.symbol}`}</span>
             ) : (
-              <TokenName address={props.getValue()[1].value} />
+              <TokenName symbol={true} address={props.getValue()[1].value} />
             )}
           </>
         ),
@@ -184,7 +190,7 @@ export default function Pools() {
 
   return (
     <Box p="4">
-      <Box m={-4} px={4}>
+      <Box mb={6}>
         <Text
           fontSize="2xl"
           fontWeight="bold"
@@ -195,8 +201,35 @@ export default function Pools() {
         >
           My Pools
         </Text>
-
-        <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
+        {isWalletConnected ? (
+          <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
+        ) : (
+          <Flex
+            borderRadius="md"
+            p={4}
+            bg={"whiteAlpha.50"}
+            mb={4}
+            alignItems="center"
+            justifyContent="center"
+            minH="8rem"
+          >
+            <Button
+              onClick={connect}
+              fontSize="sm"
+              alignItems="center"
+              justifyContent="center"
+              gap="0.5rem"
+              display="flex"
+              bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+              _hover={{
+                bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+              }}
+            >
+              <Icon as={FiCreditCard} />
+              <Text>Connect wallet</Text>
+            </Button>
+          </Flex>
+        )}
       </Box>
       <DataTable columns={columns} data={data} userAssets={userAssets} />
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}

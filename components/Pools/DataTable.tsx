@@ -31,10 +31,7 @@ import {
   getPaginationRowModel,
   FilterFn,
   getFilteredRowModel,
-  ColumnFiltersState,
 } from "@tanstack/react-table";
-
-import { rankItem } from "@tanstack/match-sorter-utils";
 
 import { useRouter } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
@@ -67,9 +64,9 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
         ? getAssetByDenom(tokenPool[1].value)
         : getAssetByTokenAddr(tokenPool[1].value);
 
-    return token1?.name.toLowerCase().includes(filter)
+    return token1?.symbol.toLowerCase().includes(filter)
       ? true
-      : token2?.name.toLowerCase().includes(filter)
+      : token2?.symbol.toLowerCase().includes(filter)
       ? true
       : false;
   };
@@ -182,10 +179,14 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
                 <Tr
                   key={row.id}
                   onClick={() => handleRowClick(row)}
-                  background={canBeProvider ? "wynd.cyan.alpha.20" : ""}
+                  background={canBeProvider ? "wynd.gray.alpha.20" : ""}
                   cursor="pointer"
+                  backgroundImage={"url(/images/Vector2Bg.png)"}
+                  backgroundSize="cover"
+                  backgroundRepeat="repeat"
+                  backgroundAttachment="fixed"
                   _hover={{
-                    backgroundColor: canBeProvider ? "wynd.cyan.alpha.10" : "wynd.base.sidebarHover",
+                    backgroundColor: "wynd.gray.alpha.10",
                   }}
                 >
                   {row.getVisibleCells().map((cell) => {

@@ -1,9 +1,9 @@
 "use client";
 
-import { Box, Button, Collapse, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Button, Collapse, Flex, Icon, SimpleGrid, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { IoChevronDown, IoChevronUp } from "react-icons/io5";
-import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
+import { IoChevronDown } from "react-icons/io5";
+import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { getNativeIbcTokenDenom } from "../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
@@ -20,16 +20,16 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
     <>
       <Flex alignItems="center" mt={4} justifyContent="center">
         <Button variant="ghost" onClick={() => setShow(!show)}>
-          {!show ? (
-            <>
-              <IoChevronDown /> Show
-            </>
-          ) : (
-            <>
-              <IoChevronUp /> Hide{" "}
-            </>
-          )}{" "}
-          liquidity pool assets
+          <Text display="flex" justifyContent="center" alignItems="center" gap="0.5rem">
+            <Icon
+              as={IoChevronDown}
+              transform={!show ? "rotate(0deg)" : "rotate(180deg)"}
+              transition="all linear 0.2s"
+              m="0 0 4px 0"
+            />
+            {show ? "Hide " : "Show "}
+            liquidity pool assets
+          </Text>
         </Button>
       </Flex>
       <Collapse in={show}>
