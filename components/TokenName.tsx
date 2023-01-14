@@ -9,6 +9,5 @@ interface TokenNameProps {
 export default function TokenName(props: TokenNameProps) {
   const { address, symbol } = props;
   const { tokenName, tokenSymbol } = useTokenInfo(address);
-  console.log(tokenSymbol);
   return <span>{symbol ? tokenSymbol : tokenName}</span>;
 }
