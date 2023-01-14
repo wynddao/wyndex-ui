@@ -52,7 +52,7 @@ export function filterAssets(
   const isSearchedAsset = (asset: ExtendedAsset) =>
     asset.name.toLowerCase().includes(searchText.toLowerCase());
 
-  if (filterOption === "CW20") {
+  if (filterOption === "Juno Assets") {
     return assets.filter((asset) => asset.tags === "cw20" && isSearchedAsset(asset));
   }
 

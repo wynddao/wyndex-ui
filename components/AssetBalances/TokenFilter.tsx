@@ -2,7 +2,7 @@ import { HStack, useRadioGroup } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
 import TokenFilterOption from "./TokenFilterOption";
 
-const tokenFilterOptions = ["All", "Native", "CW20"] as const;
+const tokenFilterOptions = ["All", "Native", "Juno Assets"] as const;
 export type TokenFilterOptions = typeof tokenFilterOptions[number];
 
 interface TokenFilterProps {

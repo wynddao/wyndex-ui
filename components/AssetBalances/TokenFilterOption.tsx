@@ -13,7 +13,7 @@ export default function TokenFilterOption({ children, ...radioProps }: TokenFilt
       <Box
         {...getCheckboxProps()}
         cursor="pointer"
-        width="70px"
+        minWidth="70px"
         textAlign="center"
         borderWidth="1px"
         borderRadius="md"
