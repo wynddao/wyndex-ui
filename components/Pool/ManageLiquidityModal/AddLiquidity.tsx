@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Coin } from "cosmwasm";
-import { startTransition, useState } from "react";
+import { startTransition, useCallback, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
@@ -24,6 +24,7 @@ import TokenName from "../../TokenName";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { getNativeIbcTokenDenom } from "../../../utils/assets";
+import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../AssetImage";
 interface inputType {
@@ -104,6 +105,62 @@ export default function AddLiquidity({
   const pairBalances = useRecoilValue(pairBalancesSelector);
   const refreshPairBalances = useRecoilRefresher_UNSTABLE(pairBalancesSelector);
 
+  const calculateRatios = useCallback(() => {
+    const [newInputValueA, newInputValueB] = tokenInputValue;
+
+    const assetA = chainData.assets.find((asset) =>
+      "token" in asset.info
+        ? asset.info.token === newInputValueA.id
+        : asset.info.native === newInputValueA.id,
+    );
+    const assetB = chainData.assets.find((asset) =>
+      "token" in asset.info
+        ? asset.info.token === newInputValueB.id
+        : asset.info.native === newInputValueB.id,
+    );
+
+    const ratioA = Number(assetB?.amount || "0") / Number(assetA?.amount || "0");
+    const ratioB = Number(assetA?.amount || "0") / Number(assetB?.amount || "0");
+
+    return [ratioA, ratioB];
+  }, [chainData.assets, tokenInputValue]);
+
+  const calculateInputValues = useCallback(
+    (denom: string, inputValue: string) => {
+      const [newInputValueA, newInputValueB] = tokenInputValue;
+      const [ratioA, ratioB] = calculateRatios();
+
+      newInputValueA.value =
+        denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
+      newInputValueB.value =
+        denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(6);
+
+      setTokenInputValue([newInputValueA, newInputValueB]);
+    },
+    [calculateRatios, tokenInputValue],
+  );
+
+  const calculateMaxValues = useCallback(() => {
+    const [newInputValueA, newInputValueB] = tokenInputValue;
+    const [ratioA, ratioB] = calculateRatios();
+
+    const assets = getAssetList().tokens;
+    const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
+    const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
+    const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
+    const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
+
+    if (ratioA < ratioB) {
+      newInputValueA.value = maxMicroBalanceA;
+      newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(6);
+    } else {
+      newInputValueB.value = maxMicroBalanceB;
+      newInputValueA.value = (Number(maxMicroBalanceB) / ratioA).toFixed(6);
+    }
+
+    setTokenInputValue([newInputValueA, newInputValueB]);
+  }, [calculateRatios, pairBalances, tokenInputValue]);
+
   const prodiveLiquidity = async () => {
     setLoading(true);
     const assets = tokenInputValue
@@ -161,7 +218,7 @@ export default function AddLiquidity({
   return (
     <>
       <Stack spacing={2} mb={6}>
-        {poolData.map(({ denom, show, contractAddress, name }, i) => {
+        {poolData.map(({ denom, show, name }, i) => {
           return (
             show && (
               <Box position="relative" key={`box-${name}-${i}`}>
@@ -183,7 +240,7 @@ export default function AddLiquidity({
                       _focus={{ outline: "none" }}
                     >
                       <PopoverBody>
-                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name, contractAddress }, i) => (
+                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name }, i) => (
                           <Button
                             key={i}
                             variant="ghost"
@@ -273,43 +330,10 @@ export default function AddLiquidity({
                       </Text>
                       <Button
                         alignSelf="end"
-                        size="xs"
+                        size="sm"
+                        sx={{ display: i === 0 ? "flex" : "none" }}
                         _focus={{ outline: "none" }}
-                        onClick={() => {
-                          const val = microamountToAmount(pairBalances[i] ?? "", 6) || "0";
-                          const getVal = tokenInputValue.map(
-                            ({ id, value: defaultVal, contract: contractDefault }) => {
-                              const thisEl = chainData.assets.find((el) =>
-                                el.info.hasOwnProperty("token")
-                                  ? // @ts-ignore
-                                    el.info.token === denom
-                                  : // @ts-ignore
-                                    el.info.native === denom,
-                              );
-                              const otherEl = chainData.assets.find((el) =>
-                                el.info.hasOwnProperty("token")
-                                  ? // @ts-ignore
-                                    el.info.token !== denom
-                                  : // @ts-ignore
-                                    el.info.native !== denom,
-                              );
-                              const ratio = Number(thisEl?.amount || "0") / Number(otherEl?.amount || "0");
-                              if (id === denom) {
-                                return {
-                                  id: id,
-                                  value: val,
-                                  contract: contractAddress || undefined,
-                                };
-                              }
-                              return {
-                                id: id,
-                                value: (Number(val) / ratio).toFixed(6),
-                                contract: contractDefault,
-                              };
-                            },
-                          );
-                          setTokenInputValue(getVal);
-                        }}
+                        onClick={calculateMaxValues}
                       >
                         MAX
                       </Button>
@@ -320,40 +344,7 @@ export default function AddLiquidity({
                       bg={"wynd.alpha.200"}
                       min={0}
                       max={Number(pairBalances[i])}
-                      onChange={(val) => {
-                        const getVal = tokenInputValue.map(
-                          ({ id, value: defaultVal, contract: contractDefault }) => {
-                            const thisEl = chainData.assets.find((el) =>
-                              el.info.hasOwnProperty("token")
-                                ? // @ts-ignore
-                                  el.info.token === denom
-                                : // @ts-ignore
-                                  el.info.native === denom,
-                            );
-                            const otherEl = chainData.assets.find((el) =>
-                              el.info.hasOwnProperty("token")
-                                ? // @ts-ignore
-                                  el.info.token !== denom
-                                : // @ts-ignore
-                                  el.info.native !== denom,
-                            );
-                            const ratio = Number(thisEl?.amount || "0") / Number(otherEl?.amount || "0");
-                            if (id === denom) {
-                              return {
-                                id: id,
-                                value: val,
-                                contract: contractAddress || undefined,
-                              };
-                            }
-                            return {
-                              id: id,
-                              value: (Number(val) / ratio).toFixed(6),
-                              contract: contractDefault,
-                            };
-                          },
-                        );
-                        setTokenInputValue(getVal);
-                      }}
+                      onChange={(value) => calculateInputValues(denom, value)}
                     >
                       <NumberInputField textAlign="end" pr={4} />
                     </NumberInput>
@@ -367,6 +358,8 @@ export default function AddLiquidity({
       <Box px={{ sm: 12 }}>
         <Button
           onClick={() => prodiveLiquidity()}
+          isLoading={loading}
+          loadingText={"Executing"}
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
@@ -376,8 +369,18 @@ export default function AddLiquidity({
           w="full"
           size="lg"
           h={{ base: 12, sm: 14 }}
-          isLoading={loading}
-          loadingText={"Executing"}
+          bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+          _hover={{
+            bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+            ":disabled": {
+              bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+              cursor: "initial",
+            },
+          }}
+          _disabled={{
+            bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+            cursor: "initial",
+          }}
         >
           Add Liquidity
         </Button>
