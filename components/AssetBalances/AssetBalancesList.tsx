@@ -32,7 +32,6 @@ export default function AssetBalancesList() {
       <HStack
         position="sticky"
         top={0}
-        zIndex={5}
         gap={{ base: 4 }}
         flexWrap="wrap"
         alignItems="center"
