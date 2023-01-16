@@ -73,6 +73,9 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const group = getRootProps();
   const { txToast } = useToast();
   const roundForExecution = (N: number): number => Math.floor(N * 10000) / 10000;
+  const maxAmount = roundForExecution(
+    Number(microamountToAmount(Number(stake.stake) - Number(stake.total_locked), 6)),
+  );
 
   const ChooseModeContent = () => {
     const mode = [];
@@ -146,12 +149,10 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             <Text fontWeight="medium" textAlign="center">
               Available&nbsp;
               <Text as="span" color={"wynd.cyan.700"}></Text>
-              <strong>{roundForExecution(Number(microamountToAmount(stake.stake, 6)))}</strong>
+              <strong>{maxAmount}</strong>
             </Text>
             <Button
-              onClick={() =>
-                setAmount(roundForExecution(Number(microamountToAmount(stake.stake, 6))).toString())
-              }
+              onClick={() => setAmount(String(maxAmount))}
               alignSelf="end"
               size="xs"
               _focus={{ outline: "none" }}
@@ -164,7 +165,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             bg={"wynd.alpha.50"}
             value={amount}
             key="amount"
-            max={roundForExecution(Number(microamountToAmount(stake.stake, 6)))}
+            max={maxAmount}
             onChange={(e) => setAmount(e)}
           >
             <NumberInputField ref={inputRef} textAlign="end" pr={4} />
@@ -336,9 +337,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
                   size="sm"
                   onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
                   isDisabled={
-                    activeStep === 1 &&
-                    (Number(amount || "0") <= 0 ||
-                      Number(amountToMicroamount(amount, 6)) > Number(stake.stake))
+                    activeStep === 1 && (Number(amount || "0") <= 0 || Number(amount || "0") > maxAmount)
                   }
                   isLoading={loading}
                   loadingText={"Executing"}
