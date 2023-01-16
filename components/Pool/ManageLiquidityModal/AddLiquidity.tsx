@@ -358,6 +358,8 @@ export default function AddLiquidity({
       <Box px={{ sm: 12 }}>
         <Button
           onClick={() => prodiveLiquidity()}
+          isLoading={loading}
+          loadingText={"Executing"}
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
@@ -367,8 +369,18 @@ export default function AddLiquidity({
           w="full"
           size="lg"
           h={{ base: 12, sm: 14 }}
-          isLoading={loading}
-          loadingText={"Executing"}
+          bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+          _hover={{
+            bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+            ":disabled": {
+              bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+              cursor: "initial",
+            },
+          }}
+          _disabled={{
+            bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+            cursor: "initial",
+          }}
         >
           Add Liquidity
         </Button>
