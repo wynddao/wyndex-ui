@@ -37,14 +37,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
     <>
       <Box p={4}>
         <Flex justifyContent="space-between" alignItems="center">
-          <Text
-            fontSize="xl"
-            fontWeight="bold"
-            mb={4}
-            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-            bgClip="text"
-            display="inline"
-          >
+          <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline">
             My Pending Unbondings
           </Text>
           {claimable && <Button onClick={() => setModalOpen(true)}>Claim now!</Button>}

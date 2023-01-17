@@ -4,15 +4,18 @@ import {
   Flex,
   GridItem,
   Heading,
+  Icon,
   Show,
   SimpleGrid,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
+import { FiCreditCard } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
 import { Cw20Hooks, useCw20UserInfos, useToast } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
@@ -84,6 +87,7 @@ export default function PoolHeader({
   const { onOpen: onOpenBondings, isOpen: isBondingsOpen, onClose: onCloseBondings } = useDisclosure();
   const currency = useRecoilValue(currencyAtom);
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const { connect, isWalletConnected } = useWallet();
   const [loading, setLoading] = useState<boolean>(false);
   const wyndexStake = pairData.staking_addr;
   const { infos } = useStakeInfos(wyndexStake);
@@ -112,6 +116,7 @@ export default function PoolHeader({
     setLoading(false);
   };
 
+  console.log(Number(lpBalance) > 0);
   return (
     <>
       <Head>
@@ -126,24 +131,12 @@ export default function PoolHeader({
         p={4}
         position="relative"
         overflow="hidden"
+        borderRadius="xl"
       >
         <Flex align="center" wrap="wrap" mb={7}>
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
             Pool: {pairNames[0]} / {pairNames[1]}
           </Heading>
-          {walletAddress && (
-            <Flex align="center" wrap="wrap">
-              <Button
-                onClick={onOpenLiquidity}
-                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-                _hover={{
-                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
-                }}
-              >
-                Add/Remove Liquidity
-              </Button>
-            </Flex>
-          )}
         </Flex>
 
         <SimpleGrid columns={{ md: 2 }} gap={{ base: 2, md: 4 }} maxW={{ lg: "50%" }}>
@@ -151,7 +144,7 @@ export default function PoolHeader({
             <Text fontWeight="bold" color={"whiteAlpha.600"}>
               Pool Liquidity
             </Text>
-            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
+            <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
               <span>{formatCurrency(currency, `${totalInFiat}`)} </span>
             </Text>
           </GridItem>
@@ -159,7 +152,7 @@ export default function PoolHeader({
             <Text fontWeight="bold" color={"whiteAlpha.600"}>
               Swap Fee
             </Text>
-            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
+            <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
               <span>{pairData.fee_config.total_fee_bps / 100}%</span>
             </Text>
           </GridItem>
@@ -169,7 +162,7 @@ export default function PoolHeader({
             </Text>
 
             {walletAddress ? (
-              <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" wordBreak="break-word">
+              <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
                 <PoolHeaderUserInfo
                   chainData={chainData}
                   pairData={pairData}
@@ -178,9 +171,41 @@ export default function PoolHeader({
                 />
               </Text>
             ) : (
-              <Text fontSize={{ base: "xl", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
+              <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
                 <span>Not connected</span>
               </Text>
+            )}
+          </GridItem>
+          <GridItem display="flex" justifyItems={{ base: "start", md: "center" }} alignItems="center">
+            {isWalletConnected ? (
+              <Flex align="center" wrap="wrap">
+                <Button
+                  fontSize="sm"
+                  onClick={onOpenLiquidity}
+                  bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                  _hover={{
+                    bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                  }}
+                >
+                  Add/Remove Liquidity
+                </Button>
+              </Flex>
+            ) : (
+              <Button
+                onClick={connect}
+                fontSize="sm"
+                alignItems="center"
+                justifyContent="center"
+                gap="0.5rem"
+                display="flex"
+                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                _hover={{
+                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                }}
+              >
+                <Icon as={FiCreditCard} />
+                <Text>Connect wallet</Text>
+              </Button>
             )}
           </GridItem>
         </SimpleGrid>
@@ -193,6 +218,7 @@ export default function PoolHeader({
           />
         </Show>
       </Box>
+
       <ManageLiquidityModal
         walletAddress={walletAddress}
         poolData={chainData}
