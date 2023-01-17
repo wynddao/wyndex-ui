@@ -116,7 +116,6 @@ export default function PoolHeader({
     setLoading(false);
   };
 
-  console.log(Number(lpBalance) > 0);
   return (
     <>
       <Head>
