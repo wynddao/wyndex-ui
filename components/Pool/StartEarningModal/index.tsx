@@ -20,6 +20,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { UseTokenNameResponse } from "../../../state";
 import { BondingPeriodInfo } from "../../../state/clients/types/WyndexStake.types";
 import { secondsToDays } from "../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens";
@@ -37,11 +38,12 @@ interface StartEarningModalProps {
     apr: number;
   }[];
   loading: boolean;
+  tokenInfo: UseTokenNameResponse;
   pairNames: JSX.Element[];
 }
 
 export default function StartEarningModal(props: StartEarningModalProps) {
-  const { isOpen, onClose, balance, pairNames, bondingInfos, doStake, apr, loading } = props;
+  const { isOpen, onClose, balance, pairNames, bondingInfos, doStake, apr, tokenInfo, loading } = props;
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
   const [amount, setAmount] = useState<string>("0");
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -92,10 +94,10 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                 <Text fontWeight="medium" textAlign="center">
                   Available&nbsp;
                   <Text as="span" color={"wynd.cyan.600"}></Text>
-                  <strong>{microamountToAmount(balance, 6)}</strong>
+                  <strong>{microamountToAmount(balance, tokenInfo.tokenDecimals)}</strong>
                 </Text>
                 <Button
-                  onClick={() => setAmount(microamountToAmount(balance, 6))}
+                  onClick={() => setAmount(microamountToAmount(balance, tokenInfo.tokenDecimals))}
                   alignSelf="end"
                   size="xs"
                   _focus={{ outline: "none" }}
@@ -150,10 +152,12 @@ export default function StartEarningModal(props: StartEarningModalProps) {
             <Button
               isLoading={loading}
               loadingText={"Executing"}
-              onClick={() => doStake(Number(amountToMicroamount(amount, 6)), Number(value))}
+              onClick={() =>
+                doStake(Number(amountToMicroamount(amount, tokenInfo.tokenDecimals)), Number(value))
+              }
               isDisabled={
-                Number(amountToMicroamount(amount, 6)) <= 0 ||
-                Number(amountToMicroamount(amount, 6)) > Number(balance)
+                Number(amountToMicroamount(amount, tokenInfo.tokenDecimals)) <= 0 ||
+                Number(amountToMicroamount(amount, tokenInfo.tokenDecimals)) > Number(balance)
               }
               w="full"
               size="lg"

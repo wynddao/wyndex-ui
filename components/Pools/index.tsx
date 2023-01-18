@@ -6,7 +6,7 @@ import { createColumnHelper, FilterFn } from "@tanstack/react-table";
 import { useIndexerInfos } from "../../state";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
-import { getAssetByDenom, getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
+import { getAssetByDenom, getAssetInfoDetails, getAssetPrice } from "../../utils/assets";
 import { formatCurrency } from "../../utils/currency";
 import MaxApr from "./MaxApr";
 import { useRecoilValue } from "recoil";
@@ -122,17 +122,20 @@ export default function Pools() {
         id: "tvl",
         header: "TVL",
         cell: (props) => {
-          const tokenPrice1 = getAssetPrice(props.getValue()[0].value, assetPrices);
-          const tokenPrice2 = getAssetPrice(props.getValue()[1].value, assetPrices);
+          const [{ value: token1 }, { value: token2 }] = props.getValue();
+          const tokenPrice1 = getAssetPrice(token1, assetPrices);
+          const tokenPrice2 = getAssetPrice(token2, assetPrices);
+          const tokenInfo1 = getAssetInfoDetails(token1);
+          const tokenInfo2 = getAssetInfoDetails(token2);
           return (
             <>
               {formatCurrency(
                 currency,
                 Number(
                   (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) *
-                    Number(microamountToAmount(props.getValue()[0].value.amount, 6)) +
+                    Number(microamountToAmount(token1.amount, tokenInfo1.decimals)) +
                     (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur) *
-                      Number(microamountToAmount(props.getValue()[1].value.amount, 6)),
+                      Number(microamountToAmount(token2.amount, tokenInfo2.decimals)),
                 ).toString(),
               )}
             </>
@@ -167,23 +170,18 @@ export default function Pools() {
       {
         id: "assets",
         header: "Liquidity",
-        cell: (props) => (
-          <>
-            {microamountToAmount(props.getValue()[0].amount, 6)}{" "}
-            {props.getValue()[0].type === "native" ? (
-              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[0].value))}`}</span>
-            ) : (
-              <TokenName symbol={true} address={props.getValue()[0].value} />
-            )}
-            {" / "}
-            {microamountToAmount(props.getValue()[1].amount, 6)}{" "}
-            {props.getValue()[1].type === "native" ? (
-              <span>{`${microdenomToDenom(getNativeIbcTokenDenom(props.getValue()[1].value))}`}</span>
-            ) : (
-              <TokenName symbol={true} address={props.getValue()[1].value} />
-            )}
-          </>
-        ),
+        cell: (props) => {
+          const [token1, token2] = props.getValue();
+          const tokenInfo1 = getAssetInfoDetails({ [token1.type]: token1.value });
+          const tokenInfo2 = getAssetInfoDetails({ [token2.type]: token2.value });
+          return (
+            <>
+              {microamountToAmount(token1.amount, tokenInfo1.decimals)} {tokenInfo1.symbol}
+              {" / "}
+              {microamountToAmount(token2.amount, tokenInfo2.decimals)} {tokenInfo2.symbol}
+            </>
+          );
+        },
       },
     ),
   ];

@@ -5,7 +5,7 @@ export function microamountToAmount(amount: number | string, decimals: number, f
     amount = Number(amount);
   }
   amount = amount / Math.pow(10, decimals);
-  if (fixed) {
+  if (fixed || fixed === 0) {
     return isNaN(amount) ? "0" : String(amount.toFixed(fixed));
   }
   return isNaN(amount) ? "0" : String(amount);

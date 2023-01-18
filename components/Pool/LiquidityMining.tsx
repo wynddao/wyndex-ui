@@ -4,7 +4,7 @@ import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { Cw20Hooks } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexPair.types";
-import { useToast } from "../../state/hooks";
+import { useToast, useTokenInfo } from "../../state/hooks";
 import { useCw20UserInfos } from "../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
@@ -29,6 +29,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
   const wyndexStake = pairData.staking_addr;
   const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
@@ -104,24 +105,17 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
         )}
         <UnboundingsGrid stakeAddress={wyndexStake} apr={apr} />
         <BoundingsTable
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-          tokenSymbol={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+          liquidityTokenInfo={ltokenInfo}
           stakeContract={wyndexStake}
           apr={apr}
           pairData={pairData}
         />
-        <PendingBoundingsTable
-          wyndexStake={wyndexStake}
-          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
-        />
-        <PendingUnbondingsTable
-          stakeAddress={wyndexStake}
-          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
-          pairData={pairData}
-        />
+        <PendingBoundingsTable wyndexStake={wyndexStake} tokenInfo={ltokenInfo} />
+        <PendingUnbondingsTable stakeAddress={wyndexStake} tokenInfo={ltokenInfo} pairData={pairData} />
         <StartEarningModal
           doStake={doStake}
           isOpen={isModalOpen}
+          tokenInfo={ltokenInfo}
           balance={Number(lpBalance)}
           pairNames={pairNames}
           onClose={() => setIsModalOpen(false)}

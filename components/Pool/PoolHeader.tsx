@@ -17,7 +17,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { FiCreditCard } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
-import { Cw20Hooks, useCw20UserInfos, useToast } from "../../state";
+import { Cw20Hooks, useCw20UserInfos, useToast, useTokenInfo } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
@@ -88,6 +88,7 @@ export default function PoolHeader({
   const currency = useRecoilValue(currencyAtom);
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
   const { connect, isWalletConnected } = useWallet();
+  const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
   const wyndexStake = pairData.staking_addr;
   const { infos } = useStakeInfos(wyndexStake);
@@ -230,6 +231,7 @@ export default function PoolHeader({
         doStake={doStake}
         isOpen={isBondingsOpen}
         balance={Number(lpBalance)}
+        tokenInfo={ltokenInfo}
         pairNames={pairNames}
         onClose={onCloseBondings}
         bondingInfos={infos}

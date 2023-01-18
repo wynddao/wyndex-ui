@@ -8,7 +8,7 @@ import { useCw20UserInfos } from "../../state";
 import { PairInfo, PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
-import { getNativeIbcTokenDenom } from "../../utils/assets";
+import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
@@ -63,53 +63,64 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
       <Collapse in={show}>
         <Box pt={6}>
           <SimpleGrid columns={{ md: 2 }} gap={8}>
-            {chainData.assets.map((asset, i) => (
-              <Box
-                key={i}
-                borderRadius="xl"
-                bg={"wynd.base.sidebar"}
-                bgImage={"/images/Vector2.png"}
-                bgRepeat={"no-repeat"}
-                bgPos={"right"}
-                py={4}
-                px={6}
-                minHeight="8.5rem"
-              >
-                <SimpleGrid columns={{ md: 2 }} gap={8}>
-                  <Flex align="center" justify={"center"}>
-                    <Box w={20} h={20} p={0.5} mr={4}>
-                      <AssetImage
-                        asset={
-                          //  @ts-ignore
-                          asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native
-                        }
-                      />
-                    </Box>
+            {chainData.assets.map((asset, i) => {
+              const tokenInfo = getAssetInfoDetails(asset.info);
+              return (
+                <Box
+                  key={i}
+                  borderRadius="xl"
+                  bg={"wynd.base.sidebar"}
+                  bgImage={"/images/Vector2.png"}
+                  bgRepeat={"no-repeat"}
+                  bgPos={"right"}
+                  p={6}
+                >
+                  <SimpleGrid columns={{ md: 2 }} gap={8}>
+                    <Flex align="center" justify={"center"}>
+                      <Box
+                        w={20}
+                        h={20}
+                        bg="whiteAlpha.900"
+                        borderRadius="full"
+                        border="1px solid"
+                        borderColor="orange.300"
+                        overflow="hidden"
+                        p={0.5}
+                        mr={4}
+                      >
+                        <AssetImage
+                          asset={
+                            //  @ts-ignore
+                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native
+                          }
+                        />
+                      </Box>
+                      <Box>
+                        <Text fontSize="3xl" fontWeight="extrabold"></Text>
+                        <Text fontWeight="bold" color={"wynd.neutral.600"}>
+                          {tokenInfo.symbol}
+                        </Text>
+                      </Box>
+                    </Flex>
                     <Box>
-                      <Text fontSize="3xl" fontWeight="extrabold"></Text>
-                      <Text color={"wynd.gray.500"}>
-                        {asset.info.hasOwnProperty("token") ? (
-                          // @ts-ignore
-                          <TokenName address={asset.info.token} />
-                        ) : (
-                          // @ts-ignore
-                          microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))
-                        )}
+                      <Text fontWeight="bold" color={"wynd.neutral.600"}>
+                        Total amount
+                      </Text>
+                      <Text fontSize="xl" fontWeight="bold" mb={2}>
+                        {microamountToAmount(asset.amount, tokenInfo.decimals)}
+                      </Text>
+                      <Text fontWeight="bold" color={"wynd.neutral.600"}>
+                        My amount
+                      </Text>
+                      <Text fontSize="xl" fontWeight="bold">
+                        {"≈ "}
+                        {microamountToAmount(myShare * Number(asset.amount), tokenInfo.decimals, 6)}
                       </Text>
                     </Box>
-                  </Flex>
-                  <Box fontWeight="bold">
-                    <Text color={"wynd.gray.500"}>Total amount</Text>
-                    <Text mb={2}>{microamountToAmount(asset.amount, 6)}</Text>
-                    <Text color={"wynd.gray.500"}>My amount</Text>
-                    <Text>
-                      {"≈ "}
-                      {Number(microamountToAmount(myShare * Number(asset.amount), 6)).toFixed(6)}
-                    </Text>
-                  </Box>
-                </SimpleGrid>
-              </Box>
-            ))}
+                  </SimpleGrid>
+                </Box>
+              );
+            })}
           </SimpleGrid>
         </Box>
       </Collapse>
