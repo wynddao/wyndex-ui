@@ -12,7 +12,7 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { startTransition } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { useIndexerInfos, useToast, WyndexStakeHooks } from "../../state";
+import { useIndexerInfos, useToast, UseTokenNameResponse, WyndexStakeHooks } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
 import { microamountToAmount } from "../../utils/tokens";
 
@@ -22,7 +22,7 @@ interface UnclaimModalProps {
   readonly totalUnstakingAvailable: number;
   readonly wyndexStakeAddress: string;
   readonly refreshPendingUnstaking: () => void;
-  readonly tokenSymbol: any;
+  readonly tokenInfo: UseTokenNameResponse;
   readonly pairData: PairInfo;
 }
 
@@ -32,7 +32,7 @@ export default function UnclaimModal({
   totalUnstakingAvailable,
   wyndexStakeAddress,
   refreshPendingUnstaking,
-  tokenSymbol,
+  tokenInfo,
   pairData,
 }: UnclaimModalProps) {
   const { address: walletAddress } = useWallet();
@@ -67,7 +67,8 @@ export default function UnclaimModal({
         <ModalCloseButton />
         <ModalBody>
           <Text>
-            Total available: {microamountToAmount(totalUnstakingAvailable, 6)} {tokenSymbol}
+            Total available: {microamountToAmount(totalUnstakingAvailable, tokenInfo.tokenDecimals)}{" "}
+            {tokenInfo.tokenSymbol}
           </Text>
           <Flex justifyContent="end">
             <Button onClick={() => claim()}>Claim now!</Button>

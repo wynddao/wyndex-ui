@@ -1,7 +1,7 @@
 "use client";
 import { Box, Divider, Flex, Grid, GridItem, Text, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
-import { getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
+import { getAssetInfoDetails, getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
 import { formatCurrency, formatCurrencyStatic } from "../../utils/currency";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import MyShares from "./MyShares";
 import Carousel from "../Carousel";
+import { Asset } from "@wynddao/asset-list";
 
 interface PoolsCardProps {
   readonly poolsData: readonly any[];
@@ -18,7 +19,19 @@ interface PoolsCardProps {
   readonly assetPrices: any[];
 }
 
-function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD: any; tvl: string }) {
+function PoolCard({
+  index,
+  pool,
+  tokens,
+  tvl,
+}: {
+  index: number;
+  pool: any;
+  tokens: [Asset & { amount: string }, Asset & { amount: string }];
+  tvl: string;
+}) {
+  const [token1, token2] = tokens;
+
   return (
     <Link key={index} href={`/pools/${pool.address}`}>
       <Box
@@ -131,19 +144,9 @@ function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD
             </Text>
 
             <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
-              {Number(microamountToAmount(poolD[0].amount, 6)).toFixed(0)}{" "}
-              {poolD[0].hasOwnProperty("token") ? (
-                <TokenName symbol={true} address={poolD[0].token}></TokenName>
-              ) : (
-                microdenomToDenom(getNativeIbcTokenDenom(poolD[0].native))
-              )}
+              {microamountToAmount(token1.amount, token1.decimals, 0)} {token1.symbol}
               <br />
-              {Number(microamountToAmount(poolD[1].amount, 6)).toFixed(0)}{" "}
-              {poolD[1].hasOwnProperty("token") ? (
-                <TokenName symbol={true} address={poolD[1].token}></TokenName>
-              ) : (
-                microdenomToDenom(getNativeIbcTokenDenom(poolD[1].native))
-              )}
+              {microamountToAmount(token2.amount, token2.decimals, 0)} {token2.symbol}
             </Text>
           </GridItem>
           <GridItem>
@@ -163,23 +166,33 @@ function PoolCard({ index, pool, poolD, tvl }: { index: number; pool: any; poolD
 export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCardProps) {
   const currency = useRecoilValue(currencyAtom);
   const items = poolsData.map((pool, index) => {
-    const poolD = allPools[pool.address];
-    const tokenPrice1 = getAssetPrice(poolD[0], assetPrices);
-    const tokenPrice2 = getAssetPrice(poolD[1], assetPrices);
+    const [token1, token2] = allPools[pool.address];
+    const tokenPrice1 = getAssetPrice(token1, assetPrices);
+    const tokenPrice2 = getAssetPrice(token2, assetPrices);
+    const tokenInfo1 = getAssetInfoDetails(token1);
+    const tokenInfo2 = getAssetInfoDetails(token2);
 
     const tvl = formatCurrency(
       currency,
       Number(
         (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) *
-          Number(microamountToAmount(poolD[0].amount, 6)) +
+          Number(microamountToAmount(token1.amount, tokenInfo1.decimals)) +
           (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur) *
-            Number(microamountToAmount(poolD[1].amount, 6)),
+            Number(microamountToAmount(token2.amount, tokenInfo2.decimals)),
       ).toString(),
     );
 
     return (
       <div key={index}>
-        <PoolCard tvl={tvl} pool={pool} poolD={poolD} index={index} />
+        <PoolCard
+          tvl={tvl}
+          pool={pool}
+          tokens={[
+            { ...tokenInfo1, amount: token1.amount },
+            { ...tokenInfo2, amount: token2.amount },
+          ]}
+          index={index}
+        />
       </div>
     );
   });

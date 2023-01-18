@@ -13,6 +13,7 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { UseTokenNameResponse } from "../../../state";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { secondsToDays } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
@@ -20,11 +21,11 @@ import { getPendingRebonding } from "./util";
 
 interface PendingBoundingsTableOptions {
   wyndexStake: string;
-  tokenName: any;
+  tokenInfo: UseTokenNameResponse;
 }
 
 export default function PendingBoundingsTable(props: PendingBoundingsTableOptions) {
-  const { wyndexStake, tokenName } = props;
+  const { wyndexStake, tokenInfo } = props;
   const { infos } = useStakeInfos(wyndexStake);
   const { address: walletAddress } = useWallet();
 
@@ -74,7 +75,7 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
                       return (
                         <Tr key={i}>
                           <Td fontWeight="semibold">
-                            {microamountToAmount(amount[1], 6)} {tokenName}
+                            {microamountToAmount(amount[1], tokenInfo.tokenDecimals)} {tokenInfo.tokenSymbol}
                           </Td>
                           <Td fontWeight="semibold">
                             {new Date(Number(amount[0]) / 1000000).toLocaleDateString()}{" "}

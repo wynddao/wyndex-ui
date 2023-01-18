@@ -1,8 +1,6 @@
-import { useWallet } from "@cosmos-kit/react";
 import { useIndexerInfos, usePairInfos, usePoolInfos } from "../../state";
-import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
-import { getAssetPrice } from "../../utils/assets";
+import { getAssetInfoDetails, getAssetPrice } from "../../utils/assets";
 import { microamountToAmount } from "../../utils/tokens";
 import { getApr } from "../Pool/util/apr";
 
@@ -15,11 +13,13 @@ export default function MaxApr({ poolAddress }: { poolAddress: string }) {
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
   const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);
+  const tokenInfo1 = getAssetInfoDetails(poolData.assets[0].info);
+  const tokenInfo2 = getAssetInfoDetails(poolData.assets[1].info);
 
   // Calculate total share in USD
   const totalFiatShares =
-    Number(microamountToAmount(poolData.assets[0].amount, 6)) * tokenPrice1.priceInUsd +
-    Number(microamountToAmount(poolData.assets[1].amount, 6)) * tokenPrice2.priceInUsd;
+    Number(microamountToAmount(poolData.assets[0].amount, tokenInfo1.decimals)) * tokenPrice1.priceInUsd +
+    Number(microamountToAmount(poolData.assets[1].amount, tokenInfo2.decimals)) * tokenPrice2.priceInUsd;
 
   // Value of one LP token in $
   const lpTokenValue = (1 / Number(microamountToAmount(poolData.total_share, 6))) * totalFiatShares;

@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BsPatchCheckFill } from "react-icons/bs";
+import { UseTokenNameResponse } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { microamountToAmount } from "../../utils/tokens";
@@ -8,13 +9,13 @@ import UnclaimModal from "./UnclaimModal";
 
 interface PendingUnbondingsTableProps {
   stakeAddress: string;
-  tokenName: any;
+  tokenInfo: UseTokenNameResponse;
   pairData: PairInfo;
 }
 
 export default function PendingUnbondingsTable(props: PendingUnbondingsTableProps) {
-  const { stakeAddress, tokenName, pairData } = props;
-  const { pendingUnstaking, refreshPendingUnstaking } = useStakeInfos(stakeAddress, true);
+  const { stakeAddress, tokenInfo, pairData } = props;
+  const { pendingUnstaking, refreshPendingUnstaking, infos } = useStakeInfos(stakeAddress, true);
   const [claimable, setClaimable] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [totalUnstakingAvaiable, setTotalUnstakingAvaiable] = useState<number>(0);
@@ -59,7 +60,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
                   return (
                     <Tr key={i}>
                       <Td fontWeight="semibold">
-                        {microamountToAmount(amount, 6)} {tokenName}
+                        {microamountToAmount(amount, tokenInfo.tokenDecimals)} {tokenInfo.tokenSymbol}
                       </Td>
                       <Td fontWeight="semibold">
                         {/*@ts-ignore */}
@@ -96,7 +97,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
         totalUnstakingAvailable={totalUnstakingAvaiable}
         wyndexStakeAddress={stakeAddress}
         refreshPendingUnstaking={refreshPendingUnstaking}
-        tokenSymbol={tokenName}
+        tokenInfo={tokenInfo}
         pairData={pairData}
       />
     </>
