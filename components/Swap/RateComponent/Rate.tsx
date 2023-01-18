@@ -77,7 +77,7 @@ const Rate: React.FC<IProps> = ({ fromToken, toToken, simulatedOperation, inputA
         <Text>{minSlippage} %</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Minimum received amount</Text>
+        <Text color={"wynd.neutral.500"}>Minimum Received Amount</Text>
         <Text>{microamountToAmount(minimumReceived, toToken.decimals, 6)}</Text>
       </Flex>
     </Flex>
