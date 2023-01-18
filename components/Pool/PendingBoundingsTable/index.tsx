@@ -47,14 +47,7 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
 
   return (
     <Box p={4}>
-      <Text
-        fontSize="xl"
-        fontWeight="bold"
-        mb={4}
-        bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-        bgClip="text"
-        display="inline-block"
-      >
+      <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline-block">
         My Pending Rebondings
       </Text>
       <TableContainer>

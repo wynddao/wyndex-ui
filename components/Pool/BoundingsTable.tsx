@@ -58,14 +58,7 @@ export default function BoundingsTable({
   return (
     <>
       <Box p={4}>
-        <Text
-          fontSize="xl"
-          fontWeight="bold"
-          mb={4}
-          bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-          bgClip="text"
-          display="inline-block"
-        >
+        <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline-block">
           My Bonded Liquidity
         </Text>
         <TableContainer>

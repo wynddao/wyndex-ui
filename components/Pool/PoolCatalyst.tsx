@@ -71,54 +71,38 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                 bgImage={"/images/Vector2.png"}
                 bgRepeat={"no-repeat"}
                 bgPos={"right"}
-                p={6}
+                py={4}
+                px={6}
+                minHeight="8.5rem"
               >
                 <SimpleGrid columns={{ md: 2 }} gap={8}>
-                  <Box alignItems="center" display="flex" justifyContent="center">
-                    <Flex align="center" justify={"center"}>
-                      <Box
-                        w={20}
-                        h={20}
-                        bg="whiteAlpha.900"
-                        borderRadius="full"
-                        border="1px solid"
-                        borderColor="orange.300"
-                        overflow="hidden"
-                        p={0.5}
-                        mr={4}
-                      >
-                        <AssetImage
-                          asset={
-                            //  @ts-ignore
-                            asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native
-                          }
-                        />
-                      </Box>
-                      <Box>
-                        <Text fontSize="3xl" fontWeight="extrabold"></Text>
-                        <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                          {asset.info.hasOwnProperty("token") ? (
-                            // @ts-ignore
-                            <TokenName address={asset.info.token} />
-                          ) : (
-                            // @ts-ignore
-                            microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))
-                          )}
-                        </Text>
-                      </Box>
-                    </Flex>
-                  </Box>
-                  <Box>
-                    <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                      Total amount
-                    </Text>
-                    <Text fontSize="xl" fontWeight="bold" mb={2}>
-                      {microamountToAmount(asset.amount, 6)}
-                    </Text>
-                    <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                      My amount
-                    </Text>
-                    <Text fontSize="xl" fontWeight="bold">
+                  <Flex align="center" justify={"center"}>
+                    <Box w={20} h={20} p={0.5} mr={4}>
+                      <AssetImage
+                        asset={
+                          //  @ts-ignore
+                          asset.info.hasOwnProperty("token") ? asset.info.token : asset.info.native
+                        }
+                      />
+                    </Box>
+                    <Box>
+                      <Text fontSize="3xl" fontWeight="extrabold"></Text>
+                      <Text color={"wynd.gray.500"}>
+                        {asset.info.hasOwnProperty("token") ? (
+                          // @ts-ignore
+                          <TokenName address={asset.info.token} />
+                        ) : (
+                          // @ts-ignore
+                          microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))
+                        )}
+                      </Text>
+                    </Box>
+                  </Flex>
+                  <Box fontWeight="bold">
+                    <Text color={"wynd.gray.500"}>Total amount</Text>
+                    <Text mb={2}>{microamountToAmount(asset.amount, 6)}</Text>
+                    <Text color={"wynd.gray.500"}>My amount</Text>
+                    <Text>
                       {"≈ "}
                       {Number(microamountToAmount(myShare * Number(asset.amount), 6)).toFixed(6)}
                     </Text>
