@@ -48,8 +48,17 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
+  const { ibcBalanceSelector, cw20BalanceSelector, refreshIbcBalances, refreshCw20Balances } =
+    useIndexerInfos({});
+
+  const [assetA, assetB] = pairData.asset_infos;
+  const refreshAssetA = useRecoilRefresher_UNSTABLE(
+    "token" in assetA ? cw20BalanceSelector(assetA.token) : ibcBalanceSelector(assetA.native),
+  );
+  const refreshAssetB = useRecoilRefresher_UNSTABLE(
+    "token" in assetB ? cw20BalanceSelector(assetB.token) : ibcBalanceSelector(assetB.native),
+  );
+
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
     onChange: (v) => {
@@ -281,7 +290,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
-      refreshPairBalances();
+      refreshAssetA();
+      refreshAssetB();
       refreshBondings();
 
       if (hasCw20) refreshCw20Balances();
