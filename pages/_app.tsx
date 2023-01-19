@@ -21,11 +21,11 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     <ErrorBoundary>
       <Providers>
         <Toaster />
-        <Sidebar>
-          <Suspense fallback={<Loader />}>
+        <Suspense fallback={<Loader />}>
+          <Sidebar>
             <Component {...pageProps} />
-          </Suspense>
-        </Sidebar>
+          </Sidebar>
+        </Suspense>
         <ToSModal />
       </Providers>
     </ErrorBoundary>
