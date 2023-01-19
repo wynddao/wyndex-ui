@@ -17,7 +17,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { Coin } from "cosmwasm";
 import { startTransition, useCallback, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { CustomHooks, useIndexerInfos, useToast, useTokenInfo } from "../../../state";
+import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
@@ -83,7 +83,8 @@ export default function AddLiquidity({
 
   const { address: walletAddress } = useWallet();
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { ibcBalanceSelector, cw20BalanceSelector, refreshIbcBalances, refreshCw20Balances } =
+    useIndexerInfos({});
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -101,9 +102,17 @@ export default function AddLiquidity({
     sender: walletAddress || "",
   });
 
-  const pairBalancesSelector = assetInfosBalancesSelector(pairData.asset_infos);
-  const pairBalances = useRecoilValue(pairBalancesSelector);
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(pairBalancesSelector);
+  const [assetA, assetB] = pairData.asset_infos;
+
+  const assetABalanceSelector =
+    "token" in assetA ? cw20BalanceSelector(assetA.token) : ibcBalanceSelector(assetA.native);
+  const assetABalance = useRecoilValue(assetABalanceSelector);
+  const refreshAssetA = useRecoilRefresher_UNSTABLE(assetABalanceSelector);
+
+  const assetBBalanceSelector =
+    "token" in assetB ? cw20BalanceSelector(assetB.token) : ibcBalanceSelector(assetB.native);
+  const assetBBalance = useRecoilValue(assetBBalanceSelector);
+  const refreshAssetB = useRecoilRefresher_UNSTABLE(assetBBalanceSelector);
 
   const calculateRatios = useCallback(() => {
     const [newInputValueA, newInputValueB] = tokenInputValue;
@@ -147,8 +156,8 @@ export default function AddLiquidity({
     const assets = getAssetList().tokens;
     const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
     const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
-    const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
-    const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
+    const maxMicroBalanceA = microamountToAmount(assetABalance, decimalsA);
+    const maxMicroBalanceB = microamountToAmount(assetBBalance, decimalsB);
 
     if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
@@ -159,7 +168,7 @@ export default function AddLiquidity({
     }
 
     setTokenInputValue([newInputValueA, newInputValueB]);
-  }, [calculateRatios, pairBalances, tokenInputValue]);
+  }, [assetABalance, assetBBalance, calculateRatios, tokenInputValue]);
 
   const prodiveLiquidity = async () => {
     setLoading(true);
@@ -209,7 +218,8 @@ export default function AddLiquidity({
     const hasNative = !!assets.find(({ info }) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
-      refreshPairBalances();
+      refreshAssetA();
+      refreshAssetB();
       refreshBondings();
       refreshLpBalance();
 
@@ -328,7 +338,7 @@ export default function AddLiquidity({
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available {microamountToAmount(pairBalances[i] ?? "", 6)}
+                        Available {microamountToAmount(i === 0 ? assetABalance : assetBBalance, 6)}
                         <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
@@ -346,7 +356,7 @@ export default function AddLiquidity({
                       value={tokenInputValue[i].value}
                       bg={"wynd.alpha.200"}
                       min={0}
-                      max={Number(pairBalances[i])}
+                      max={Number(i === 0 ? assetABalance : assetBBalance)}
                       onChange={(value) => calculateInputValues(denom, value)}
                     >
                       <NumberInputField textAlign="end" pr={4} />
@@ -366,7 +376,8 @@ export default function AddLiquidity({
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
-              ({ value }, index) => Number(value) > Number(microamountToAmount(pairBalances[index], 6)),
+              ({ value }, index) =>
+                Number(value) > Number(microamountToAmount(index === 0 ? assetABalance : assetBBalance, 6)),
             ).length > 0
           }
           w="full"
