@@ -109,7 +109,7 @@ export default function PoolHeader({
       onCloseBondings();
 
       // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 6500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       refreshBondings();
       refreshBalance();
       return result;

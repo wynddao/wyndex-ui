@@ -82,7 +82,7 @@ export default function WithdrawIbcModal() {
 
       setWithdrawIbcModalOpen({ isOpen: false });
       // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 6500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       refreshIbcBalances();
     } catch (error) {
       console.error({ error });
