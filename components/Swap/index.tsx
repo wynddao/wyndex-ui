@@ -4,7 +4,7 @@ import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
 import React, { startTransition, useCallback, useMemo, useState } from "react";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
-import { getBalanceByAsset, useIndexerInfos, useToast } from "../../state";
+import { useIndexerInfos, useToast } from "../../state";
 import { useSend } from "../../state/hooks/clients/Cw20";
 import { useExecuteSwapOperations } from "../../state/hooks/clients/WyndexMultiHop";
 import { useSimulateOperationInfos } from "../../state/hooks/useSimulateOperationInfos";
@@ -32,12 +32,25 @@ const Swap: React.FC = () => {
   const [inputAmount, setInputAmount] = useState<string>("1");
   const [slippage, setSlippage] = useState<number>(1);
   const { txToast, isTxLoading } = useToast();
-  const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const fromBalanceSelector = getBalanceByAsset({ address: walletAddress || "", asset: fromToken });
+  const {
+    swapOperationRoutes,
+    ibcBalanceSelector,
+    cw20BalanceSelector,
+    refreshIbcBalances,
+    refreshCw20Balances,
+  } = useIndexerInfos({});
+
+  const fromBalanceSelector =
+    "token_address" in fromToken
+      ? cw20BalanceSelector(fromToken.token_address)
+      : ibcBalanceSelector(fromToken.denom);
   const fromBalance = useRecoilValue(fromBalanceSelector);
   const refreshFromBalance = useRecoilRefresher_UNSTABLE(fromBalanceSelector);
+
   const refreshToBalance = useRecoilRefresher_UNSTABLE(
-    getBalanceByAsset({ address: walletAddress || "", asset: toToken }),
+    "token_address" in toToken
+      ? cw20BalanceSelector(toToken.token_address)
+      : ibcBalanceSelector(toToken.denom),
   );
 
   const operations = useRecoilValue(
