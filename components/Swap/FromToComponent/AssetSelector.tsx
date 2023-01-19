@@ -91,7 +91,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
             </Text>
           </Flex>
           <Text ml={4} fontSize="xs" color="wynd.neutral.500">
-            {microamountToAmount(asset.balance, 6)}
+            {microamountToAmount(asset.balance, asset.decimals)}
           </Text>
         </Flex>
       </ListItem>

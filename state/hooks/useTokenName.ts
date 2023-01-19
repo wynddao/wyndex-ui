@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil";
 import { Cw20Selectors } from "../recoil";
 
-interface UseTokenNameResponse {
+export interface UseTokenNameResponse {
   tokenName: string;
   tokenSymbol: string;
   tokenDecimals: number;

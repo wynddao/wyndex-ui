@@ -12,7 +12,7 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useCw20UserInfos } from "../../../state";
+import { useCw20UserInfos, UseTokenNameResponse } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import AddLiquidity from "./AddLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
