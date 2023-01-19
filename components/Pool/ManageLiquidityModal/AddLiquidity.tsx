@@ -143,14 +143,14 @@ export default function AddLiquidity({
   const calculateMaxValues = useCallback(() => {
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
-
+    console.log(ratioA, ratioB)
     const assets = getAssetList().tokens;
     const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
     const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
     const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
     const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
 
-    if (ratioA < ratioB) {
+    if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
       newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(6);
     } else {
