@@ -62,7 +62,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += Number(reward.amount) * (currency === "USD" ? price.priceInUsd : price.priceInEur);
+      value += Number(reward.amount) / 1000000 * (currency === "USD" ? price.priceInUsd : price.priceInEur);
     });
 
     return {

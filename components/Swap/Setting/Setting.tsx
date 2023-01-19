@@ -58,8 +58,8 @@ const Settings: React.FC<IProps> = ({ slippage, setSlippage }) => {
         bg={"wynd.base.sidebar"}
         borderColor={"WhiteAlpha.700"}
         boxShadow="md"
-        w="fit-content"
-        right={4}
+        w={{ xl: "fit-content" }}
+        right={4} 
         className="swap-popover"
       >
         <PopoverBody p={{ base: 6, md: 8 }}>
