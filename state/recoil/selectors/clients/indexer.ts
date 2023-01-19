@@ -2,7 +2,6 @@ import { Coin } from "cosmwasm";
 import { selectorFamily } from "recoil";
 import { RequestAssetPrice } from "../../../../utils/assets";
 import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
-import { AssetInfoValidated } from "../../../clients/types/WyndexFactory.types";
 import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
 
 type QueryClientParams = {
@@ -69,7 +68,7 @@ export const ibcBalancesSelector = selectorFamily<
 });
 
 export const ibcBalanceSelector = selectorFamily<
-  Coin,
+  string,
   QueryClientParams & { params: Parameters<IndexerQueryClient["ibcBalance"]> }
 >({
   key: "indexerIbcBalance",
@@ -77,7 +76,7 @@ export const ibcBalanceSelector = selectorFamily<
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-      return await client.ibcBalance(...params);
+      return (await client.ibcBalance(...params)).amount;
     },
 });
 
@@ -112,7 +111,7 @@ export const userFiatSelector = selectorFamily<
 });
 
 export const cw20BalanceSelector = selectorFamily<
-  Cw20BalanceResponse,
+  string,
   QueryClientParams & { params: Parameters<IndexerQueryClient["cw20Balance"]> }
 >({
   key: "indexerIbcBalance",
@@ -120,33 +119,7 @@ export const cw20BalanceSelector = selectorFamily<
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-      return await client.cw20Balance(...params);
-    },
-});
-
-export const assetInfosBalancesSelector = selectorFamily<
-  [string, string],
-  QueryClientParams & {
-    params: [walletAddress: string | undefined, assetInfos: readonly AssetInfoValidated[]];
-  }
->({
-  key: "indexerIbcBalance",
-  get:
-    ({ apiUrl, params: [walletAddress, [assetA, assetB]] }) =>
-    async ({ get }) => {
-      if (!walletAddress) return ["0", "0"];
-
-      const client = get(queryClient({ apiUrl }));
-      const assetABalance =
-        "token" in assetA
-          ? (await client.cw20Balance(walletAddress, assetA.token)).balance
-          : (await client.ibcBalance(walletAddress, assetA.native)).amount;
-      const assetBBalance =
-        "token" in assetB
-          ? (await client.cw20Balance(walletAddress, assetB.token)).balance
-          : (await client.ibcBalance(walletAddress, assetB.native)).amount;
-
-      return [assetABalance, assetBBalance];
+      return (await client.cw20Balance(...params)).balance;
     },
 });
 
