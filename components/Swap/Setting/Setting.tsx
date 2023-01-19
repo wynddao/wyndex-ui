@@ -62,20 +62,22 @@ const Settings: React.FC<IProps> = ({ slippage, setSlippage }) => {
         right={4} 
         className="swap-popover"
       >
-        <PopoverBody p={{ base: 6, md: 8 }}>
-          <Text fontWeight="semibold" mb={1.5}>
-            Transaction Setting
-          </Text>
-          <Box fontWeight="semibold" color={"wynd.alpha.700"} mb={4} display="flex" alignItems="center">
-            Slippage tolerance&ensp;
-            <Icon as={BsExclamationCircleFill} color="wynd.cyan.600" />
-          </Box>
-          <Flex width="100%" justifyContent="space-between" gap={2}>
-            {options.map((value) => {
-              return (
-                <RadioTag key={value} value={value} setSlippage={setSlippage} selected={defaultOption()} />
-              );
-            })}
+        <PopoverBody>
+          <Flex flexFlow="column" fontSize={{ base: "sm", md: "md" }} p={{ base: 2, md: 8 }}>
+            <Text fontWeight="semibold" mb={1.5}>
+              Transaction Setting
+            </Text>
+            <Box fontWeight="semibold" color={"wynd.alpha.700"} mb={4} display="flex" alignItems="center">
+              Slippage tolerance&ensp;
+              <Icon as={BsExclamationCircleFill} color="wynd.cyan.600" />
+            </Box>
+            <Flex width="100%" justifyContent="space-between" gap={2}>
+              {options.map((value) => {
+                return (
+                  <RadioTag key={value} value={value} setSlippage={setSlippage} selected={defaultOption()} />
+                );
+              })}
+            </Flex>
           </Flex>
         </PopoverBody>
       </PopoverContent>
