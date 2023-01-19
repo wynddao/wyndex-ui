@@ -58,7 +58,7 @@ export const getTransferIbcData = selectorFamily<
           ibcChain: {
             tokenName: "IBC/" + asset.name,
             userAddress: address,
-            balance: microamountToAmount(ibcBalance?.amount ?? 0, asset.decimals),
+            balance: microamountToAmount(ibcBalance, asset.decimals),
           },
         };
 

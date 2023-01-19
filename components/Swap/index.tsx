@@ -131,10 +131,10 @@ const Swap: React.FC = () => {
   const buttonText = useMemo(() => {
     if (isTxLoading) return "";
     if (!walletAddress) return "Connect Wallet";
-    if (Number(inputAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
+    if (Number(inputAmount) > Number(microamountToAmount(fromBalance, fromToken.decimals)))
       return "Insufficient Amount";
     if (walletAddress) return "Swap";
-  }, [fromBalance.amount, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
+  }, [fromBalance, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
 
   return (
     <Flex
@@ -154,7 +154,7 @@ const Swap: React.FC = () => {
           setFromToken={setFromToken}
           inputAmount={inputAmount}
           setInputAmount={setInputAmount}
-          balance={fromBalance}
+          balance={{ denom: fromToken.denom, amount: fromBalance }}
         />
         <SwapIcon swapTokens={swapTokenPosition} />
         <ToToken
@@ -173,7 +173,7 @@ const Swap: React.FC = () => {
         disabled={
           !isTxLoading &&
           isWalletConnected &&
-          Number(inputAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals))
+          Number(inputAmount) > Number(microamountToAmount(fromBalance, fromToken.decimals))
         }
         bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
