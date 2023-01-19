@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
@@ -85,7 +85,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
                   Available LP tokens ({pairNames[0]} / {pairNames[1]})
                 </Text>
                 <Text fontSize="xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
-                  {microamountToAmount(lpBalance, 6)}{" "}
+                  {microamountToAmount(lpBalance, ltokenInfo.tokenDecimals)}{" "}
                   <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
                 </Text>
                 <Button

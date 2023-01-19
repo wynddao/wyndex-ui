@@ -23,7 +23,12 @@ import TokenName from "../../TokenName";
 
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
-import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../utils/assets";
+import {
+  getAssetByDenom,
+  getAssetByTokenAddr,
+  getAssetInfoDetails,
+  getNativeIbcTokenDenom,
+} from "../../../utils/assets";
 import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../AssetImage";
@@ -102,15 +107,15 @@ export default function AddLiquidity({
     sender: walletAddress || "",
   });
 
-  const [assetA, assetB] = pairData.asset_infos;
+  const [assetInfoA, assetInfoB] = pairData.asset_infos;
 
   const assetABalanceSelector =
-    "token" in assetA ? cw20BalanceSelector(assetA.token) : ibcBalanceSelector(assetA.native);
+    "token" in assetInfoA ? cw20BalanceSelector(assetInfoA.token) : ibcBalanceSelector(assetInfoA.native);
   const assetABalance = useRecoilValue(assetABalanceSelector);
   const refreshAssetA = useRecoilRefresher_UNSTABLE(assetABalanceSelector);
 
   const assetBBalanceSelector =
-    "token" in assetB ? cw20BalanceSelector(assetB.token) : ibcBalanceSelector(assetB.native);
+    "token" in assetInfoB ? cw20BalanceSelector(assetInfoB.token) : ibcBalanceSelector(assetInfoB.native);
   const assetBBalance = useRecoilValue(assetBBalanceSelector);
   const refreshAssetB = useRecoilRefresher_UNSTABLE(assetBBalanceSelector);
 
@@ -152,7 +157,6 @@ export default function AddLiquidity({
   const calculateMaxValues = useCallback(() => {
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
-    console.log(ratioA, ratioB)
     const assets = getAssetList().tokens;
     const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
     const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
@@ -227,6 +231,11 @@ export default function AddLiquidity({
       if (hasNative) refreshIbcBalances();
     });
   };
+
+  const assetA =
+    "token" in assetInfoA ? getAssetByTokenAddr(assetInfoA.token) : getAssetByDenom(assetInfoA.native);
+  const assetB =
+    "token" in assetInfoB ? getAssetByTokenAddr(assetInfoB.token) : getAssetByDenom(assetInfoB.native);
 
   return (
     <>
@@ -338,7 +347,11 @@ export default function AddLiquidity({
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available {microamountToAmount(i === 0 ? assetABalance : assetBBalance, 6)}
+                        Available{" "}
+                        {microamountToAmount(
+                          i === 0 ? assetABalance : assetBBalance,
+                          i === 0 ? assetA?.decimals ?? 6 : assetB?.decimals ?? 6,
+                        )}
                         <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
@@ -377,7 +390,13 @@ export default function AddLiquidity({
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
               ({ value }, index) =>
-                Number(value) > Number(microamountToAmount(index === 0 ? assetABalance : assetBBalance, 6)),
+                Number(value) >
+                Number(
+                  microamountToAmount(
+                    index === 0 ? assetABalance : assetBBalance,
+                    index === 0 ? assetA?.decimals ?? 6 : assetB?.decimals ?? 6,
+                  ),
+                ),
             ).length > 0
           }
           w="full"
