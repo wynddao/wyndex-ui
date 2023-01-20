@@ -130,10 +130,17 @@ export default function AddLiquidity({
       const [newInputValueA, newInputValueB] = tokenInputValue;
       const [ratioA, ratioB] = calculateRatios();
 
-      newInputValueA.value =
-        denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
-      newInputValueB.value =
-        denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(6);
+      if (isNaN(ratioA) && isNaN(ratioB)) {
+        newInputValueA.value = denom === newInputValueA.id ? inputValue : newInputValueA.value;
+        newInputValueB.value = denom === newInputValueB.id ? inputValue : newInputValueB.value;
+
+        console.log(newInputValueA, newInputValueB)
+      } else {
+        newInputValueA.value =
+          denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
+        newInputValueB.value =
+          denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(6);
+      }
 
       setTokenInputValue([newInputValueA, newInputValueB]);
     },
@@ -143,7 +150,6 @@ export default function AddLiquidity({
   const calculateMaxValues = useCallback(() => {
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
-    console.log(ratioA, ratioB)
     const assets = getAssetList().tokens;
     const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
     const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;

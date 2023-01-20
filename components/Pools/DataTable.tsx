@@ -149,7 +149,6 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
                   return (
                     <Th
                       key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
                       isNumeric={meta?.isNumeric}
                     >
                       <chakra.div display="inline-block">
