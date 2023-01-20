@@ -27,7 +27,7 @@ const spin = keyframes`
 const Swap: React.FC = () => {
   const assetList = getAssetList();
   const [fromToken, setFromToken] = useState<Asset>(assetList.tokens[3]);
-  const [toToken, setToToken] = useState<Asset>(assetList.tokens[1]);
+  const [toToken, setToToken] = useState<Asset>(assetList.tokens[4]);
   const { address: walletAddress, connect, isWalletConnected } = useWallet();
   const [inputAmount, setInputAmount] = useState<string>("1");
   const [slippage, setSlippage] = useState<number>(1);
