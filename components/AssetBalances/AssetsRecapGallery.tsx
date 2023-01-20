@@ -26,99 +26,101 @@ export default function AssetsRecapGallery() {
 
   return (
     <>
-      <Heading p={8} pb={0}>
-        My Assets
-      </Heading>
-      <Grid
-        templateColumns={{
-          base: "repeat(2, 1fr)",
-          md: "repeat(3, 1fr)",
-        }}
-        maxW="4xl"
-        gap={6}
-        px={8}
-        py={4}
-      >
-        <Box py={{ md: 2 }}>
-          <Text fontWeight="semibold" opacity={0.7}>
-            Total Assets
-          </Text>
-          <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress
-              ? formatCurrency(
-                  currency,
-                  `${
-                    (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
-                    (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur)
-                  }`,
-                )
-              : "-"}
-          </Text>
-        </Box>
-        <Box py={{ md: 2 }}>
-          <Text fontWeight="semibold" opacity={0.7}>
-            Bonded Assets
-          </Text>
-          <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress
-              ? formatCurrency(
-                  currency,
-                  `${currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur}`,
-                )
-              : "-"}
-          </Text>
-        </Box>
-        <Box py={{ md: 2 }}>
-          <Text fontWeight="semibold" opacity={0.7}>
-            Available Assets
-          </Text>
-          <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-            {walletAddress
-              ? formatCurrency(
-                  currency,
-                  `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
-                )
-              : "-"}
-          </Text>
-        </Box>
-      </Grid>
-      <Grid
-        templateColumns={{
-          base: "repeat(2, 1fr)",
-          md: "repeat(3, 1fr)",
-        }}
-        maxW="4xl"
-        gap={6}
-        px={8}
-        py={4}
-      >
-        <Box py={{ md: 2 }}>
-          <Text fontWeight="semibold" opacity={0.7}>
-            JUNO Price
-          </Text>
-          <Text
-            fontSize={{ base: "3xl", md: "4xl" }}
-            fontWeight="extrabold"
-            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-            bgClip="text"
+      <Heading pt="8">My Assets</Heading>
+      <Box bg="url(/castle.jpeg)" rounded="lg">
+        <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
+          <Grid
+            templateColumns={{
+              base: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            }}
+            maxW="4xl"
+            gap={6}
+            px={8}
+            py={4}
           >
-            {junoPriceFormatted}
-          </Text>
-        </Box>
-        <Box py={{ md: 2 }}>
-          <Text fontWeight="semibold" opacity={0.7}>
-            WYND Price
-          </Text>
-          <Text
-            fontSize={{ base: "3xl", md: "4xl" }}
-            fontWeight="extrabold"
-            bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-            bgClip="text"
+            <Box py={{ md: 2 }}>
+              <Text fontWeight="semibold" opacity={0.7}>
+                Total Assets
+              </Text>
+              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+                {walletAddress
+                  ? formatCurrency(
+                      currency,
+                      `${
+                        (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
+                        (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur)
+                      }`,
+                    )
+                  : "-"}
+              </Text>
+            </Box>
+            <Box py={{ md: 2 }}>
+              <Text fontWeight="semibold" opacity={0.7}>
+                Bonded Assets
+              </Text>
+              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+                {walletAddress
+                  ? formatCurrency(
+                      currency,
+                      `${currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur}`,
+                    )
+                  : "-"}
+              </Text>
+            </Box>
+            <Box py={{ md: 2 }}>
+              <Text fontWeight="semibold" opacity={0.7}>
+                Available Assets
+              </Text>
+              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+                {walletAddress
+                  ? formatCurrency(
+                      currency,
+                      `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
+                    )
+                  : "-"}
+              </Text>
+            </Box>
+          </Grid>
+          <Grid
+            templateColumns={{
+              base: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            }}
+            maxW="4xl"
+            gap={6}
+            px={8}
+            py={4}
           >
-            {wyndexPriceFormatted}
-          </Text>
+            <Box py={{ md: 2 }}>
+              <Text fontWeight="semibold" opacity={0.7}>
+                JUNOX Price
+              </Text>
+              <Text
+                fontSize={{ base: "3xl", md: "4xl" }}
+                fontWeight="extrabold"
+                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+                bgClip="text"
+              >
+                {junoPriceFormatted}
+              </Text>
+            </Box>
+            <Box py={{ md: 2 }}>
+              <Text fontWeight="semibold" opacity={0.7}>
+                WYND Price
+              </Text>
+              <Text
+                fontSize={{ base: "3xl", md: "4xl" }}
+                fontWeight="extrabold"
+                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+                bgClip="text"
+              >
+                {wyndexPriceFormatted}
+              </Text>
+            </Box>
+          </Grid>
         </Box>
-      </Grid>
+      </Box>
     </>
   );
 }

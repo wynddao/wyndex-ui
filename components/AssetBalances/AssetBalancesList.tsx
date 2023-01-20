@@ -28,7 +28,7 @@ export default function AssetBalancesList() {
   const readyAssets = prepareAssets(assets, ibcBalances, cw20Balances, favAssets, filterOption, searchText);
 
   return (
-    <Box p={8} pt={0}>
+    <Box>
       <HStack
         position="sticky"
         top={0}
@@ -57,42 +57,29 @@ export default function AssetBalancesList() {
         </GridItem>
       </HStack>
       <Grid
-        position="sticky"
-        top={9}
-        zIndex={5}
-        display={{ base: "none", xl: "grid" }}
-        templateColumns="repeat(3, minmax(12rem, 1fr))"
-        columnGap={{ base: 4 }}
-        fontSize="sm"
+        display="grid"
+        templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 50px 1fr" }}
+        columnGap={{ base: 2, lg: 4 }}
+        fontSize="xs"
         fontWeight="semibold"
         color={"wynd.neutral.900"}
-        borderColor="wynd.base.sidebar"
-        borderWidth="1px"
-        boxShadow="base"
         py={2}
         px={4}
+        bg="whiteAlpha.100"
       >
         <GridItem>Asset / Chain</GridItem>
         <GridItem textAlign="end">Balance</GridItem>
-        <GridItem textAlign="end">Actions</GridItem>
+        <GridItem textAlign="end" display={{ base: "none", lg: "block" }}>
+          Actions
+        </GridItem>
       </Grid>
-      <Stack
-        borderRadius="md"
-        borderTopLeftRadius={0}
-        borderTopRightRadius={0}
-        boxShadow={{ lg: "base" }}
-        spacing={{ base: 4, lg: 0 }}
-        borderColor="wynd.base.sidebar"
-        borderWidth="1px"
-      >
-        {readyAssets.map((asset) => (
-          <AssetBalanceItem
-            key={getAssetId(asset)}
-            asset={asset}
-            toggleFav={asset.isFav ? () => removeFav(asset) : () => addFav(asset)}
-          />
-        ))}
-      </Stack>
+      {readyAssets.map((asset) => (
+        <AssetBalanceItem
+          key={getAssetId(asset)}
+          asset={asset}
+          toggleFav={asset.isFav ? () => removeFav(asset) : () => addFav(asset)}
+        />
+      ))}
     </Box>
   );
 }
