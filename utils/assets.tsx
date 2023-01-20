@@ -37,7 +37,10 @@ export const getAssetInfo = (item: Asset) => {
 
 export const getAssetInfoDetails = (asset: { token?: string; native?: string }): Asset => {
   const { tokens } = getAssetList();
-  if (asset.token) return tokens.find((token) => (token as CW20Asset).token_address)!;
+  if (asset.token) {
+    const res = tokens.find((token) => (token as CW20Asset).token_address === asset.token)!;
+    return res;
+  }
   const isIBC = asset.native?.startsWith("ibc");
   return tokens.find((token) => {
     const denom = isIBC ? token.juno_denom : token.denom;

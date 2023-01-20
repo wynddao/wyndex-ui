@@ -1,5 +1,5 @@
 import { Image, ImageProps } from "@chakra-ui/react";
-import { assetListTestnet } from "@wynddao/asset-list";
+import { assetList as assetListTestnet } from "@wynddao/asset-list";
 import { AssetInfo } from "../state/clients/types/WyndexPair.types";
 
 interface AssetImageOptions extends Omit<ImageProps, "alt" | "src"> {
