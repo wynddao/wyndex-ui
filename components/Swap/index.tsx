@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Image, keyframes } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { Asset, CW20Asset } from "@wynddao/asset-list";
+import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
 import React, { startTransition, useCallback, useMemo, useState } from "react";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
@@ -73,18 +73,12 @@ const Swap: React.FC = () => {
     }
 
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
-      { amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(), denom: fromToken.denom },
+      {
+        amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(),
+        denom: fromToken.tags.includes("ibc") ? (fromToken as IBCAsset).juno_denom : fromToken.denom,
+      },
     ]);
-  }, [
-    fromToken.decimals,
-    fromToken.denom,
-    fromToken.tags,
-    inputAmount,
-    operations,
-    sendCW20,
-    slippage,
-    swapNative,
-  ]);
+  }, [fromToken, inputAmount, operations, sendCW20, slippage, swapNative]);
 
   const swapTokenPosition = () => {
     startTransition(() => {
