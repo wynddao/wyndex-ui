@@ -39,7 +39,6 @@ const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmo
         bg="wynd.base.sidebar"
         display="flex"
         flexFlow="column"
-        pl={{ lg: "2rem" }}
         className="swap-to"
         minHeight="120px"
         justifyContent="end"
