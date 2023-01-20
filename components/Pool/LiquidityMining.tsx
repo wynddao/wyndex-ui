@@ -4,7 +4,7 @@ import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { Cw20Hooks } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexPair.types";
-import { useToast } from "../../state/hooks";
+import { useToast, useTokenInfo } from "../../state/hooks";
 import { useCw20UserInfos } from "../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../state/hooks/useUserStakeInfos";
@@ -29,6 +29,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
   const wyndexStake = pairData.staking_addr;
   const { txToast } = useToast();
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
@@ -61,74 +62,60 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
   return (
     <>
       <Box>
-        <Box p={4} pt={8}>
-          <Flex justify={{ md: "space-between" }} flexDirection={{ base: "column", md: "row" }}>
-            <Box maxW={{ md: "md", lg: "2xl" }}>
-              <Text
-                fontSize="2xl"
-                fontWeight="bold"
-                mb={2}
-                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-                bgClip="text"
-                display="inline"
-              >
-                Start WYNNING!
-              </Text>
-              <Text
-                fontSize="lg"
-                fontWeight="semibold"
-                color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
-                mb={{ base: 4, md: 2 }}
-              >
-                Bond liquidity to various minimum unbonding period to earn liquidity reward and swap fees
-              </Text>
-            </Box>
-            <Flex flexDirection="column" align={{ md: "end" }}>
-              <Text
-                fontSize="lg"
-                fontWeight="semibold"
-                color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
-                mb={2}
-              >
-                Available LP tokens ({pairNames[0]} / {pairNames[1]})
-              </Text>
-              <Text fontSize="2xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
-                {microamountToAmount(lpBalance, 6)}{" "}
-                <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
-              </Text>
-              <Button
-                disabled={lpBalance === "0"}
-                onClick={() => setIsModalOpen(true)}
-                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-                _hover={{
-                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
-                }}
-              >
-                Start WYNNING!
-              </Button>
+        {Number(lpBalance) > 0 && (
+          <Box p={4} pt={8}>
+            <Flex justify={{ md: "space-between" }} flexDirection={{ base: "column", md: "row" }} gap="4">
+              <Box maxW={{ md: "md" }}>
+                <Text
+                  fontSize={{ base: "2xl", md: "3xl" }}
+                  fontWeight="bold"
+                  mb={2}
+                  bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+                  bgClip="text"
+                  display="inline"
+                >
+                  Start WYNNING!
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="whiteAlpha.600" mb={{ base: 4, md: 2 }}>
+                  Bond liquidity to various minimum unbonding period to earn liquidity reward and swap fees
+                </Text>
+              </Box>
+              <Flex flexDirection="column" align={{ md: "end" }}>
+                <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.600">
+                  Available LP tokens ({pairNames[0]} / {pairNames[1]})
+                </Text>
+                <Text fontSize="xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
+                  {microamountToAmount(lpBalance, 6)}{" "}
+                  <TokenName symbol={true} address={pairData.liquidity_token}></TokenName>
+                </Text>
+                <Button
+                  fontSize="sm"
+                  disabled={lpBalance === "0"}
+                  onClick={() => setIsModalOpen(true)}
+                  bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                  _hover={{
+                    bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                  }}
+                >
+                  Start WYNNING!
+                </Button>
+              </Flex>
             </Flex>
-          </Flex>
-        </Box>
+          </Box>
+        )}
         <UnboundingsGrid stakeAddress={wyndexStake} apr={apr} />
         <BoundingsTable
-          tokenName={<TokenName address={pairData.liquidity_token}></TokenName>}
-          tokenSymbol={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
+          liquidityTokenInfo={ltokenInfo}
           stakeContract={wyndexStake}
           apr={apr}
           pairData={pairData}
         />
-        <PendingBoundingsTable
-          wyndexStake={wyndexStake}
-          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
-        />
-        <PendingUnbondingsTable
-          stakeAddress={wyndexStake}
-          tokenName={<TokenName symbol={true} address={pairData.liquidity_token}></TokenName>}
-          pairData={pairData}
-        />
+        <PendingBoundingsTable wyndexStake={wyndexStake} tokenInfo={ltokenInfo} />
+        <PendingUnbondingsTable stakeAddress={wyndexStake} tokenInfo={ltokenInfo} pairData={pairData} />
         <StartEarningModal
           doStake={doStake}
           isOpen={isModalOpen}
+          tokenInfo={ltokenInfo}
           balance={Number(lpBalance)}
           pairNames={pairNames}
           onClose={() => setIsModalOpen(false)}

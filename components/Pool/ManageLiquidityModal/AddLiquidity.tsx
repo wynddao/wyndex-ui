@@ -17,13 +17,13 @@ import { useWallet } from "@cosmos-kit/react";
 import { Coin } from "cosmwasm";
 import { startTransition, useCallback, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
+import { CustomHooks, useIndexerInfos, useToast, useTokenInfo } from "../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
-import { getNativeIbcTokenDenom } from "../../../utils/assets";
+import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../utils/assets";
 import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../AssetImage";
@@ -143,14 +143,14 @@ export default function AddLiquidity({
   const calculateMaxValues = useCallback(() => {
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
-
+    console.log(ratioA, ratioB)
     const assets = getAssetList().tokens;
     const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
     const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
     const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
     const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
 
-    if (ratioA < ratioB) {
+    if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
       newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(6);
     } else {
@@ -168,8 +168,10 @@ export default function AddLiquidity({
         return token.value !== "0";
       })
       .map((token): WyndAsset => {
+        const info = token.contract ? { token: token.contract } : { native: token.id };
+        const { decimals } = getAssetInfoDetails(info);
         return {
-          amount: amountToMicroamount(token.value, 6),
+          amount: amountToMicroamount(token.value, decimals),
           info: token.contract ? { token: token.contract } : { native: token.id },
         };
       });
@@ -178,8 +180,9 @@ export default function AddLiquidity({
       .filter((element) => !element.contract)
       .map((e) => {
         if (!e.contract) {
+          const { decimals } = getAssetInfoDetails({ native: e.id });
           return {
-            amount: amountToMicroamount(e.value || "", 6) || "1",
+            amount: amountToMicroamount(e.value || "", decimals) || "1",
             denom: e.id,
           };
         }

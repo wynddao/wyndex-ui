@@ -34,7 +34,7 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
       bg={"wynd.alpha.700"}
       borderRadius="full"
       bgGradient={value === selected ? "linear(to-r, wynd.green.300, wynd.cyan.300)" : ""}
-      px={5}
+      px={{ base: 3, md: 5 }}
       py={1}
       transition="all linear 0.5s"
       maxW="fit-content"
@@ -59,6 +59,7 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
             outline="none"
             _focus={{ outline: "none" }}
             _focusVisible={{ outline: "none" }}
+            fontSize={{ base: "sm", md: "md" }}
           />
           <span>%</span>
         </NumberInput>

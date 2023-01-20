@@ -4,10 +4,9 @@ import { Box, Button, Collapse, Flex, Icon, SimpleGrid, Text } from "@chakra-ui/
 import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
-import { getNativeIbcTokenDenom } from "../../utils/assets";
-import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
+import { getAssetInfoDetails } from "../../utils/assets";
+import { microamountToAmount } from "../../utils/tokens";
 import AssetImage from "../AssetImage";
-import TokenName from "../TokenName";
 
 interface PoolCatalystProps {
   readonly chainData: PoolResponse;
@@ -35,18 +34,19 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
       <Collapse in={show}>
         <Box pt={6}>
           <SimpleGrid columns={{ md: 2 }} gap={8}>
-            {chainData.assets.map((asset, i) => (
-              <Box
-                key={i}
-                borderRadius="xl"
-                bg={"wynd.base.sidebar"}
-                bgImage={"/images/Vector2.png"}
-                bgRepeat={"no-repeat"}
-                bgPos={"right"}
-                p={6}
-              >
-                <SimpleGrid columns={{ md: 2 }} gap={8}>
-                  <Box alignItems="center" display="flex" justifyContent="center">
+            {chainData.assets.map((asset, i) => {
+              const tokenInfo = getAssetInfoDetails(asset.info);
+              return (
+                <Box
+                  key={i}
+                  borderRadius="xl"
+                  bg={"wynd.base.sidebar"}
+                  bgImage={"/images/Vector2.png"}
+                  bgRepeat={"no-repeat"}
+                  bgPos={"right"}
+                  p={6}
+                >
+                  <SimpleGrid columns={{ md: 2 }} gap={8}>
                     <Flex align="center" justify={"center"}>
                       <Box
                         w={20}
@@ -69,28 +69,22 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
                       <Box>
                         <Text fontSize="3xl" fontWeight="extrabold"></Text>
                         <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                          {asset.info.hasOwnProperty("token") ? (
-                            // @ts-ignore
-                            <TokenName address={asset.info.token} />
-                          ) : (
-                            // @ts-ignore
-                            microdenomToDenom(getNativeIbcTokenDenom(asset.info.native))
-                          )}
+                          {tokenInfo.symbol}
                         </Text>
                       </Box>
                     </Flex>
-                  </Box>
-                  <Box>
-                    <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                      Total amount
-                    </Text>
-                    <Text fontSize="xl" fontWeight="bold" mb={2}>
-                      {microamountToAmount(asset.amount, 6)}
-                    </Text>
-                  </Box>
-                </SimpleGrid>
-              </Box>
-            ))}
+                    <Box>
+                      <Text fontWeight="bold" color={"wynd.neutral.600"}>
+                        Total amount
+                      </Text>
+                      <Text fontSize="xl" fontWeight="bold" mb={2}>
+                        {microamountToAmount(asset.amount, tokenInfo.decimals)}
+                      </Text>
+                    </Box>
+                  </SimpleGrid>
+                </Box>
+              );
+            })}
           </SimpleGrid>
         </Box>
       </Collapse>

@@ -13,7 +13,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import { startTransition, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { Cw20Hooks, useIndexerInfos, useToast } from "../../../state";
+import { Cw20Hooks, useIndexerInfos, useToast, useTokenInfo } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { getNativeIbcTokenDenom } from "../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
@@ -35,6 +35,7 @@ export default function RemoveLiquidity({
   refreshLpBalance: () => void;
 }) {
   const [removeValue, setRemoveValue] = useState(35);
+  const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
   const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
@@ -78,20 +79,19 @@ export default function RemoveLiquidity({
         <TokenName address={pairData.liquidity_token} />
       </Text>
       <Text fontSize={{ base: "5xl", sm: "7xl" }} fontWeight="bold" textAlign="center">
-        {Number(microamountToAmount((removeValue / 100) * availableTokens, 6)).toFixed(6)}
+        {microamountToAmount((removeValue / 100) * availableTokens, ltokenInfo.tokenDecimals, 6)}
       </Text>
       <Flex justify={"space-between"} pb={10}>
         {poolData.assets.map((asset, i) => (
           <Box key={i}>
             <Text>
               ≈
-              {Number(
-                microamountToAmount(
-                  (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
-                    Number(asset.amount),
-                  6,
-                ),
-              ).toFixed(6)}{" "}
+              {microamountToAmount(
+                (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
+                  Number(asset.amount),
+                ltokenInfo.tokenDecimals,
+                6,
+              )}{" "}
               {asset.info.hasOwnProperty("token") ? (
                 //@ts-ignore
                 <TokenName symbol={true} address={asset.info.token} />

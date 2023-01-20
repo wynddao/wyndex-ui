@@ -22,7 +22,7 @@ import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { WyndexStakeHooks } from "../../../state";
 import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
 import { BondingPeriodInfo, StakedResponse } from "../../../state/clients/types/WyndexStake.types";
-import { useIndexerInfos, useToast } from "../../../state/hooks";
+import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../state/hooks";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { renderUnboundingText } from "../../../utils/text";
 import { secondsToDays } from "../../../utils/time";
@@ -32,8 +32,7 @@ import RadioCard from "../../RadioCard";
 interface ManageBoundingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  tokenName: any;
-  tokenSymbol: any;
+  tokenInfo: UseTokenNameResponse;
   stake: StakedResponse;
   higherDuration: BondingPeriodInfo | undefined;
   lowerDuration: BondingPeriodInfo | undefined;
@@ -42,17 +41,8 @@ interface ManageBoundingsModalProps {
 }
 
 export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
-  const {
-    isOpen,
-    onClose,
-    tokenName,
-    stake,
-    higherDuration,
-    lowerDuration,
-    wyndexStakeAddress,
-    tokenSymbol,
-    pairData,
-  } = props;
+  const { isOpen, onClose, tokenInfo, stake, higherDuration, lowerDuration, wyndexStakeAddress, pairData } =
+    props;
   const { address: walletAddress } = useWallet();
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
@@ -74,7 +64,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const { txToast } = useToast();
   const roundForExecution = (N: number): number => Math.floor(N * 10000) / 10000;
   const maxAmount = roundForExecution(
-    Number(microamountToAmount(Number(stake.stake) - Number(stake.total_locked), 6)),
+    Number(microamountToAmount(Number(stake.stake) - Number(stake.total_locked), tokenInfo.tokenDecimals)),
   );
 
   const ChooseModeContent = () => {
@@ -132,7 +122,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
         <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
           <Flex position="relative" align="center">
             <Text fontWeight="bold" fontSize={{ base: "xl" }}>
-              {tokenName}
+              {tokenInfo.tokenName}
             </Text>
           </Flex>
         </Flex>
@@ -180,14 +170,14 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "unstake":
         return (
           <Text fontSize="large">
-            You{"'"}re about to unbond {amount || "0"} {tokenSymbol}!
+            You{"'"}re about to unbond {amount || "0"} {tokenInfo.tokenSymbol}!
           </Text>
         );
       case "bondDown":
         return (
           <Stack>
             <p>
-              You{"'"}re about to rebond {amount || "0"} {tokenSymbol} from a duration of{" "}
+              You{"'"}re about to rebond {amount || "0"} {tokenInfo.tokenSymbol} from a duration of{" "}
               {secondsToDays(stake.unbonding_period)} days to a lower duration of{" "}
               {secondsToDays(lowerDuration?.unbonding_period ?? 0)} days!
             </p>
@@ -202,7 +192,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
         return (
           <Stack>
             <p>
-              You{"'"}re about to rebond {amount || "0"} {tokenSymbol} from a duration of{" "}
+              You{"'"}re about to rebond {amount || "0"} {tokenInfo.tokenSymbol} from a duration of{" "}
               {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
               {secondsToDays(higherDuration?.unbonding_period)} days!
             </p>
@@ -248,7 +238,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: lowerDuration?.unbonding_period || 0,
-            tokens: amountToMicroamount(amount || "0", 6),
+            tokens: amountToMicroamount(amount || "0", tokenInfo.tokenDecimals),
           });
           reset();
           setAmount("");
@@ -262,7 +252,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
           const res = await doRebond({
             bondFrom: stake.unbonding_period,
             bondTo: higherDuration?.unbonding_period || 0,
-            tokens: amountToMicroamount(amount || "0", 6),
+            tokens: amountToMicroamount(amount || "0", tokenInfo.tokenDecimals),
           });
           reset();
           setAmount("");
@@ -274,7 +264,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
       case "unstake": {
         await txToast(async () => {
           const res = await doUnbond({
-            tokens: amountToMicroamount(amount || "0", 6),
+            tokens: amountToMicroamount(amount || "0", tokenInfo.tokenDecimals),
             unbondingPeriod: stake.unbonding_period,
           });
           reset();

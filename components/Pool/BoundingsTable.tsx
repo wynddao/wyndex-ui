@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useState } from "react";
+import { UseTokenNameResponse } from "../../state";
 import { PairInfo } from "../../state/clients/types/WyndexFactory.types";
 import { BondingPeriodInfo, StakedResponse } from "../../state/clients/types/WyndexStake.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
@@ -11,8 +12,7 @@ import ManageBoundingsModal from "./ManageBoundingsModal";
 import { getApr } from "./util/apr";
 interface BoundingsTableProps {
   readonly stakeContract: string;
-  tokenName: any;
-  tokenSymbol: any;
+  liquidityTokenInfo: UseTokenNameResponse;
   apr: {
     unbonding_period: number;
     apr: number;
@@ -22,8 +22,7 @@ interface BoundingsTableProps {
 
 export default function BoundingsTable({
   stakeContract,
-  tokenName,
-  tokenSymbol,
+  liquidityTokenInfo,
   apr,
   pairData,
 }: BoundingsTableProps) {
@@ -58,14 +57,7 @@ export default function BoundingsTable({
   return (
     <>
       <Box p={4}>
-        <Text
-          fontSize="xl"
-          fontWeight="bold"
-          mb={4}
-          bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-          bgClip="text"
-          display="inline-block"
-        >
+        <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline-block">
           My Bonded Liquidity
         </Text>
         <TableContainer>
@@ -87,7 +79,8 @@ export default function BoundingsTable({
                       <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days Unbonding</Td>
                       <Td fontWeight="semibold">{getApr(apr, unbonding_period)}</Td>
                       <Td fontWeight="semibold">
-                        {microamountToAmount(stake, 6)} {tokenSymbol}
+                        {microamountToAmount(stake, liquidityTokenInfo.tokenDecimals)}{" "}
+                        {liquidityTokenInfo.tokenSymbol}
                       </Td>
                       <Td>
                         <Flex>
@@ -132,8 +125,7 @@ export default function BoundingsTable({
           lowerDuration={prevDuration}
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
-          tokenSymbol={tokenSymbol}
-          tokenName={tokenName}
+          tokenInfo={liquidityTokenInfo}
           stake={activeStake}
           pairData={pairData}
         />
