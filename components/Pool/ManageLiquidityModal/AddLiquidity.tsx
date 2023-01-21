@@ -27,6 +27,7 @@ import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../utils/asse
 import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../AssetImage";
+import { CW20Asset } from "@wynddao/asset-list";
 interface inputType {
   id: string;
   value: string;
@@ -119,9 +120,19 @@ export default function AddLiquidity({
         : asset.info.native === newInputValueB.id,
     );
 
-    const ratioA = Number(assetB?.amount || "0") / Number(assetA?.amount || "0");
-    const ratioB = Number(assetA?.amount || "0") / Number(assetB?.amount || "0");
-
+    const assets = getAssetList().tokens;
+    const decimalsA =
+      assets.find(
+        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+    const decimalsB =
+      assets.find(
+        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+    const ratioA =
+      Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
+    const ratioB =
+      Number(assetA?.amount || "0") / 10 ** decimalsA / (Number(assetB?.amount || "0") / 10 ** decimalsB);
     return [ratioA, ratioB];
   }, [chainData.assets, tokenInputValue]);
 
@@ -129,17 +140,23 @@ export default function AddLiquidity({
     (denom: string, inputValue: string) => {
       const [newInputValueA, newInputValueB] = tokenInputValue;
       const [ratioA, ratioB] = calculateRatios();
-
+      const assets = getAssetList().tokens;
+      const decimalsA =
+        assets.find(
+          (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+        )?.decimals || 6;
+      const decimalsB =
+        assets.find(
+          (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+        )?.decimals || 6;
       if (isNaN(ratioA) && isNaN(ratioB)) {
         newInputValueA.value = denom === newInputValueA.id ? inputValue : newInputValueA.value;
         newInputValueB.value = denom === newInputValueB.id ? inputValue : newInputValueB.value;
-
-        console.log(newInputValueA, newInputValueB)
       } else {
         newInputValueA.value =
-          denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
+          denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(decimalsA);
         newInputValueB.value =
-          denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(6);
+          denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(decimalsB);
       }
 
       setTokenInputValue([newInputValueA, newInputValueB]);
@@ -151,17 +168,23 @@ export default function AddLiquidity({
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
     const assets = getAssetList().tokens;
-    const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
-    const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
+    const decimalsA =
+      assets.find(
+        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+    const decimalsB =
+      assets.find(
+        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
     const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
     const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
 
     if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
-      newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(6);
+      newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(decimalsA);
     } else {
       newInputValueB.value = maxMicroBalanceB;
-      newInputValueA.value = (Number(maxMicroBalanceB) / ratioA).toFixed(6);
+      newInputValueA.value = (Number(maxMicroBalanceB) / ratioA).toFixed(decimalsB);
     }
 
     setTokenInputValue([newInputValueA, newInputValueB]);
@@ -204,7 +227,7 @@ export default function AddLiquidity({
         pairContractAddress: pairData.contract_addr,
         assets: assets,
         funds,
-        slippageTolerance: "0.03"
+        slippageTolerance: "0.03",
       });
       onClose();
       return res;
@@ -224,6 +247,8 @@ export default function AddLiquidity({
       if (hasNative) refreshIbcBalances();
     });
   };
+
+  const assets = getAssetList().tokens;
 
   return (
     <>
@@ -335,7 +360,12 @@ export default function AddLiquidity({
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available {microamountToAmount(pairBalances[i] ?? "", 6)}
+                        Available{" "}
+                        {microamountToAmount(
+                          pairBalances[i] ?? "",
+                          assets.find((el) => denom === el.denom || denom === (el as CW20Asset).token_address)
+                            ?.decimals || 6,
+                        )}
                         <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
@@ -373,7 +403,15 @@ export default function AddLiquidity({
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
-              ({ value }, index) => Number(value) > Number(microamountToAmount(pairBalances[index], 6)),
+              (input, index) =>
+                Number(input.value) >
+                Number(
+                  microamountToAmount(
+                    pairBalances[index],
+                    assets.find((el) => input.id === el.denom || input.contract === (el as CW20Asset).token_address)
+                      ?.decimals || 6,
+                  ),
+                ),
             ).length > 0
           }
           w="full"

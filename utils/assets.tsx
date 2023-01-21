@@ -49,7 +49,7 @@ export const getAssetInfoDetails = (asset: { token?: string; native?: string }):
 };
 
 export const getDenom = (item: Asset): string => {
-  return item.tags.includes("native") ? item.denom.slice(1) : item.denom;
+  return item.denom.slice(1);
 };
 
 type AssetInfoIndexer =
