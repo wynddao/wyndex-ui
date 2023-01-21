@@ -27,6 +27,7 @@ import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../utils/asse
 import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../AssetImage";
+import { CW20Asset } from "@wynddao/asset-list";
 interface inputType {
   id: string;
   value: string;
@@ -119,9 +120,19 @@ export default function AddLiquidity({
         : asset.info.native === newInputValueB.id,
     );
 
-    const ratioA = Number(assetB?.amount || "0") / Number(assetA?.amount || "0");
-    const ratioB = Number(assetA?.amount || "0") / Number(assetB?.amount || "0");
-
+    const assets = getAssetList().tokens;
+    const decimalsA =
+      assets.find(
+        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+    const decimalsB =
+      assets.find(
+        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+    const ratioA =
+      Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
+    const ratioB =
+      Number(assetA?.amount || "0") / 10 ** decimalsA / (Number(assetB?.amount || "0") / 10 ** decimalsB);
     return [ratioA, ratioB];
   }, [chainData.assets, tokenInputValue]);
 
@@ -134,7 +145,7 @@ export default function AddLiquidity({
         newInputValueA.value = denom === newInputValueA.id ? inputValue : newInputValueA.value;
         newInputValueB.value = denom === newInputValueB.id ? inputValue : newInputValueB.value;
 
-        console.log(newInputValueA, newInputValueB)
+        console.log(newInputValueA, newInputValueB);
       } else {
         newInputValueA.value =
           denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
@@ -151,8 +162,14 @@ export default function AddLiquidity({
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
     const assets = getAssetList().tokens;
-    const decimalsA = assets.find(({ denom }) => newInputValueA.id === denom)?.decimals || 6;
-    const decimalsB = assets.find(({ denom }) => newInputValueB.id === denom)?.decimals || 6;
+    const decimalsA =
+      assets.find(
+        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+    const decimalsB =
+      assets.find(
+        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
     const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
     const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
 
@@ -204,7 +221,7 @@ export default function AddLiquidity({
         pairContractAddress: pairData.contract_addr,
         assets: assets,
         funds,
-        slippageTolerance: "0.03"
+        slippageTolerance: "0.03",
       });
       onClose();
       return res;
