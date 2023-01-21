@@ -144,8 +144,6 @@ export default function AddLiquidity({
       if (isNaN(ratioA) && isNaN(ratioB)) {
         newInputValueA.value = denom === newInputValueA.id ? inputValue : newInputValueA.value;
         newInputValueB.value = denom === newInputValueB.id ? inputValue : newInputValueB.value;
-
-        console.log(newInputValueA, newInputValueB);
       } else {
         newInputValueA.value =
           denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
