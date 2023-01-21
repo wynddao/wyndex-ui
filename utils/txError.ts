@@ -6,8 +6,11 @@ export class TxError extends Error {
 
   pretty() {
     const parsedMsg = this.parser();
+
     if (!Array.isArray(parsedMsg)) return parsedMsg;
     const [msg] = parsedMsg;
+
+    if(msg.includes('The transfer would have moved tokens still locked by a vesting schedule')) return 'The transfer would have moved tokens still locked by a vesting schedule.';
 
     // Support new cases
     if (msg.includes("contract: ")) return this.formatContractErr(msg);
