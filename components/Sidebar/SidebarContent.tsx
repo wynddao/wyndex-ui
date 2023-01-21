@@ -33,19 +33,17 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
       {...restProps}
     >
       <Box>
-        <Flex h="80px" alignItems="center" mx="4" justifyContent="space-between">
-          <Box display={{ base: "none", md: "block" }}>
-            <Image
-              alt="Wynd logo"
-              src={wyndLogoWhite}
-              sizes="100vw"
-              style={{ width: "100%", height: "auto", maxWidth: 128, maxHeight: 38 }}
-            />
-          </Box>
+        <Flex h="20" alignItems="center" mx="4" justifyContent="space-between">
+          <Image
+            alt="Wynd logo"
+            src={wyndLogoWhite}
+            sizes="100vw"
+            style={{ width: "100%", height: "auto", maxWidth: 128, maxHeight: 38 }}
+          />
+          <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
         </Flex>
         {LinkItems.map((link) => (
           <NavItem
-            onClick={onClose}
             key={link.name}
             to={link.to}
             icon={link.icon}

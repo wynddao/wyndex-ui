@@ -1,16 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  Icon,
-  IconButton,
-  Image,
-  Text,
-  Tooltip,
-} from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Grid, GridItem, IconButton, Image, Text, Tooltip } from "@chakra-ui/react";
 import { IBCAsset } from "@wynddao/asset-list";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { useSetRecoilState } from "recoil";
@@ -29,45 +17,83 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
 
   return (
     <Grid
-      templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 50px 1fr" }}
+      templateColumns={{
+        base: "1fr 1fr",
+        xl: "repeat(3, minmax(12rem, 1fr))",
+      }}
+      columnGap={{ base: 4 }}
       fontWeight="semibold"
       alignItems="center"
-      backgroundImage={"url(/images/Vector2Bg.png)"}
-      backgroundAttachment="fixed"
-      backgroundPosition="bottom"
-      borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
-      py="4"
-      px="2"
-      gap="4"
+      _odd={{
+        bg: {
+          lg: "wynd.base.subBg",
+        },
+      }}
+      _notLast={{
+        borderBottom: "1px solid",
+        borderBottomColor: "wynd.gray.100",
+      }}
+      p={4}
     >
-      <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-        <Tooltip label={asset.isFav ? "Remove from favourites" : "Add to favourites"}>
-          <Button
-            padding="0"
-            onClick={() => toggleFav()}
-            border="1px solid wynd.cyan.500"
-            aria-label={asset.isFav ? "Remove Fav" : "Add fav"}
+      <GridItem colSpan={{ base: 2, md: 1 }}>
+        <Flex justify={{ base: "center", md: "start" }} align="center">
+          <Box mr={3}>
+            <Tooltip label={asset.isFav ? "Remove from favourites" : "Add to favourites"}>
+              <IconButton
+                variant="outline"
+                colorScheme="teal"
+                aria-label={asset.isFav ? "Remove Fav" : "Add fav"}
+                icon={asset.isFav ? <AiFillStar /> : <AiOutlineStar />}
+                onClick={() => toggleFav()}
+              />
+            </Tooltip>
+          </Box>
+          <Box
+            w={{ base: 14, lg: 16 }}
+            h={{ base: 14, lg: 16 }}
+            minW={{ base: 14, lg: 16 }}
+            minH={{ base: 14, lg: 16 }}
+            maxW={{ base: 14, lg: 16 }}
+            maxH={{ base: 14, lg: 16 }}
+            bg={"whiteAlpha.500"}
+            border="1px solid"
+            borderColor={"wynd.neutral.900"}
+            borderRadius="full"
+            mr={4}
+            overflow="hidden"
           >
-            <Icon as={asset.isFav ? AiFillStar : AiOutlineStar} w="1rem" h="1rem" color={"wynd.cyan.500"} />
-          </Button>
-        </Tooltip>
-        <Image
-          alt={asset.name}
-          src={asset.logoURI}
-          w={{ base: "2rem", lg: "3rem" }}
-          h={{ base: "2rem", lg: "3rem" }}
-        />
-        <Text fontSize="lg">{asset.name}</Text>
-        <Badge rounded="md" py="1" px="2" fontSize="x-small">
-          {asset.tags}
-        </Badge>
+            <Image alt={`${asset.name} logo`} src={asset.logoURI} width="100%" />
+          </Box>
+          <Text fontSize="lg" mr={4}>
+            {asset.name}
+          </Text>
+          <Badge>{asset.tags}</Badge>
+        </Flex>
       </GridItem>
-      <GridItem display="flex" alignItems="center" justifyContent="end">
-        <Text fontSize="lg" mb={0.5}>
-          {microamountToAmount(asset.balance, asset.decimals)}
-        </Text>
+      <GridItem
+        colSpan={{ base: 2, md: 1 }}
+        display="flex"
+        alignItems={{ base: "center", md: "end" }}
+        py={{ base: 2, md: 0 }}
+        pr={{ base: 4, lg: 0 }}
+        pl={{ base: 4, lg: 0 }}
+      >
+        <Text display={{ base: "block", md: "none" }}>IBC Balance</Text>
+        <Box w="full" textAlign="end">
+          <Text fontSize="lg" mb={0.5}>
+            {microamountToAmount(asset.balance, asset.decimals)}
+          </Text>
+        </Box>
       </GridItem>
-      <GridItem colSpan={{ base: 2, lg: 1 }} display="flex" alignItems="end" justifyContent="end" gap="2">
+      <GridItem
+        colSpan={{ base: 2, md: 1 }}
+        display="flex"
+        alignItems={{ base: "center", md: "end" }}
+        justifyContent="flex-end"
+        py={{ base: 2, md: 0 }}
+        pr={{ base: 4, lg: 0 }}
+        pl={{ base: 4, lg: 0 }}
+      >
         {(asset as IBCAsset).external_deposit_uri && (
           <Button
             fontSize="sm"
@@ -91,9 +117,8 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
         {asset.tags === "ibc" && !(asset as IBCAsset).external_deposit_uri ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
             <Button
-              fontSize={{ base: "sm" }}
+              fontSize="sm"
               bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-              cursor="pointer"
               _hover={{
                 bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
                 ":disabled": {
@@ -106,14 +131,11 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
                 cursor: "initial",
               }}
               onClick={() => setDepositIbcModalOpen({ isOpen: true, chainId: asset.chain_id })}
-              height="fit-content"
-              px="4"
-              py="2"
             >
               IBC Deposit
             </Button>
             <Button
-              fontSize={{ base: "sm" }}
+              fontSize="sm"
               _hover={{
                 ":disabled": {
                   bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
@@ -126,9 +148,6 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
               }}
               disabled={asset.balance === "0"}
               onClick={() => setWithdrawIbcModalOpen({ isOpen: true, chainId: asset.chain_id })}
-              height="fit-content"
-              px="4"
-              py="2"
             >
               IBC Withdraw
             </Button>
