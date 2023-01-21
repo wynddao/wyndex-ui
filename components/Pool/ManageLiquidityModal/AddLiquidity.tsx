@@ -204,6 +204,7 @@ export default function AddLiquidity({
         pairContractAddress: pairData.contract_addr,
         assets: assets,
         funds,
+        slippageTolerance: "0.03"
       });
       onClose();
       return res;
