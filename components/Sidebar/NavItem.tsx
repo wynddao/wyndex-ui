@@ -30,7 +30,6 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
       <Flex
         align="center"
         p={{ base: "4" }}
-        mx={{ base: "2" }}
         borderRadius="lg"
         role="group"
         fontSize={{ base: "16" }}

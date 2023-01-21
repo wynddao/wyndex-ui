@@ -11,7 +11,7 @@ export default function Page() {
       <Head>
         <title>WYND DEX</title>
       </Head>
-      <Box p="4" bgImage={"/images/Vector2Bg.png"} minH={"100vh"} bgRepeat={"repeat"} bgSize={600}>
+      <Box p="4">
         <AssetBalances />
         <DepositIbcModal />
         <WithdrawIbcModal />
