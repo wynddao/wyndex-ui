@@ -403,12 +403,12 @@ export default function AddLiquidity({
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
-              ({ value }, index) =>
-                Number(value) >
+              (input, index) =>
+                Number(input.value) >
                 Number(
                   microamountToAmount(
                     pairBalances[index],
-                    assets.find((el) => value === el.denom || value === (el as CW20Asset).token_address)
+                    assets.find((el) => input.id === el.denom || input.contract === (el as CW20Asset).token_address)
                       ?.decimals || 6,
                   ),
                 ),
