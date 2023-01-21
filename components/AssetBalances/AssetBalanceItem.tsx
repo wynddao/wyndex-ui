@@ -1,4 +1,5 @@
 import { Badge, Box, Button, Flex, Grid, GridItem, IconButton, Image, Text, Tooltip } from "@chakra-ui/react";
+import { IBCAsset } from "@wynddao/asset-list";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { useSetRecoilState } from "recoil";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../state/recoil/atoms/modal";
@@ -93,7 +94,27 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
         pr={{ base: 4, lg: 0 }}
         pl={{ base: 4, lg: 0 }}
       >
-        {asset.tags === "ibc" ? (
+        {(asset as IBCAsset).external_deposit_uri && (
+          <Button
+            fontSize="sm"
+            bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+            _hover={{
+              bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+              ":disabled": {
+                bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+                cursor: "initial",
+              },
+            }}
+            _disabled={{
+              bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+              cursor: "initial",
+            }}
+            onClick={() => window.open((asset as IBCAsset).external_deposit_uri)}
+          >
+            IBC Transfer
+          </Button>
+        )}
+        {asset.tags === "ibc" && !(asset as IBCAsset).external_deposit_uri ? (
           <Flex flexDirection="row" justifyContent="flex-end" gap={2} flexWrap="wrap">
             <Button
               fontSize="sm"
@@ -132,7 +153,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
             </Button>
           </Flex>
         ) : (
-          <Text>—</Text>
+          <Text></Text>
         )}
       </GridItem>
     </Grid>
