@@ -240,6 +240,8 @@ export default function AddLiquidity({
     });
   };
 
+  const assets = getAssetList().tokens;
+
   return (
     <>
       <Stack spacing={2} mb={6}>
@@ -350,7 +352,12 @@ export default function AddLiquidity({
                       mb={2}
                     >
                       <Text fontWeight="medium" textAlign="center">
-                        Available {microamountToAmount(pairBalances[i] ?? "", 6)}
+                        Available{" "}
+                        {microamountToAmount(
+                          pairBalances[i] ?? "",
+                          assets.find((el) => denom === el.denom || denom === (el as CW20Asset).token_address)
+                            ?.decimals || 6,
+                        )}
                         <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                       </Text>
                       <Button
@@ -388,7 +395,15 @@ export default function AddLiquidity({
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter(
-              ({ value }, index) => Number(value) > Number(microamountToAmount(pairBalances[index], 6)),
+              ({ value }, index) =>
+                Number(value) >
+                Number(
+                  microamountToAmount(
+                    pairBalances[index],
+                    assets.find((el) => value === el.denom || value === (el as CW20Asset).token_address)
+                      ?.decimals || 6,
+                  ),
+                ),
             ).length > 0
           }
           w="full"
