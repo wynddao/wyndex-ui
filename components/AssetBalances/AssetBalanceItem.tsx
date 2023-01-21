@@ -132,7 +132,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
             >
               IBC Withdraw
             </Button>
-          </>
+          </Flex>
         ) : (
           <Text></Text>
         )}
