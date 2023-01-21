@@ -39,7 +39,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
               alt="Wynd logo"
               src={wyndLogoWhite}
               sizes="100vw"
-              style={{ width: "100%", height: "auto", maxWidth: 128, maxHeight: 38 }}
+              style={{ height: "auto", maxWidth: 128, maxHeight: 38 }}
             />
           </Box>
         </Flex>
