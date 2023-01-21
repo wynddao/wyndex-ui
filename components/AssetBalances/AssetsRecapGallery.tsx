@@ -94,7 +94,7 @@ export default function AssetsRecapGallery() {
       >
         <Box py={{ md: 2 }}>
           <Text fontWeight="semibold" opacity={0.7}>
-            JUNOX Price
+            JUNO Price
           </Text>
           <Text
             fontSize={{ base: "3xl", md: "4xl" }}
