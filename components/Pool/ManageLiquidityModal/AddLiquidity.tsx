@@ -140,15 +140,23 @@ export default function AddLiquidity({
     (denom: string, inputValue: string) => {
       const [newInputValueA, newInputValueB] = tokenInputValue;
       const [ratioA, ratioB] = calculateRatios();
-
+      const assets = getAssetList().tokens;
+      const decimalsA =
+        assets.find(
+          (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+        )?.decimals || 6;
+      const decimalsB =
+        assets.find(
+          (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+        )?.decimals || 6;
       if (isNaN(ratioA) && isNaN(ratioB)) {
         newInputValueA.value = denom === newInputValueA.id ? inputValue : newInputValueA.value;
         newInputValueB.value = denom === newInputValueB.id ? inputValue : newInputValueB.value;
       } else {
         newInputValueA.value =
-          denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(6);
+          denom === newInputValueA.id ? inputValue : (Number(inputValue) / ratioA).toFixed(decimalsA);
         newInputValueB.value =
-          denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(6);
+          denom === newInputValueB.id ? inputValue : (Number(inputValue) / ratioB).toFixed(decimalsB);
       }
 
       setTokenInputValue([newInputValueA, newInputValueB]);
@@ -173,10 +181,10 @@ export default function AddLiquidity({
 
     if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
-      newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(6);
+      newInputValueB.value = (Number(maxMicroBalanceA) / ratioB).toFixed(decimalsA);
     } else {
       newInputValueB.value = maxMicroBalanceB;
-      newInputValueA.value = (Number(maxMicroBalanceB) / ratioA).toFixed(6);
+      newInputValueA.value = (Number(maxMicroBalanceB) / ratioA).toFixed(decimalsB);
     }
 
     setTokenInputValue([newInputValueA, newInputValueB]);
