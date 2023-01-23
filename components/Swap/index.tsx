@@ -90,6 +90,7 @@ const Swap: React.FC = () => {
     startTransition(() => {
       setFromToken(toToken);
       setToToken(fromToken);
+      setInputAmount(microamountToAmount(simulatedOperation.amount, fromToken.decimals, 6));
     });
   };
 
