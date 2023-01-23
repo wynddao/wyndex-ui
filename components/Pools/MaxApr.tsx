@@ -34,7 +34,7 @@ export default function MaxApr({ poolAddress }: { poolAddress: string }) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += Number(reward.amount) / 1000000 * price.priceInUsd;
+      value += Number(reward.amount) / 1000000 * price.priceInUsd * 100;
     });
 
     return {
