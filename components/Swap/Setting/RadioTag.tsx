@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useState } from "react";
 import { Box, NumberInput, NumberInputField, Text } from "@chakra-ui/react";
+import React, { ChangeEvent, useState } from "react";
 
 interface IProps {
   selected: string;
@@ -31,9 +31,15 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
     <Box
       onClick={onClick}
       cursor="pointer"
-      bg={"wynd.alpha.700"}
-      borderRadius="full"
-      bgGradient={value === selected ? "linear(to-r, wynd.green.300, wynd.cyan.300)" : ""}
+      bg={value.includes("custom") ? "whiteAlpha.100" : "wynd.alpha.700"}
+      bgGradient={
+        value === selected && !value.includes("custom") ? "linear(to-r, wynd.green.300, wynd.cyan.300)" : ""
+      }
+      _focus={value.includes("custom") ? { bg: "whiteAlpha.200" } : {}}
+      _hover={value.includes("custom") ? { bg: "whiteAlpha.200" } : {}}
+      borderRadius={value.includes("custom") ? "none" : "full"}
+      outline="1px solid transparent"
+      outlineColor={value.includes("custom") && value === selected ? "wynd.cyan.500" : "transparent"}
       px={{ base: 3, md: 5 }}
       py={1}
       transition="all linear 0.5s"
@@ -49,6 +55,7 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
           justifyContent="center"
         >
           <NumberInputField
+            placeholder="Custom slippage"
             onChange={handlerCustomVal}
             value={customVal}
             maxW="fit-content"
