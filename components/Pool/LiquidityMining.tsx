@@ -13,6 +13,7 @@ import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
 import PendingBoundingsTable from "./PendingBoundingsTable";
 import PendingUnbondingsTable from "./PendingUnbondingsTable";
+import { Rewards } from "./Rewards";
 import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnbondingsGrid";
 
@@ -104,6 +105,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
           </Box>
         )}
         <UnboundingsGrid stakeAddress={wyndexStake} apr={apr} />
+        <Rewards address={walletAddress || ""} stakingContract={wyndexStake} />
         <BoundingsTable
           liquidityTokenInfo={ltokenInfo}
           stakeContract={wyndexStake}
