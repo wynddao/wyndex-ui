@@ -177,9 +177,7 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
                   background={canBeProvider ? "wynd.gray.alpha.20" : ""}
                   cursor="pointer"
                   backgroundImage={"url(/images/Vector2Bg.png)"}
-                  backgroundSize="cover"
-                  backgroundRepeat="repeat"
-                  backgroundAttachment="fixed"
+                  backgroundSize="300px"
                   _hover={{
                     backgroundColor: "wynd.gray.alpha.10",
                   }}

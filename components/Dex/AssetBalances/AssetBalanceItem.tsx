@@ -33,8 +33,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
       fontWeight="semibold"
       alignItems="center"
       backgroundImage={"url(/images/Vector2Bg.png)"}
-      backgroundAttachment="fixed"
-      backgroundPosition="bottom"
+      backgroundSize="300px"
       borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
       py="4"
       px="2"
