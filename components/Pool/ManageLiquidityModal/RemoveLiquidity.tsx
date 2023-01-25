@@ -61,7 +61,7 @@ export default function RemoveLiquidity({
     });
     setLoading(false);
     // New balances will not appear until the next block.
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 6500));
     const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
     const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
     //FIXME - This startTransition does not work

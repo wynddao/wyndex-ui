@@ -1,19 +1,19 @@
-"use client";
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
-import { DataTable } from "./DataTable";
-import PoolsCard from "./PoolsCard";
+import { useWallet } from "@cosmos-kit/react";
 import { createColumnHelper, FilterFn } from "@tanstack/react-table";
+import { useMemo } from "react";
+import { FiCreditCard } from "react-icons/fi";
+import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../state";
-import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
-import TokenName from "../TokenName";
+import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { getAssetByDenom, getAssetInfoDetails, getAssetPrice } from "../../utils/assets";
 import { formatCurrency } from "../../utils/currency";
+import { microamountToAmount } from "../../utils/tokens";
+import AssetImage from "../AssetImage";
+import TokenName from "../TokenName";
+import { DataTable } from "./DataTable";
 import MaxApr from "./MaxApr";
-import { useRecoilValue } from "recoil";
-import { currencyAtom } from "../../state/recoil/atoms/settings";
-import { useMemo } from "react";
-import { useWallet } from "@cosmos-kit/react";
-import { FiCreditCard } from "react-icons/fi";
+import PoolsCard from "./PoolsCard";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -90,20 +90,48 @@ export default function Pools() {
         header: "Pool",
         filterFn: "auto",
         enableColumnFilter: true,
-        cell: (props) => (
-          <>
-            {props.getValue()[0].type === "native" ? (
-              <span>{`${getAssetByDenom(props.getValue()[0].value)?.symbol}`}</span>
+        cell: ({ getValue }) => (
+          <Flex alignItems="center">
+            <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
+              <Box
+                w={{ base: 6, md: 7, lg: 8 }}
+                h={{ base: 6, md: 7, lg: 8 }}
+                bg="whiteAlpha.900"
+                borderRadius="full"
+                border="1px solid"
+                borderColor={"wynd.cyan.100"}
+                overflow="hidden"
+                p={0.5}
+              >
+                <AssetImage asset={getValue()[0].value as string} />
+              </Box>
+              <Box
+                position="absolute"
+                left={{ base: 4, sm: 5 }}
+                w={{ base: 6, md: 7, lg: 8 }}
+                h={{ base: 6, md: 7, lg: 8 }}
+                bg="whiteAlpha.900"
+                borderRadius="full"
+                border="1px solid"
+                borderColor={"wynd.cyan.100"}
+                overflow="hidden"
+                p={0.5}
+              >
+                <AssetImage asset={getValue()[1].value as string} />
+              </Box>
+            </Flex>
+            {getValue()[0].type === "native" ? (
+              <span>{`${getAssetByDenom(getValue()[0].value)?.symbol}`}</span>
             ) : (
-              <TokenName symbol={true} address={props.getValue()[0].value} />
+              <TokenName symbol={true} address={getValue()[0].value} />
             )}
             {" / "}
-            {props.getValue()[1].type === "native" ? (
-              <span>{`${getAssetByDenom(props.getValue()[1].value)?.symbol}`}</span>
+            {getValue()[1].type === "native" ? (
+              <span>{`${getAssetByDenom(getValue()[1].value)?.symbol}`}</span>
             ) : (
-              <TokenName symbol={true} address={props.getValue()[1].value} />
+              <TokenName symbol={true} address={getValue()[1].value} />
             )}
-          </>
+          </Flex>
         ),
       },
     ),

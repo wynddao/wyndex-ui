@@ -234,7 +234,7 @@ export default function AddLiquidity({
     });
     setLoading(false);
     // New balances will not appear until the next block.
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 6500));
     const hasCw20 = !!assets.find(({ info }) => "token" in info);
     const hasNative = !!assets.find(({ info }) => "native" in info);
     //FIXME - This startTransition does not work

@@ -1,6 +1,7 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin } from "@cosmjs/amino";
 import { Asset, Decimal } from "./types/WyndexPair.types";
+import { StdFee } from "@cosmjs/stargate";
 export class Cw20QueryClient {
   client: CosmWasmClient;
 
@@ -18,6 +19,7 @@ export class CustomClient extends Cw20QueryClient {
     this.client = client;
     this.sender = sender;
     this.customProvideLP = this.customProvideLP.bind(this);
+    this.withdrawAllRewards = this.withdrawAllRewards.bind(this);
   }
 
   customProvideLP = async ({
@@ -95,6 +97,27 @@ export class CustomClient extends Cw20QueryClient {
         },
       ];
     }
+    return await this.client.executeMultiple(this.sender, msgs, "auto");
+  };
+  withdrawAllRewards = async (
+    {
+      stakingAddresses,
+    }: {
+      stakingAddresses: string[];
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    const msgs = stakingAddresses.map((address) => {
+      return {
+        contractAddress: address,
+        msg: {
+          withdraw_rewards: {},
+        },
+      };
+    });
+
     return await this.client.executeMultiple(this.sender, msgs, "auto");
   };
 }
