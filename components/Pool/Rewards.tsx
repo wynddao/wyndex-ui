@@ -30,7 +30,7 @@ export const Rewards = ({ address, stakingContract }: { address: string; staking
       const result = await doWithdraw({});
 
       // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshPendingUnstaking();
       return result;
     });

@@ -54,7 +54,8 @@ export default function AssetsRecapGallery() {
       });
 
       // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 6500));
+      getData();
       return result;
     });
   };
@@ -71,7 +72,6 @@ export default function AssetsRecapGallery() {
     userPools.map(async (pool: any) => {
       const staking_addr: string = pool.value.pair_info.staking_addr;
       const rewards = await getRewards(walletAddress || "", staking_addr);
-      console.log(rewards)
       let assetPrice: RequestAssetPrice = {
         asset: "",
         priceInJuno: "0",
@@ -99,7 +99,7 @@ export default function AssetsRecapGallery() {
 
   useEffect(() => {
     getData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
 
   return (
@@ -217,9 +217,15 @@ export default function AssetsRecapGallery() {
                     )
                   : "-"}
               </Text>
-              <Button backgroundColor={"wynd.gray.alpha.20"} onClick={() => withdrawAll()} variant={"ghost"}>
-                Claim all!
-              </Button>
+              {walletAddress && (
+                <Button
+                  backgroundColor={"wynd.gray.alpha.20"}
+                  onClick={() => withdrawAll()}
+                  variant={"ghost"}
+                >
+                  Claim all!
+                </Button>
+              )}
             </Box>
           </Grid>
         </Box>

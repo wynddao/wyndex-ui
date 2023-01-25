@@ -93,7 +93,7 @@ const Swap: React.FC = () => {
       await txToast(swap);
 
       // New balances will not appear until the next block.
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 6500));
       //FIXME - This startTransition does not work
       startTransition(() => {
         refreshFromBalance();
