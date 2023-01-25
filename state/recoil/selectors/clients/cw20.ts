@@ -11,8 +11,10 @@ import {
   DownloadLogoResponse,
   MarketingInfoResponse,
   TokenInfoResponse,
+  VestingResponse,
 } from "../../../clients/types/Cw20.types";
 import { Cw20Client, Cw20QueryClient } from "../../../clients/Cw20.client";
+import { string } from "zod";
 
 type QueryClientParams = {
   contractAddress: string;
@@ -58,6 +60,28 @@ export const balanceSelector = selectorFamily<
       return await client.balance(...params);
     },
 });
+
+// returns how much of the balance is currently locked.
+// will error on any contract that isn't cw20-vesting, so we catch errors and treat as 0
+export const vestingSelector = selectorFamily<
+  VestingResponse,
+  QueryClientParams & {
+    params: Parameters<Cw20QueryClient["vesting"]>;
+  }
+>({
+  key: "cw20Balance",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      try {
+        return await client.vesting(...params);
+      } catch (e) {
+        return { locked: "0" };
+      }
+    },
+});
+
 export const tokenInfoSelector = selectorFamily<
   TokenInfoResponse,
   QueryClientParams & {
