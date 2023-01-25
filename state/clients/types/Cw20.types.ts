@@ -203,9 +203,6 @@ export interface AllowanceResponse {
 export interface BalanceResponse {
   balance: Uint128;
 }
-export interface VestingResponse {
-  locked: string;
-}
 export interface DownloadLogoResponse {
   data: Binary;
   mime_type: string;
