@@ -37,7 +37,7 @@ const RadioTag: React.FC<IProps> = ({ selected, value, setSlippage }) => {
       }
       _focus={value.includes("custom") ? { bg: "whiteAlpha.200" } : {}}
       _hover={value.includes("custom") ? { bg: "whiteAlpha.200" } : {}}
-      borderRadius={value.includes("custom") ? "none" : "full"}
+      borderRadius={value.includes("custom") ? "md" : "full"}
       outline="1px solid transparent"
       outlineColor={value.includes("custom") && value === selected ? "wynd.cyan.500" : "transparent"}
       px={{ base: 3, md: 5 }}
