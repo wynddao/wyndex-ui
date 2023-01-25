@@ -30,7 +30,7 @@ export default function AssetsRecapGallery() {
   });
   const [allStakingAddresses, setAllStakingAddresses] = useState<string[]>([]);
   const { txToast } = useToast();
-  const { userFiat, assetPrices, userPools } = useIndexerInfos({
+  const { userFiat, assetPrices, userPools, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({
     fetchCw20Balances: true,
     fetchPoolData: true,
   });
@@ -56,6 +56,8 @@ export default function AssetsRecapGallery() {
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
       getData();
+      refreshIbcBalances();
+      refreshCw20Balances();
       return result;
     });
   };
