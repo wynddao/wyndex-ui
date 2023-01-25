@@ -7,7 +7,7 @@ import { CustomHooks, useIndexerInfos, useToast } from "../../state";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../utils";
-import { RequestAssetPrice } from "../../utils/assets";
+import { getAssetInfoDetails, RequestAssetPrice } from "../../utils/assets";
 import { formatCurrency } from "../../utils/currency";
 import { getRewards } from "../Pool/PendingBoundingsTable/util";
 
@@ -58,12 +58,17 @@ export default function AssetsRecapGallery() {
       } else {
         assetPrice = assetPrices.find((price) => price.asset === reward.info.native)!;
       }
-      totalAvailableRewardValue.priceInEur += Number(assetPrice.priceInEur) * reward.amount;
-      totalAvailableRewardValue.priceInUsd += Number(assetPrice.priceInUsd) * reward.amount;
-      totalAvailableRewardValue.priceInJuno += Number(assetPrice.priceInJuno) * reward.amount;
+      const assetInfo = getAssetInfoDetails(reward.info);
+      totalAvailableRewardValue.priceInEur +=
+        Number(assetPrice.priceInEur) * (Number(reward.amount) / 10 ** assetInfo.decimals);
+      totalAvailableRewardValue.priceInUsd +=
+        Number(assetPrice.priceInUsd) * (Number(reward.amount) / 10 ** assetInfo.decimals);
+      totalAvailableRewardValue.priceInJuno +=
+        Number(assetPrice.priceInJuno) * (Number(reward.amount) / 10 ** assetInfo.decimals);
     });
-  });
+    console.log(rewards)
 
+  });
   const doWithdrawAll = CustomHooks.useCustomWithdrawAllRewards({
     sender: walletAddress || "",
   });
