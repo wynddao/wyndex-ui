@@ -83,7 +83,7 @@ export default function AssetsRecapGallery() {
   return (
     <>
       <Heading pt="8">My Assets</Heading>
-      <Box bg="url(/castle.jpeg)" rounded="lg">
+      <Box bg="url(/castle.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
         <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
           <Grid
             templateColumns={{
