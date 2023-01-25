@@ -108,7 +108,7 @@ function PoolCard({
                 } else {
                   return (
                     <span key={index}>
-                      <TokenName address={assetInfo.token} />
+                      <TokenName symbol={true} address={assetInfo.token} />
                       {divider}
                     </span>
                   );

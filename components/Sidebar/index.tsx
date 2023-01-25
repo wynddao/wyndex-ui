@@ -3,7 +3,7 @@
 import { Box, Drawer, DrawerContent, Flex, useDisclosure } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
-
+import { useMediaQuery } from "@chakra-ui/react";
 import { CHAIN_NAME } from "../../utils";
 import Hamburguer from "./Hamburguer";
 import SidebarContent from "./SidebarContent";
@@ -15,6 +15,7 @@ interface SidebarProps {
 export default function Sidebar({ children }: SidebarProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { setCurrentChain } = useWallet();
+  const [isMd] = useMediaQuery("(min-width: 48em)");
 
   useEffect(() => {
     setCurrentChain(CHAIN_NAME);
@@ -32,7 +33,7 @@ export default function Sidebar({ children }: SidebarProps) {
       />
       <Drawer
         autoFocus={false}
-        isOpen={isOpen}
+        isOpen={!isMd ? isOpen : false}
         placement="left"
         onClose={onClose}
         returnFocusOnClose={false}
@@ -43,7 +44,7 @@ export default function Sidebar({ children }: SidebarProps) {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      <Hamburguer display={{ base: "flex", md: "none" }} onOpen={onOpen} />
+      <Hamburguer display={{ base: "flex", md: "none" }} onOpen={onOpen} onClose={onClose} isOpen={isOpen} />
       <Box flex="1">{children}</Box>
     </Flex>
   );

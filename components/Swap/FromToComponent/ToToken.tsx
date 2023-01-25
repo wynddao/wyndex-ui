@@ -7,7 +7,7 @@ import { useIndexerInfos } from "../../../state";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { getAmountByPrice, getDenom } from "../../../utils/assets";
 import { formatCurrency } from "../../../utils/currency";
-import { microamountToAmount } from "../../../utils/tokens";
+import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 
 interface IProps {
@@ -56,7 +56,8 @@ const ToToken: React.FC<IProps> = ({ fromToken, toToken, setToToken, expectedAmo
           <Flex flexFlow="column" position="relative">
             <Flex alignItems="center" gap="0.5rem">
               <Text textTransform="uppercase">
-                ≈ {microamountToAmount(expectedAmount, toToken.decimals, 6)} {getDenom(toToken)}
+                ≈ {microamountToAmount(expectedAmount, toToken.decimals, 6)}{" "}
+                {microdenomToDenom(toToken.denom)}
               </Text>
               <Text position="absolute" right="0" bottom="-4" fontSize="xs" color="wynd.neutral.500">
                 ≈ {formatCurrency(currency, `${price.toFixed(6)}`)} (-{impact.toFixed(2)} %)

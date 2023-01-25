@@ -30,3 +30,4 @@ const wrapExecuteHook =
 export const useUnbond = wrapExecuteHook("unbond");
 export const useRebond = wrapExecuteHook("rebond");
 export const useClaim = wrapExecuteHook("claim");
+export const useWithdraw = wrapExecuteHook("withdrawRewards")

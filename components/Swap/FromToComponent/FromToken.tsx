@@ -3,7 +3,7 @@ import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { getDenom, getAmountByPrice } from "../../../utils/assets";
-import { microamountToAmount } from "../../../utils/tokens";
+import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 import { useRecoilValue } from "recoil";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
@@ -100,7 +100,7 @@ const FromToken: React.FC<IProps> = ({
                 onChange={({ target }) => setInputAmount(target.value)}
                 value={inputAmount}
               />
-              <Text textTransform="uppercase">{getDenom(fromToken)}</Text>
+              <Text textTransform="uppercase">{microdenomToDenom(fromToken.denom)}</Text>
             </Flex>
             <Text position="absolute" right="0" bottom="-6px" fontSize="xs" color="wynd.neutral.500">
               ≈ {formatCurrency(currency, `${price.toFixed(6)}`)}

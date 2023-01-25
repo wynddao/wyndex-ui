@@ -139,7 +139,7 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
           </Select>
         </Flex>
       </Box>
-      <Box borderRadius="lg" overflow="hidden">
+      <Box borderRadius="lg" overflow="auto">
         <Table variant="simple">
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -147,11 +147,7 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
                 {headerGroup.headers.map((header) => {
                   const meta: any = header.column.columnDef.meta;
                   return (
-                    <Th
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      isNumeric={meta?.isNumeric}
-                    >
+                    <Th key={header.id} isNumeric={meta?.isNumeric}>
                       <chakra.div display="inline-block">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {header.column.getIsSorted() ? (
