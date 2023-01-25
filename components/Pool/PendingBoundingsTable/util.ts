@@ -33,3 +33,12 @@ export async function getPendingRebonding(address: string, unbondingPeriod: numb
     return { locked_tokens: [] };
   }
 }
+
+export async function getRewards(address: string, contractAddresses: string) {
+  const client = await CosmWasmClient.connect(CHAIN_RPC_ENDPOINT);
+  return (await client.queryContractSmart(contractAddresses, {
+    withdrawable_rewards: {
+      owner: address,
+    },
+  })).rewards;
+}

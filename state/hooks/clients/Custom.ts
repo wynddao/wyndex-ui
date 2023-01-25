@@ -27,3 +27,4 @@ const wrapExecuteHook =
   };
 
 export const useCustomProvideLP = wrapExecuteHook("customProvideLP");
+export const useCustomWithdrawAllRewards = wrapExecuteHook("withdrawAllRewards");
