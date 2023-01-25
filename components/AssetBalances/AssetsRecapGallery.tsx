@@ -1,7 +1,7 @@
 import { Box, Button, Grid, Heading, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomHooks, useIndexerInfos, useToast } from "../../state";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
@@ -19,6 +19,16 @@ export interface AssetsRecap {
 
 export default function AssetsRecapGallery() {
   const { address: walletAddress } = useWallet();
+  const [totalAvailableRewardValue, setTotalAvailableRewardValue] = useState<{
+    priceInJuno: number;
+    priceInUsd: number;
+    priceInEur: number;
+  }>({
+    priceInJuno: 0,
+    priceInUsd: 0,
+    priceInEur: 0,
+  });
+  const [allStakingAddresses, setAllStakingAddresses] = useState<string[]>([]);
   const { txToast } = useToast();
   const { userFiat, assetPrices, userPools } = useIndexerInfos({
     fetchCw20Balances: true,
@@ -33,42 +43,6 @@ export default function AssetsRecapGallery() {
   const wyndexPrice = currency === "USD" ? wyndexAssetPrice?.priceInUsd : wyndexAssetPrice?.priceInEur;
   const wyndexPriceFormatted = formatCurrency(currency, String(wyndexPrice ?? "0"));
 
-  let totalAvailableRewardValue = {
-    priceInJuno: 0,
-    priceInUsd: 0,
-    priceInEur: 0,
-  };
-
-  const allStakingAddresses = userPools.map((pool: any) => pool.value.pair_info.staking_addr);
-
-  userPools.map(async (pool: any) => {
-    const staking_addr: string = pool.value.pair_info.staking_addr;
-    const rewards = await getRewards(walletAddress || "", staking_addr);
-
-    let assetPrice: RequestAssetPrice = {
-      asset: "",
-      priceInJuno: "0",
-      priceInUsd: 0,
-      priceInEur: 0,
-    };
-
-    rewards.map((reward: any) => {
-      if (reward.info.hasOwnProperty("token")) {
-        assetPrice = assetPrices.find((price) => price.asset === reward.info.token)!;
-      } else {
-        assetPrice = assetPrices.find((price) => price.asset === reward.info.native)!;
-      }
-      const assetInfo = getAssetInfoDetails(reward.info);
-      totalAvailableRewardValue.priceInEur +=
-        Number(assetPrice.priceInEur) * (Number(reward.amount) / 10 ** assetInfo.decimals);
-      totalAvailableRewardValue.priceInUsd +=
-        Number(assetPrice.priceInUsd) * (Number(reward.amount) / 10 ** assetInfo.decimals);
-      totalAvailableRewardValue.priceInJuno +=
-        Number(assetPrice.priceInJuno) * (Number(reward.amount) / 10 ** assetInfo.decimals);
-    });
-    console.log(rewards)
-
-  });
   const doWithdrawAll = CustomHooks.useCustomWithdrawAllRewards({
     sender: walletAddress || "",
   });
@@ -84,6 +58,49 @@ export default function AssetsRecapGallery() {
       return result;
     });
   };
+
+  const getData = async () => {
+    let _totalAvailableRewardValue = {
+      priceInJuno: 0,
+      priceInUsd: 0,
+      priceInEur: 0,
+    };
+
+    const _allStakingAddresses = userPools.map((pool: any) => pool.value.pair_info.staking_addr);
+    setAllStakingAddresses(_allStakingAddresses);
+    userPools.map(async (pool: any) => {
+      const staking_addr: string = pool.value.pair_info.staking_addr;
+      const rewards = await getRewards(walletAddress || "", staking_addr);
+      console.log(rewards)
+      let assetPrice: RequestAssetPrice = {
+        asset: "",
+        priceInJuno: "0",
+        priceInUsd: 0,
+        priceInEur: 0,
+      };
+
+      rewards.map((reward: any) => {
+        if (reward.info.hasOwnProperty("token")) {
+          assetPrice = assetPrices.find((price) => price.asset === reward.info.token)!;
+        } else {
+          assetPrice = assetPrices.find((price) => price.asset === reward.info.native)!;
+        }
+        const assetInfo = getAssetInfoDetails(reward.info);
+        _totalAvailableRewardValue.priceInEur +=
+          Number(assetPrice.priceInEur) * (Number(reward.amount) / 10 ** assetInfo.decimals);
+        _totalAvailableRewardValue.priceInUsd +=
+          Number(assetPrice.priceInUsd) * (Number(reward.amount) / 10 ** assetInfo.decimals);
+        _totalAvailableRewardValue.priceInJuno +=
+          Number(assetPrice.priceInJuno) * (Number(reward.amount) / 10 ** assetInfo.decimals);
+      });
+      setTotalAvailableRewardValue(_totalAvailableRewardValue);
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress]);
 
   return (
     <>
