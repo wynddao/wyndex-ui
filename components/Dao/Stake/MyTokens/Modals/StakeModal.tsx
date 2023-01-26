@@ -15,35 +15,28 @@ import {
   NumberInputField,
   Stack,
   Text,
-  useColorMode,
   useRadioGroup,
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { UseTokenNameResponse } from "../../../../state";
-import { BondingPeriodInfo } from "../../../../state/clients/types/WyndexStake.types";
-import { secondsToDays } from "../../../../utils/time";
-import { amountToMicroamount, microamountToAmount } from "../../../../utils/tokens";
-import RadioCard from "../../../General/RadioCard";
-import { getApr } from "../util/apr";
+import { UseTokenNameResponse } from "../../../../../state";
+import { BondingPeriodInfo } from "../../../../../state/clients/types/WyndexStake.types";
+import { secondsToDays } from "../../../../../utils/time";
+import { amountToMicroamount, microamountToAmount } from "../../../../../utils/tokens";
+import RadioCard from "../../../../General/RadioCard";
 
-interface StartEarningModalProps {
+interface StakeModalProps {
   isOpen: boolean;
   onClose: () => void;
   balance: number;
-  bondingInfos: BondingPeriodInfo[];
+  bondingInfos: any;
   doStake: (amount: number, duration: number) => void;
-  apr: {
-    unbonding_period: number;
-    apr: number;
-  }[];
   loading: boolean;
   tokenInfo: UseTokenNameResponse;
-  pairNames: JSX.Element[];
 }
 
-export default function StartEarningModal(props: StartEarningModalProps) {
-  const { isOpen, onClose, balance, pairNames, bondingInfos, doStake, apr, tokenInfo, loading } = props;
+export default function StakeModal(props: StakeModalProps) {
+  const { isOpen, onClose, balance, bondingInfos, doStake, tokenInfo, loading } = props;
   const [value, setValue] = useState<string>(bondingInfos[0].unbonding_period.toString());
   const [amount, setAmount] = useState<string>("0");
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -60,7 +53,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent bgColor="wynd.base.subBg">
-        <ModalHeader>Start WYNNING!</ModalHeader>
+        <ModalHeader>Stake your WYND!</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex
@@ -77,7 +70,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
             <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
               <Flex position="relative" align="center">
                 <Text fontWeight="bold" fontSize={{ base: "xl" }}>
-                  {pairNames[0]} / {pairNames[1]}
+                  {tokenInfo.tokenName}
                 </Text>
               </Flex>
             </Flex>
@@ -123,7 +116,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           </Text>
           {bondingInfos && bondingInfos.length > 0 && (
             <VStack {...group}>
-              {bondingInfos.map(({ unbonding_period }) => {
+              {bondingInfos.map(({ unbonding_period, apy }: {unbonding_period: number, apy: number}) => {
                 const radio = getRadioProps({ value: unbonding_period });
                 return (
                   <RadioCard
@@ -136,7 +129,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                         {secondsToDays(unbonding_period)} Days
                       </Text>
                       <Text as="p">
-                        APR: <strong>{getApr(apr, unbonding_period)}</strong>
+                        APR: {(apy * 100).toFixed(2)} %
                       </Text>
                     </Flex>
                   </RadioCard>

@@ -19,15 +19,14 @@ import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { startTransition, useEffect, useRef, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { WyndexStakeHooks } from "../../../../state";
-import { PairInfo } from "../../../../state/clients/types/WyndexFactory.types";
-import { BondingPeriodInfo, StakedResponse } from "../../../../state/clients/types/WyndexStake.types";
-import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../../state/hooks";
-import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
-import { renderUnboundingText } from "../../../../utils/text";
-import { secondsToDays } from "../../../../utils/time";
-import { amountToMicroamount, microamountToAmount } from "../../../../utils/tokens";
-import RadioCard from "../../../General/RadioCard";
+import { WyndexStakeHooks } from "../../../../../state";
+import { BondingPeriodInfo, StakedResponse } from "../../../../../state/clients/types/WyndexStake.types";
+import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../../../state/hooks";
+import { useUserStakeInfos } from "../../../../../state/hooks/useUserStakeInfos";
+import { renderUnboundingText } from "../../../../../utils/text";
+import { secondsToDays } from "../../../../../utils/time";
+import { amountToMicroamount, microamountToAmount } from "../../../../../utils/tokens";
+import RadioCard from "../../../../General/RadioCard";
 
 interface ManageBoundingsModalProps {
   isOpen: boolean;
@@ -37,19 +36,16 @@ interface ManageBoundingsModalProps {
   higherDuration: BondingPeriodInfo | undefined;
   lowerDuration: BondingPeriodInfo | undefined;
   wyndexStakeAddress: string;
-  pairData: PairInfo;
 }
 
-export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
-  const { isOpen, onClose, tokenInfo, stake, higherDuration, lowerDuration, wyndexStakeAddress, pairData } =
-    props;
+export default function ManageStakeModal(props: ManageBoundingsModalProps) {
+  const { isOpen, onClose, tokenInfo, stake, higherDuration, lowerDuration, wyndexStakeAddress } = props;
   const { address: walletAddress } = useWallet();
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
   const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
     onChange: (v) => {
@@ -277,16 +273,6 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     setLoading(false);
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
-    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
-    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
-    //FIXME - This startTransition does not work
-    startTransition(() => {
-      refreshPairBalances();
-      refreshBondings();
-
-      if (hasCw20) refreshCw20Balances();
-      if (hasNative) refreshIbcBalances();
-    });
   };
 
   return (

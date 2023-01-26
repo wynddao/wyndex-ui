@@ -65,3 +65,11 @@ export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: 
       );
     },
 });
+
+export const blockHeightSelector = selector({
+  key: "blockHeight",
+  get: async ({ get }) => {
+    const client = get(cosmWasmClientSelector);
+    return await client.getHeight();
+  },
+});
