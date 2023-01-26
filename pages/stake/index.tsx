@@ -9,7 +9,7 @@ import { useDaoStakingInfos } from "../../state/hooks/useDaoStakingInfos";
 
 export default function Page() {
   const { address: walletAddress } = useWallet();
-  const { walletStakedPower, walletStakedTokens, totalStakedValue, totalStaked, treasuryBalance } =
+  const { walletStakedPower, walletStakedTokens, totalStakedValue, totalStaked, treasuryBalance, rewards } =
     useDaoStakingInfos({
       fetchWalletStakedValue: true,
       fetchTotalStakedValue: true,
@@ -32,7 +32,7 @@ export default function Page() {
             totalStakedValue={totalStakedValue || 0}
           />
         )}
-        <Rewards />
+        <Rewards rewards={rewards} address={walletAddress} />
       </Box>
     </>
   );
