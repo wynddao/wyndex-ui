@@ -1,5 +1,5 @@
 import { Coin } from "cosmwasm";
-import { AssetsRecap } from "../components/AssetBalances/AssetsRecapGallery";
+import { AssetsRecap } from "../components/Dex/AssetBalances/AssetsRecapGallery";
 import { REST_API_ENDPOINT } from "./constants";
 import { Asset, Pair } from "./types";
 
