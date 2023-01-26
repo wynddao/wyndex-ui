@@ -1,15 +1,15 @@
 "use client";
 
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/General/Sidebar";
 import Providers from "../providers/providers";
 import { Toaster } from "react-hot-toast";
 import { Suspense, useEffect, useState } from "react";
-import Loader from "../components/Loader";
-import ToSModal from "../components/ToSModal";
+import Loader from "../components/General/Loader";
+import ToSModal from "../components/General/ToSModal";
 import { AppProps } from "next/app";
-import ErrorBoundary from "../components/ErrorBoundary";
-import "../components/Carousel/index.css";
-import "../components/Swap/LineChart/style.css"
+import ErrorBoundary from "../components/General/ErrorBoundary";
+import "../components/Dex/Carousel/index.css";
+import "../components/Dex/Swap/LineChart/style.css"
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);

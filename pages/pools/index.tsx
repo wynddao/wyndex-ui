@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Pools from "../../components/Pools";
+import Pools from "../../components/Dex/Pools";
 
 export default function Page() {
   return (

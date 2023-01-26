@@ -1,4 +1,4 @@
-import Pool from "../../../components/Pool";
+import Pool from "../../../components/Dex/Pool";
 import { GetStaticPaths, GetStaticPropsContext } from "next";
 import { INDEXER_API_ENDPOINT } from "../../../utils";
 
