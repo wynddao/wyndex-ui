@@ -18,7 +18,6 @@ export const LineChart = ({
   const [totalHistory, setTotalHistory] = useState<ApexAxisChartSeries>([]);
 
   const getDenom = (token: Asset) => {
-    console.log(token.tags);
     if (token.tags.includes("cw20")) {
       return (token as CW20Asset).token_address;
     } else if (token.tags.includes("ibc")) {
