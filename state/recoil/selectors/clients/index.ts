@@ -7,3 +7,4 @@ export * as IndexerSelectors from "./indexer";
 export * as WyndDaoStakeSelectors from "./daostake";
 export * as WyndDaoDistSelectors from "./daodist";
 export * as WyndBaseSelectors from "./cw20vesting";
+export * as CwProposalSingleSelectors from "./cw-proposal-single";

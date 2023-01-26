@@ -73,3 +73,18 @@ export const blockHeightSelector = selector({
     return await client.getHeight();
   },
 });
+
+export const blockHeightTimestampSafeSelector = selectorFamily<Date | undefined, number>({
+  key: "blockHeightTimestamp",
+  get:
+    (blockHeight) =>
+    async ({ get }) => {
+      const client = get(cosmWasmClientSelector);
+      try {
+        const block = await client.getBlock(blockHeight);
+        return new Date(Date.parse(block.header.time));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+});
