@@ -9,6 +9,7 @@ import ToSModal from "../components/ToSModal";
 import { AppProps } from "next/app";
 import ErrorBoundary from "../components/ErrorBoundary";
 import "../components/Carousel/index.css";
+import "../components/Swap/LineChart/style.css"
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);

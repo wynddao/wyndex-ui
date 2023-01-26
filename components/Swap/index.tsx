@@ -1,8 +1,9 @@
-import { Box, Button, Flex, Image, keyframes } from "@chakra-ui/react";
+import { Box, Button, Collapse, Flex, Icon, Image, keyframes, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
 import React, { startTransition, useCallback, useMemo, useState } from "react";
+import { IoChevronDown } from "react-icons/io5";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../state";
 import { useSend } from "../../state/hooks/clients/Cw20";
@@ -16,6 +17,7 @@ import { amountToMicroamount, microamountToAmount } from "../../utils/tokens";
 import FromToken from "./FromToComponent/FromToken";
 import SwapIcon from "./FromToComponent/SwapIcon";
 import ToToken from "./FromToComponent/ToToken";
+import { LineChart } from "./LineChart";
 import Rate from "./RateComponent/Rate";
 import Setting from "./Setting/Setting";
 
@@ -26,8 +28,13 @@ const spin = keyframes`
 
 const Swap: React.FC = () => {
   const assetList = getAssetList();
-  const [fromToken, setFromToken] = useState<Asset>(assetList.tokens[3]);
-  const [toToken, setToToken] = useState<Asset>(assetList.tokens[4]);
+  const [showHistorical, setShowHistorical] = useState<boolean>(false);
+  const [fromToken, setFromToken] = useState<Asset>(
+    assetList.tokens.find((asset) => asset.denom.includes("juno")) ?? assetList.tokens[3],
+  );
+  const [toToken, setToToken] = useState<Asset>(
+    assetList.tokens.find((asset) => asset.denom.includes("wynd")) ?? assetList.tokens[4],
+  );
   const { address: walletAddress, connect, isWalletConnected } = useWallet();
   const [inputAmount, setInputAmount] = useState<string>("1");
   const [slippage, setSlippage] = useState<number>(1);
@@ -159,6 +166,25 @@ const Swap: React.FC = () => {
           expectedAmount={simulatedOperation.amount}
         />
       </Box>
+      <Box mt={{ lg: -16 }}>
+        <Flex alignItems="center" justifyContent="center">
+          <Button variant="ghost" onClick={() => setShowHistorical(!showHistorical)}>
+            <Text display="flex" justifyContent="center" alignItems="center" gap="0.5rem">
+              <Icon
+                as={IoChevronDown}
+                transform={!showHistorical ? "rotate(0deg)" : "rotate(180deg)"}
+                transition="all linear 0.2s"
+              />
+              {showHistorical ? "Hide " : "Show "}
+              historical prices
+            </Text>
+          </Button>
+        </Flex>
+        <Collapse in={showHistorical} animateOpacity>
+          <LineChart toToken={toToken} fromToken={fromToken} open={showHistorical} />
+        </Collapse>
+      </Box>
+
       <Button
         h={{ base: 12, lg: 16 }}
         w="full"
