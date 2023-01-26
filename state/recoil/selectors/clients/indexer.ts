@@ -1,5 +1,5 @@
 import { Coin } from "cosmwasm";
-import { selectorFamily } from "recoil";
+import { atom, selectorFamily } from "recoil";
 import { RequestAssetPrice } from "../../../../utils/assets";
 import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
 import { AssetInfoValidated } from "../../../clients/types/WyndexFactory.types";
@@ -53,6 +53,11 @@ export const assetPricesSelector = selectorFamily<RequestAssetPrice[], QueryClie
     },
 });
 
+export const ibcBalancesAtom = atom<readonly Coin[]>({
+  key: "indexerIbcBalancesAtom",
+  default: [],
+});
+
 export const ibcBalancesSelector = selectorFamily<
   readonly Coin[],
   QueryClientParams & {
@@ -63,9 +68,16 @@ export const ibcBalancesSelector = selectorFamily<
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
+      const ibcBalances = get(ibcBalancesAtom);
+      if (ibcBalances.length) return ibcBalances;
+
       const client = get(queryClient(queryClientParams));
       return await client.ibcBalances(...params);
     },
+  set:
+    () =>
+    ({ set }, newValue) =>
+      set(ibcBalancesAtom, newValue),
 });
 
 export const ibcBalanceSelector = selectorFamily<
@@ -81,6 +93,11 @@ export const ibcBalanceSelector = selectorFamily<
     },
 });
 
+export const cw20BalancesAtom = atom<readonly Cw20BalanceResponse[]>({
+  key: "indexerCw20BalancesAtom",
+  default: [],
+});
+
 export const cw20BalancesSelector = selectorFamily<
   readonly Cw20BalanceResponse[],
   QueryClientParams & {
@@ -91,8 +108,28 @@ export const cw20BalancesSelector = selectorFamily<
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
+      const cw20Balances = get(cw20BalancesAtom);
+      if (cw20Balances.length) return cw20Balances;
+
       const client = get(queryClient(queryClientParams));
       return await client.cw20Balances(...params);
+    },
+  set:
+    () =>
+    ({ set }, newValue) =>
+      set(cw20BalancesAtom, newValue),
+});
+
+export const cw20BalanceSelector = selectorFamily<
+  string,
+  QueryClientParams & { params: Parameters<IndexerQueryClient["cw20Balance"]> }
+>({
+  key: "indexerIbcBalance",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return (await client.cw20Balance(...params)).balance;
     },
 });
 
@@ -108,19 +145,6 @@ export const userFiatSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.userFiat(...params);
-    },
-});
-
-export const cw20BalanceSelector = selectorFamily<
-  Cw20BalanceResponse,
-  QueryClientParams & { params: Parameters<IndexerQueryClient["cw20Balance"]> }
->({
-  key: "indexerIbcBalance",
-  get:
-    ({ params, ...queryClientParams }) =>
-    async ({ get }) => {
-      const client = get(queryClient(queryClientParams));
-      return await client.cw20Balance(...params);
     },
 });
 
