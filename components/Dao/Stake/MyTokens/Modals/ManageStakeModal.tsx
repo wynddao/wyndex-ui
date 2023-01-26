@@ -17,8 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { startTransition, useEffect, useRef, useState } from "react";
-import { useRecoilRefresher_UNSTABLE } from "recoil";
+import { useEffect, useRef, useState } from "react";
 import { WyndexStakeHooks } from "../../../../../state";
 import { BondingPeriodInfo, StakedResponse } from "../../../../../state/clients/types/WyndexStake.types";
 import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../../../state/hooks";

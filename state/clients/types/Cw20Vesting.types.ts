@@ -5,357 +5,357 @@
  */
 
 export interface AllAccountsResponse {
-  accounts: string[]
-  [k: string]: unknown
+  accounts: string[];
+  [k: string]: unknown;
 }
-export type Uint128 = string
+export type Uint128 = string;
 export type Expiration =
   | {
-      at_height: number
+      at_height: number;
     }
   | {
-      at_time: Timestamp
+      at_time: Timestamp;
     }
   | {
-      never: {}
-    }
-export type Timestamp = Uint64
-export type Uint64 = string
+      never: {};
+    };
+export type Timestamp = Uint64;
+export type Uint64 = string;
 export interface AllAllowancesResponse {
-  allowances: AllowanceInfo[]
-  [k: string]: unknown
+  allowances: AllowanceInfo[];
+  [k: string]: unknown;
 }
 export interface AllowanceInfo {
-  allowance: Uint128
-  expires: Expiration
-  spender: string
+  allowance: Uint128;
+  expires: Expiration;
+  spender: string;
 }
 export interface AllowanceResponse {
-  allowance: Uint128
-  expires: Expiration
-  [k: string]: unknown
+  allowance: Uint128;
+  expires: Expiration;
+  [k: string]: unknown;
 }
 export interface BalanceResponse {
-  balance: Uint128
+  balance: Uint128;
 }
 export interface DelegatedResponse {
-  delegated: Uint128
-  [k: string]: unknown
+  delegated: Uint128;
+  [k: string]: unknown;
 }
-export type Binary = string
+export type Binary = string;
 export interface DownloadLogoResponse {
-  data: Binary
-  mime_type: string
+  data: Binary;
+  mime_type: string;
 }
 export type ExecuteMsg =
   | {
       transfer: {
-        amount: Uint128
-        recipient: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        recipient: string;
+        [k: string]: unknown;
+      };
     }
   | {
       transfer_vesting: {
-        amount: Uint128
-        recipient: string
-        schedule: Curve
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        recipient: string;
+        schedule: Curve;
+        [k: string]: unknown;
+      };
     }
   | {
       burn: {
-        amount: Uint128
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        [k: string]: unknown;
+      };
     }
   | {
       send: {
-        amount: Uint128
-        contract: string
-        msg: Binary
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        contract: string;
+        msg: Binary;
+        [k: string]: unknown;
+      };
     }
   | {
       increase_allowance: {
-        amount: Uint128
-        expires?: Expiration | null
-        spender: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        expires?: Expiration | null;
+        spender: string;
+        [k: string]: unknown;
+      };
     }
   | {
       decrease_allowance: {
-        amount: Uint128
-        expires?: Expiration | null
-        spender: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        expires?: Expiration | null;
+        spender: string;
+        [k: string]: unknown;
+      };
     }
   | {
       transfer_from: {
-        amount: Uint128
-        owner: string
-        recipient: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        owner: string;
+        recipient: string;
+        [k: string]: unknown;
+      };
     }
   | {
       send_from: {
-        amount: Uint128
-        contract: string
-        msg: Binary
-        owner: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        contract: string;
+        msg: Binary;
+        owner: string;
+        [k: string]: unknown;
+      };
     }
   | {
       burn_from: {
-        amount: Uint128
-        owner: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        owner: string;
+        [k: string]: unknown;
+      };
     }
   | {
       mint: {
-        amount: Uint128
-        recipient: string
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        recipient: string;
+        [k: string]: unknown;
+      };
     }
   | {
       update_minter: {
-        minter: string
-        [k: string]: unknown
-      }
+        minter: string;
+        [k: string]: unknown;
+      };
     }
   | {
       update_marketing: {
-        description?: string | null
-        marketing?: string | null
-        project?: string | null
-        [k: string]: unknown
-      }
+        description?: string | null;
+        marketing?: string | null;
+        project?: string | null;
+        [k: string]: unknown;
+      };
     }
   | {
-      upload_logo: Logo
+      upload_logo: Logo;
     }
   | {
       allow_vester: {
-        address: string
-        [k: string]: unknown
-      }
+        address: string;
+        [k: string]: unknown;
+      };
     }
   | {
       deny_vester: {
-        address: string
-        [k: string]: unknown
-      }
+        address: string;
+        [k: string]: unknown;
+      };
     }
   | {
       update_staking_address: {
-        address: string
-        [k: string]: unknown
-      }
+        address: string;
+        [k: string]: unknown;
+      };
     }
   | {
       delegate: {
-        amount: Uint128
-        msg: Binary
-        [k: string]: unknown
-      }
+        amount: Uint128;
+        msg: Binary;
+        [k: string]: unknown;
+      };
     }
   | {
       undelegate: {
-        amount: Uint128
-        recipient: string
-        [k: string]: unknown
-      }
-    }
+        amount: Uint128;
+        recipient: string;
+        [k: string]: unknown;
+      };
+    };
 export type Curve =
   | {
       constant: {
-        y: Uint128
-        [k: string]: unknown
-      }
+        y: Uint128;
+        [k: string]: unknown;
+      };
     }
   | {
-      saturating_linear: SaturatingLinear
+      saturating_linear: SaturatingLinear;
     }
   | {
-      piecewise_linear: PiecewiseLinear
-    }
+      piecewise_linear: PiecewiseLinear;
+    };
 export type Logo =
   | {
-      url: string
+      url: string;
     }
   | {
-      embedded: EmbeddedLogo
-    }
+      embedded: EmbeddedLogo;
+    };
 export type EmbeddedLogo =
   | {
-      svg: Binary
+      svg: Binary;
     }
   | {
-      png: Binary
-    }
+      png: Binary;
+    };
 export interface SaturatingLinear {
-  max_x: number
-  max_y: Uint128
-  min_x: number
-  min_y: Uint128
-  [k: string]: unknown
+  max_x: number;
+  max_y: Uint128;
+  min_x: number;
+  min_y: Uint128;
+  [k: string]: unknown;
 }
 export interface PiecewiseLinear {
-  steps: [number, Uint128][]
-  [k: string]: unknown
+  steps: [number, Uint128][];
+  [k: string]: unknown;
 }
 export interface InstantiateMsg {
-  allowed_vesters?: string[] | null
-  decimals: number
-  initial_balances: InitBalance[]
-  marketing?: InstantiateMarketingInfo | null
-  max_curve_complexity: number
-  mint?: MinterInfo | null
-  name: string
-  symbol: string
-  [k: string]: unknown
+  allowed_vesters?: string[] | null;
+  decimals: number;
+  initial_balances: InitBalance[];
+  marketing?: InstantiateMarketingInfo | null;
+  max_curve_complexity: number;
+  mint?: MinterInfo | null;
+  name: string;
+  symbol: string;
+  [k: string]: unknown;
 }
 export interface InitBalance {
-  address: string
-  amount: Uint128
-  vesting?: Curve | null
-  [k: string]: unknown
+  address: string;
+  amount: Uint128;
+  vesting?: Curve | null;
+  [k: string]: unknown;
 }
 export interface InstantiateMarketingInfo {
-  description?: string | null
-  logo?: Logo | null
-  marketing?: string | null
-  project?: string | null
-  [k: string]: unknown
+  description?: string | null;
+  logo?: Logo | null;
+  marketing?: string | null;
+  project?: string | null;
+  [k: string]: unknown;
 }
 export interface MinterInfo {
-  cap?: Curve | null
-  minter: string
-  [k: string]: unknown
+  cap?: Curve | null;
+  minter: string;
+  [k: string]: unknown;
 }
 export type LogoInfo =
-  | 'embedded'
+  | "embedded"
   | {
-      url: string
-    }
-export type Addr = string
+      url: string;
+    };
+export type Addr = string;
 export interface MarketingInfoResponse {
-  description?: string | null
-  logo?: LogoInfo | null
-  marketing?: Addr | null
-  project?: string | null
-  [k: string]: unknown
+  description?: string | null;
+  logo?: LogoInfo | null;
+  marketing?: Addr | null;
+  project?: string | null;
+  [k: string]: unknown;
 }
 export interface MinterResponse {
-  cap?: Curve | null
-  current_cap?: Uint128 | null
-  minter: string
-  [k: string]: unknown
+  cap?: Curve | null;
+  current_cap?: Uint128 | null;
+  minter: string;
+  [k: string]: unknown;
 }
 export type QueryMsg =
   | {
       balance: {
-        address: string
-        [k: string]: unknown
-      }
+        address: string;
+        [k: string]: unknown;
+      };
     }
   | {
       vesting: {
-        address: string
-        [k: string]: unknown
-      }
+        address: string;
+        [k: string]: unknown;
+      };
     }
   | {
       delegated: {
-        address: string
-        [k: string]: unknown
-      }
+        address: string;
+        [k: string]: unknown;
+      };
     }
   | {
       vesting_allow_list: {
-        [k: string]: unknown
-      }
+        [k: string]: unknown;
+      };
     }
   | {
       token_info: {
-        [k: string]: unknown
-      }
+        [k: string]: unknown;
+      };
     }
   | {
       max_vesting_complexity: {
-        [k: string]: unknown
-      }
+        [k: string]: unknown;
+      };
     }
   | {
       minter: {
-        [k: string]: unknown
-      }
+        [k: string]: unknown;
+      };
     }
   | {
       allowance: {
-        owner: string
-        spender: string
-        [k: string]: unknown
-      }
+        owner: string;
+        spender: string;
+        [k: string]: unknown;
+      };
     }
   | {
       all_allowances: {
-        limit?: number | null
-        owner: string
-        start_after?: string | null
-        [k: string]: unknown
-      }
+        limit?: number | null;
+        owner: string;
+        start_after?: string | null;
+        [k: string]: unknown;
+      };
     }
   | {
       all_accounts: {
-        limit?: number | null
-        start_after?: string | null
-        [k: string]: unknown
-      }
+        limit?: number | null;
+        start_after?: string | null;
+        [k: string]: unknown;
+      };
     }
   | {
       marketing_info: {
-        [k: string]: unknown
-      }
+        [k: string]: unknown;
+      };
     }
   | {
       download_logo: {
-        [k: string]: unknown
-      }
+        [k: string]: unknown;
+      };
     }
   | {
       staking_address: {
-        [k: string]: unknown
-      }
-    }
+        [k: string]: unknown;
+      };
+    };
 export interface StakingAddressResponse {
-  address?: Addr | null
-  [k: string]: unknown
+  address?: Addr | null;
+  [k: string]: unknown;
 }
 
 export interface MaxVestingComplexityResponse {
-  complexity: number
-  [k: string]: unknown
+  complexity: number;
+  [k: string]: unknown;
 }
 export interface TokenInfoResponse {
-  decimals: number
-  name: string
-  symbol: string
-  total_supply: Uint128
+  decimals: number;
+  name: string;
+  symbol: string;
+  total_supply: Uint128;
 }
 export interface VestingAllowListResponse {
-  allow_list: string[]
-  [k: string]: unknown
+  allow_list: string[];
+  [k: string]: unknown;
 }
 export interface VestingResponse {
-  locked: Uint128
-  schedule?: Curve | null
-  [k: string]: unknown
+  locked: Uint128;
+  schedule?: Curve | null;
+  [k: string]: unknown;
 }
