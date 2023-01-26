@@ -17,12 +17,13 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { startTransition, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { WyndexStakeHooks } from "../../../../state";
 import { PairInfo } from "../../../../state/clients/types/WyndexFactory.types";
 import { BondingPeriodInfo, StakedResponse } from "../../../../state/clients/types/WyndexStake.types";
 import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../../state/hooks";
+import { useRefreshBalances } from "../../../../state/hooks/useRefreshBalances";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
 import { renderUnboundingText } from "../../../../utils/text";
 import { secondsToDays } from "../../../../utils/time";
@@ -48,7 +49,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { assetInfosBalancesSelector } = useIndexerInfos({});
+  const refreshBalances = useRefreshBalances();
   const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
@@ -277,16 +279,9 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     setLoading(false);
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
-    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
-    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
-    //FIXME - This startTransition does not work
-    startTransition(() => {
-      refreshPairBalances();
-      refreshBondings();
-
-      if (hasCw20) refreshCw20Balances();
-      if (hasNative) refreshIbcBalances();
-    });
+    refreshPairBalances();
+    refreshBondings();
+    await refreshBalances(pairData.asset_infos);
   };
 
   return (

@@ -10,10 +10,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { startTransition } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { useIndexerInfos, useToast, UseTokenNameResponse, WyndexStakeHooks } from "../../../state";
 import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
+import { useRefreshBalances } from "../../../state/hooks/useRefreshBalances";
 import { microamountToAmount } from "../../../utils/tokens";
 
 interface UnclaimModalProps {
@@ -36,8 +36,9 @@ export default function UnclaimModal({
   pairData,
 }: UnclaimModalProps) {
   const { address: walletAddress } = useWallet();
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { assetInfosBalancesSelector } = useIndexerInfos({});
   const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
+  const refreshBalances = useRefreshBalances();
   const { txToast } = useToast();
   const doClaim = WyndexStakeHooks.useClaim({
     contractAddress: wyndexStakeAddress,
@@ -48,16 +49,9 @@ export default function UnclaimModal({
     onClose();
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
-    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
-    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
-    //FIXME - This startTransition does not work
-    startTransition(() => {
-      refreshPairBalances();
-      refreshPendingUnstaking();
-
-      if (hasCw20) refreshCw20Balances();
-      if (hasNative) refreshIbcBalances();
-    });
+    refreshPairBalances();
+    refreshPendingUnstaking();
+    await refreshBalances(pairData.asset_infos);
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
