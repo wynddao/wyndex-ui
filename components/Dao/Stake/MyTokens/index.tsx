@@ -1,6 +1,7 @@
 import { Box, Grid, Text } from "@chakra-ui/react";
+import { useCw20UserInfos } from "../../../../state";
 import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
-import { DAO_STAKING_ADDRESS } from "../../../../utils";
+import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { ManageTokens } from "./ManageTokens";
 import { Unstaked } from "./Unstaked";
 import { VotingPower } from "./VotingPower";
@@ -16,6 +17,7 @@ export const MyTokens = ({
   walletStakedPower: number | undefined;
   totalStakedValue: number;
 }) => {
+  const { balance } = useCw20UserInfos(WYND_TOKEN_ADDRESS);
   return (
     <>
       <Box my={4}>
@@ -35,7 +37,7 @@ export const MyTokens = ({
           walletStakedTokens={walletStakedTokens}
           totalStakedValue={totalStakedValue}
         />
-        <Unstaked />
+        <Unstaked unstakedAmount={Number(balance)} />
       </Grid>
       <ManageTokens stakeContract={DAO_STAKING_ADDRESS} address={walletAddress} />
     </>

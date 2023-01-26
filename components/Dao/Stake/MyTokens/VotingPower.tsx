@@ -27,7 +27,7 @@ export const VotingPower = ({
             ) + "%"}
             )
           </Text>
-          {walletStakedTokens && <Text>{microamountToAmount(walletStakedTokens, 6)} $WYND staked</Text>}
+          {Number(walletStakedTokens) > 0 && <Text>{microamountToAmount(walletStakedTokens || 0, 6)} $WYND staked</Text>}
         </Box>
       </Flex>
     </BorderedBox>

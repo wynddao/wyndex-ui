@@ -1,7 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
 
-export const Unstaked = () => {
+export const Unstaked = ({ unstakedAmount }: { unstakedAmount: number }) => {
   return (
     <BorderedBox>
       <Flex justifyContent={"space-between"}>
@@ -10,7 +11,7 @@ export const Unstaked = () => {
         </Text>
         <Box>
           <Text fontSize="xl" fontWeight="bold" mt={4} color="wynd.green.500" display="inline-block">
-            1,567886 $WYND
+            {microamountToAmount(unstakedAmount, 6) || 0} $WYND
           </Text>
           <Text>Stake these to increase your voting power.</Text>
         </Box>
