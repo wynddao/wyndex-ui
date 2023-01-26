@@ -11,10 +11,11 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
-import { startTransition, useState } from "react";
+import { useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { Cw20Hooks, useIndexerInfos, useToast, useTokenInfo } from "../../../../state";
 import { PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
+import { useRefreshBalances } from "../../../../state/hooks/useRefreshBalances";
 import { getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import TokenName from "../../TokenName";
@@ -38,7 +39,8 @@ export default function RemoveLiquidity({
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { assetInfosBalancesSelector } = useIndexerInfos({});
+  const refreshBalances = useRefreshBalances();
   const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
 
   const doSend = Cw20Hooks.useSend({
@@ -62,16 +64,9 @@ export default function RemoveLiquidity({
     setLoading(false);
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
-    const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
-    const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
-    //FIXME - This startTransition does not work
-    startTransition(() => {
-      refreshPairBalances();
-      refreshLpBalance();
-
-      if (hasCw20) refreshCw20Balances();
-      if (hasNative) refreshIbcBalances();
-    });
+    refreshPairBalances();
+    refreshLpBalance();
+    await refreshBalances(pairData.asset_infos);
   };
   return (
     <Box>

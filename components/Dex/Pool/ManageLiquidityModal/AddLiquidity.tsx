@@ -15,19 +15,20 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Coin } from "cosmwasm";
-import { startTransition, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { CustomHooks, useIndexerInfos, useToast, useTokenInfo } from "../../../../state";
+import { CustomHooks, useIndexerInfos, useToast } from "../../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
+import { CW20Asset } from "@wynddao/asset-list";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
+import { useRefreshBalances } from "../../../../state/hooks/useRefreshBalances";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
 import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { getAssetList } from "../../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import AssetImage from "../../AssetImage";
-import { CW20Asset } from "@wynddao/asset-list";
 interface inputType {
   id: string;
   value: string;
@@ -84,7 +85,8 @@ export default function AddLiquidity({
 
   const { address: walletAddress } = useWallet();
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { assetInfosBalancesSelector } = useIndexerInfos({});
+  const refreshBalances = useRefreshBalances();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -103,7 +105,7 @@ export default function AddLiquidity({
   });
 
   const pairBalancesSelector = assetInfosBalancesSelector(pairData.asset_infos);
-  const pairBalances = useRecoilValue(pairBalancesSelector);
+  const { state: pairBalancesState, contents: pairBalances } = useRecoilValueLoadable(pairBalancesSelector);
   const refreshPairBalances = useRecoilRefresher_UNSTABLE(pairBalancesSelector);
 
   const calculateRatios = useCallback(() => {
@@ -165,6 +167,8 @@ export default function AddLiquidity({
   );
 
   const calculateMaxValues = useCallback(() => {
+    if (pairBalancesState !== "hasValue") return;
+
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
     const assets = getAssetList().tokens;
@@ -188,7 +192,7 @@ export default function AddLiquidity({
     }
 
     setTokenInputValue([newInputValueA, newInputValueB]);
-  }, [calculateRatios, pairBalances, tokenInputValue]);
+  }, [calculateRatios, pairBalances, pairBalancesState, tokenInputValue]);
 
   const prodiveLiquidity = async () => {
     setLoading(true);
@@ -235,17 +239,11 @@ export default function AddLiquidity({
     setLoading(false);
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
-    const hasCw20 = !!assets.find(({ info }) => "token" in info);
-    const hasNative = !!assets.find(({ info }) => "native" in info);
-    //FIXME - This startTransition does not work
-    startTransition(() => {
-      refreshPairBalances();
-      refreshBondings();
-      refreshLpBalance();
+    refreshPairBalances();
+    refreshBondings();
+    refreshLpBalance();
 
-      if (hasCw20) refreshCw20Balances();
-      if (hasNative) refreshIbcBalances();
-    });
+    await refreshBalances(assets.map((asset) => asset.info));
   };
 
   const assets = getAssetList().tokens;
@@ -359,15 +357,22 @@ export default function AddLiquidity({
                       spacing={2}
                       mb={2}
                     >
-                      <Text fontWeight="medium" textAlign="center">
-                        Available{" "}
-                        {microamountToAmount(
-                          pairBalances[i] ?? "",
-                          assets.find((el) => denom === el.denom || denom === (el as CW20Asset).token_address)
-                            ?.decimals || 6,
-                        )}
-                        <Text as="span" color={"wynd.cyan.500"}></Text> {name}
-                      </Text>
+                      {pairBalancesState === "hasValue" ? (
+                        <Text fontWeight="medium" textAlign="center">
+                          Available{" "}
+                          {microamountToAmount(
+                            pairBalances[i] ?? "",
+                            assets.find(
+                              (el) => denom === el.denom || denom === (el as CW20Asset).token_address,
+                            )?.decimals || 6,
+                          )}
+                          <Text as="span" color={"wynd.cyan.500"}></Text> {name}
+                        </Text>
+                      ) : (
+                        <Text fontWeight="medium" textAlign="center">
+                          loading balance
+                        </Text>
+                      )}
                       <Button
                         alignSelf="end"
                         size="sm"
@@ -408,8 +413,9 @@ export default function AddLiquidity({
                 Number(
                   microamountToAmount(
                     pairBalances[index],
-                    assets.find((el) => input.id === el.denom || input.contract === (el as CW20Asset).token_address)
-                      ?.decimals || 6,
+                    assets.find(
+                      (el) => input.id === el.denom || input.contract === (el as CW20Asset).token_address,
+                    )?.decimals || 6,
                   ),
                 ),
             ).length > 0
