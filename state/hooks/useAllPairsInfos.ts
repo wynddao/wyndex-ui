@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilValueLoadable } from "recoil";
 import { FACTORY_CONTRACT_ADDRESS } from "../../utils";
 import { PairInfo } from "../clients/types/WyndexFactory.types";
 import { WyndexFactorySelectors } from "../recoil";
@@ -8,7 +8,7 @@ interface UseAllPairsInfosResponse {
 }
 
 export const useAllPairsInfos = ({ limit = undefined, startAfter = undefined }): UseAllPairsInfosResponse => {
-  const pairs = useRecoilValue(
+  const { state: pairsState, contents: pairResponse } = useRecoilValueLoadable(
     WyndexFactorySelectors.pairsSelector({
       contractAddress: FACTORY_CONTRACT_ADDRESS,
       params: [
@@ -18,9 +18,9 @@ export const useAllPairsInfos = ({ limit = undefined, startAfter = undefined }):
         },
       ],
     }),
-  ).pairs;
+  );
 
   return {
-    pairs,
+    pairs: pairsState === "hasValue" ? pairResponse.pairs : [],
   };
 };

@@ -1,13 +1,13 @@
-import { useRecoilValue } from "recoil";
+import { Loadable, useRecoilValueLoadable } from "recoil";
 import { PoolResponse } from "../clients/types/WyndexPair.types";
 import { WyndexPairSelectors } from "../recoil";
 
 interface UsePoolInfosResponse {
-  pool: PoolResponse;
+  pool: Loadable<PoolResponse>;
 }
 
 export const usePoolInfos = (poolAddress: string): UsePoolInfosResponse => {
-  const pool = useRecoilValue(
+  const loadablePool = useRecoilValueLoadable(
     WyndexPairSelectors.poolSelector({
       contractAddress: poolAddress,
       params: [],
@@ -15,6 +15,6 @@ export const usePoolInfos = (poolAddress: string): UsePoolInfosResponse => {
   );
 
   return {
-    pool,
+    pool: loadablePool,
   };
 };
