@@ -17,8 +17,9 @@ export const PropList = ({ limit }: { limit: number }) => {
 
   const router = useRouter();
   const handleRowClick = (prop: any) => {
-    router.push(`/vote/${prop.id}`);
+    router.push(`/vote/${prop.proposalNumber}`);
   };
+
   return (
     <>
       {allProps.map((prop, i) => (
@@ -28,7 +29,7 @@ export const PropList = ({ limit }: { limit: number }) => {
           fontWeight="semibold"
           _hover={{
             bgColor: "wynd.base.sidebar",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
           onClick={() => handleRowClick(prop)}
           alignItems="center"
