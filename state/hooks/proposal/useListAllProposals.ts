@@ -38,7 +38,8 @@ export const useListAllProposalInfos = (
         status,
         title,
         votes,
-        expiration,
+        // @ts-ignore
+        expiration: expiration.at_time ?? 0,
       })),
     [prefix, proposalResponses, timestamps],
   );

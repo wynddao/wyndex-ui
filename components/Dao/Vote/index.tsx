@@ -10,7 +10,7 @@ export const Vote = () => {
     <BorderedBox bgImage={false}>
       <Grid
         display="grid"
-        templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 2fr 1fr 1fr" }}
+        templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 1fr 2fr 1fr 2fr" }}
         columnGap={{ base: 2, lg: 4 }}
         fontSize="xs"
         fontWeight="semibold"
@@ -20,9 +20,12 @@ export const Vote = () => {
         bg="whiteAlpha.100"
       >
         <GridItem>Proposal ID</GridItem>
-        <GridItem textAlign="start">Title</GridItem>
+        <GridItem textAlign="start">Status</GridItem>
         <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
-          Status
+          Title
+        </GridItem>
+        <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
+          Expiration
         </GridItem>
         <GridItem textAlign="center" display={{ base: "none", lg: "block" }}>
           Votes

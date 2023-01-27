@@ -2,7 +2,6 @@ import { getColor, mode } from "@chakra-ui/theme-tools";
 
 const multiColorFilledTrack = (props: any) => {
   const { theme, colors, value } = props;
-console.log(1)
   const breakpoints = [];
   let prevColor;
 

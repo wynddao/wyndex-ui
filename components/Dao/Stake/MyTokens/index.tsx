@@ -1,5 +1,6 @@
 import { Box, Grid, Text } from "@chakra-ui/react";
 import { useCw20UserInfos } from "../../../../state";
+import { Claim } from "../../../../state/clients/types/WyndDaoStake.types";
 import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
 import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { ManageTokens } from "./ManageTokens";
@@ -11,11 +12,19 @@ export const MyTokens = ({
   walletStakedPower,
   walletStakedTokens,
   totalStakedValue,
+  vestedBalance,
+  claims,
+  claimsPending,
+  claimsAvailable,
 }: {
   walletAddress: string;
   walletStakedTokens: number | undefined;
   walletStakedPower: number | undefined;
   totalStakedValue: number;
+  vestedBalance: string;
+  claims?: Claim[];
+  claimsPending?: Claim[];
+  claimsAvailable?: Claim[];
 }) => {
   const { balance } = useCw20UserInfos(WYND_TOKEN_ADDRESS);
   return (
@@ -39,7 +48,16 @@ export const MyTokens = ({
         />
         <Unstaked unstakedAmount={Number(balance)} />
       </Grid>
-      <ManageTokens stakeContract={DAO_STAKING_ADDRESS} address={walletAddress} />
+      <ManageTokens
+        stakeContract={DAO_STAKING_ADDRESS}
+        address={walletAddress}
+        vestedBalance={vestedBalance}
+        walletStakedTokens={Number(walletStakedTokens)}
+        unstakedAmount={Number(balance)}
+        claims={claims}
+        claimsAvailable={claimsAvailable}
+        claimsPending={claimsPending}
+      />
     </>
   );
 };

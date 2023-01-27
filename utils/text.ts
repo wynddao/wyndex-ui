@@ -20,3 +20,5 @@ export const renderUnboundingText = (
       return "";
   }
 };
+
+export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);

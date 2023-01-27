@@ -1,22 +1,52 @@
-import { Box, Button, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from "@chakra-ui/react";
 import { ExecuteResult } from "cosmwasm";
-import dynamic from "next/dynamic";
 import { useState } from "react";
-import { Cw20Hooks, useCw20UserInfos, useToast, useTokenInfo, WyndDaoBaseHooks } from "../../../../state";
+import { useCw20UserInfos, useToast, useTokenInfo, WyndDaoBaseHooks } from "../../../../state";
+import { Claim } from "../../../../state/clients/types/WyndDaoStake.types";
 import { BondingPeriodInfo, StakedResponse } from "../../../../state/clients/types/WyndexStake.types";
 import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
-import { useStakeInfos } from "../../../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
-import { WYND_TOKEN_ADDRESS } from "../../../../utils";
+import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { secondsToDays } from "../../../../utils/time";
-import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
+import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
 import ManageStakeModal from "./Modals/ManageStakeModal";
 import StakeModal from "./Modals/StakeModal";
+import { RebondingTokens } from "./RebondingTokens";
+import { UnstakingTokens } from "./UnstakingTokens";
+import { VestedTokens } from "./VestedTokens";
 
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
-
-export const ManageTokens = ({ stakeContract, address }: { stakeContract: string; address: string }) => {
+export const ManageTokens = ({
+  stakeContract,
+  address,
+  vestedBalance,
+  walletStakedTokens,
+  unstakedAmount,
+  claims,
+  claimsPending,
+  claimsAvailable,
+}: {
+  stakeContract: string;
+  address: string;
+  vestedBalance: string;
+  walletStakedTokens: number;
+  unstakedAmount: number;
+  claims?: Claim[];
+  claimsPending?: Claim[];
+  claimsAvailable?: Claim[];
+}) => {
   const { allStakes } = useUserStakeInfos(stakeContract, address);
   const { balance, refreshBalance } = useCw20UserInfos(WYND_TOKEN_ADDRESS);
   const { unbondingPeriods } = useDaoStakingInfos();
@@ -145,35 +175,37 @@ export const ManageTokens = ({ stakeContract, address }: { stakeContract: string
         </Box>
         <Box>
           <Text fontSize="2xl" fontWeight="bold" mb={2}>
-            Vested Tokens
+            Locked Tokens
           </Text>
           <BorderedBox bgImage={false}>
-            {/* <ReactApexChart
-              options={{
-                chart: {
-                  width: 380,
-                  height: 400,
-                  type: "pie",
-                },
-                labels: ["Locked", "Unlocked"],
-                responsive: [
-                  {
-                    breakpoint: 480,
-                    options: {
-                      chart: {
-                        width: 200,
-                      },
-                      legend: {
-                        position: "bottom",
-                      },
-                    },
-                  },
-                ],
-              }}
-              series={[23, 77]}
-              type="pie"
-              width={380}
-            /> */}
+            <Tabs isFitted>
+              <TabList>
+                <Tab>Vesting</Tab>
+                <Tab>Rebonding</Tab>
+                <Tab>Unstaking</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel p={0}>
+                  <VestedTokens
+                    vestedBalance={vestedBalance}
+                    walletStakedTokens={walletStakedTokens}
+                    unstakedAmount={unstakedAmount}
+                  />
+                </TabPanel>
+                <TabPanel p={0}>
+                  <RebondingTokens wyndexStake={DAO_STAKING_ADDRESS} walletAddress={address} />
+                </TabPanel>
+                <TabPanel p={0}>
+                  <UnstakingTokens
+                    stakeAddress={DAO_STAKING_ADDRESS}
+                    claims={claims}
+                    claimsAvailable={claimsAvailable}
+                    claimsPending={claimsPending}
+                    walletAddress={address}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </BorderedBox>
         </Box>
       </Grid>

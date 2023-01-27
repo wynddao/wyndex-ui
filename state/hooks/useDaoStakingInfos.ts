@@ -62,6 +62,7 @@ export interface WyndUseStakingInfoResponse
   rewards: number | undefined;
   distributionContractAddress: string;
   treasuryBalance: string;
+  vestedBalance: string;
 }
 
 export const useDaoStakingInfos = ({
@@ -88,7 +89,7 @@ export const useDaoStakingInfos = ({
   const claimsPending = blockHeight ? claims?.filter((c) => !claimAvailable(c, blockHeight)) : undefined;
   const claimsAvailable = blockHeight ? claims?.filter((c) => claimAvailable(c, blockHeight)) : undefined;
   const sumClaimsAvailable = claimsAvailable?.reduce((p, c) => p + Number(c.amount), 0);
-
+  
   // Total staked value TODO
   const totalStakedPower = useRecoilValue(
     fetchWalletStakedValue && walletAddress
@@ -180,6 +181,15 @@ export const useDaoStakingInfos = ({
     }),
   )?.balance;
 
+  const vestedBalance = useRecoilValue(
+    fetchWalletStakedValue && walletAddress
+      ? WyndBaseSelectors.vestingSelector({
+          contractAddress: WYND_TOKEN_ADDRESS,
+          params: [{ address: walletAddress }],
+        })
+      : constSelector({ locked: "0" }),
+  ).locked;
+
   return {
     stakingContractAddress,
     unstakingDuration: {
@@ -203,5 +213,6 @@ export const useDaoStakingInfos = ({
     walletStakedTokensArr,
     distributionContractAddress,
     treasuryBalance,
+    vestedBalance,
   };
 };
