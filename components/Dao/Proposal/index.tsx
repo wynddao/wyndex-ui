@@ -323,7 +323,7 @@ export const ProposalComponent = ({
                           </Button>
                         </>
                       )}
-                    {walletStakedPowerAtHeight && (
+                    {walletStakedPowerAtHeight <= 0 && (
                       <Text>{"You had no staked $WYND when the proposal started"}</Text>
                     )}
                     {walletVote && (
