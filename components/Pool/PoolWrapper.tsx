@@ -5,6 +5,7 @@ import { PoolResponse } from "../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../state/recoil/atoms/settings";
 import { getAssetInfoDetails, getAssetPrice, getNativeIbcTokenDenom } from "../../utils/assets";
+import { getMultiplier } from "../../utils/hotfix";
 import { microamountToAmount, microdenomToDenom } from "../../utils/tokens";
 import TokenName from "../TokenName";
 import LiquidityMining from "./LiquidityMining";
@@ -62,7 +63,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += (Number(reward.amount) / 1000000 * (currency === "USD" ? price.priceInUsd : price.priceInEur)) * 100 * 4; //! TODO!!!! 
+      value += (Number(reward.amount) / 1000000 * (currency === "USD" ? price.priceInUsd : price.priceInEur)) * 100 * getMultiplier(); //! TODO!!!! 
     });
 
     return {

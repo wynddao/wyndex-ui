@@ -3,6 +3,8 @@ import { useStakeInfos } from "../../state/hooks/useStakeInfos";
 import { getAssetInfoDetails, getAssetPrice } from "../../utils/assets";
 import { microamountToAmount } from "../../utils/tokens";
 import { getApr } from "../Pool/util/apr";
+import { nextMonday, previousMonday } from "date-fns";
+import { getMultiplier } from "../../utils/hotfix";
 
 export default function MaxApr({ poolAddress }: { poolAddress: string }) {
   const { pool: poolData } = usePoolInfos(poolAddress);
@@ -34,7 +36,7 @@ export default function MaxApr({ poolAddress }: { poolAddress: string }) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += Number(reward.amount) / 1000000 * price.priceInUsd * 100 * 4; //! TODO
+      value += (Number(reward.amount) / 1000000) * price.priceInUsd * 100 * getMultiplier(); //! TODO
     });
 
     return {
