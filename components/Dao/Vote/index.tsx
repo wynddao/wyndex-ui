@@ -1,9 +1,10 @@
 import { Button, Grid, GridItem } from "@chakra-ui/react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useListAllProposalInfos } from "../../../state/hooks/proposal";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { PropList } from "./PropList";
 import { ProposalHeader } from "./ProposalHeader";
+import { PropListSkeleton } from "./Skeletons/PropListSkeleton";
 
 export const Vote = () => {
   const voteModule = {
@@ -40,7 +41,9 @@ export const Vote = () => {
             Votes
           </GridItem>
         </Grid>
-        <PropList limit={limit} voteModule={voteModule} />
+        <Suspense fallback={<PropListSkeleton limit={limit} />}>
+          <PropList limit={limit} />
+        </Suspense>
         <Button onClick={() => setLimit(limit + 1)} mt={3}>
           Load More
         </Button>

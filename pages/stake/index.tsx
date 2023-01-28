@@ -33,9 +33,6 @@ export default function Page() {
         <title>WYND DEX | Stake Tokens</title>
       </Head>
       <Box p="4">
-        <Heading pt="8" mb="8">
-          Stake Tokens
-        </Heading>
         <StakeHeader totalStaked={totalStaked} treasuryBalance={treasuryBalance} />
         {walletAddress ? (
           <>

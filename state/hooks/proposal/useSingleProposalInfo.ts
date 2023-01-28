@@ -1,5 +1,5 @@
 import { useWallet } from "@cosmos-kit/react";
-import { constSelector, useRecoilValue } from "recoil";
+import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { CwProposalSingleSelectors } from "../../recoil";
 
 export const useSingleProposalInfo = (proposalId: number, address: string) => {
@@ -24,8 +24,20 @@ export const useSingleProposalInfo = (proposalId: number, address: string) => {
       : constSelector(undefined),
   )?.vote?.vote;
 
+  const refreshData = useRecoilRefresher_UNSTABLE(
+    CwProposalSingleSelectors.proposalSelector({
+      contractAddress: address,
+      params: [
+        {
+          proposalId,
+        },
+      ],
+    }),
+  );
+
   return {
     proposalResponse,
     walletVote,
+    refreshData,
   };
 };

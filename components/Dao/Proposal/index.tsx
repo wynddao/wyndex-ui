@@ -18,7 +18,7 @@ import { Proposal, Status, Vote } from "../../../state/clients/Cw-proposal-singl
 import { getMsgType, getResultInText } from "../../../utils/proposals";
 import { Message } from "./Message";
 import { VoteRadio } from "./VoteRadio";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { truncate, capitalizeFirstLetter } from "../../../utils/text";
 import { BsChevronLeft, BsClipboard } from "react-icons/bs";
 import { CwProposalSingleHooks, useToast } from "../../../state";
@@ -26,6 +26,7 @@ import { useWallet } from "@cosmos-kit/react";
 import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { ExecuteResult } from "cosmwasm";
 import { useRouter } from "next/navigation";
+import { VoteRatioSkeleton } from "./Skeletons/VoteRatioSkeleton";
 
 const ColoredVote = ({ vote }: { vote: Vote }) => {
   switch (vote) {
@@ -56,11 +57,13 @@ export const ProposalComponent = ({
   proposalResponse,
   votingModuleAddress,
   walletVote,
+  refreshData,
 }: {
   propId: number;
   proposalResponse: Proposal;
   votingModuleAddress: string;
   walletVote: Vote | undefined;
+  refreshData: () => void;
 }) => {
   const { address: walletAddress } = useWallet();
   const totalVoted =
@@ -103,9 +106,10 @@ export const ProposalComponent = ({
 
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
-
+      refreshData();
       return result;
     });
+    refreshData();
     setLoading(false);
   };
   const router = useRouter();
@@ -195,81 +199,83 @@ export const ProposalComponent = ({
               </Text>
             </Grid>
             <Divider mt={5} />
-            <Box mt={5}>
-              <Text fontSize={"2xl"}>Vote Status</Text>
-              <Text fontSize={"sm"}>
-                {getResultInText(quorum, totalVoted, votesInPercent, proposalResponse.status)}
-              </Text>
-              <Text fontSize={"xl"} mt={8}>
-                Ratio of Votes
-              </Text>
-              <Flex justifyContent={"space-around"} mt={4}>
-                <Text color={"#9AE6B4"} fontSize={"small"}>
-                  {votesInPercent.yes.toFixed(2)}% Yes
+            <Suspense fallback={<VoteRatioSkeleton />}>
+              <Box mt={5}>
+                <Text fontSize={"2xl"}>Vote Status</Text>
+                <Text fontSize={"sm"}>
+                  {getResultInText(quorum, totalVoted, votesInPercent, proposalResponse.status)}
                 </Text>
-                <Text color={"#90cdf4"} fontSize={"small"}>
-                  {votesInPercent.abstain.toFixed(2)}% Abstain
+                <Text fontSize={"xl"} mt={8}>
+                  Ratio of Votes
                 </Text>
-                <Text color={"#FEB2B2"} fontSize={"small"}>
-                  {votesInPercent.no.toFixed(2)}% No
-                </Text>
-              </Flex>
-              <Box mx={4} mt={3} position={"relative"}>
-                <Progress
-                  variant="multiSegment"
-                  min={0}
-                  max={100}
-                  position="relative"
-                  //@ts-ignore
-                  values={{
-                    green: Number(votesInPercent.yes),
-                    blue: Number(votesInPercent.abstain),
-                    red: Number(votesInPercent.no),
-                  }}
-                />
-                <Tooltip
-                  isOpen={true}
-                  p={2}
-                  hasArrow
-                  label="Passing threshold: 51%"
-                  bg="wynd.base.sidebar"
-                  color="white"
-                >
-                  <Box
-                    height={5}
-                    top={-1}
-                    left={"calc(100% * 0.51)"}
-                    width={"3px"}
-                    bgColor={"white"}
-                    position={"absolute"}
+                <Flex justifyContent={"space-around"} mt={4}>
+                  <Text color={"#9AE6B4"} fontSize={"small"}>
+                    {votesInPercent.yes.toFixed(2)}% Yes
+                  </Text>
+                  <Text color={"#90cdf4"} fontSize={"small"}>
+                    {votesInPercent.abstain.toFixed(2)}% Abstain
+                  </Text>
+                  <Text color={"#FEB2B2"} fontSize={"small"}>
+                    {votesInPercent.no.toFixed(2)}% No
+                  </Text>
+                </Flex>
+                <Box mx={4} mt={3} position={"relative"}>
+                  <Progress
+                    variant="multiSegment"
+                    min={0}
+                    max={100}
+                    position="relative"
+                    //@ts-ignore
+                    values={{
+                      green: Number(votesInPercent.yes),
+                      blue: Number(votesInPercent.abstain),
+                      red: Number(votesInPercent.no),
+                    }}
                   />
-                </Tooltip>
+                  <Tooltip
+                    isOpen={true}
+                    p={2}
+                    hasArrow
+                    label="Passing threshold: 51%"
+                    bg="wynd.base.sidebar"
+                    color="white"
+                  >
+                    <Box
+                      height={5}
+                      top={-1}
+                      left={"calc(100% * 0.51)"}
+                      width={"3px"}
+                      bgColor={"white"}
+                      position={"absolute"}
+                    />
+                  </Tooltip>
+                </Box>
+                <Flex mt={16} justifyContent={"space-between"}>
+                  <Text fontSize={"xl"}>Turnout</Text>
+                  <Text fontSize={"xl"}>{turnout.toFixed(3)}%</Text>
+                </Flex>
+                <Box position={"relative"} mb={16}>
+                  <Progress mx={4} mt={2} value={totalVoted} max={Number(proposalResponse.total_power)} />
+                  <Tooltip
+                    isOpen={true}
+                    p={2}
+                    hasArrow
+                    label="Quorum: 30%"
+                    bg="wynd.base.sidebar"
+                    color="white"
+                  >
+                    <Box
+                      height={5}
+                      top={-1}
+                      left={"calc(100% * 0.3)"}
+                      width={"3px"}
+                      bgColor={"white"}
+                      position={"absolute"}
+                    />
+                  </Tooltip>
+                </Box>
               </Box>
-              <Flex mt={16} justifyContent={"space-between"}>
-                <Text fontSize={"xl"}>Turnout</Text>
-                <Text fontSize={"xl"}>{turnout.toFixed(3)}%</Text>
-              </Flex>
-              <Box position={"relative"} mb={16}>
-                <Progress mx={4} mt={2} value={totalVoted} max={Number(proposalResponse.total_power)} />
-                <Tooltip
-                  isOpen={true}
-                  p={2}
-                  hasArrow
-                  label="Quorum: 30%"
-                  bg="wynd.base.sidebar"
-                  color="white"
-                >
-                  <Box
-                    height={5}
-                    top={-1}
-                    left={"calc(100% * 0.3)"}
-                    width={"3px"}
-                    bgColor={"white"}
-                    position={"absolute"}
-                  />
-                </Tooltip>
-              </Box>
-            </Box>
+            </Suspense>
             <Divider my={5} />
             <Text fontSize={"2xl"} mb={4}>
               Vote!
