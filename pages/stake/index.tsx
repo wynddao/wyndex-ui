@@ -30,7 +30,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>WYND DEX | Stake Tokens</title>
+        <title>WYND | DAO - Stake Tokens</title>
       </Head>
       <Box p="4">
         <StakeHeader totalStaked={totalStaked} treasuryBalance={treasuryBalance} />

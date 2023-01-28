@@ -119,7 +119,7 @@ export default function PoolHeader({
     <>
       <Head>
         {/* TODO: Pool Title */}
-        <title>WYND DEX | Pool</title>
+        <title>WYND | DEX - Pool</title>
       </Head>
       <Box
         bg={"wynd.base.sidebar"}

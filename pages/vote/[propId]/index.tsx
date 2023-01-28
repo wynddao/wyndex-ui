@@ -12,7 +12,7 @@ const ProposalSingle = () => {
   return (
     <>
       <Head>
-        <title>WYND DEX | Proposal {propId}</title>
+        <title>WYND | DAO - Proposal {propId}</title>
       </Head>
       <ProposalComponent proposalResponse={proposalResponse} propId={Number(propId)} votingModuleAddress={votingModuleAddress} walletVote={walletVote} refreshData={refreshData} />
     </>

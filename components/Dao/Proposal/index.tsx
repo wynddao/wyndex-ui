@@ -156,9 +156,12 @@ export const ProposalComponent = ({
       <Grid templateColumns={{ base: "1fr, 1fr", lg: "6fr 2fr" }} mt={4} gap={30}>
         <Box>
           <BorderedBox bgImage={false}>
-            <Text>
-              <ReactMarkdown components={ChakraUIRenderer()}>{proposalResponse.description}</ReactMarkdown>
-            </Text>
+            <Text fontSize={"4xl"}>Description</Text>
+            <BorderedBox bgImage={false}>
+              <Text>
+                <ReactMarkdown components={ChakraUIRenderer()}>{proposalResponse.description}</ReactMarkdown>
+              </Text>
+            </BorderedBox>
           </BorderedBox>
           <Box mt={4}>
             {proposalResponse.msgs.map((msg, i) => {
