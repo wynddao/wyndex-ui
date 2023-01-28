@@ -11,6 +11,7 @@ import {
   WyndDaoStakeSelectors,
 } from "../recoil";
 import { WyndDaoBaseHooks } from "./clients";
+import { TokenInfoResponse } from "../clients/types/Cw20.types";
 
 function claimAvailable(claim: Claim, blockHeight: number) {
   if ("at_height" in claim.release_at) {
@@ -63,6 +64,7 @@ export interface WyndUseStakingInfoResponse
   distributionContractAddress: string;
   treasuryBalance: string;
   vestedBalance: string;
+  governanceTokenInfo: TokenInfoResponse;
 }
 
 export const useDaoStakingInfos = ({
@@ -73,6 +75,7 @@ export const useDaoStakingInfos = ({
   const { address: walletAddress } = useWallet();
   const stakingContractAddress = DAO_STAKING_ADDRESS;
   const distributionContractAddress = DAO_DIST_ADDRESS;
+  const governanceTokenAddress = WYND_TOKEN_ADDRESS;
 
   // Claims
   const blockHeight = useRecoilValue(fetchClaims ? blockHeightSelector : constSelector(undefined));
@@ -86,10 +89,17 @@ export const useDaoStakingInfos = ({
       : constSelector(undefined),
   )?.claims;
 
+  const governanceTokenInfo = useRecoilValue(
+    WyndBaseSelectors.tokenInfoSelector({
+      contractAddress: governanceTokenAddress,
+      params: [],
+    }),
+  );
+
   const claimsPending = blockHeight ? claims?.filter((c) => !claimAvailable(c, blockHeight)) : undefined;
   const claimsAvailable = blockHeight ? claims?.filter((c) => claimAvailable(c, blockHeight)) : undefined;
   const sumClaimsAvailable = claimsAvailable?.reduce((p, c) => p + Number(c.amount), 0);
-  
+
   // Total staked value TODO
   const totalStakedPower = useRecoilValue(
     fetchWalletStakedValue && walletAddress
@@ -214,5 +224,6 @@ export const useDaoStakingInfos = ({
     distributionContractAddress,
     treasuryBalance,
     vestedBalance,
+    governanceTokenInfo,
   };
 };

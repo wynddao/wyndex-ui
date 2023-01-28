@@ -10,9 +10,6 @@ export default function Page() {
         <title>WYND DEX | Vote</title>
       </Head>
       <Box p="4">
-        <Heading pt="8" mb="8">
-          Vote
-        </Heading>
         <Vote />
       </Box>
     </>

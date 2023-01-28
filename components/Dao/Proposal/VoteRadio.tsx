@@ -27,10 +27,12 @@ export const VoteRadio = (props: any) => {
         _checked={{ backgroundColor: color, color: "black" }}
         bgColor={"wynd.base.sidebar"}
         p={3}
-        width={"6rem"}
+        borderStartRadius={props.children === "yes" ? "xl" : "none"}
+        borderEndRadius={props.children === "no" ? "xl" : "none"}
+        borderX={props.children === "abstain" ? "white solid 1px" : "none"}
+        width={"100%"}
         cursor={"pointer"}
         textAlign={"center"}
-        borderRadius={"xl"}
       >
         {capitalizeFirstLetter(props.children)}
       </Box>

@@ -1,4 +1,5 @@
 import { MsgType } from "../components/Dao/Actions/types";
+import { Status } from "../state/clients/Cw-proposal-single";
 
 export const getMsgType = (msg: Record<string, any>): MsgType => {
   let type = "unknown";
@@ -26,4 +27,19 @@ export const getMsgType = (msg: Record<string, any>): MsgType => {
       rawMsg: msg,
     };
   }
+};
+
+export const getResultInText = (quorum: number, totalVotes: number, votes: any, status: Status) => {
+  const thresholdReached = votes.yes >= votes.no + votes.abstain;
+  const quorumMet = quorum <= totalVotes;
+
+  return status === Status.Open
+    ? thresholdReached && quorumMet
+      ? "If the current vote stands, this proposal will pass."
+      : !thresholdReached && quorumMet
+      ? "If the current vote stands, this proposal will fail because insufficient 'Yes' votes have been cast."
+      : thresholdReached && !quorumMet
+      ? "If the current vote stands, this proposal will fail due to a lack of voter participation."
+      : undefined
+    : undefined;
 };
