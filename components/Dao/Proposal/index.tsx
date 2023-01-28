@@ -58,12 +58,14 @@ export const ProposalComponent = ({
   votingModuleAddress,
   walletVote,
   refreshData,
+  walletStakedPowerAtHeight,
 }: {
   propId: number;
   proposalResponse: Proposal;
   votingModuleAddress: string;
   walletVote: Vote | undefined;
   refreshData: () => void;
+  walletStakedPowerAtHeight: number;
 }) => {
   const { address: walletAddress } = useWallet();
   const totalVoted =
@@ -287,37 +289,42 @@ export const ProposalComponent = ({
               <Flex justifyContent={"space-between"} py={2} flexDir={"column"} gap={3} alignItems={"center"}>
                 {walletAddress ? (
                   <>
-                    {!walletVote && proposalResponse.status === Status.Open && (
-                      <>
-                        <Grid w={"100%"} templateColumns={"1fr 1fr 1fr"} {...group}>
-                          {["yes", "abstain", "no"].map((item) => (
-                            <VoteRadio w="full" key={item} {...getRadioProps({ value: item })}>
-                              {item}
-                            </VoteRadio>
-                          ))}
-                        </Grid>
-                        <Button
-                          bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-                          _hover={{
-                            bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
-                            ":disabled": {
+                    {!walletVote &&
+                      proposalResponse.status === Status.Open &&
+                      walletStakedPowerAtHeight > 0 && (
+                        <>
+                          <Grid w={"100%"} templateColumns={"1fr 1fr 1fr"} {...group}>
+                            {["yes", "abstain", "no"].map((item) => (
+                              <VoteRadio w="full" key={item} {...getRadioProps({ value: item })}>
+                                {item}
+                              </VoteRadio>
+                            ))}
+                          </Grid>
+                          <Button
+                            bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                            _hover={{
+                              bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                              ":disabled": {
+                                bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+                                cursor: "initial",
+                              },
+                            }}
+                            _disabled={{
                               bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
                               cursor: "initial",
-                            },
-                          }}
-                          _disabled={{
-                            bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
-                            cursor: "initial",
-                          }}
-                          onClick={() => doCastVote()}
-                          isLoading={loading}
-                          borderRadius={"xl"}
-                          w={"100%"}
-                          disabled={selectedVote === ""}
-                        >
-                          Vote!
-                        </Button>
-                      </>
+                            }}
+                            onClick={() => doCastVote()}
+                            isLoading={loading}
+                            borderRadius={"xl"}
+                            w={"100%"}
+                            disabled={selectedVote === ""}
+                          >
+                            Vote!
+                          </Button>
+                        </>
+                      )}
+                    {walletStakedPowerAtHeight && (
+                      <Text>{"You had no staked $WYND when the proposal started"}</Text>
                     )}
                     {walletVote && (
                       <Text>
