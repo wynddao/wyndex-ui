@@ -52,7 +52,12 @@ export default function Pools() {
     assets: AssetInfoIndexer[];
   };
 
+  const disabledPools = [
+    "juno16xrz7kd26j0qmdg706qyesqs56g2f6dulplsajtl0t9z8frd8tfqsx2lkj",
+    "juno1jtendlawm8rv96hnfuwn04y8uhwzp9epcxy5f0ms973pspueqcgsy3qzt0",
+  ];
   const data: PoolListEntry[] = Object.keys(pools)
+    .filter((poolAddress) => !disabledPools.includes(poolAddress))
     .map((poolAddress) => {
       return {
         address: poolAddress,
