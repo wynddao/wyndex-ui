@@ -6,3 +6,4 @@ export * from "./usePoolInfos";
 export * from "./useTokenName";
 export * from "./useToast";
 export * from "./useIndexerInfos";
+export * from "./useAprInfos";
