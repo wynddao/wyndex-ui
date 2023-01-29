@@ -57,7 +57,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <WalletProvider
           chains={[...chains, junoTestnet]}
           assetLists={[...assets, junoAssets]}
-          wallets={[...keplrWallet, ...leapwallets, ...cosmostationWallets]}
+          wallets={[...keplrWallet]}
           signerOptions={signerOptions}
           endpointOptions={{
             junotestnet1: {
