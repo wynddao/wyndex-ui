@@ -6,5 +6,5 @@ export const getMultiplier = () => {
   const now = new Date();
   const totalDateDifference = nextMondayNineAM.getTime() - lastMondayNineAM.getTime();
   const currentDateDifference = totalDateDifference - (nextMondayNineAM.getTime() - now.getTime());
-  return (7 / totalDateDifference) * currentDateDifference;
+  return 1 + (6 / totalDateDifference) * currentDateDifference;
 };
