@@ -4,12 +4,14 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CgChevronDown, CgChevronUp } from "react-icons/cg";
 import { FiUsers } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 export const SidebarMenu = () => {
   const pathname = usePathname();
   const isLinkActive =
     pathname?.includes("vote") || pathname?.includes("stake") || pathname?.includes("gauge");
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const router = useRouter();
   return (
     <Menu isOpen={isOpen} closeOnBlur={true} onClose={() => setIsOpen(false)}>
       <MenuButton
@@ -67,14 +69,14 @@ export const SidebarMenu = () => {
         </Flex>
       </MenuButton>
       <MenuList ml={2}>
-        <MenuItem justifyContent={"center"}>
-          <Link href="/stake">Stake</Link>
+        <MenuItem onClick={() => router.push("/stake")} justifyContent={"center"}>
+          <Text>Stake</Text>
         </MenuItem>
-        <MenuItem justifyContent={"center"}>
-          <Link href="/vote">Vote</Link>
+        <MenuItem onClick={() => router.push("/vote")} justifyContent={"center"}>
+          <Text>Vote</Text>
         </MenuItem>
-        <MenuItem justifyContent={"center"}>
-          <Link href="/gauges">Gauges</Link>
+        <MenuItem onClick={() => router.push("/gauges")} justifyContent={"center"}>
+          <Text>Gauges</Text>
         </MenuItem>
       </MenuList>
     </Menu>
