@@ -1,11 +1,15 @@
 import { useWallet } from "@cosmos-kit/react";
 import { useRecoilValue } from "recoil";
-import { useIndexerInfos, usePairInfos, useTokenInfo } from "../../../state";
+
+import { useAprInfos, useIndexerInfos, usePairInfos, useTokenInfo } from "../../../state";
 import { PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { getAssetInfoDetails, getAssetPrice, getNativeIbcTokenDenom } from "../../../utils/assets";
+import { getMultiplier } from "../../../utils/hotfix";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
+
+
 import TokenName from "../TokenName";
 import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
@@ -53,7 +57,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     (1 / Number(microamountToAmount(poolData.total_share, ltokenInfo.tokenDecimals))) * totalFiatShares;
 
   // Value of APR token per LP token
-  const { apr } = useStakeInfos(pair.staking_addr);
+  const { rewards: apr } = useAprInfos(pair.staking_addr);
 
   // Loop through APR for every unbonding time to calculat the % of each reward and add it up
   const aprCalculated = apr.map((bucket) => {
@@ -62,7 +66,7 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += (Number(reward.amount) / 1000000 * (currency === "USD" ? price.priceInUsd : price.priceInEur)) * 100;
+      value += (Number(reward.amount) / 1000000 * (currency === "USD" ? price.priceInUsd : price.priceInEur)) * 10 ** 6; //! TODO!!!! 
     });
 
     return {

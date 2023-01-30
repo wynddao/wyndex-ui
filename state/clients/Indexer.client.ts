@@ -1,7 +1,9 @@
 import { Coin } from "cosmwasm";
+import async from "react-select/dist/declarations/src/async/index";
 import { RequestAssetPrice } from "../../utils/assets";
 import { AssetInfo } from "./types/WyndexFactory.types";
 import { SwapOperation } from "./types/WyndexMultiHop.types";
+import { AnnualizedRewardsResponse } from "./types/WyndexStake.types";
 
 interface IbcBalanceResponse {
   readonly address: string;
@@ -129,5 +131,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     const cw20Balance = cw20Balances.find((balance) => balance.address === tokenAddress);
 
     return cw20Balance ? cw20Balance : { address: tokenAddress, balance: "0" };
+  };
+
+  rewards = async (poolAddress: string): Promise<AnnualizedRewardsResponse> => {
+    const res = await fetch(`${this.apiUrl}/pools/apr/${poolAddress}`);
+    const annualizedRewardsResponse: AnnualizedRewardsResponse = await res.json();
+    return annualizedRewardsResponse;
   };
 }
