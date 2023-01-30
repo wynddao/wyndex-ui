@@ -9,8 +9,8 @@ export const StakeHeader = ({
   treasuryBalance: string;
 }) => {
   return (
-    <Box bg="url(/castle.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
-      <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
+    <Box bg="url(/castle3.png)" rounded="lg" bgPosition="0 -180px" bgSize="cover">
+      <Box bg="rgba(16, 11, 22,0.8)" py={4} w="full" h="full">
         <Heading textAlign="center" fontSize={{ base: "3xl", md: "6xl" }}>Stake</Heading>
         <Flex gap={6} px={8} py={4} justifyContent={"space-around"}>
           <Box py={{ md: 2 }}>
