@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
@@ -40,7 +40,6 @@ const FromToken: React.FC<IProps> = ({
         bg="wynd.base.sidebar"
         display="flex"
         flexFlow="column"
-        pr={{ lg: "2rem" }}
         className="swap-from"
       >
         <Flex justifyContent="space-between">
@@ -86,25 +85,29 @@ const FromToken: React.FC<IProps> = ({
             setAsset={setFromToken}
             hiddenTokens={[toToken.name.toLowerCase(), fromToken.name.toLowerCase()]}
           />
-          <Flex flexFlow="column" position="relative">
+          <Flex flexFlow="column">
             <Flex alignItems="center" gap="0.5rem">
-              <Input
-                textAlign="right"
-                border="none"
-                _focus={{ bg: "whiteAlpha.200" }}
-                _focus-visible={{ borderColor: "none", boxShadow: "none" }}
-                _hover={{ bg: "whiteAlpha.200" }}
-                p="0.2rem"
-                bg="whiteAlpha.100"
-                type="number"
-                onChange={({ target }) => setInputAmount(target.value)}
-                value={inputAmount}
-              />
-              <Text textTransform="uppercase">{microdenomToDenom(fromToken.denom)}</Text>
+              <Flex position="relative">
+                <Input
+                  textAlign="right"
+                  border="none"
+                  _focus={{ bg: "whiteAlpha.200" }}
+                  _focus-visible={{ borderColor: "none", boxShadow: "none" }}
+                  _hover={{ bg: "whiteAlpha.200" }}
+                  p="0.2rem"
+                  bg="whiteAlpha.100"
+                  type="number"
+                  onChange={({ target }) => setInputAmount(target.value)}
+                  value={inputAmount}
+                />
+                <Text position="absolute" right="0" bottom="-4" fontSize="10px" color="wynd.neutral.500">
+                  ≈ {formatCurrency(currency, `${price.toFixed(6)}`)}
+                </Text>
+              </Flex>
+              <Text textTransform="uppercase" minW="55px">
+                {microdenomToDenom(fromToken.denom)}
+              </Text>
             </Flex>
-            <Text position="absolute" right="0" bottom="-6px" fontSize="xs" color="wynd.neutral.500">
-              ≈ {formatCurrency(currency, `${price.toFixed(6)}`)}
-            </Text>
           </Flex>
         </Flex>
       </Box>
