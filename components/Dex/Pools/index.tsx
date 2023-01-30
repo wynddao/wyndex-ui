@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { createColumnHelper, FilterFn } from "@tanstack/react-table";
+import { createColumnHelper, FilterFn, SortingFn } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { FiCreditCard } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
@@ -18,6 +18,11 @@ import PoolsCard from "./PoolsCard";
 declare module "@tanstack/table-core" {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
+  }
+  interface SortingFns {
+    tvlSort: SortingFn<unknown>;
+    poolNameSort: SortingFn<unknown>;
+    aprSort: SortingFn<unknown>;
   }
 }
 
@@ -90,6 +95,7 @@ export default function Pools() {
         header: "Pool",
         filterFn: "auto",
         enableColumnFilter: true,
+        sortingFn: "poolNameSort",
         cell: ({ getValue }) => (
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
@@ -149,6 +155,7 @@ export default function Pools() {
       {
         id: "tvl",
         header: "TVL",
+        sortingFn: "tvlSort",
         cell: (props) => {
           const [{ value: token1 }, { value: token2 }] = props.getValue();
           const tokenPrice1 = getAssetPrice(token1, assetPrices);
@@ -174,6 +181,7 @@ export default function Pools() {
     columnHelper.accessor((row) => row.address, {
       id: "apr",
       header: "APR",
+      sortingFn: "aprSort",
       cell: (props) => {
         return <MaxApr poolAddress={props.getValue()} />;
       },
@@ -257,7 +265,7 @@ export default function Pools() {
           </Flex>
         )}
       </Box>
-      <DataTable columns={columns} data={data} userAssets={userAssets} />
+      <DataTable assetsPrice={assetPrices} columns={columns} data={data} userAssets={userAssets} />
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
     </Box>
   );

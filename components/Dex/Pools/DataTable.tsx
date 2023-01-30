@@ -34,15 +34,28 @@ import {
 
 import { useRouter } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
-import { getAssetByDenom, getAssetByTokenAddr } from "../../../utils/assets";
+import {
+  getAssetByDenom,
+  getAssetByTokenAddr,
+  getAssetInfoDetails,
+  getAssetPrice,
+  RequestAssetPrice,
+} from "../../../utils/assets";
+import { microamountToAmount } from "../../../utils/tokens";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
   userAssets: string[];
   columns: ColumnDef<Data, any>[];
+  assetsPrice: RequestAssetPrice[];
 };
 
-export function DataTable<Data extends object>({ data, columns, userAssets }: DataTableProps<Data>) {
+export function DataTable<Data extends object>({
+  data,
+  columns,
+  userAssets,
+  assetsPrice,
+}: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
@@ -70,11 +83,57 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
       : false;
   };
 
+  const tvlSort = (rowA: any, rowB: any, columnId: any) => {
+    const [{ value: token1A }, { value: token2A }] = rowA.getValue(columnId);
+    const tokenInfo1A = getAssetInfoDetails(token1A);
+    const tokenInfo2A = getAssetInfoDetails(token2A);
+
+    const token1AmountA = microamountToAmount(token1A.amount, tokenInfo1A.decimals);
+    const token2AmountA = microamountToAmount(token2A.amount, tokenInfo2A.decimals);
+
+    const { priceInUsd: tokenPrice1A } = getAssetPrice(token1A, assetsPrice);
+    const { priceInUsd: tokenPrice2A } = getAssetPrice(token2A, assetsPrice);
+
+    const rawAValue = Number(token1AmountA) * tokenPrice1A + Number(token2AmountA) * tokenPrice2A;
+
+    const [{ value: token1B }, { value: token2B }] = rowB.getValue(columnId);
+    const tokenInfo1B = getAssetInfoDetails(token1B);
+    const tokenInfo2B = getAssetInfoDetails(token2B);
+
+    const token1AmountB = microamountToAmount(token1B.amount, tokenInfo1B.decimals);
+    const token2AmountB = microamountToAmount(token2B.amount, tokenInfo2B.decimals);
+
+    const { priceInUsd: tokenPrice1B } = getAssetPrice(token1B, assetsPrice);
+    const { priceInUsd: tokenPrice2B } = getAssetPrice(token2B, assetsPrice);
+
+    const rawBValue = Number(token1AmountB) * tokenPrice1B + Number(token2AmountB) * tokenPrice2B;
+
+    return rawAValue > rawBValue ? 1 : -1;
+  };
+
+  const poolNameSort = (rowA: any, rowB: any, columnId: any) => {
+    const [tokenA] = rowA.getValue(columnId) as { value: string; type: string }[];
+
+    const [tokenB] = rowB.getValue(columnId) as { value: string; type: string }[];
+
+    return tokenA.value.localeCompare(tokenB.value);
+  };
+
+  const aprSort = (rowA: any, rowB: any, columnId: any) => {
+    // Here is where APR sort
+    return 1;
+  };
+
   const table = useReactTable({
     columns,
     data,
     enableFilters: true,
     globalFilterFn: fuzzyFilter,
+    sortingFns: {
+      tvlSort,
+      poolNameSort,
+      aprSort,
+    },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
@@ -145,9 +204,10 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
               <Tr key={headerGroup.id} bgColor={"wynd.base.sidebar"}>
                 {headerGroup.headers.map((header) => {
                   const meta: any = header.column.columnDef.meta;
+                  const sortFn = header.column.getToggleSortingHandler();
                   return (
-                    <Th key={header.id} isNumeric={meta?.isNumeric} >
-                      <chakra.div display="inline-block">
+                    <Th key={header.id} isNumeric={meta?.isNumeric}>
+                      <chakra.div display="inline-block" cursor="pointer" onClick={sortFn}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {header.column.getIsSorted() ? (
                           header.column.getIsSorted() === "desc" ? (
