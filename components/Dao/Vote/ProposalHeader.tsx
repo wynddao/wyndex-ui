@@ -10,14 +10,25 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
 
   return (
     <>
-      <Box bg="url(/castle.jpeg)" rounded="lg" mb={4} bgPosition="bottom" bgSize="cover">
-        <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
-          <Grid textAlign="center" templateColumns={"1fr 1fr 1fr"} px={8} py={4}>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
+      <Box bg="url(/lab.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
+        <Flex
+          bg="rgba(16, 11, 22,0.8)"
+          w="full"
+          px={{ base: "4", md: "8" }}
+          py={{ base: "6", md: "12" }}
+          flexFlow="column"
+          gap="10"
+          rounded="lg"
+        >
+          <Heading textAlign="center" fontSize={{ base: "4xl", md: "5xl" }}>
+            Vote
+          </Heading>
+          <Flex gap={6} justifyContent={"space-around"} flexFlow={{ base: "column", md: "row" }}>
+            <Box py={{ md: 2 }} textAlign={{ base: "center", md: "left" }}>
+              <Text fontWeight="semibold" color="wynd.gray.500">
                 Total Supply
               </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+              <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
                 {(
                   Number(
                     microamountToAmount(governanceTokenInfo.total_supply, governanceTokenInfo.decimals),
@@ -27,69 +38,99 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
                 M $WYND
               </Text>
             </Box>
-            <Box py={{ md: 2 }}>
-              <Heading fontSize={{ base: "3xl", md: "6xl" }} fontWeight="extrabold">
-                Vote
-              </Heading>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
+            <Box py={{ md: 2 }} textAlign={{ base: "center", md: "right" }}>
+              <Text fontWeight="semibold" color="wynd.gray.500">
                 Staked
               </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+              <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
                 {((100 / Number(governanceTokenInfo.total_supply)) * Number(totalStaked)).toFixed(2)}%
               </Text>
             </Box>
-          </Grid>
-        </Box>
+          </Flex>
+        </Flex>
         <Flex
-          bg="rgba(16, 11, 22,0.95)"
+          bg="rgba(16, 11, 22,0.9)"
           gap={6}
           px={3}
-          py={1}
-          borderBottomRadius="md"
+          py={2}
           justifyContent={"space-around"}
+          borderBottomRadius="lg"
+          flexWrap="wrap"
         >
-          <Box py={{ md: 2 }}>
-            <Text fontWeight="semibold" opacity={0.7}>
-              Proposal deposit
+          <Box>
+            <Text
+              fontWeight="semibold"
+              color="wynd.gray.500"
+              fontSize="xs"
+              textTransform="uppercase"
+              textAlign="center"
+            >
+              Total Supply
             </Text>
-            <Text fontWeight="extrabold" fontSize={"sm"}>
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
-              {microamountToAmount(config.deposit_info?.deposit, 6)} $WYND
+              {(
+                Number(microamountToAmount(governanceTokenInfo.total_supply, governanceTokenInfo.decimals)) /
+                10 ** 6
+              ).toFixed(1)}
+              M $WYND
             </Text>
           </Box>
-          <Box py={{ md: 2 }}>
-            <Text fontWeight="semibold" opacity={0.7}>
+          <Box>
+            <Text
+              fontWeight="semibold"
+              color="wynd.gray.500"
+              fontSize="xs"
+              textTransform="uppercase"
+              textAlign="center"
+            >
               Refund failed proposals
             </Text>
-            <Text fontWeight="extrabold" fontSize={"sm"}>
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {config.deposit_info?.refund_failed_proposals ? "YES" : "NO"}
             </Text>
           </Box>
-          <Box py={{ md: 2 }}>
-            <Text fontWeight="semibold" opacity={0.7}>
+          <Box>
+            <Text
+              fontWeight="semibold"
+              color="wynd.gray.500"
+              fontSize="xs"
+              textTransform="uppercase"
+              textAlign="center"
+            >
               Passing threshold
             </Text>
-            <Text fontWeight="extrabold" fontSize={"sm"}>
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
               {config.threshold.threshold_quorum.threshold.percent * 100}%
             </Text>
           </Box>
-          <Box py={{ md: 2 }}>
-            <Text fontWeight="semibold" opacity={0.7}>
+          <Box>
+            <Text
+              fontWeight="semibold"
+              color="wynd.gray.500"
+              fontSize="xs"
+              textTransform="uppercase"
+              textAlign="center"
+            >
               Quorum
             </Text>
-            <Text fontWeight="extrabold" fontSize={"sm"}>
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
               {config.threshold.threshold_quorum.quorum.percent * 100}%
             </Text>
           </Box>
-          <Box py={{ md: 2 }}>
-            <Text fontWeight="semibold" opacity={0.7}>
+          <Box>
+            <Text
+              fontWeight="semibold"
+              color="wynd.gray.500"
+              fontSize="xs"
+              textTransform="uppercase"
+              textAlign="center"
+            >
               Voting Period
             </Text>
-            <Text fontWeight="extrabold" fontSize={"sm"}>
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
               {secondsToDays(config.max_voting_period.time)} Days
             </Text>
