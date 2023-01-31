@@ -13,9 +13,9 @@ import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import { startTransition, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { Cw20Hooks, useIndexerInfos, useToast, useTokenInfo } from "../../../../state";
+import { Cw20Hooks, getBalanceByAsset, useIndexerInfos, useToast, useTokenInfo } from "../../../../state";
 import { PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
-import { getNativeIbcTokenDenom } from "../../../../utils/assets";
+import { getAssetByInfo, getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import TokenName from "../../TokenName";
 
@@ -38,8 +38,18 @@ export default function RemoveLiquidity({
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
+  const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+
+  const assetASelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[0]),
+  });
+  const assetBSelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[1]),
+  });
+  const refreshBalanceA = useRecoilRefresher_UNSTABLE(assetASelector);
+  const refreshBalanceB = useRecoilRefresher_UNSTABLE(assetBSelector);
 
   const doSend = Cw20Hooks.useSend({
     sender: walletAddress ?? "",
@@ -66,7 +76,8 @@ export default function RemoveLiquidity({
     const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
-      refreshPairBalances();
+      refreshBalanceA();
+      refreshBalanceB();
       refreshLpBalance();
 
       if (hasCw20) refreshCw20Balances();
