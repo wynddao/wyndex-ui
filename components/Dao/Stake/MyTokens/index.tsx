@@ -39,8 +39,9 @@ export const MyTokens = ({
         >
           My Tokens
         </Text>
+        <Text color="wynd.gray.600">Stake more WYND to increase yor voting power</Text>
       </Box>
-      <Grid templateColumns="repeat(2, 2fr)" gap={30}>
+      <Grid templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }} gap={30}>
         <VotingPower
           walletStakedPower={walletStakedPower}
           walletStakedTokens={walletStakedTokens}

@@ -100,14 +100,17 @@ export const ManageTokens = ({
 
   return (
     <>
-      <Grid templateColumns="repeat(2, 2fr)" gap={30} mt="4">
+      <Grid templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }} gap={30} mt="12">
         <Box>
           <Flex mb={2} justifyContent={"space-between"}>
             <Text fontSize="2xl" fontWeight="bold">
               Manage Stakes
             </Text>
             <Button
-              fontSize="sm"
+              fontSize="xs"
+              height="fit-content"
+              px="4"
+              py="2"
               bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
               _hover={{
                 bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",

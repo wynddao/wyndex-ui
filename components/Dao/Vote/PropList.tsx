@@ -20,49 +20,60 @@ export const PropList = ({ limit }: { limit: number }) => {
     router.push(`/vote/${prop.proposalNumber}`);
   };
 
+  /*  "open" | "rejected" | "passed" | "executed" | "closed" */
+
+  const colorStatus = {
+    open: "wynd.cyan.600",
+    rejected: "orange.300",
+    passed: "wynd.green.600",
+    executed: "purple.400",
+    closed: "wynd.gray.600",
+  };
+
   return (
     <>
       {allProps.map((prop, i) => (
         <Grid
           key={i}
-          templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 1fr 2fr 1fr 2fr" }}
+          templateColumns={{ base: "repeat(2, 1fr)", lg: "70px 100px 3fr 120px 2fr" }}
           fontWeight="semibold"
           _hover={{
-            bgColor: "wynd.base.sidebar",
+            bgColor: "wynd.gray.alpha.10",
             cursor: "pointer",
           }}
           onClick={() => handleRowClick(prop)}
           alignItems="center"
           backgroundImage={"url(/images/Vector2Bg.png)"}
-          backgroundAttachment="fixed"
-          backgroundPosition="bottom"
+          backgroundSize="300px"
           borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
-          py="4"
           px="2"
+          py="4"
           gap="4"
         >
-          <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-            <Text fontSize="lg">{prop.id}</Text>
+          <GridItem>
+            <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
+              {prop.id}
+            </Text>
           </GridItem>
-          <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
-            <Text fontSize="lg">{capitalizeFirstLetter(prop.status)}</Text>
+          <GridItem textAlign="start" color={colorStatus[prop.status]}>
+            <Text fontSize={{ base: "xs", md: "sm" }}>{capitalizeFirstLetter(prop.status)}</Text>
           </GridItem>
-          <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
-            <Text fontSize="lg">{prop.title}</Text>
+          <GridItem textAlign="start">
+            <Text fontSize={{ base: "sm", md: "md" }}>{prop.title}</Text>
           </GridItem>
-          <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
-            <Text fontSize="lg">
+          <GridItem textAlign="center">
+            <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
               {(expirationAtTimeToSecondsFromNow(prop.expiration || "") || 0 - new Date().getTime()) < 0 ||
               prop.status === "executed"
                 ? "Completed"
                 : secondsToWdhms(expirationAtTimeToSecondsFromNow(prop.expiration || "") || "")}
             </Text>
           </GridItem>
-          <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
+          <GridItem textAlign="end" colSpan={{ base: 2, lg: "auto" }} py="2">
             <Progress
               variant="multiSegment"
-              m={4}
-              height={8}
+              height={4}
+              rounded="sm"
               min={0}
               max={Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain)}
               //@ts-ignore

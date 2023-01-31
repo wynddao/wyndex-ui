@@ -13,7 +13,6 @@ export const Unstaked = ({ unstakedAmount }: { unstakedAmount: number }) => {
           <Text fontSize="xl" fontWeight="bold" mt={4} color="wynd.green.500" display="inline-block">
             {microamountToAmount(unstakedAmount, 6) || 0} $WYND
           </Text>
-          <Text>Stake these to increase your voting power.</Text>
         </Box>
       </Flex>
     </BorderedBox>
