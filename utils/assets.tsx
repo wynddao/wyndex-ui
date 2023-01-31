@@ -108,14 +108,21 @@ export const getAmountByPrice = (
   return 0;
 };
 
-export const getAssetByTokenAddr = (tokenAddr: string): Asset | undefined => {
+export const getAssetByTokenAddr = (tokenAddr: string): Asset => {
   const assetList = getAssetList();
-  return assetList.tokens.find((a) => a.token_address === tokenAddr);
+  return assetList.tokens.find((a) => a.token_address === tokenAddr) || ({} as Asset);
 };
 
 export const getAssetByDenom = (denom: string): Asset => {
   const assetList = getAssetList();
   return assetList.tokens.find((a) => a.denom === denom || a.juno_denom === denom) || ({} as Asset);
+};
+
+export const getAssetByInfo = (info: AssetInfo): Asset => {
+  if ("native" in info) {
+    return getAssetByDenom(info.native);
+  }
+  return getAssetByTokenAddr(info.token);
 };
 
 export const getNativeIbcTokenDenom = (denom: string) =>
