@@ -1,10 +1,16 @@
 import { ChainRecord } from "@cosmos-kit/core";
-import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { selector, selectorFamily } from "recoil";
-import { CHAIN_RPC_ENDPOINT, cosmWasmClientRouter, cosmWasmStargateClientRouter } from "../../../utils";
+import {
+  CHAIN_RPC_ENDPOINT,
+  cosmWasmClientRouter,
+  cosmWasmStargateClientRouter,
+  WYND_TOKEN_ADDRESS,
+} from "../../../utils";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { balanceSelector, vestingSelector } from "./clients/cw20";
+import { allStakedSelector } from "./clients/stake";
 
 export const cosmWasmClientSelector = selector({
   key: "cosmWasmClient",
@@ -52,20 +58,35 @@ export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: 
     ({ address, asset }) =>
     async ({ get }) => {
       if (!address) return { amount: "0", denom: asset.denom };
-      if (asset.tags.includes("cw20")) {
-        const { balance } = get(
-          balanceSelector({ contractAddress: (asset as CW20Asset).token_address, params: [{ address }] }),
-        );
-        const { locked } = get(
-          vestingSelector({ contractAddress: (asset as CW20Asset).token_address, params: [{ address }] }),
-        );
-        const amount = (BigInt(balance) - BigInt(locked)).toString();
-        return { amount, denom: asset.denom } as Coin;
+
+      if (!("token_address" in asset)) {
+        const client = get(cosmWasmStargateClientSelector);
+        const nativeDenom = "juno_denom" in asset ? asset.juno_denom : asset.denom;
+        const nativeBalance = await client.getBalance(address, nativeDenom);
+        return nativeBalance;
       }
-      const client = get(cosmWasmStargateClientSelector);
-      return await client.getBalance(
-        address,
-        asset.hasOwnProperty("juno_denom") ? (asset as IBCAsset).juno_denom : asset.denom,
+
+      const { balance } = get(
+        balanceSelector({ contractAddress: asset.token_address, params: [{ address }] }),
       );
+
+      if (asset.token_address !== WYND_TOKEN_ADDRESS) {
+        return { amount: balance, denom: asset.denom };
+      }
+
+      // For WYND token, take into account staked and vesting
+      const { locked } = get(
+        vestingSelector({ contractAddress: asset.token_address, params: [{ address }] }),
+      );
+      const { stakes } = get(
+        allStakedSelector({ contractAddress: asset.token_address, params: [{ address }] }),
+      );
+      const totalStaked = stakes.reduce(
+        (prevStake, stakedRes) => BigInt(prevStake) + BigInt(stakedRes.stake),
+        BigInt(0),
+      );
+
+      const amount = (BigInt(balance) + totalStaked - BigInt(locked)).toString();
+      return { amount, denom: asset.denom };
     },
 });
