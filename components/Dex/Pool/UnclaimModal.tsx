@@ -12,8 +12,15 @@ import {
 import { useWallet } from "@cosmos-kit/react";
 import { startTransition } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { useIndexerInfos, useToast, UseTokenNameResponse, WyndexStakeHooks } from "../../../state";
+import {
+  getBalanceByAsset,
+  useIndexerInfos,
+  useToast,
+  UseTokenNameResponse,
+  WyndexStakeHooks,
+} from "../../../state";
 import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
+import { getAssetByInfo } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 
 interface UnclaimModalProps {
@@ -36,8 +43,19 @@ export default function UnclaimModal({
   pairData,
 }: UnclaimModalProps) {
   const { address: walletAddress } = useWallet();
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
+  const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+
+  const assetASelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[0]),
+  });
+  const assetBSelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[1]),
+  });
+  const refreshBalanceA = useRecoilRefresher_UNSTABLE(assetASelector);
+  const refreshBalanceB = useRecoilRefresher_UNSTABLE(assetBSelector);
+
   const { txToast } = useToast();
   const doClaim = WyndexStakeHooks.useClaim({
     contractAddress: wyndexStakeAddress,
@@ -52,7 +70,8 @@ export default function UnclaimModal({
     const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
-      refreshPairBalances();
+      refreshBalanceA();
+      refreshBalanceB();
       refreshPendingUnstaking();
 
       if (hasCw20) refreshCw20Balances();
