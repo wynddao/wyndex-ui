@@ -64,18 +64,35 @@ export const SidebarMenu = () => {
             alignSelf={"end"}
             mr="4"
             fontSize={{ base: "1rem", lg: "20px" }}
-            as={isOpen ? CgChevronUp : CgChevronDown}
+            as={CgChevronDown}
+            transform={isOpen ? "rotate(180deg)" : "rotate(0)"}
+            transition="all ease-in 0.2s"
           />
         </Flex>
       </MenuButton>
-      <MenuList ml={2}>
-        <MenuItem onClick={() => router.push("/stake")} justifyContent={"center"}>
+      <MenuList ml={2} bg="wynd.base.sidebar">
+        <MenuItem
+          onClick={() => router.push("/stake")}
+          justifyContent={"center"}
+          bg="wynd.base.sidebar"
+          _hover={{ bg: "wynd.gray.alpha.20" }}
+        >
           <Text>Stake</Text>
         </MenuItem>
-        <MenuItem onClick={() => router.push("/vote")} justifyContent={"center"}>
+        <MenuItem
+          onClick={() => router.push("/vote")}
+          justifyContent={"center"}
+          bg="wynd.base.sidebar"
+          _hover={{ bg: "wynd.gray.alpha.20" }}
+        >
           <Text>Vote</Text>
         </MenuItem>
-        <MenuItem onClick={() => router.push("/gauges")} justifyContent={"center"}>
+        <MenuItem
+          onClick={() => router.push("/gauges")}
+          justifyContent={"center"}
+          bg="wynd.base.sidebar"
+          _hover={{ bg: "wynd.gray.alpha.20" }}
+        >
           <Text>Gauges</Text>
         </MenuItem>
       </MenuList>
