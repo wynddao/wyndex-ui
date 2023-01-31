@@ -14,73 +14,59 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
 import { useWallet } from "@cosmos-kit/react";
-import { Asset, IBCAsset } from "@wynddao/asset-list";
 import { useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import { useIndexerInfos, useToast } from "../../../state";
 import { depositIbcModalAtom } from "../../../state/recoil/atoms/modal";
 import { getTransferIbcData } from "../../../state/recoil/selectors/ibc";
-import { getNativeKeplrData } from "../../../state/recoil/selectors/keplr";
-import { ChainInfo, chainInfos } from "../../../utils/chaindata/keplr/chainInfos";
-import { getAssetList } from "../../../utils/getAssetList";
+import { getIbcSigningDataSelector } from "../../../state/recoil/selectors/ibcSigningData";
 import { amountToMicroamount } from "../../../utils/tokens";
 
 export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { txToast } = useToast();
-  const { address } = useWallet();
+  const { address, currentWalletName } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
   const { refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
 
-  const loadableKeplrData = useRecoilValueLoadable(
-    getNativeKeplrData({ chainId: depositIbcModalOpen.chainId }),
+  const loadableIbcSigningData = useRecoilValueLoadable(
+    getIbcSigningDataSelector(depositIbcModalOpen.chainId ?? "", currentWalletName),
   );
   const loadableTransferIbcData = useRecoilValueLoadable(
     getTransferIbcData({
       chainId: depositIbcModalOpen.chainId,
       address,
-      nativeAddress: loadableKeplrData.state === "hasValue" ? loadableKeplrData.contents.nativeAddress : null,
+      nativeAddress:
+        loadableIbcSigningData.state === "hasValue" ? loadableIbcSigningData.contents.nativeAddress : null,
     }),
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
 
-  const chainInfo: ChainInfo | undefined = chainInfos[depositIbcModalOpen.chainId || ""];
-  const assets: readonly Asset[] = getAssetList().tokens;
-  const ibcAssets: readonly IBCAsset[] = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
-  const asset = ibcAssets.find((asset) => asset.chain_id === depositIbcModalOpen.chainId);
-
   async function submitDepositIbc() {
-    if (loadableKeplrData.state === "hasValue" && !loadableKeplrData.contents.nativeAddress) return;
-    const { keplrClient, nativeAddress } = loadableKeplrData.contents;
-
-    if (!keplrClient || !chainInfo || !asset || !address || !nativeAddress || !inputValue) return;
+    if (loadableIbcSigningData.state !== "hasValue") return;
+    const { feeAsset, ibcSigningClient, nativeAddress } = loadableIbcSigningData.contents;
+    if (!feeAsset || !ibcSigningClient || !nativeAddress || !address || !inputValue) return;
 
     try {
       setIsSubmitting(true);
-      const signer = await keplrClient.getOfflineSigner(chainInfo.chainId);
-      const gasPrice = GasPrice.fromString(
-        String(
-          chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === asset.denom)?.gasPriceStep
-            ?.average,
-        ) + asset.denom,
-      );
-      const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer, { gasPrice });
 
-      const coinToSend = { denom: asset.denom, amount: amountToMicroamount(inputValue, asset.decimals) };
+      const coinToSend = {
+        denom: feeAsset.denom,
+        amount: amountToMicroamount(inputValue, feeAsset.decimals),
+      };
       const OneDayFromNowInSeconds = Math.floor(Date.now() / 1000) + 86400;
 
       await txToast(() =>
-        client.sendIbcTokens(
+        ibcSigningClient.sendIbcTokens(
           nativeAddress,
           address,
           coinToSend,
           "transfer",
-          asset.channel,
+          feeAsset.channel,
           undefined,
           OneDayFromNowInSeconds,
           "auto",
