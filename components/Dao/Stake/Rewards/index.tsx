@@ -28,7 +28,7 @@ export const Rewards = ({
   };
   return (
     <Box mt="8">
-      <BorderedBox bgImage={false}>
+      <BorderedBox bgImageActive={false}>
         <Flex gap={4} alignItems={"center"} justifyContent={"space-between"}>
           <Text fontSize="xl" fontWeight="bold">
             Rewards: <strong>{microamountToAmount(rewards || 0, 6)} $WYND</strong>

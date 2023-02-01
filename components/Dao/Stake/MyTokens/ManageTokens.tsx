@@ -120,7 +120,7 @@ export const ManageTokens = ({
               Stake!
             </Button>
           </Flex>
-          <BorderedBox bgImage={false}>
+          <BorderedBox bgImageActive={false}>
             <Grid
               display="grid"
               templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 1fr 1fr" }}
@@ -180,7 +180,7 @@ export const ManageTokens = ({
           <Text fontSize="2xl" fontWeight="bold" mb={2}>
             Locked Tokens
           </Text>
-          <BorderedBox bgImage={false}>
+          <BorderedBox bgImageActive={false}>
             <Tabs isFitted>
               <TabList>
                 <Tab>Vesting</Tab>

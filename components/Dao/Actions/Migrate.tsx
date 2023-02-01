@@ -8,7 +8,7 @@ export const Migrate = ({ msg }: { msg: MsgType }) => {
   return (
     <>
       <Text fontSize={"xl"}>Migrate</Text>
-      <BorderedBox bgImage={false}>Contract Address: {msg.contract_addr}</BorderedBox>
+      <BorderedBox bgImageActive={false}>Contract Address: {msg.contract_addr}</BorderedBox>
       <Box mt={4}>
         <BorderedBox>New Code Id: {msg.rawMsg.wasm.migrate.new_code_id}</BorderedBox>
       </Box>

@@ -1,13 +1,12 @@
-import { Box } from "@chakra-ui/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 import React from "react";
 
-export const BorderedBox = ({
-  children,
-  bgImage = true,
-}: {
+interface BorderedBoxProps extends BoxProps {
   children: React.ReactNode;
-  bgImage?: boolean;
-}) => {
+  bgImageActive?: boolean;
+}
+
+export const BorderedBox = (props: BorderedBoxProps) => {
   return (
     <Box
       borderRadius="lg"
@@ -15,11 +14,12 @@ export const BorderedBox = ({
       borderColor={"wynd.neutral.100"}
       boxShadow="md"
       backgroundColor={"wynd.gray.alpha.10"}
-      backgroundImage={bgImage ? "url(/images/Vector2Bg.png)" : undefined}
+      backgroundImage={props.bgImageActive ? undefined : "url(/images/Vector2Bg.png)"}
       backgroundPosition="right"
       p={4}
+      {...props}
     >
-      {children}
+      {props.children}
     </Box>
   );
 };

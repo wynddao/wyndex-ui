@@ -8,7 +8,7 @@ export const Execute = ({ msg }: { msg: MsgType }) => {
   return (
     <>
       <Text fontSize={"xl"}>Execute</Text>
-      <BorderedBox bgImage={false}>Contract Address: {msg.contract_addr}</BorderedBox>
+      <BorderedBox bgImageActive={false}>Contract Address: {msg.contract_addr}</BorderedBox>
       <Text fontSize={"xl"} mt={5}>
         Message:
       </Text>

@@ -10,7 +10,7 @@ export const Gauges = () => {
   return (
     <>
       <GaugesHeader gauges={gauges} />
-      <BorderedBox bgImage={false}>
+      <BorderedBox bgImageActive={false}>
         <Grid
           display="grid"
           templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 1fr 1fr 2fr 1fr" }}

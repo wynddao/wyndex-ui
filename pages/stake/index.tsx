@@ -50,7 +50,7 @@ export default function Page() {
           </>
         ) : (
           <Box mt="4">
-            <BorderedBox bgImage={false}>
+            <BorderedBox bgImageActive={false}>
               <Flex gap={4} alignItems={"center"} justifyContent={"center"}>
                 <Box>
                   <ConnectWalletButton />
