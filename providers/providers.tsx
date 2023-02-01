@@ -1,8 +1,8 @@
 import { Chain } from "@chain-registry/types";
-import { SignerOptions } from "@cosmos-kit/core";
+import { MainWalletBase, SignerOptions } from "@cosmos-kit/core";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr";
-import { wallets as leapwallets } from "@cosmos-kit/leap";
+import { wallets as leapwallets } from "@cosmos-kit/leap-extension";
 import { WalletProvider } from "@cosmos-kit/react";
 import { assets, chains } from "chain-registry";
 import { GasPrice } from "cosmwasm";
@@ -55,7 +55,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <WalletProvider
           chains={[...chains, junoTestnet]}
           assetLists={[...assets, junoAssets]}
-          wallets={[...keplrWallets, ...leapwallets, ...cosmostationWallets]}
+          // FIXME type mismatch, try fixing after updating all @cosmos-kit
+          wallets={[...keplrWallets, ...(leapwallets as unknown as MainWalletBase[]), ...cosmostationWallets]}
           signerOptions={signerOptions}
           endpointOptions={{
             junotestnet1: {
