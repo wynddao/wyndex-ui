@@ -37,12 +37,8 @@ export default function AssetBalancesList() {
         alignItems="center"
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.base.sidebar"}
-        borderRadius="md"
-        borderBottomLeftRadius={0}
-        borderBottomRightRadius={0}
-        borderColor="wynd.base.sidebar"
-        borderWidth="medium"
+        bg={"wynd.gray.alpha.20"}
+        roundedTop="md"
         boxShadow="base"
         py={2}
         px={4}
@@ -65,7 +61,7 @@ export default function AssetBalancesList() {
         color={"wynd.neutral.900"}
         py={2}
         px={4}
-        bg="whiteAlpha.100"
+        bg="wynd.gray.alpha.10"
       >
         <GridItem>Asset / Chain</GridItem>
         <GridItem textAlign="end">Balance</GridItem>
