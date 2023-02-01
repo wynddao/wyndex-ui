@@ -1,7 +1,7 @@
 import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
 import { CosmostationExtensionWallet } from "@cosmos-kit/cosmostation";
 import { KeplrExtensionWallet } from "@cosmos-kit/keplr";
-import { LeapExtensionWallet } from "@cosmos-kit/leap";
+import { LeapExtensionWallet } from "@cosmos-kit/leap-extension";
 import { Asset, IBCAsset } from "@wynddao/asset-list";
 import { RecoilValueReadOnly, selectorFamily } from "recoil";
 import { chainInfos } from "../../../utils/chaindata/keplr/chainInfos";
@@ -70,9 +70,16 @@ export const getKeplrIbcSigningData = selectorFamily<
               ?.gasPriceStep?.average,
           ) + feeAsset.denom,
         );
-        const ibcSigningClient = await SigningStargateClient.connectWithSigner(chainInfo.rpc, keplrSigner, {
-          gasPrice,
-        });
+        let ibcSigningClientAny: any = await SigningStargateClient.connectWithSigner(
+          chainInfo.rpc,
+          keplrSigner,
+          {
+            gasPrice,
+          },
+        );
+        // NOTE ibc deposit fails without manually adding this field
+        ibcSigningClientAny.chainId = chainInfo.chainId;
+        const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
 
         const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
 
@@ -119,9 +126,16 @@ export const getLeapIbcSigningData = selectorFamily<
               ?.gasPriceStep?.average,
           ) + feeAsset.denom,
         );
-        const ibcSigningClient = await SigningStargateClient.connectWithSigner(chainInfo.rpc, leapSigner, {
-          gasPrice,
-        });
+        let ibcSigningClientAny: any = await SigningStargateClient.connectWithSigner(
+          chainInfo.rpc,
+          leapSigner,
+          {
+            gasPrice,
+          },
+        );
+        // NOTE ibc deposit fails without manually adding this field
+        ibcSigningClientAny.chainId = chainInfo.chainId;
+        const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
 
         const { address: nativeAddress } = await leapClient.getAccount(chainInfo.chainId);
 
@@ -168,13 +182,16 @@ export const getCosmostationIbcSigningData = selectorFamily<
               ?.gasPriceStep?.average,
           ) + feeAsset.denom,
         );
-        const ibcSigningClient = await SigningStargateClient.connectWithSigner(
+        let ibcSigningClientAny: any = await SigningStargateClient.connectWithSigner(
           chainInfo.rpc,
           cosmostationSigner,
           {
             gasPrice,
           },
         );
+        // NOTE ibc deposit fails without manually adding this field
+        ibcSigningClientAny.chainId = chainInfo.chainId;
+        const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
 
         const { address: nativeAddress } = await cosmostationClient.getAccount(chainInfo.chainId);
 
