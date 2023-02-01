@@ -4,6 +4,7 @@ import { RequestAssetPrice } from "../../../../utils/assets";
 import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
 import { AssetInfoValidated } from "../../../clients/types/WyndexFactory.types";
 import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
+import { AnnualizedRewardsResponse } from "../../../clients/types/WyndexStake.types";
 
 type QueryClientParams = {
   apiUrl: string;
@@ -121,6 +122,19 @@ export const cw20BalanceSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.cw20Balance(...params);
+    },
+});
+
+export const rewardsSelector = selectorFamily<
+  AnnualizedRewardsResponse,
+  QueryClientParams & { params: Parameters<IndexerQueryClient["rewards"]> }
+>({
+  key: "indexerIbcBalance",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.rewards(...params);
     },
 });
 

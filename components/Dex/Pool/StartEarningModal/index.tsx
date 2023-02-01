@@ -24,7 +24,7 @@ import { UseTokenNameResponse } from "../../../../state";
 import { BondingPeriodInfo } from "../../../../state/clients/types/WyndexStake.types";
 import { secondsToDays } from "../../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../../utils/tokens";
-import RadioCard from "../../RadioCard";
+import RadioCard from "../../../General/RadioCard";
 import { getApr } from "../util/apr";
 
 interface StartEarningModalProps {

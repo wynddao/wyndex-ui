@@ -7,13 +7,12 @@ import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem, { LinkItemProps } from "./NavItem";
 import OnRampButton from "./OnRamp/OnRampButton";
 import Settings from "./Options/Settings";
+import { SidebarMenu } from "./SidebarMenu";
 
 const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
-  { name: "Gauges", to: "https://app.wynddao.com/gauges", icon: FiUsers, isExternalLink: true },
-  { name: "Governance", to: "https://app.wynddao.com", icon: FiUsers, isExternalLink: true },
 ];
 
 interface SidebarContentProps extends BoxProps {
@@ -51,6 +50,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
             isExternalLink={link.isExternalLink}
           />
         ))}
+        <SidebarMenu />
       </Box>
       <Flex
         direction="column"
