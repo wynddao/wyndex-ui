@@ -9,7 +9,7 @@ export const StakeHeader = ({
   treasuryBalance: string;
 }) => {
   return (
-    <Box bg="url(/lab.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
+    <Box bg="url(/moonforest.png)" rounded="lg" bgPosition="center" bgSize="cover">
       <Flex
         bg="rgba(16, 11, 22,0.8)"
         w="full"

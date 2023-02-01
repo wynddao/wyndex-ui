@@ -10,9 +10,9 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
 
   return (
     <>
-      <Box bg="url(/lab.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
+      <Box bg="url(/mooncastle.png)" rounded="lg" bgPosition="center" bgSize="cover">
         <Flex
-          bg="rgba(16, 11, 22,0.8)"
+          bg="rgba(16, 11, 22,0.5)"
           w="full"
           px={{ base: "4", md: "8" }}
           py={{ base: "6", md: "12" }}
@@ -65,15 +65,11 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Total Supply
+              Proposal deposit
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
-              {(
-                Number(microamountToAmount(governanceTokenInfo.total_supply, governanceTokenInfo.decimals)) /
-                10 ** 6
-              ).toFixed(1)}
-              M $WYND
+              {microamountToAmount(config.deposit_info?.deposit, 6)} $WYND
             </Text>
           </Box>
           <Box>

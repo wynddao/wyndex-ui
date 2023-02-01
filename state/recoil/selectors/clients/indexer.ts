@@ -10,6 +10,12 @@ type QueryClientParams = {
   apiUrl: string;
 };
 
+export interface PairsResponse {
+  pair: string;
+  staking: string;
+  lp: string;
+}
+
 export const queryClient = selectorFamily<IndexerQueryClient, QueryClientParams>({
   key: "indexerQueryClient",
   get:
@@ -26,6 +32,16 @@ export const poolsSelector = selectorFamily<any, QueryClientParams>({
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.pools();
+    },
+});
+
+export const pairsSelector = selectorFamily<PairsResponse[], QueryClientParams>({
+  key: "indexerPools",
+  get:
+    ({ ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.pairs();
     },
 });
 

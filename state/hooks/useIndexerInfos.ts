@@ -26,6 +26,14 @@ export const useIndexerInfos = ({
       : constSelector([]),
   );
 
+  const pairs = useRecoilValue(
+    fetchPoolData
+      ? IndexerSelectors.pairsSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+        })
+      : constSelector([]),
+  );
+
   const userPools = useRecoilValue(
     fetchPoolData && walletAddress
       ? IndexerSelectors.userPoolsSelector({
@@ -96,6 +104,7 @@ export const useIndexerInfos = ({
   // TODO: type each returned property to avoid errors
   return {
     pools,
+    pairs,
     userPools,
     assetPrices,
     ibcBalances,

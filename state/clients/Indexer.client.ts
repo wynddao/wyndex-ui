@@ -56,6 +56,12 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     return await res.json();
   };
 
+  pairs = async (): Promise<any> => {
+    const res = await fetch(`${this.apiUrl}/pairs`);
+    return await res.json();
+  };
+
+
   userPools = async (walletAddress: string): Promise<any> => {
     const res = await fetch(`${this.apiUrl}/pools/user/${walletAddress}`);
     return await res.json();
