@@ -30,7 +30,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
       {...restProps}
     >
       <Box>
-        <Flex h="80px" alignItems="center" mx="4" justifyContent="space-between">
+        <Flex h="80px" alignItems="center" mx="4" justifyContent="center">
           <Box display={{ base: "none", md: "block" }}>
             <Image
               alt="Wynd logo"
