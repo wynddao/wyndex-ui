@@ -33,7 +33,7 @@ export const Vote = () => {
           bg="wynd.gray.alpha.20"
           borderTopRadius="lg"
         >
-          <GridItem>Voted?</GridItem>
+          {walletAddress && <GridItem>Voted?</GridItem>}
           <GridItem>Proposal ID</GridItem>
           <GridItem textAlign="start">Status</GridItem>
           <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
