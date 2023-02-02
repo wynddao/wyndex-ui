@@ -1,7 +1,7 @@
-import { Box, Button, Grid, GridItem, Progress, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, GridItem, Progress, Text, Tooltip } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useRouter } from "next/navigation";
-import { BsCheck2Circle, BsXCircle } from "react-icons/bs";
+import { BsCheck2Circle, BsQuestionCircle, BsXCircle } from "react-icons/bs";
 import { useIndexerInfos } from "../../../state";
 import { useListAllProposalInfos } from "../../../state/hooks/proposal";
 import { useProposalCount } from "../../../state/hooks/proposal/useProposalCount";
@@ -11,23 +11,37 @@ import { expirationAtTimeToSecondsFromNow, secondsToWdhms } from "../../../utils
 const VoteStatus = ({ id }: { id: string }) => {
   const { userVotes } = useIndexerInfos({});
 
-  let includes = false;
+  let includes: string | undefined;
   // Find id in uservotes
   userVotes.map((vote) => {
     if (vote.proposal === id.substring(1)) {
-      includes = true;
+      includes = vote.vote;
     }
   });
 
-  return includes ? (
-    <Tooltip title="You voted on this proposal">
-      <span>
-        <BsCheck2Circle color="green" />
-      </span>
-    </Tooltip>
-  ) : (
-    <BsXCircle color="red" />
-  );
+  switch (includes) {
+    case "yes":
+      return (
+        <Flex justifyContent="center">
+          <BsCheck2Circle color="green" />
+        </Flex>
+      );
+    case "no":
+      return (
+        <Flex justifyContent="center">
+          <BsXCircle color="red" />
+        </Flex>
+      );
+    case "abstain":
+      return (
+        <Flex justifyContent="center">
+          <BsQuestionCircle color="yellow" />
+        </Flex>
+      );
+    case undefined:
+    default:
+      return <Text color="wynd.cyan.300">-</Text>;
+  }
 };
 
 export const PropList = ({ limit }: { limit: number }) => {
@@ -81,7 +95,7 @@ export const PropList = ({ limit }: { limit: number }) => {
           gap="4"
         >
           {walletAddress && (
-            <GridItem>
+            <GridItem textAlign={"center"}>
               <VoteStatus id={prop.id} />
             </GridItem>
           )}
