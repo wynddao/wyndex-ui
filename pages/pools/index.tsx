@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>WYND DEX | Pool Overview</title>
+        <title>WYND | DEX - Pool Overview</title>
       </Head>
       <Pools />
     </>

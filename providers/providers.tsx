@@ -1,16 +1,14 @@
-"use client";
-
-import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
-import { wallets as keplrWallet } from "@cosmos-kit/keplr";
-import { wallets as leapwallets } from "@cosmos-kit/leap";
-import { WalletProvider } from "@cosmos-kit/react";
-import { chains, assets } from "chain-registry";
-import { RecoilRoot } from "recoil";
-import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/chaindata";
-import { GasPrice } from "cosmwasm";
-import { SignerOptions } from "@cosmos-kit/core";
 import { Chain } from "@chain-registry/types";
+import { MainWalletBase, SignerOptions } from "@cosmos-kit/core";
+import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
+import { wallets as keplrWallets } from "@cosmos-kit/keplr";
+import { wallets as leapwallets } from "@cosmos-kit/leap-extension";
+import { WalletProvider } from "@cosmos-kit/react";
+import { assets, chains } from "chain-registry";
+import { GasPrice } from "cosmwasm";
+import { RecoilRoot } from "recoil";
 import { InnerWalletProvider, ThemeProvider } from "../providers";
+import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/chaindata";
 
 // construct signer options
 const signerOptions = {
@@ -57,7 +55,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <WalletProvider
           chains={[...chains, junoTestnet]}
           assetLists={[...assets, junoAssets]}
-          wallets={[...keplrWallet]}
+          // FIXME type mismatch, try fixing after updating all @cosmos-kit
+          wallets={[...keplrWallets, ...(leapwallets as unknown as MainWalletBase[]), ...cosmostationWallets]}
           signerOptions={signerOptions}
           endpointOptions={{
             junotestnet1: {

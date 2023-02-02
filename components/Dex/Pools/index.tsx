@@ -6,9 +6,11 @@ import { FiCreditCard } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../state";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { WYND_TOKEN_ADDRESS } from "../../../utils";
 import { getAssetByDenom, getAssetInfoDetails, getAssetPrice } from "../../../utils/assets";
 import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
+
 import AssetImage from "../AssetImage";
 import TokenName from "../TokenName";
 import { DataTable } from "./DataTable";
@@ -52,7 +54,12 @@ export default function Pools() {
     assets: AssetInfoIndexer[];
   };
 
+  const disabledPools = [
+    "juno16xrz7kd26j0qmdg706qyesqs56g2f6dulplsajtl0t9z8frd8tfqsx2lkj",
+    "juno1jtendlawm8rv96hnfuwn04y8uhwzp9epcxy5f0ms973pspueqcgsy3qzt0",
+  ];
   const data: PoolListEntry[] = Object.keys(pools)
+    .filter((poolAddress) => !disabledPools.includes(poolAddress))
     .map((poolAddress) => {
       return {
         address: poolAddress,
@@ -64,7 +71,14 @@ export default function Pools() {
       const [token1, token2] = assets as { native: string; token: string }[];
       const t1 = token1.native || token1.token;
       const t2 = token2.native || token2.token;
-      return userAssets.includes(t1) && userAssets.includes(t2) ? -1 : 1;
+      if (userAssets.includes(t1) && userAssets.includes(t2)) {
+        return -1;
+      } else {
+        if (token1.token === WYND_TOKEN_ADDRESS || token2.token === WYND_TOKEN_ADDRESS) {
+          return -1;
+        }
+      }
+      return 1;
     });
 
   const columnHelper = createColumnHelper<PoolListEntry>();

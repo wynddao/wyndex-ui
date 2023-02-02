@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Button,
@@ -24,25 +22,26 @@ import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import { useIndexerInfos, useToast } from "../../../state";
 import { withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
 import { getTransferIbcData } from "../../../state/recoil/selectors/ibc";
-import { getNativeKeplrData } from "../../../state/recoil/selectors/keplr";
+import { getIbcSigningDataSelector } from "../../../state/recoil/selectors/ibcSigningData";
 import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount } from "../../../utils/tokens";
 
 export default function WithdrawIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { txToast } = useToast();
-  const { address, getSigningStargateClient } = useWallet();
+  const { address, currentWalletName, getSigningStargateClient } = useWallet();
   const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalAtom);
   const { refreshIbcBalances } = useIndexerInfos({});
 
-  const loadableKeplrData = useRecoilValueLoadable(
-    getNativeKeplrData({ chainId: withdrawIbcModalOpen.chainId }),
+  const loadableIbcSigningData = useRecoilValueLoadable(
+    getIbcSigningDataSelector(withdrawIbcModalOpen.chainId ?? "", currentWalletName),
   );
   const loadableTransferIbcData = useRecoilValueLoadable(
     getTransferIbcData({
       chainId: withdrawIbcModalOpen.chainId,
       address,
-      nativeAddress: loadableKeplrData.state === "hasValue" ? loadableKeplrData.contents.nativeAddress : null,
+      nativeAddress:
+        loadableIbcSigningData.state === "hasValue" ? loadableIbcSigningData.contents.nativeAddress : null,
     }),
   );
 
@@ -54,17 +53,19 @@ export default function WithdrawIbcModal() {
   const asset = ibcAssets.find((asset) => asset.chain_id === withdrawIbcModalOpen.chainId);
 
   async function submitWithdrawIbc() {
-    if (loadableKeplrData.state === "hasValue" && !loadableKeplrData.contents.nativeAddress) return;
-    const { nativeAddress } = loadableKeplrData.contents;
-
-    if (!asset || !address || !nativeAddress || !inputValue) return;
+    if (loadableIbcSigningData.state !== "hasValue") return;
+    const { feeAsset, nativeAddress } = loadableIbcSigningData.contents;
+    if (!feeAsset || !nativeAddress || !address || !inputValue) return;
 
     try {
       setIsSubmitting(true);
       const client = await getSigningStargateClient();
       if (!client) return;
 
-      const coinToSend = { denom: asset.juno_denom, amount: amountToMicroamount(inputValue, asset.decimals) };
+      const coinToSend = {
+        denom: feeAsset.juno_denom,
+        amount: amountToMicroamount(inputValue, feeAsset.decimals),
+      };
       const OneDayFromNowInSeconds = Math.floor(Date.now() / 1000) + 86400;
 
       await txToast(() =>
@@ -73,7 +74,7 @@ export default function WithdrawIbcModal() {
           nativeAddress,
           coinToSend,
           "transfer",
-          asset.juno_channel,
+          feeAsset.juno_channel,
           undefined,
           OneDayFromNowInSeconds,
           "auto",
