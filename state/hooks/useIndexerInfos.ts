@@ -97,6 +97,15 @@ export const useIndexerInfos = ({
       : constSelector([]),
   );
 
+  const refreshUserVotes = useRecoilRefresher_UNSTABLE(
+    walletAddress
+      ? IndexerSelectors.userVotesSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+          params: [walletAddress],
+        })
+      : constSelector([]),
+  );
+
   const assetInfosBalancesSelector = (assetInfos: readonly AssetInfoValidated[]) =>
     IndexerSelectors.assetInfosBalancesSelector({
       apiUrl: INDEXER_API_ENDPOINT,
@@ -126,5 +135,6 @@ export const useIndexerInfos = ({
     assetInfosBalancesSelector,
     swapOperationRoutes,
     userVotes,
+    refreshUserVotes,
   };
 };

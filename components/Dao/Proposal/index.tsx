@@ -21,7 +21,7 @@ import { VoteRadio } from "./VoteRadio";
 import { Suspense, useState } from "react";
 import { truncate, capitalizeFirstLetter } from "../../../utils/text";
 import { BsChevronLeft, BsClipboard } from "react-icons/bs";
-import { CwProposalSingleHooks, useToast } from "../../../state";
+import { CwProposalSingleHooks, useIndexerInfos, useToast } from "../../../state";
 import { useWallet } from "@cosmos-kit/react";
 import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { ExecuteResult } from "cosmwasm";
@@ -84,6 +84,7 @@ export const ProposalComponent = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { onCopy } = useClipboard(proposalResponse.proposer);
   const { txToast } = useToast();
+  const { refreshUserVotes } = useIndexerInfos({});
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "test",
@@ -109,6 +110,7 @@ export const ProposalComponent = ({
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
       refreshData();
+      refreshUserVotes();
       return result;
     });
     refreshData();
