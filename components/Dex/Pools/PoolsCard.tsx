@@ -34,7 +34,7 @@ function PoolCard({
 
   return (
     <Link key={index} href={`/pools/${pool.address}`}>
-      <Box
+      <Flex
         borderRadius="lg"
         border="1px solid"
         borderColor={"wynd.neutral.100"}
@@ -47,6 +47,9 @@ function PoolCard({
         backgroundImage={"url(/images/Vector2Bg.png)"}
         backgroundPosition="right"
         p={4}
+        minHeight="20rem"
+        flexFlow="column"
+        justifyContent="space-between"
       >
         <Flex align="center" mb={4}>
           <Flex position="relative" align="center" pr={{ base: 10, sm: 14 }}>
@@ -120,18 +123,18 @@ function PoolCard({
         </Flex>
         <Grid templateColumns={"1fr 1fr"} gap={{ base: 2, md: 4 }}>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
               APR
             </Text>
-            <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold" wordBreak="break-word">
+            <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold" wordBreak="break-word">
               <MaxApr poolAddress={pool.address} />
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
               TVL
             </Text>
-            <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
+            <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
               {tvl}
             </Text>
           </GridItem>
@@ -139,26 +142,26 @@ function PoolCard({
             <Divider borderColor={"wynd.cyan.300"} />
           </GridItem>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
               Total Liquidity
             </Text>
 
-            <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
+            <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
               {microamountToAmount(token1.amount, token1.decimals, 0)} {token1.symbol}
               <br />
               {microamountToAmount(token2.amount, token2.decimals, 0)} {token2.symbol}
             </Text>
           </GridItem>
           <GridItem>
-            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "sm", md: "md" }}>
+            <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
               My Shares
             </Text>
-            <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="extrabold">
+            <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
               <MyShares poolAddress={pool.address} />
             </Text>
           </GridItem>
         </Grid>
-      </Box>
+      </Flex>
     </Link>
   );
 }
