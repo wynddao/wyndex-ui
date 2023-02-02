@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { WyndexStakeHooks } from "../../../../../state";
 import { BondingPeriodInfo, StakedResponse } from "../../../../../state/clients/types/WyndexStake.types";
 import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../../../state/hooks";
@@ -272,6 +272,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
     setLoading(false);
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
+    refreshBondings();
   };
 
   return (
@@ -289,39 +290,41 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
         <ModalHeader>Manage Bonding</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Flex flexDir="column" width="100%">
-            <Steps colorScheme={"cyan"} activeStep={activeStep}>
-              {steps.map(({ label, content }) => (
-                <Step label={label} key={label}>
-                  {content}
-                </Step>
-              ))}
-            </Steps>
-            {activeStep === steps.length ? (
-              <Flex p={4}>
-                <Button mx="auto" size="sm" onClick={reset}>
-                  Reset
-                </Button>
-              </Flex>
-            ) : (
-              <Flex width="100%" position={"absolute"} right={6} bottom={5} justify="flex-end">
-                <Button isDisabled={activeStep === 0} mr={4} onClick={prevStep} size="sm" variant="ghost">
-                  Prev
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
-                  isDisabled={
-                    activeStep === 1 && (Number(amount || "0") <= 0 || Number(amount || "0") > maxAmount)
-                  }
-                  isLoading={loading}
-                  loadingText={"Executing"}
-                >
-                  {activeStep === steps.length - 1 ? "Execute" : "Next"}
-                </Button>
-              </Flex>
-            )}
-          </Flex>
+          <Suspense fallback={<p>Loading...</p>}>
+            <Flex flexDir="column" width="100%">
+              <Steps colorScheme={"cyan"} activeStep={activeStep}>
+                {steps.map(({ label, content }) => (
+                  <Step label={label} key={label}>
+                    {content}
+                  </Step>
+                ))}
+              </Steps>
+              {activeStep === steps.length ? (
+                <Flex p={4}>
+                  <Button mx="auto" size="sm" onClick={reset}>
+                    Reset
+                  </Button>
+                </Flex>
+              ) : (
+                <Flex width="100%" position={"absolute"} right={6} bottom={5} justify="flex-end">
+                  <Button isDisabled={activeStep === 0} mr={4} onClick={prevStep} size="sm" variant="ghost">
+                    Prev
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={activeStep === steps.length - 1 ? () => doExecute() : nextStep}
+                    isDisabled={
+                      activeStep === 1 && (Number(amount || "0") <= 0 || Number(amount || "0") > maxAmount)
+                    }
+                    isLoading={loading}
+                    loadingText={"Executing"}
+                  >
+                    {activeStep === steps.length - 1 ? "Execute" : "Next"}
+                  </Button>
+                </Flex>
+              )}
+            </Flex>
+          </Suspense>
         </ModalBody>
       </ModalContent>
     </Modal>

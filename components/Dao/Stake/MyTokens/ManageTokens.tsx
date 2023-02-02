@@ -139,40 +139,42 @@ export const ManageTokens = ({
               </GridItem>
             </Grid>
             {allStakes.map((stake, i) => {
-              return (
-                <Grid
-                  key={i}
-                  templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 1fr 1fr" }}
-                  fontWeight="semibold"
-                  alignItems="center"
-                  backgroundImage={"url(/images/Vector2Bg.png)"}
-                  backgroundAttachment="fixed"
-                  backgroundPosition="bottom"
-                  borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
-                  py="4"
-                  px="2"
-                  gap="4"
-                >
-                  <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-                    <Text fontSize="lg">{secondsToDays(stake.unbonding_period)} days</Text>
-                  </GridItem>
-                  <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
-                    <Text fontSize="lg">{microamountToAmount(stake.stake, 6)} $WYND</Text>
-                  </GridItem>
-                  <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
-                    <Button
-                      onClick={() => {
-                        setModalOpen(true);
-                        setActiveStake(allStakes[i]);
-                        setPrevDuration(getNextOrPrevDurationTime(allStakes[i], false));
-                        setNextDuration(getNextOrPrevDurationTime(allStakes[i], true));
-                      }}
-                    >
-                      Manage
-                    </Button>
-                  </GridItem>
-                </Grid>
-              );
+              if (Number(stake.stake) > 0) {
+                return (
+                  <Grid
+                    key={i}
+                    templateColumns={{ base: "repeat(2, 1fr)", lg: "1fr 1fr 1fr" }}
+                    fontWeight="semibold"
+                    alignItems="center"
+                    backgroundImage={"url(/images/Vector2Bg.png)"}
+                    backgroundAttachment="fixed"
+                    backgroundPosition="bottom"
+                    borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
+                    py="4"
+                    px="2"
+                    gap="4"
+                  >
+                    <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
+                      <Text fontSize="lg">{secondsToDays(stake.unbonding_period)} days</Text>
+                    </GridItem>
+                    <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
+                      <Text fontSize="lg">{microamountToAmount(stake.stake, 6)} $WYND</Text>
+                    </GridItem>
+                    <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
+                      <Button
+                        onClick={() => {
+                          setModalOpen(true);
+                          setActiveStake(allStakes[i]);
+                          setPrevDuration(getNextOrPrevDurationTime(allStakes[i], false));
+                          setNextDuration(getNextOrPrevDurationTime(allStakes[i], true));
+                        }}
+                      >
+                        Manage
+                      </Button>
+                    </GridItem>
+                  </Grid>
+                );
+              }
             })}
           </BorderedBox>
         </Box>

@@ -1,12 +1,15 @@
 "use client";
 
-import { Box, Button, Flex, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { FiCopy, FiCreditCard } from "react-icons/fi";
 import { VscDebugDisconnect } from "react-icons/vsc";
 import { useRecoilValueLoadable } from "recoil";
-import { coinByDenomSelector } from "../../../state";
+import { coinByDenomSelector, useIndexerInfos } from "../../../state";
+import { WYND_TOKEN_ADDRESS } from "../../../utils";
+import { truncate } from "../../../utils/text";
+import { microamountToAmount } from "../../../utils/tokens";
 
 export default function ConnectWalletButton() {
   const { onCopy, hasCopied, setValue } = useClipboard("");
@@ -15,6 +18,10 @@ export default function ConnectWalletButton() {
   const loadableBalance = useRecoilValueLoadable(
     coinByDenomSelector({ address, serializedChainRecord: JSON.stringify(currentChainRecord) }),
   );
+
+  const { cw20Balances } = useIndexerInfos({ fetchCw20Balances: true });
+
+  const wyndBalance = cw20Balances.find((asset) => asset.address === WYND_TOKEN_ADDRESS)?.balance;
 
   useEffect(() => {
     setValue(address || "");
@@ -27,42 +34,57 @@ export default function ConnectWalletButton() {
         bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
       }}
       as={Box}
+      display={"block"}
       pr={0}
       w="full"
       h="auto"
       p={1}
     >
-      <Flex alignItems="center" justifyContent="space-between" gap={2} w="full">
-        <Flex alignItems="center" justifyContent="center" gap={4} pl="4">
-          <Icon fontSize="1.25em" as={FiCreditCard} />
-          <Box fontSize="sm">
-            <Text>{username}</Text>
-            <Text>
-              {loadableBalance.state === "hasValue"
-                ? `${Number(loadableBalance.contents.amount).toFixed(2)} ${loadableBalance.contents.denom}`
-                : "0"}
-            </Text>
-          </Box>
-        </Flex>
-        <Flex direction="column">
-          <Tooltip label={hasCopied ? "Copied!" : "Copy wallet address"}>
-            <Button bgColor={"wynd.gray.100"} onClick={onCopy} sx={{ padding: 0, margin: 1 }} size="xs" m={0}>
-              <Icon fontSize="xs" as={FiCopy} />
-            </Button>
-          </Tooltip>
-          <Tooltip label="Disconnect wallet">
-            <Button
-              bgColor={"wynd.gray.100"}
-              onClick={disconnect}
-              sx={{ padding: 0, margin: 1 }}
-              size="xs"
-              m={0}
-            >
-              <Icon fontSize="xs" as={VscDebugDisconnect} />
-            </Button>
-          </Tooltip>
-        </Flex>
-      </Flex>
+      <Suspense fallback={<Text>Loading...</Text>}>
+        <Box>
+          <Flex alignItems="center" justifyContent="space-between" gap={2} w="full">
+            <Flex alignItems="center" justifyContent="center" gap={4} pl="4">
+              <Box fontSize="sm">
+                <Text fontSize="lg">{truncate(username || "", 8)}</Text>
+                <Divider borderBottomWidth="3px" />
+                <Text fontSize="sm">
+                  {loadableBalance.state === "hasValue"
+                    ? `${Number(loadableBalance.contents.amount).toFixed(2)} ${
+                        loadableBalance.contents.denom
+                      }`
+                    : "0"}{" "}
+                </Text>
+                <Text fontSize="sm">{microamountToAmount(wyndBalance || 0, 6)} WYND</Text>
+              </Box>
+              <Flex direction="column">
+                <Tooltip label={hasCopied ? "Copied!" : "Copy wallet address"}>
+                  <Button
+                    bgColor={"wynd.gray.100"}
+                    onClick={onCopy}
+                    sx={{ padding: 0, margin: 1 }}
+                    size="xs"
+                    m={0}
+                  >
+                    <Icon fontSize="xs" as={FiCopy} />
+                  </Button>
+                </Tooltip>
+                <Tooltip label="Disconnect wallet">
+                  <Button
+                    bgColor={"wynd.gray.100"}
+                    onClick={disconnect}
+                    sx={{ padding: 0, margin: 1 }}
+                    size="xs"
+                    m={0}
+                  >
+                    <Icon fontSize="xs" as={VscDebugDisconnect} />
+                  </Button>
+                </Tooltip>
+              </Flex>
+            </Flex>
+          </Flex>
+        </Box>
+      </Suspense>
+      <Box></Box>
     </Button>
   ) : (
     <Button
