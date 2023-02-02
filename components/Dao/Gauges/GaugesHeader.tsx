@@ -36,7 +36,6 @@ export const GaugesHeader = ({ gauges }: { gauges: GaugeResponse[] }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gaugesDailyRewards]);
 
-  console.log(dailyRewards);
   return (
     <>
       <Box bg="url(/castle2.png)" rounded="lg" mb={4} bgPosition="0 -120px" bgSize="cover">

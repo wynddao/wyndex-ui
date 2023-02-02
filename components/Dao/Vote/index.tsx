@@ -7,6 +7,7 @@ import { ProposalHeader } from "./ProposalHeader";
 import { PropListSkeleton } from "./Skeletons/PropListSkeleton";
 
 export const Vote = () => {
+
   const voteModule = {
     contractName: "CwProposalSingle",
     address: WYND_VOTE_MODULE_ADDRESS,
