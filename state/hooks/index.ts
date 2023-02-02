@@ -1,4 +1,6 @@
 export * from "./clients";
+export * from "./proposal";
+export * from "./gauge";
 export * from "./useAllPairsInfos";
 export * from "./usePairInfos";
 export * from "./useCw20UserInfos";
@@ -6,3 +8,4 @@ export * from "./usePoolInfos";
 export * from "./useTokenName";
 export * from "./useToast";
 export * from "./useIndexerInfos";
+export * from "./useAprInfos";

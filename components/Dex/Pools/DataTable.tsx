@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import {
   Table,
   Thead,
@@ -34,7 +34,10 @@ import {
 
 import { useRouter } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
-import { getAssetByDenom, getAssetByTokenAddr } from "../../../utils/assets";
+
+import { getAssetByDenom, getAssetByTokenAddr, getNativeIbcTokenDenom } from "../../../utils/assets";
+import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
+
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
@@ -139,63 +142,72 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
         </Flex>
       </Box>
       <Box borderRadius="lg" overflow="auto">
-        <Table variant="simple">
-          <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id} bgColor={"wynd.base.sidebar"}>
-                {headerGroup.headers.map((header) => {
-                  const meta: any = header.column.columnDef.meta;
-                  return (
-                    <Th key={header.id} isNumeric={meta?.isNumeric} >
-                      <chakra.div display="inline-block">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getIsSorted() ? (
-                          header.column.getIsSorted() === "desc" ? (
-                            <RxTriangleDown
-                              style={{ display: "inline-block" }}
-                              aria-label="sorted descending"
-                            />
-                          ) : (
-                            <RxTriangleUp style={{ display: "inline-block" }} aria-label="sorted ascending" />
-                          )
-                        ) : null}
-                      </chakra.div>
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody>
-            {table.getRowModel().rows.map((row) => {
-              const [{ value: token1 }, { value: token2 }] = row.getValue("poolName") as { value: string }[];
-              const canBeProvider = userAssets.includes(token1) && userAssets.includes(token2);
-              return (
-                <Tr
-                  key={row.id}
-                  onClick={() => handleRowClick(row)}
-                  background={canBeProvider ? "wynd.gray.alpha.20" : ""}
-                  cursor="pointer"
-                  backgroundImage={"url(/images/Vector2Bg.png)"}
-                  backgroundSize="300px"
-                  _hover={{
-                    backgroundColor: "wynd.gray.alpha.10",
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
-                    const meta: any = cell.column.columnDef.meta;
+        <Suspense fallback={<DataTableSkeleton />}>
+          <Table variant="simple">
+            <Thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <Tr key={headerGroup.id} bgColor={"wynd.base.sidebar"}>
+                  {headerGroup.headers.map((header) => {
+                    const meta: any = header.column.columnDef.meta;
                     return (
-                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Td>
+                      <Th key={header.id} isNumeric={meta?.isNumeric}>
+                        <chakra.div display="inline-block">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.column.getIsSorted() ? (
+                            header.column.getIsSorted() === "desc" ? (
+                              <RxTriangleDown
+                                style={{ display: "inline-block" }}
+                                aria-label="sorted descending"
+                              />
+                            ) : (
+                              <RxTriangleUp
+                                style={{ display: "inline-block" }}
+                                aria-label="sorted ascending"
+                              />
+                            )
+                          ) : null}
+                        </chakra.div>
+                      </Th>
                     );
                   })}
                 </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+              ))}
+            </Thead>
+            <Tbody>
+              {table.getRowModel().rows.map((row) => {
+                const [{ value: token1 }, { value: token2 }] = row.getValue("poolName") as {
+                  value: string;
+                }[];
+                const canBeProvider = userAssets.includes(token1) && userAssets.includes(token2);
+                return (
+                  <Tr
+                    key={row.id}
+                    onClick={() => handleRowClick(row)}
+                    background={canBeProvider ? "wynd.gray.alpha.20" : ""}
+                    cursor="pointer"
+                    backgroundImage={"url(/images/Vector2Bg.png)"}
+                    backgroundSize="cover"
+                    backgroundRepeat="repeat"
+                    backgroundAttachment="fixed"
+                    _hover={{
+                      backgroundColor: "wynd.gray.alpha.10",
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+                      const meta: any = cell.column.columnDef.meta;
+                      return (
+                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </Suspense>
       </Box>
       <Flex mt={3} justifyContent={"end"} alignItems={"center"}>
         <Stack direction="row" spacing="4px" mr={3}>

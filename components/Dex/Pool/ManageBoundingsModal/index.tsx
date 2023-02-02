@@ -28,7 +28,7 @@ import { getAssetByInfo } from "../../../../utils/assets";
 import { renderUnboundingText } from "../../../../utils/text";
 import { secondsToDays } from "../../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../../utils/tokens";
-import RadioCard from "../../RadioCard";
+import RadioCard from "../../../General/RadioCard";
 
 interface ManageBoundingsModalProps {
   isOpen: boolean;

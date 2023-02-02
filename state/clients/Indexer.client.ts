@@ -1,7 +1,9 @@
 import { Coin } from "cosmwasm";
+import async from "react-select/dist/declarations/src/async/index";
 import { RequestAssetPrice } from "../../utils/assets";
 import { AssetInfo } from "./types/WyndexFactory.types";
 import { SwapOperation } from "./types/WyndexMultiHop.types";
+import { AnnualizedRewardsResponse } from "./types/WyndexStake.types";
 
 interface IbcBalanceResponse {
   readonly address: string;
@@ -13,6 +15,11 @@ interface IbcBalanceResponse {
 export interface Cw20BalanceResponse {
   readonly address: string;
   readonly balance: string;
+}
+
+export interface UserVote {
+  readonly proposal: string;
+  readonly vote: string;
 }
 
 export interface UserFiatResponse {
@@ -39,6 +46,7 @@ export interface IndexerQueryClientReadOnlyInterface {
   ibcBalance: (walletAddress: string | undefined, microdenom: string) => Promise<Coin>;
   cw20Balances: (walletAddress: string | undefined) => Promise<readonly Cw20BalanceResponse[]>;
   cw20Balance: (walletAddress: string | undefined, tokenAddress: string) => Promise<Cw20BalanceResponse>;
+  userVotes: (walletAddress: string) => Promise<UserVote[]>;
 }
 
 export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
@@ -54,6 +62,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     return await res.json();
   };
 
+  pairs = async (): Promise<any> => {
+    const res = await fetch(`${this.apiUrl}/pairs`);
+    return await res.json();
+  };
+
   userPools = async (walletAddress: string): Promise<any> => {
     const res = await fetch(`${this.apiUrl}/pools/user/${walletAddress}`);
     return await res.json();
@@ -66,6 +79,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
 
   assetPrices = async (): Promise<RequestAssetPrice[]> => {
     const res = await fetch(`${this.apiUrl}/assets/prices`);
+    return await res.json();
+  };
+
+  userVotes = async (walletAddress: string): Promise<UserVote[]> => {
+    const res = await fetch(`${this.apiUrl}/votes/${walletAddress}`);
     return await res.json();
   };
 
@@ -129,5 +147,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     const cw20Balance = cw20Balances.find((balance) => balance.address === tokenAddress);
 
     return cw20Balance ? cw20Balance : { address: tokenAddress, balance: "0" };
+  };
+
+  rewards = async (poolAddress: string): Promise<AnnualizedRewardsResponse> => {
+    const res = await fetch(`${this.apiUrl}/pools/apr/${poolAddress}`);
+    const annualizedRewardsResponse: AnnualizedRewardsResponse = await res.json();
+    return annualizedRewardsResponse;
   };
 }

@@ -1,7 +1,8 @@
-import { useIndexerInfos, usePairInfos, usePoolInfos } from "../../../state";
-import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
+
+import { useAprInfos, useIndexerInfos, usePairInfos, usePoolInfos } from "../../../state";
 import { getAssetInfoDetails, getAssetPrice } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
+
 import { getApr } from "../Pool/util/apr";
 
 export default function MaxApr({ poolAddress }: { poolAddress: string }) {
@@ -25,7 +26,7 @@ export default function MaxApr({ poolAddress }: { poolAddress: string }) {
   const lpTokenValue = (1 / Number(microamountToAmount(poolData.total_share, 6))) * totalFiatShares;
 
   // Value of APR token per LP token
-  const { apr } = useStakeInfos(pair.staking_addr);
+  const { rewards: apr } = useAprInfos(pair.staking_addr);
 
   // Loop through APR for every unbonding time to calculat the % of each reward and add it up
   const aprCalculated = apr.map((bucket) => {
@@ -34,7 +35,7 @@ export default function MaxApr({ poolAddress }: { poolAddress: string }) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += Number(reward.amount) / 1000000 * price.priceInUsd * 100;
+      value += (Number(reward.amount) / 1000000) * price.priceInUsd * 10 ** 6; //! TODO
     });
 
     return {

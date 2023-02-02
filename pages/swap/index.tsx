@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>WYND DEX | Swap Tokens</title>
+        <title>WYND | DEX - Swap Tokens</title>
       </Head>
       <Flex
         overflow="hidden"

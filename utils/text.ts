@@ -20,3 +20,7 @@ export const renderUnboundingText = (
       return "";
   }
 };
+
+export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
+export const truncate = (string: string, characters: number = 5) =>
+  string.length > characters ? `${string.substring(0, characters)}...` : string;
