@@ -1,7 +1,13 @@
 import { Coin } from "cosmwasm";
+import async from "react-select/dist/declarations/src/async/index";
 import { selectorFamily } from "recoil";
 import { RequestAssetPrice } from "../../../../utils/assets";
-import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
+import {
+  Cw20BalanceResponse,
+  IndexerQueryClient,
+  UserFiatResponse,
+  UserVote,
+} from "../../../clients/Indexer.client";
 import { AssetInfoValidated } from "../../../clients/types/WyndexFactory.types";
 import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
 import { AnnualizedRewardsResponse } from "../../../clients/types/WyndexStake.types";
@@ -125,6 +131,19 @@ export const userFiatSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.userFiat(...params);
+    },
+});
+
+export const userVotesSelector = selectorFamily<
+  UserVote[],
+  QueryClientParams & { params: Parameters<IndexerQueryClient["userVotes"]> }
+>({
+  key: "indexerUserVotes",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.userVotes(...params);
     },
 });
 

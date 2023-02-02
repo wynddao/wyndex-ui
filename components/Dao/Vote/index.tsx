@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import { Suspense, useState } from "react";
 import { useListAllProposalInfos } from "../../../state/hooks/proposal";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
@@ -12,7 +13,7 @@ export const Vote = () => {
     address: "juno105jclaywm4lxt74z8a3jgtpfr6jzlx5edg6h0sp024gm292ah2usdln48t",
     prefix: "B",
   };
-
+  const { address: walletAddress } = useWallet();
   const [limit, setLimit] = useState<number>(1);
   return (
     <Flex gap="8" flexFlow="column">
@@ -20,7 +21,10 @@ export const Vote = () => {
       <Box rounded="lg">
         <Grid
           display="grid"
-          templateColumns={{ base: "repeat(2, 1fr)", lg: "70px 100px 3fr 120px 2fr" }}
+          templateColumns={{
+            base: "repeat(2, 1fr)",
+            lg: walletAddress ? "50px 70px 100px 3fr 120px 2fr" : "70px 100px 3fr 120px 2fr",
+          }}
           fontSize="xs"
           fontWeight="semibold"
           color={"wynd.neutral.900"}
@@ -29,6 +33,7 @@ export const Vote = () => {
           bg="wynd.gray.alpha.20"
           borderTopRadius="lg"
         >
+          <GridItem>Voted?</GridItem>
           <GridItem>Proposal ID</GridItem>
           <GridItem textAlign="start">Status</GridItem>
           <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>

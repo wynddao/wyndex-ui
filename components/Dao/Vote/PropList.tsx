@@ -1,9 +1,34 @@
-import { Button, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
+import { Box, Button, Grid, GridItem, Progress, Text, Tooltip } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import { useRouter } from "next/navigation";
+import { BsCheck2Circle, BsXCircle } from "react-icons/bs";
+import { useIndexerInfos } from "../../../state";
 import { useListAllProposalInfos } from "../../../state/hooks/proposal";
 import { useProposalCount } from "../../../state/hooks/proposal/useProposalCount";
 import { capitalizeFirstLetter } from "../../../utils/text";
 import { expirationAtTimeToSecondsFromNow, secondsToWdhms } from "../../../utils/time";
+
+const VoteStatus = ({ id }: { id: string }) => {
+  const { userVotes } = useIndexerInfos({});
+
+  let includes = false;
+  // Find id in uservotes
+  userVotes.map((vote) => {
+    if (vote.proposal === id.substring(1)) {
+      includes = true;
+    }
+  });
+
+  return includes ? (
+    <Tooltip title="You voted on this proposal">
+      <span>
+        <BsCheck2Circle color="green" />
+      </span>
+    </Tooltip>
+  ) : (
+    <BsXCircle color="red" />
+  );
+};
 
 export const PropList = ({ limit }: { limit: number }) => {
   const voteModule = {
@@ -11,6 +36,8 @@ export const PropList = ({ limit }: { limit: number }) => {
     address: "juno105jclaywm4lxt74z8a3jgtpfr6jzlx5edg6h0sp024gm292ah2usdln48t",
     prefix: "B",
   };
+
+  const { address: walletAddress } = useWallet();
 
   const propCount = useProposalCount(voteModule);
   const allProps = useListAllProposalInfos(voteModule, propCount - limit * 10, limit * 10).reverse();
@@ -35,7 +62,10 @@ export const PropList = ({ limit }: { limit: number }) => {
       {allProps.map((prop, i) => (
         <Grid
           key={i}
-          templateColumns={{ base: "repeat(2, 1fr)", lg: "70px 100px 3fr 120px 2fr" }}
+          templateColumns={{
+            base: "repeat(2, 1fr)",
+            lg: walletAddress ? "50px 70px 100px 3fr 120px 2fr" : "70px 100px 3fr 120px 2fr",
+          }}
           fontWeight="semibold"
           _hover={{
             bgColor: "wynd.gray.alpha.10",
@@ -50,6 +80,11 @@ export const PropList = ({ limit }: { limit: number }) => {
           py="4"
           gap="4"
         >
+          {walletAddress && (
+            <GridItem>
+              <VoteStatus id={prop.id} />
+            </GridItem>
+          )}
           <GridItem>
             <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
               {prop.id}

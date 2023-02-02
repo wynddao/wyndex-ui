@@ -88,6 +88,15 @@ export const useIndexerInfos = ({
       : constSelector({ availableBalance: { eur: 0, usd: 0 }, lockedBalance: { eur: 0, usd: 0 } }),
   );
 
+  const userVotes = useRecoilValue(
+    walletAddress
+      ? IndexerSelectors.userVotesSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+          params: [walletAddress],
+        })
+      : constSelector([]),
+  );
+
   const assetInfosBalancesSelector = (assetInfos: readonly AssetInfoValidated[]) =>
     IndexerSelectors.assetInfosBalancesSelector({
       apiUrl: INDEXER_API_ENDPOINT,
@@ -116,5 +125,6 @@ export const useIndexerInfos = ({
     userFiat,
     assetInfosBalancesSelector,
     swapOperationRoutes,
+    userVotes,
   };
 };
