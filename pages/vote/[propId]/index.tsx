@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import { useSingleProposalInfo } from "../../../state/hooks/proposal/useSingleProposalInfo";
 import { ProposalComponent } from "../../../components/Dao/Proposal";
 import { GetStaticPaths, GetStaticPropsContext } from "next";
+import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 
 const ProposalSingle = () => {
   const router = useRouter();
-  const votingModuleAddress = "juno105jclaywm4lxt74z8a3jgtpfr6jzlx5edg6h0sp024gm292ah2usdln48t"; //!TODO FETCHING IT FROM CHAIN
+  const votingModuleAddress = WYND_VOTE_MODULE_ADDRESS;
   const { propId } = router.query;
   const { proposalResponse, walletVote, refreshData, walletStakedPowerAtHeight } = useSingleProposalInfo(
     Number(propId),

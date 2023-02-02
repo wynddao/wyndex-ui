@@ -1,8 +1,7 @@
 import { Box, Button, Flex, Grid, GridItem } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Suspense, useState } from "react";
-import { useListAllProposalInfos } from "../../../state/hooks/proposal";
-import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
+import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { PropList } from "./PropList";
 import { ProposalHeader } from "./ProposalHeader";
 import { PropListSkeleton } from "./Skeletons/PropListSkeleton";
@@ -10,7 +9,7 @@ import { PropListSkeleton } from "./Skeletons/PropListSkeleton";
 export const Vote = () => {
   const voteModule = {
     contractName: "CwProposalSingle",
-    address: "juno105jclaywm4lxt74z8a3jgtpfr6jzlx5edg6h0sp024gm292ah2usdln48t",
+    address: WYND_VOTE_MODULE_ADDRESS,
     prefix: "B",
   };
   const { address: walletAddress } = useWallet();

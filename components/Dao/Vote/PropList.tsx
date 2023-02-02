@@ -1,10 +1,11 @@
-import { Box, Button, Flex, Grid, GridItem, Progress, Text, Tooltip } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useRouter } from "next/navigation";
 import { BsCheck2Circle, BsQuestionCircle, BsXCircle } from "react-icons/bs";
 import { useIndexerInfos } from "../../../state";
 import { useListAllProposalInfos } from "../../../state/hooks/proposal";
 import { useProposalCount } from "../../../state/hooks/proposal/useProposalCount";
+import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { capitalizeFirstLetter } from "../../../utils/text";
 import { expirationAtTimeToSecondsFromNow, secondsToWdhms } from "../../../utils/time";
 
@@ -47,7 +48,7 @@ const VoteStatus = ({ id }: { id: string }) => {
 export const PropList = ({ limit }: { limit: number }) => {
   const voteModule = {
     contractName: "CwProposalSingle",
-    address: "juno105jclaywm4lxt74z8a3jgtpfr6jzlx5edg6h0sp024gm292ah2usdln48t",
+    address: WYND_VOTE_MODULE_ADDRESS,
     prefix: "B",
   };
 
