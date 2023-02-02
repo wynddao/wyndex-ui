@@ -1,14 +1,13 @@
-import React, { useEffect } from "react";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
-import { getDenom, getAmountByPrice } from "../../../../utils/assets";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../../../state";
+import { currencyAtom } from "../../../../state/recoil/atoms/settings";
+import { getAmountByPrice, getDenom } from "../../../../utils/assets";
+import { formatCurrency } from "../../../../utils/currency";
 import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
-import { useRecoilValue } from "recoil";
-import { currencyAtom } from "../../../../state/recoil/atoms/settings";
-import { useIndexerInfos } from "../../../../state";
-import { formatCurrency } from "../../../../utils/currency";
 
 interface IProps {
   toToken: Asset;
