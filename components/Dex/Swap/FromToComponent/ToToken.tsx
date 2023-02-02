@@ -1,13 +1,10 @@
 import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
-
-import React, { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAmountByPrice, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
-import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 
 interface IProps {
@@ -76,7 +73,8 @@ const ToToken: React.FC<IProps> = ({
                   value={inputAmount}
                 />
                 <Text position="absolute" right="0" bottom="-4" fontSize="10px" color="wynd.neutral.500">
-                  ≈ {formatCurrency(currency, `${price.toFixed(6)}`)} (-{impact.toFixed(2)} %)
+                  ≈ {formatCurrency(currency, `${price.toFixed(6)}`)} (-
+                  {isNaN(impact) ? "0" : impact.toFixed(2)} %)
                 </Text>
               </Flex>
               <Text textTransform="uppercase" minW="55px">
