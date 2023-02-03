@@ -1,12 +1,13 @@
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { createColumnHelper, FilterFn } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { createColumnHelper, FilterFn, SortingFn } from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
 import { FiCreditCard } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../state";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { WYND_TOKEN_ADDRESS } from "../../../utils";
+import { getAprForPool } from "../../../utils/apr";
 import { getAssetByDenom, getAssetInfoDetails, getAssetPrice } from "../../../utils/assets";
 import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
@@ -16,11 +17,20 @@ import TokenName from "../TokenName";
 import { DataTable } from "./DataTable";
 import MaxApr from "./MaxApr";
 import PoolsCard from "./PoolsCard";
-
 declare module "@tanstack/table-core" {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
   }
+
+  interface SortingFns {
+    customTVLSorting: SortingFn<unknown>;
+    customAPRSorting: SortingFn<unknown>;
+  }
+}
+
+export interface AllAprEntry {
+  poolAddress: string;
+  maxApr: string;
 }
 
 export default function Pools() {
@@ -58,6 +68,24 @@ export default function Pools() {
     "juno16xrz7kd26j0qmdg706qyesqs56g2f6dulplsajtl0t9z8frd8tfqsx2lkj",
     "juno1jtendlawm8rv96hnfuwn04y8uhwzp9epcxy5f0ms973pspueqcgsy3qzt0",
   ];
+
+  const [allAprs, setAllAprs] = useState<any[]>([]);
+  const loadData = async () => {
+    const _allAprs = Object.keys(pools)
+      .filter((poolAddress) => !disabledPools.includes(poolAddress))
+      .map(async (poolAddress) => {
+        const res = await getAprForPool(poolAddress);
+        return {
+          apr: res[res.length - 1].apr,
+          pool: poolAddress,
+        };
+      });
+    setAllAprs(await Promise.all(_allAprs));
+  };
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const data: PoolListEntry[] = Object.keys(pools)
     .filter((poolAddress) => !disabledPools.includes(poolAddress))
     .map((poolAddress) => {
@@ -104,6 +132,7 @@ export default function Pools() {
         header: "Pool",
         filterFn: "auto",
         enableColumnFilter: true,
+        enableSorting: false,
         cell: ({ getValue }) => (
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
@@ -163,6 +192,7 @@ export default function Pools() {
       {
         id: "tvl",
         header: "TVL",
+        sortingFn: "customTVLSorting",
         cell: (props) => {
           const [{ value: token1 }, { value: token2 }] = props.getValue();
           const tokenPrice1 = getAssetPrice(token1, assetPrices);
@@ -188,6 +218,7 @@ export default function Pools() {
     columnHelper.accessor((row) => row.address, {
       id: "apr",
       header: "APR",
+      sortingFn: "customAPRSorting",
       cell: (props) => {
         return <MaxApr poolAddress={props.getValue()} />;
       },
@@ -212,6 +243,7 @@ export default function Pools() {
       {
         id: "assets",
         header: "Liquidity",
+        enableSorting: false,
         cell: (props) => {
           const [token1, token2] = props.getValue();
           const tokenInfo1 = getAssetInfoDetails({ [token1.type]: token1.value });
@@ -271,7 +303,15 @@ export default function Pools() {
           </Flex>
         )}
       </Box>
-      <DataTable columns={columns} data={data} userAssets={userAssets} />
+      {allAprs.length > 0 && (
+        <DataTable
+          allAprs={allAprs}
+          assetPrices={assetPrices}
+          columns={columns}
+          data={data}
+          userAssets={userAssets}
+        />
+      )}
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
     </Box>
   );
