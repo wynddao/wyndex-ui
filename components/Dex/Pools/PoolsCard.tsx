@@ -206,6 +206,7 @@ export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCar
       lg: 2,
       xl: 3,
       "2xl": 4,
+      "4xl": 6,
     }) || 1;
 
   return <Carousel numOfSlides={slides}>{items}</Carousel>;
