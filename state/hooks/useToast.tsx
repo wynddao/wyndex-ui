@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ExecuteResult } from "cosmwasm";
 import { TxError } from "../../utils/txError";
-import { TxToastSuccess } from "../../components/TxToast";
+import { TxToastSuccess } from "../../components/General/TxToast";
 
 export const useToast = () => {
   const [isTxLoading, setIsTxLoading] = useState<boolean>(false);

@@ -28,7 +28,7 @@ export const getTransferIbcData = selectorFamily<
     readonly nativeAddress?: string | null | undefined;
   }
 >({
-  key: "getNativeKeplrData",
+  key: "getTransferIbcData",
   get:
     ({ chainId, address, nativeAddress }) =>
     async ({ get }) => {

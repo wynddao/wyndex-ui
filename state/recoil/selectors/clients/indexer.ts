@@ -1,7 +1,13 @@
 import { Coin } from "cosmwasm";
+import async from "react-select/dist/declarations/src/async/index";
 import { selectorFamily } from "recoil";
 import { RequestAssetPrice } from "../../../../utils/assets";
-import { Cw20BalanceResponse, IndexerQueryClient, UserFiatResponse } from "../../../clients/Indexer.client";
+import {
+  Cw20BalanceResponse,
+  IndexerQueryClient,
+  UserFiatResponse,
+  UserVote,
+} from "../../../clients/Indexer.client";
 import { AssetInfoValidated } from "../../../clients/types/WyndexFactory.types";
 import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
 import { AnnualizedRewardsResponse } from "../../../clients/types/WyndexStake.types";
@@ -9,6 +15,12 @@ import { AnnualizedRewardsResponse } from "../../../clients/types/WyndexStake.ty
 type QueryClientParams = {
   apiUrl: string;
 };
+
+export interface PairsResponse {
+  pair: string;
+  staking: string;
+  lp: string;
+}
 
 export const queryClient = selectorFamily<IndexerQueryClient, QueryClientParams>({
   key: "indexerQueryClient",
@@ -26,6 +38,16 @@ export const poolsSelector = selectorFamily<any, QueryClientParams>({
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.pools();
+    },
+});
+
+export const pairsSelector = selectorFamily<PairsResponse[], QueryClientParams>({
+  key: "indexerPools",
+  get:
+    ({ ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.pairs();
     },
 });
 
@@ -109,6 +131,19 @@ export const userFiatSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.userFiat(...params);
+    },
+});
+
+export const userVotesSelector = selectorFamily<
+  UserVote[],
+  QueryClientParams & { params: Parameters<IndexerQueryClient["userVotes"]> }
+>({
+  key: "indexerUserVotes",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.userVotes(...params);
     },
 });
 

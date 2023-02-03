@@ -26,6 +26,14 @@ export const useIndexerInfos = ({
       : constSelector([]),
   );
 
+  const pairs = useRecoilValue(
+    fetchPoolData
+      ? IndexerSelectors.pairsSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+        })
+      : constSelector([]),
+  );
+
   const userPools = useRecoilValue(
     fetchPoolData && walletAddress
       ? IndexerSelectors.userPoolsSelector({
@@ -80,6 +88,24 @@ export const useIndexerInfos = ({
       : constSelector({ availableBalance: { eur: 0, usd: 0 }, lockedBalance: { eur: 0, usd: 0 } }),
   );
 
+  const userVotes = useRecoilValue(
+    walletAddress
+      ? IndexerSelectors.userVotesSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+          params: [walletAddress],
+        })
+      : constSelector([]),
+  );
+
+  const refreshUserVotes = useRecoilRefresher_UNSTABLE(
+    walletAddress
+      ? IndexerSelectors.userVotesSelector({
+          apiUrl: INDEXER_API_ENDPOINT,
+          params: [walletAddress],
+        })
+      : constSelector([]),
+  );
+
   const assetInfosBalancesSelector = (assetInfos: readonly AssetInfoValidated[]) =>
     IndexerSelectors.assetInfosBalancesSelector({
       apiUrl: INDEXER_API_ENDPOINT,
@@ -96,6 +122,7 @@ export const useIndexerInfos = ({
   // TODO: type each returned property to avoid errors
   return {
     pools,
+    pairs,
     userPools,
     assetPrices,
     ibcBalances,
@@ -107,5 +134,7 @@ export const useIndexerInfos = ({
     userFiat,
     assetInfosBalancesSelector,
     swapOperationRoutes,
+    userVotes,
+    refreshUserVotes,
   };
 };

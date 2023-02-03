@@ -17,6 +17,11 @@ export interface Cw20BalanceResponse {
   readonly balance: string;
 }
 
+export interface UserVote {
+  readonly proposal: string;
+  readonly vote: string;
+}
+
 export interface UserFiatResponse {
   readonly availableBalance: {
     usd: number;
@@ -41,6 +46,7 @@ export interface IndexerQueryClientReadOnlyInterface {
   ibcBalance: (walletAddress: string | undefined, microdenom: string) => Promise<Coin>;
   cw20Balances: (walletAddress: string | undefined) => Promise<readonly Cw20BalanceResponse[]>;
   cw20Balance: (walletAddress: string | undefined, tokenAddress: string) => Promise<Cw20BalanceResponse>;
+  userVotes: (walletAddress: string) => Promise<UserVote[]>;
 }
 
 export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
@@ -56,6 +62,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     return await res.json();
   };
 
+  pairs = async (): Promise<any> => {
+    const res = await fetch(`${this.apiUrl}/pairs`);
+    return await res.json();
+  };
+
   userPools = async (walletAddress: string): Promise<any> => {
     const res = await fetch(`${this.apiUrl}/pools/user/${walletAddress}`);
     return await res.json();
@@ -68,6 +79,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
 
   assetPrices = async (): Promise<RequestAssetPrice[]> => {
     const res = await fetch(`${this.apiUrl}/assets/prices`);
+    return await res.json();
+  };
+
+  userVotes = async (walletAddress: string): Promise<UserVote[]> => {
+    const res = await fetch(`${this.apiUrl}/votes/${walletAddress}`);
     return await res.json();
   };
 

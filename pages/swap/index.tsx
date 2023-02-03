@@ -1,13 +1,13 @@
 "use client";
 import { Box, Flex } from "@chakra-ui/react";
 import Head from "next/head";
-import Swap from "../../components/Swap";
+import Swap from "../../components/Dex/Swap";
 
 export default function Page() {
   return (
     <>
       <Head>
-        <title>WYND DEX | Swap Tokens</title>
+        <title>WYND | DEX - Swap Tokens</title>
       </Head>
       <Flex
         overflow="hidden"
