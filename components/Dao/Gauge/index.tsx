@@ -338,7 +338,7 @@ export const Gauge = ({
                 <InputGroup w={"50%"}>
                   <Input
                     type="number"
-                    placeholder="30%"
+                    placeholder="0"
                     value={weightInput}
                     onChange={(e) => setWeightInput(e.target.value)}
                   />
