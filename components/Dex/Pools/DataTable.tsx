@@ -35,17 +35,31 @@ import {
 import { useRouter } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
 
-import { getAssetByDenom, getAssetByTokenAddr, getNativeIbcTokenDenom } from "../../../utils/assets";
+import {
+  getAssetByDenom,
+  getAssetByTokenAddr,
+  getAssetInfoDetails,
+  getAssetPrice,
+} from "../../../utils/assets";
 import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
-
+import { microamountToAmount } from "../../../utils/tokens";
+import { getAprForPool } from "../../../utils/apr";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
   userAssets: string[];
   columns: ColumnDef<Data, any>[];
+  assetPrices: any;
+  allAprs: any;
 };
 
-export function DataTable<Data extends object>({ data, columns, userAssets }: DataTableProps<Data>) {
+export function DataTable<Data extends object>({
+  data,
+  columns,
+  userAssets,
+  assetPrices,
+  allAprs,
+}: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
@@ -84,6 +98,38 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    sortingFns: {
+      customTVLSorting: (rowA: any, rowB: any, columnId: any): number => {
+        const [{ value: token1 }, { value: token2 }] = rowA.getValue(columnId);
+        const tokenPrice1A = getAssetPrice(token1, assetPrices);
+        const tokenPrice2A = getAssetPrice(token2, assetPrices);
+        const tokenInfo1A = getAssetInfoDetails(token1);
+        const tokenInfo2A = getAssetInfoDetails(token2);
+
+        const [{ value: token1B }, { value: token2B }] = rowB.getValue(columnId);
+        const tokenPrice1B = getAssetPrice(token1B, assetPrices);
+        const tokenPrice2B = getAssetPrice(token2B, assetPrices);
+        const tokenInfo1B = getAssetInfoDetails(token1B);
+        const tokenInfo2B = getAssetInfoDetails(token2B);
+
+        return Number(
+          tokenPrice1A.priceInUsd * Number(microamountToAmount(token1.amount, tokenInfo1A.decimals)) +
+            tokenPrice2A.priceInUsd * Number(microamountToAmount(token2.amount, tokenInfo2A.decimals)),
+        ) >
+          Number(
+            tokenPrice1B.priceInUsd * Number(microamountToAmount(token1B.amount, tokenInfo1B.decimals)) +
+              tokenPrice2B.priceInUsd * Number(microamountToAmount(token2B.amount, tokenInfo2B.decimals)),
+          )
+          ? 1
+          : -1;
+      },
+      customAPRSorting: (rowA: any, rowB: any, columnId: any): number => {
+        const aprsA = allAprs.find((el: any) => el.pool === rowA.getValue(columnId)).apr;
+        const aprsB = allAprs.find((el: any) => el.pool === rowB.getValue(columnId)).apr;
+
+        return aprsA > aprsB ? 1 : -1;
+      },
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
@@ -150,22 +196,30 @@ export function DataTable<Data extends object>({ data, columns, userAssets }: Da
                   {headerGroup.headers.map((header) => {
                     const meta: any = header.column.columnDef.meta;
                     return (
-                      <Th key={header.id} isNumeric={meta?.isNumeric}>
+                      <Th
+                        cursor={header.column.getCanSort() ? "pointer" : "default"}
+                        key={header.id}
+                        onClick={() => header.column.toggleSorting()}
+                        isNumeric={meta?.isNumeric}
+                      >
                         <chakra.div display="inline-block">
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          {header.column.getIsSorted() ? (
-                            header.column.getIsSorted() === "desc" ? (
-                              <RxTriangleDown
-                                style={{ display: "inline-block" }}
-                                aria-label="sorted descending"
-                              />
-                            ) : (
-                              <RxTriangleUp
-                                style={{ display: "inline-block" }}
-                                aria-label="sorted ascending"
-                              />
-                            )
-                          ) : null}
+                          {header.column.getCanSort() &&
+                            (header.column.getIsSorted() ? (
+                              header.column.getIsSorted() === "desc" ? (
+                                <RxTriangleDown
+                                  style={{ display: "inline-block" }}
+                                  aria-label="sorted descending"
+                                />
+                              ) : (
+                                header.column.getIsSorted() === "asc" && (
+                                  <RxTriangleUp
+                                    style={{ display: "inline-block" }}
+                                    aria-label="sorted ascending"
+                                  />
+                                )
+                              )
+                            ) : null)}
                         </chakra.div>
                       </Th>
                     );
