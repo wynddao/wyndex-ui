@@ -1,4 +1,4 @@
-import { Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useRouter } from "next/navigation";
 import { BsCheck2Circle, BsQuestionCircle, BsXCircle } from "react-icons/bs";
@@ -120,17 +120,59 @@ export const PropList = ({ limit }: { limit: number }) => {
             </Text>
           </GridItem>
           <GridItem textAlign="end" colSpan={{ base: 2, lg: "auto" }} py="2">
+            <Grid templateColumns={"1fr 1fr 1fr"} bgColor="wynd.gray.alpha.10" borderTopRadius="lg">
+              <Flex justifyContent="center" alignItems="center">
+                <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
+                  Yes:
+                </Text>
+                <Text color="wynd.green.500" fontWeight="light" fontSize="sm" align="center">
+                  {(
+                    (Number(prop.votes.yes) /
+                      (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
+                    100
+                  ).toFixed(2)}
+                  {"%"}
+                </Text>
+              </Flex>
+              <Flex justifyContent="center" alignItems="center">
+                <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
+                  Abstain:
+                </Text>
+                <Text color="wynd.cyan.500" fontWeight="light" fontSize="sm" align="center">
+                  {(
+                    (Number(prop.votes.abstain) /
+                      (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
+                    100
+                  ).toFixed(2)}
+                  {"%"}
+                </Text>
+              </Flex>
+              <Flex justifyContent="center" alignItems="center">
+                <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
+                  No:
+                </Text>
+                <Text color="wynd.alert.error.500" fontWeight="light" fontSize="sm" align="center">
+                  {(
+                    (Number(prop.votes.no) /
+                      (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
+                    100
+                  ).toFixed(2)}
+                  {"%"}
+                </Text>
+              </Flex>
+            </Grid>
             <Progress
               variant="multiSegment"
               height={4}
               rounded="sm"
               min={0}
+              borderBottomRadius="lg"
               max={Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain)}
               //@ts-ignore
               values={{
-                red: Number(prop.votes.no),
-                blue: Number(prop.votes.abstain),
                 green: Number(prop.votes.yes),
+                blue: Number(prop.votes.abstain),
+                red: Number(prop.votes.no),
               }}
             />
           </GridItem>
