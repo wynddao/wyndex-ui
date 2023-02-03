@@ -127,7 +127,6 @@ export function DataTable<Data extends object>({
         const aprsA = allAprs.find((el: any) => el.pool === rowA.getValue(columnId)).apr;
         const aprsB = allAprs.find((el: any) => el.pool === rowB.getValue(columnId)).apr;
 
-        console.log(aprsA, aprsB);
         return aprsA > aprsB ? 1 : -1;
       },
     },
