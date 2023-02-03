@@ -17,6 +17,7 @@ import TokenName from "../TokenName";
 import { DataTable } from "./DataTable";
 import MaxApr from "./MaxApr";
 import PoolsCard from "./PoolsCard";
+import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
 declare module "@tanstack/table-core" {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
@@ -303,7 +304,7 @@ export default function Pools() {
           </Flex>
         )}
       </Box>
-      {allAprs.length > 0 && (
+      {allAprs.length > 0 ? (
         <DataTable
           allAprs={allAprs}
           assetPrices={assetPrices}
@@ -311,6 +312,8 @@ export default function Pools() {
           data={data}
           userAssets={userAssets}
         />
+      ) : (
+        <DataTableSkeleton />
       )}
       {/* <CreatePoolModal isOpen={isOpen} onClose={onClose} /> */}
     </Box>
