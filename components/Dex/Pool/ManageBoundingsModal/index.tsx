@@ -19,11 +19,12 @@ import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { startTransition, useEffect, useRef, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { WyndexStakeHooks } from "../../../../state";
+import { getBalanceByAsset, WyndexStakeHooks } from "../../../../state";
 import { PairInfo } from "../../../../state/clients/types/WyndexFactory.types";
 import { BondingPeriodInfo, StakedResponse } from "../../../../state/clients/types/WyndexStake.types";
 import { useIndexerInfos, useToast, UseTokenNameResponse } from "../../../../state/hooks";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
+import { getAssetByInfo } from "../../../../utils/assets";
 import { renderUnboundingText } from "../../../../utils/text";
 import { secondsToDays } from "../../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../../utils/tokens";
@@ -48,8 +49,19 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(assetInfosBalancesSelector(pairData.asset_infos));
+  const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+
+  const assetASelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[0]),
+  });
+  const assetBSelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[1]),
+  });
+  const refreshBalanceA = useRecoilRefresher_UNSTABLE(assetASelector);
+  const refreshBalanceB = useRecoilRefresher_UNSTABLE(assetBSelector);
+
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
     onChange: (v) => {
@@ -281,7 +293,8 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
-      refreshPairBalances();
+      refreshBalanceA();
+      refreshBalanceB();
       refreshBondings();
 
       if (hasCw20) refreshCw20Balances();

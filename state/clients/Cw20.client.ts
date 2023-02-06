@@ -32,10 +32,12 @@ import {
   Addr,
   MarketingInfoResponse,
   TokenInfoResponse,
+  VestingResponse,
 } from "./types/Cw20.types";
 export interface Cw20ReadOnlyInterface {
   contractAddress: string;
   balance: ({ address }: { address: string }) => Promise<BalanceResponse>;
+  vesting: ({ address }: { address: string }) => Promise<VestingResponse>;
   tokenInfo: () => Promise<TokenInfoResponse>;
   minter: () => Promise<MinterResponse>;
   allowance: ({ owner, spender }: { owner: string; spender: string }) => Promise<AllowanceResponse>;
@@ -75,6 +77,7 @@ export class Cw20QueryClient implements Cw20ReadOnlyInterface {
     this.client = client;
     this.contractAddress = contractAddress;
     this.balance = this.balance.bind(this);
+    this.vesting = this.vesting.bind(this);
     this.tokenInfo = this.tokenInfo.bind(this);
     this.minter = this.minter.bind(this);
     this.allowance = this.allowance.bind(this);
@@ -86,6 +89,13 @@ export class Cw20QueryClient implements Cw20ReadOnlyInterface {
   }
 
   balance = async ({ address }: { address: string }): Promise<BalanceResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      balance: {
+        address,
+      },
+    });
+  };
+  vesting = async ({ address }: { address: string }): Promise<VestingResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       balance: {
         address,
