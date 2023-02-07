@@ -11,7 +11,7 @@ interface IProps {
   fromToken: Asset;
   toToken: Asset;
   setToToken: (asset: Asset) => void;
-  expectedAmount: string;
+  fromAmount: string;
   inputAmount: string;
   setInputAmount: (amount: string) => void;
 }
@@ -20,21 +20,16 @@ const ToToken: React.FC<IProps> = ({
   fromToken,
   toToken,
   setToToken,
-  expectedAmount,
+  fromAmount,
   inputAmount,
   setInputAmount,
 }) => {
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-  const price = getAmountByPrice(
-    (Number(expectedAmount) / 1000000).toString(),
-    currency,
-    toToken,
-    assetPrices,
-  );
-  const priceFrom = getAmountByPrice(Number(inputAmount).toString(), currency, fromToken, assetPrices);
+  const priceFrom = getAmountByPrice(fromAmount, currency, fromToken, assetPrices);
+  const priceTo = getAmountByPrice(inputAmount, currency, toToken, assetPrices);
 
-  const impact = 100 - (price / priceFrom) * 100;
+  const impact = 100 - (priceFrom / priceTo) * 100;
 
   return (
     <Box flex="1">
@@ -73,7 +68,7 @@ const ToToken: React.FC<IProps> = ({
                   value={inputAmount}
                 />
                 <Text position="absolute" right="0" bottom="-4" fontSize="10px" color="wynd.neutral.500">
-                  ≈ {formatCurrency(currency, `${price.toFixed(6)}`)} (-
+                  ≈ {formatCurrency(currency, `${priceTo.toFixed(6)}`)} (
                   {isNaN(impact) ? "0" : impact.toFixed(2)} %)
                 </Text>
               </Flex>
