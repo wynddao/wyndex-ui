@@ -53,16 +53,16 @@ const Swap: React.FC = () => {
     getBalanceByAsset({ address: walletAddress || "", asset: toToken }),
   );
 
-  const [fromTokenAmount, setFromTokenAmount] = useState<string>("1");
+  const [fromTokenAmount, setFromTokenAmount] = useState<string | null>("1");
   const { simulatedSwap: toTokenSimulated } = useSimulateSwap(
-    amountToMicroamount(fromTokenAmount, fromToken.decimals),
+    fromTokenAmount ? amountToMicroamount(fromTokenAmount, fromToken.decimals) : "0",
     operations,
   );
-  const [toTokenAmount, setToTokenAmount] = useState<string>(
+  const [toTokenAmount, setToTokenAmount] = useState<string | null>(
     microamountToAmount(toTokenSimulated.amount, fromToken.decimals, 4),
   );
   const { reverseSimulatedSwap: fromTokenSimulated } = useReverseSimulateSwap(
-    amountToMicroamount(toTokenAmount, toToken.decimals),
+    toTokenAmount ? amountToMicroamount(toTokenAmount, toToken.decimals) : "0",
     operations,
   );
 
@@ -70,8 +70,8 @@ const Swap: React.FC = () => {
     startTransition(() => {
       setFromToken(toToken);
       setToToken(fromToken);
-      setFromTokenAmount(toTokenAmount);
-      setToTokenAmount(fromTokenAmount);
+      setFromTokenAmount(null);
+      setToTokenAmount(null);
     });
   };
 
@@ -90,7 +90,9 @@ const Swap: React.FC = () => {
 
     if (fromToken.tags.includes("cw20")) {
       return await sendCW20({
-        amount: amountToMicroamount(fromTokenAmount, fromToken.decimals).toString(),
+        amount: fromTokenAmount
+          ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+          : fromTokenSimulated.amount,
         contract: MULTI_HOP_CONTRACT_ADDRESS,
         msg: toBase64(
           toUtf8(JSON.stringify({ execute_swap_operations: { operations, max_spread: spread } })),
@@ -99,7 +101,12 @@ const Swap: React.FC = () => {
     }
 
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
-      { amount: amountToMicroamount(fromTokenAmount, fromToken.decimals).toString(), denom: fromToken.denom },
+      {
+        amount: fromTokenAmount
+          ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+          : fromTokenSimulated.amount,
+        denom: fromToken.denom,
+      },
     ]);
   };
 
@@ -150,10 +157,10 @@ const Swap: React.FC = () => {
           toToken={toToken}
           fromToken={fromToken}
           setFromToken={setFromToken}
-          inputAmount={fromTokenAmount || microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
+          inputAmount={fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
           setInputAmount={(amount) => {
             setFromTokenAmount(amount);
-            setToTokenAmount("");
+            setToTokenAmount(null);
           }}
           balance={fromBalance}
         />
@@ -162,11 +169,11 @@ const Swap: React.FC = () => {
           fromToken={fromToken}
           toToken={toToken}
           setToToken={setToToken}
-          inputAmount={toTokenAmount || microamountToAmount(toTokenSimulated.amount, toToken.decimals)}
-          expectedAmount={toTokenSimulated.amount}
+          inputAmount={toTokenAmount ?? microamountToAmount(toTokenSimulated.amount, toToken.decimals)}
+          fromAmount={fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
           setInputAmount={(amount) => {
             setToTokenAmount(amount);
-            setFromTokenAmount("");
+            setFromTokenAmount(null);
           }}
         />
       </Box>
@@ -188,7 +195,6 @@ const Swap: React.FC = () => {
           <LineChart toToken={toToken} fromToken={fromToken} open={showHistorical} />
         </Collapse>
       </Box>
-
       <Button
         h={{ base: 12, lg: 16 }}
         w="full"
@@ -197,7 +203,11 @@ const Swap: React.FC = () => {
         disabled={
           !isTxLoading &&
           isWalletConnected &&
-          Number(fromTokenAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals))
+          ((!fromTokenAmount && !toTokenAmount) ||
+            fromTokenAmount === "0" ||
+            toTokenAmount === "0" ||
+            Number(fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)) >
+              Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
         }
         bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
@@ -227,12 +237,14 @@ const Swap: React.FC = () => {
       </Button>
       {operations.length > 0 && (
         <Rate
-          slippage={slippage}
-          fromToken={fromToken}
           logo-black-no-text
+          fromToken={fromToken}
           toToken={toToken}
-          simulatedOperation={toTokenSimulated}
-          inputAmount={toTokenAmount}
+          inputFrom={fromTokenAmount}
+          inputTo={toTokenAmount}
+          simulatedFrom={fromTokenSimulated}
+          simulatedTo={toTokenSimulated}
+          slippage={slippage}
           route={getRouteByOperations(operations)}
         />
       )}
