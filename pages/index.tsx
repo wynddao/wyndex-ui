@@ -11,6 +11,7 @@ export default function Page() {
       <Head>
         <title>WYND DEX</title>
       </Head>
+
       <Box p="4">
         <AssetBalances />
         <DepositIbcModal />
