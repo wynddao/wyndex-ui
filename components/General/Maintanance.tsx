@@ -24,10 +24,10 @@ export default function Maintanance() {
           w="512px"
         />
         <Flex flexDir="column">
-          <p style={{ fontFamily: "Barlow", fontSize: "2em" }}>
+          <p style={{ fontFamily: "Barlow", fontSize: "2em", color: "white" }}>
             The website is currently in maintenance mode. <br />
           </p>
-          <p style={{ fontFamily: "Barlow", fontSize: "1em" }}>
+          <p style={{ fontFamily: "Barlow", fontSize: "1em", color: "white" }}>
             All funds are safe, this is only a UI update. Please follow us on{" "}
             <a target="_blank" rel="noreferrer" href="https://twitter.com/wynddao">
               Twitter

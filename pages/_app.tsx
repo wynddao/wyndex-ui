@@ -20,7 +20,9 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     setIsLoaded(true);
   }, []);
 
-  return WYND_MAINTANANCE_MODE && <Maintanance />;
+  if (WYND_MAINTANANCE_MODE) {
+    return <Maintanance />;
+  }
 
   return isLoaded ? (
     <ErrorBoundary>
