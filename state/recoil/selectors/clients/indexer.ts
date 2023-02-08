@@ -1,5 +1,4 @@
 import { Coin } from "cosmwasm";
-import async from "react-select/dist/declarations/src/async/index";
 import { selectorFamily } from "recoil";
 import { RequestAssetPrice } from "../../../../utils/assets";
 import {
@@ -8,7 +7,6 @@ import {
   UserFiatResponse,
   UserVote,
 } from "../../../clients/Indexer.client";
-import { AssetInfoValidated } from "../../../clients/types/WyndexFactory.types";
 import { SwapOperation } from "../../../clients/types/WyndexMultiHop.types";
 import { AnnualizedRewardsResponse } from "../../../clients/types/WyndexStake.types";
 
@@ -170,32 +168,6 @@ export const rewardsSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.rewards(...params);
-    },
-});
-
-export const assetInfosBalancesSelector = selectorFamily<
-  [string, string],
-  QueryClientParams & {
-    params: [walletAddress: string | undefined, assetInfos: readonly AssetInfoValidated[]];
-  }
->({
-  key: "indexerIbcBalance",
-  get:
-    ({ apiUrl, params: [walletAddress, [assetA, assetB]] }) =>
-    async ({ get }) => {
-      if (!walletAddress) return ["0", "0"];
-
-      const client = get(queryClient({ apiUrl }));
-      const assetABalance =
-        "token" in assetA
-          ? (await client.cw20Balance(walletAddress, assetA.token)).balance
-          : (await client.ibcBalance(walletAddress, assetA.native)).amount;
-      const assetBBalance =
-        "token" in assetB
-          ? (await client.cw20Balance(walletAddress, assetB.token)).balance
-          : (await client.ibcBalance(walletAddress, assetB.native)).amount;
-
-      return [assetABalance, assetBBalance];
     },
 });
 
