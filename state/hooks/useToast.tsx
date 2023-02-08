@@ -29,6 +29,7 @@ export const useToast = () => {
         },
         {
           error: {
+            duration: Infinity,
             id: "tx.error",
             style: {
               background: "var(--chakra-colors-chakra-body-bg)",
