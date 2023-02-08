@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { toast } from "react-hot-toast";
 import { ExecuteResult } from "cosmwasm";
-import { TxError } from "../../utils/txError";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { TxToastSuccess } from "../../components/General/TxToast";
+import TxToastError from "../../components/General/TxToast/TxToastError";
+import { txError } from "../../utils/txError";
 
 export const useToast = () => {
   const [isTxLoading, setIsTxLoading] = useState<boolean>(false);
@@ -23,7 +24,7 @@ export const useToast = () => {
           error: (err) => {
             setIsTxLoading(false);
             toast.dismiss("tx.loading");
-            return `Error: ${new TxError(err).pretty()}`;
+            return <TxToastError txError={txError.init(err)} />;
           },
         },
         {
