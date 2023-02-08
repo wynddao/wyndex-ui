@@ -17,17 +17,17 @@ import { useWallet } from "@cosmos-kit/react";
 import { Coin } from "cosmwasm";
 import { startTransition, useCallback, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { CustomHooks, useIndexerInfos, useToast, useTokenInfo } from "../../../../state";
+import { CustomHooks, getBalanceByAsset, useIndexerInfos, useToast } from "../../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
+import { CW20Asset } from "@wynddao/asset-list";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
-import { getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../../utils/assets";
+import { getAssetByInfo, getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { getAssetList } from "../../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import AssetImage from "../../AssetImage";
-import { CW20Asset } from "@wynddao/asset-list";
 interface inputType {
   id: string;
   value: string;
@@ -46,7 +46,7 @@ interface popType {
 
 interface DataType {
   img: string;
-  denom: string;
+  denomOrAddr: string;
   name: any;
   contractAddress?: string;
   show?: boolean;
@@ -64,18 +64,15 @@ export default function AddLiquidity({
   poolData: PoolResponse;
 }) {
   const poolData: readonly DataType[] = pairData.asset_infos.map((asset) => {
+    const isCw20Asset = "token" in asset;
+
     return {
       img: "https://via.placeholder.com/300",
-      // @ts-ignore
-      denom: asset.hasOwnProperty("native") ? asset.native : asset.token,
-      // @ts-ignore
-      contractAddress: asset.hasOwnProperty("token") ? asset.token : undefined,
-      // @ts-ignore
-      name: asset.hasOwnProperty("token") ? (
-        // @ts-ignore
+      denomOrAddr: isCw20Asset ? asset.token : asset.native,
+      contractAddress: isCw20Asset ? asset.token : undefined,
+      name: isCw20Asset ? (
         <TokenName symbol={true} address={asset.token} />
       ) : (
-        // @ts-ignore
         <span>{microdenomToDenom(getNativeIbcTokenDenom(asset.native))}</span>
       ),
       show: true,
@@ -84,11 +81,11 @@ export default function AddLiquidity({
 
   const { address: walletAddress } = useWallet();
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const defaultInput = poolData.map(({ denom: label, contractAddress }) => ({
+  const defaultInput = poolData.map(({ denomOrAddr: label, contractAddress }) => ({
     id: label,
     value: "0",
     contract: contractAddress,
@@ -102,9 +99,18 @@ export default function AddLiquidity({
     sender: walletAddress || "",
   });
 
-  const pairBalancesSelector = assetInfosBalancesSelector(pairData.asset_infos);
-  const pairBalances = useRecoilValue(pairBalancesSelector);
-  const refreshPairBalances = useRecoilRefresher_UNSTABLE(pairBalancesSelector);
+  const assetASelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[0]),
+  });
+  const assetBSelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[1]),
+  });
+  const { state: assetABalanceState, contents: assetABalance } = useRecoilValueLoadable(assetASelector);
+  const { state: assetBBalanceState, contents: assetBBalance } = useRecoilValueLoadable(assetBSelector);
+  const refreshBalanceA = useRecoilRefresher_UNSTABLE(assetASelector);
+  const refreshBalanceB = useRecoilRefresher_UNSTABLE(assetBSelector);
 
   const calculateRatios = useCallback(() => {
     const [newInputValueA, newInputValueB] = tokenInputValue;
@@ -165,6 +171,8 @@ export default function AddLiquidity({
   );
 
   const calculateMaxValues = useCallback(() => {
+    if (assetABalanceState !== "hasValue" || assetBBalanceState !== "hasValue") return;
+
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
     const assets = getAssetList().tokens;
@@ -176,8 +184,8 @@ export default function AddLiquidity({
       assets.find(
         (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
-    const maxMicroBalanceA = microamountToAmount(pairBalances[0], decimalsA);
-    const maxMicroBalanceB = microamountToAmount(pairBalances[1], decimalsB);
+    const maxMicroBalanceA = microamountToAmount(assetABalance.amount, decimalsA);
+    const maxMicroBalanceB = microamountToAmount(assetBBalance.amount, decimalsB);
 
     if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
@@ -188,7 +196,14 @@ export default function AddLiquidity({
     }
 
     setTokenInputValue([newInputValueA, newInputValueB]);
-  }, [calculateRatios, pairBalances, tokenInputValue]);
+  }, [
+    assetABalance.amount,
+    assetABalanceState,
+    assetBBalance.amount,
+    assetBBalanceState,
+    calculateRatios,
+    tokenInputValue,
+  ]);
 
   const prodiveLiquidity = async () => {
     setLoading(true);
@@ -239,7 +254,8 @@ export default function AddLiquidity({
     const hasNative = !!assets.find(({ info }) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
-      refreshPairBalances();
+      refreshBalanceA();
+      refreshBalanceB();
       refreshBondings();
       refreshLpBalance();
 
@@ -253,7 +269,19 @@ export default function AddLiquidity({
   return (
     <>
       <Stack spacing={2} mb={6}>
-        {poolData.map(({ denom, show, name }, i) => {
+        {poolData.map(({ denomOrAddr, show, name }, i) => {
+          const asset = assets.find(
+            (asset) => denomOrAddr === asset.denom || denomOrAddr === asset.token_address,
+          );
+
+          let maxInput = "0";
+          if (assetABalanceState === "hasValue" && assetBBalanceState === "hasValue") {
+            maxInput = microamountToAmount(
+              i === 0 ? assetABalance.amount : assetBBalance.amount,
+              asset?.decimals ?? 6,
+            );
+          }
+
           return (
             show && (
               <Box position="relative" key={`box-${name}-${i}`}>
@@ -275,7 +303,7 @@ export default function AddLiquidity({
                       _focus={{ outline: "none" }}
                     >
                       <PopoverBody>
-                        {openPop.optionsIndex.map(({ denom: optionLabel, img, name }, i) => (
+                        {openPop.optionsIndex.map(({ denomOrAddr: optionLabel, img, name }, i) => (
                           <Button
                             key={i}
                             variant="ghost"
@@ -289,7 +317,7 @@ export default function AddLiquidity({
                             px={{ base: 2, sm: 4 }}
                             py={4}
                             onClick={() => {
-                              poolData.map(({ denom }, i) => {
+                              poolData.map(({ denomOrAddr: denom }, i) => {
                                 if (optionLabel === denom) {
                                   setSingle({
                                     selectedIndex: i,
@@ -303,7 +331,7 @@ export default function AddLiquidity({
                               });
                             }}
                           >
-                            <Image alt={`${denom} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
+                            <Image alt={`${denomOrAddr} logo`} src={img} w={12} mr={{ base: 3, sm: 4 }} />
                             {name}
                           </Button>
                         ))}
@@ -323,7 +351,7 @@ export default function AddLiquidity({
                   gap={4}
                 >
                   <Flex flex={1} align="center" mb={{ base: 4, sm: 0 }} mr={{ base: 0, sm: 4 }} py={2}>
-                    <AssetImage asset={denom} width={12} mr={{ base: 3, sm: 4 }} />
+                    <AssetImage asset={denomOrAddr} width={12} mr={{ base: 3, sm: 4 }} />
                     <Flex
                       position="relative"
                       align="center"
@@ -359,15 +387,16 @@ export default function AddLiquidity({
                       spacing={2}
                       mb={2}
                     >
-                      <Text fontWeight="medium" textAlign="center">
-                        Available{" "}
-                        {microamountToAmount(
-                          pairBalances[i] ?? "",
-                          assets.find((el) => denom === el.denom || denom === (el as CW20Asset).token_address)
-                            ?.decimals || 6,
-                        )}
-                        <Text as="span" color={"wynd.cyan.500"}></Text> {name}
-                      </Text>
+                      {assetABalanceState === "hasValue" && assetBBalanceState === "hasValue" ? (
+                        <Text fontWeight="medium" textAlign="center">
+                          Available {maxInput}
+                          <Text as="span" color={"wynd.cyan.500"}></Text> {name}
+                        </Text>
+                      ) : (
+                        <Text fontWeight="medium" textAlign="center">
+                          Loading balance
+                        </Text>
+                      )}
                       <Button
                         alignSelf="end"
                         size="sm"
@@ -383,8 +412,8 @@ export default function AddLiquidity({
                       value={tokenInputValue[i].value}
                       bg={"wynd.alpha.200"}
                       min={0}
-                      max={Number(pairBalances[i])}
-                      onChange={(value) => calculateInputValues(denom, value)}
+                      max={Number(maxInput)}
+                      onChange={(value) => calculateInputValues(denomOrAddr, value)}
                     >
                       <NumberInputField textAlign="end" pr={4} />
                     </NumberInput>
@@ -402,17 +431,21 @@ export default function AddLiquidity({
           loadingText={"Executing"}
           isDisabled={
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
-            tokenInputValue.filter(
-              (input, index) =>
-                Number(input.value) >
-                Number(
-                  microamountToAmount(
-                    pairBalances[index],
-                    assets.find((el) => input.id === el.denom || input.contract === (el as CW20Asset).token_address)
-                      ?.decimals || 6,
-                  ),
-                ),
-            ).length > 0
+            tokenInputValue.filter((input, index) => {
+              const asset = assets.find(
+                (asset) => input.id === asset.denom || input.contract === asset.token_address,
+              );
+
+              let maxInput = "0";
+              if (assetABalanceState === "hasValue" && assetBBalanceState === "hasValue") {
+                maxInput = microamountToAmount(
+                  index === 0 ? assetABalance.amount : assetBBalance.amount,
+                  asset?.decimals ?? 6,
+                );
+              }
+
+              return Number(input.value) > Number(maxInput);
+            }).length > 0
           }
           w="full"
           size="lg"

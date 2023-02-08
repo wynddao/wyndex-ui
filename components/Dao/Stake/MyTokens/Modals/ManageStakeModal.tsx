@@ -44,7 +44,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { refreshBondings } = useUserStakeInfos(wyndexStakeAddress, walletAddress || "");
-  const { assetInfosBalancesSelector, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "selectedMode",
     onChange: (v) => {
