@@ -1,6 +1,6 @@
 import Pool from "../../../components/Dex/Pool";
 import { GetStaticPaths, GetStaticPropsContext } from "next";
-import { INDEXER_API_ENDPOINT } from "../../../utils";
+import { INDEXER_API_ENDPOINT, WYND_MAINTANANCE_MODE } from "../../../utils";
 
 export default function Page({ poolAddress }: { poolAddress: string }) {
   return <Pool poolAddress={poolAddress} />;
@@ -16,7 +16,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 }
 
 export const getStaticPaths: GetStaticPaths<{ poolAddress: string }> = async () => {
-  const pools = await (await fetch(`${INDEXER_API_ENDPOINT}/pools`)).json();
+  const pools = !WYND_MAINTANANCE_MODE ? await (await fetch(`${INDEXER_API_ENDPOINT}/pools`)).json() : [];
   const paths = Object.keys(pools).map((poolAddress) => {
     return {
       params: {
