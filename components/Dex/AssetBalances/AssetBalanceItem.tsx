@@ -11,10 +11,13 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import { IBCAsset } from "@wynddao/asset-list";
+import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useIndexerInfos } from "../../../state";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
 import { ExtendedAsset } from "./utils";
 
@@ -26,6 +29,8 @@ interface AssetBalanceItemProps {
 export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemProps) {
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
 
   return (
     <Grid
@@ -61,9 +66,27 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
           {asset.tags}
         </Badge>
       </GridItem>
-      <GridItem display="flex" alignItems="center" justifyContent="end">
-        <Text fontSize="lg" mb={0.5}>
-          {microamountToAmount(asset.balance, asset.decimals)}
+      <GridItem display="flex" alignItems="center" flexDir="column" justifyContent="end">
+        <Text fontSize="lg">{microamountToAmount(asset.balance, asset.decimals)}</Text>
+        <Text fontSize="xs">
+          (≈{formatCurrency(
+            currency,
+            (
+              ((currency === "EUR"
+                ? assetPrices.find(
+                    (el) =>
+                      el.asset === asset.denom ||
+                      (asset as IBCAsset).juno_denom === el.asset ||
+                      (asset as CW20Asset).token_address === el.asset,
+                  )?.priceInEur
+                : assetPrices.find(
+                    (el) =>
+                      el.asset === asset.denom ||
+                      (asset as IBCAsset).juno_denom === el.asset ||
+                      (asset as CW20Asset).token_address === el.asset,
+                  )?.priceInUsd) || 0) * Number(microamountToAmount(asset.balance, asset.decimals))
+            ).toString(),
+          )})
         </Text>
       </GridItem>
       <GridItem colSpan={{ base: 2, lg: 1 }} display="flex" alignItems="end" justifyContent="end" gap="2">

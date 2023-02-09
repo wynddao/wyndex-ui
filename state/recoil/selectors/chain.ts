@@ -6,6 +6,7 @@ import {
   CHAIN_RPC_ENDPOINT,
   cosmWasmClientRouter,
   cosmWasmStargateClientRouter,
+  DAO_STAKING_ADDRESS,
   WYND_TOKEN_ADDRESS,
 } from "../../../utils";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
@@ -75,18 +76,19 @@ export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: 
       }
 
       // For WYND token, take into account staked and vesting
-      const { locked } = get(
-        vestingSelector({ contractAddress: asset.token_address, params: [{ address }] }),
-      );
+      let { locked } = get(vestingSelector({ contractAddress: asset.token_address, params: [{ address }] }));
+      if (!locked) {
+        locked = "0";
+      }
       const { stakes } = get(
-        allStakedSelector({ contractAddress: asset.token_address, params: [{ address }] }),
+        allStakedSelector({ contractAddress: DAO_STAKING_ADDRESS, params: [{ address }] }),
       );
       const totalStaked = stakes.reduce(
         (prevStake, stakedRes) => BigInt(prevStake) + BigInt(stakedRes.stake),
         BigInt(0),
       );
-
       const amount = (BigInt(balance) + totalStaked - BigInt(locked)).toString();
+
       return { amount, denom: asset.denom };
     },
 });

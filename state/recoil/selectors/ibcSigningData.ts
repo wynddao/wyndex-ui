@@ -58,7 +58,7 @@ export const getKeplrIbcSigningData = selectorFamily<
 
         const keplrWallet = new KeplrExtensionWallet(
           { name: walletNames.keplr, prettyName: "Keplr", mode: "extension", mobileDisabled: true },
-          { [chainInfo.chainName]: { rpc: [chainInfo.rpc] } },
+          { [chainInfo.chainName]: { rpc: [feeAsset.rpc] } },
         );
         const keplrClient = await keplrWallet.fetchClient();
         await keplrClient.client.experimentalSuggestChain(chainInfo);
@@ -71,7 +71,7 @@ export const getKeplrIbcSigningData = selectorFamily<
           ) + feeAsset.denom,
         );
         let ibcSigningClientAny: any = await SigningStargateClient.connectWithSigner(
-          chainInfo.rpc,
+          feeAsset.rpc,
           keplrSigner,
           {
             gasPrice,
