@@ -47,7 +47,12 @@ export const MyTokens = ({
           walletStakedTokens={walletStakedTokens}
           totalStakedValue={totalStakedValue}
         />
-        <Unstaked unstakedAmount={Number(balance)} />
+        <Unstaked
+          walletStakedTokens={Number(walletStakedTokens)}
+          vestedBalance={vestedBalance}
+          unstakedAmount={Number(balance)}
+          claims={claims}
+        />
       </Grid>
       <ManageTokens
         stakeContract={DAO_STAKING_ADDRESS}
