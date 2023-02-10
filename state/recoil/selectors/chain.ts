@@ -10,7 +10,8 @@ import {
   WYND_TOKEN_ADDRESS,
 } from "../../../utils";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
-import { balanceSelector, vestingSelector } from "./clients/cw20";
+import { balanceSelector } from "./clients/cw20";
+import { vestingSelector } from "./clients/cw20vesting";
 import { allStakedSelector } from "./clients/stake";
 
 export const cosmWasmClientSelector = selector({
@@ -76,18 +77,28 @@ export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: 
       }
 
       // For WYND token, take into account staked and vesting
-      let { locked } = get(vestingSelector({ contractAddress: asset.token_address, params: [{ address }] }));
+      let { locked } = get(vestingSelector({ contractAddress: WYND_TOKEN_ADDRESS, params: [{ address }] }));
       if (!locked) {
         locked = "0";
       }
       const { stakes } = get(
         allStakedSelector({ contractAddress: DAO_STAKING_ADDRESS, params: [{ address }] }),
       );
+
       const totalStaked = stakes.reduce(
         (prevStake, stakedRes) => BigInt(prevStake) + BigInt(stakedRes.stake),
         BigInt(0),
       );
-      const amount = (BigInt(balance) + totalStaked - BigInt(locked)).toString();
+
+      const _amount = BigInt(balance) + totalStaked - BigInt(locked);
+
+      let amount = "0";
+
+      if (_amount > Number(balance)) {
+        amount = balance;
+      } else if (_amount > 0) {
+        amount = _amount.toString();
+      }
 
       return { amount, denom: asset.denom };
     },
