@@ -12,7 +12,7 @@ export interface LinkItemProps {
   readonly isExternalLink?: boolean;
 }
 
-import React from "react";
+import React, { Suspense } from "react";
 import { CgExternal } from "react-icons/cg";
 import { UnvotedPropCount } from "./UnvotedPropCount";
 
@@ -68,7 +68,7 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
           >
             {name}
           </Text>
-          {name === "Vote" && <UnvotedPropCount />}
+          {name === "Vote" && <Suspense fallback={<span>...</span>}><UnvotedPropCount /></Suspense>}
         </Flex>
         {isExternalLink && (
           <Icon

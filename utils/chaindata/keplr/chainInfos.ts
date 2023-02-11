@@ -159,6 +159,45 @@ export const chainInfos: Record<string, ChainInfo> = {
       },
     ],
   },
+  "stargaze-1": {
+    rpc: "https://stargaze-rpc.polkachu.com/",
+    rest: "https://testnet-api.kichain.chaintools.tech",
+    chainId: "stargaze-1",
+    chainName: "stargaze-1",
+    stakeCurrency: {
+      coinDenom: "stars",
+      coinMinimalDenom: "ustars",
+      coinDecimals: 6,
+    },
+    bip44: { coinType: 118 },
+    bech32Config: {
+      bech32PrefixAccAddr: "stars",
+      bech32PrefixAccPub: "stars",
+      bech32PrefixValAddr: "stars",
+      bech32PrefixValPub: "stars",
+      bech32PrefixConsAddr: "stars", 
+      bech32PrefixConsPub: "stars",
+    },
+    currencies: [
+      {
+        coinDenom: "stars",
+        coinMinimalDenom: "ustars",
+        coinDecimals: 6,
+      },
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: "stars",
+        coinMinimalDenom: "ustars",
+        coinDecimals: 6,
+        gasPriceStep: {
+          low: 0.025,
+          average: 0.05,
+          high: 0.075,
+        },
+      },
+    ],
+  },
   "osmosis-1": {
     rpc: "https://rpc.osmosis.zone",
     rest: "https://lcd.osmosis.zone",
