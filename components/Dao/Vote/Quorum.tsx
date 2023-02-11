@@ -18,9 +18,9 @@ export const Quorum = ({ propId }: { propId: string }) => {
   const color = currentQuorum > threshold ? "wynd.green.500" : "wynd.alert.error.500";
 
   return (
-    <Flex>
-      <Text color={color}>{currentQuorum.toFixed(2)}%</Text>
-      <Text ml={1}>/ {threshold}%</Text>
+    <Flex alignItems="center">
+      <Text fontSize="sm" color={color}>{currentQuorum.toFixed(2)}%</Text>
+      <Text fontSize="xs" ml={1}>/ {threshold}%</Text>
     </Flex>
   );
 };
