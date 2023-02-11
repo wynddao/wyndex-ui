@@ -30,7 +30,7 @@ export const NotVotedAlert = () => {
     return count.length > 0 ? (
       <Alert status="warning">
         <AlertIcon />
-        You didnt vote for proposals:{" "}
+        {"You didn't vote for proposals: "}
         {count.map((prop, i) => (
           <Text ml={2} key={prop.id}>
             {prop.id} {count.length > 1 && i !== count.length - 1 && ","}
