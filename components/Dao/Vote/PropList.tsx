@@ -8,6 +8,7 @@ import { useProposalCount } from "../../../state/hooks/proposal/useProposalCount
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { capitalizeFirstLetter } from "../../../utils/text";
 import { expirationAtTimeToSecondsFromNow, secondsToWdhms } from "../../../utils/time";
+import { Quorum } from "./Quorum";
 
 const VoteStatus = ({ id }: { id: string }) => {
   const { userVotes } = useIndexerInfos({});
@@ -79,7 +80,7 @@ export const PropList = ({ limit }: { limit: number }) => {
           key={i}
           templateColumns={{
             base: "repeat(2, 1fr)",
-            lg: walletAddress ? "50px 70px 100px 3fr 120px 2fr" : "70px 100px 3fr 120px 2fr",
+            lg: walletAddress ? "50px 70px 100px 5fr 120px 4fr 1fr" : "70px 100px 5fr 120px 4fr 1fr",
           }}
           fontWeight="semibold"
           _hover={{
@@ -175,6 +176,9 @@ export const PropList = ({ limit }: { limit: number }) => {
                 red: Number(prop.votes.no),
               }}
             />
+          </GridItem>
+          <GridItem>
+            <Quorum propId={prop.id} />
           </GridItem>
         </Grid>
       ))}

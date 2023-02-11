@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, FlexProps, Icon, Text } from "@chakra-ui/react";
+import { Badge, Flex, FlexProps, Icon, Text, Tooltip } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconType } from "react-icons";
@@ -14,6 +14,7 @@ export interface LinkItemProps {
 
 import React from "react";
 import { CgExternal } from "react-icons/cg";
+import { UnvotedPropCount } from "./UnvotedPropCount";
 
 const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExternalLink, ...restProps }) => {
   const pathname = usePathname();
@@ -67,6 +68,7 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
           >
             {name}
           </Text>
+          {name === "Vote" && <UnvotedPropCount />}
         </Flex>
         {isExternalLink && (
           <Icon
@@ -78,7 +80,9 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
                 ? {
                     color: "wynd.green.500",
                   }
-                : undefined
+                : {
+                    color: "white",
+                  }
             }
           />
         )}
