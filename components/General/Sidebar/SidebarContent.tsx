@@ -3,6 +3,7 @@ import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiActivity, FiPieChart, FiRefreshCw, FiWind } from "react-icons/fi";
 import { MdBallot, MdOutlineBallot } from "react-icons/md";
+import { FaBalanceScaleLeft } from "react-icons/fa"
 import wyndLogoWhite from "../../../public/logo-white.svg";
 import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem, { LinkItemProps } from "./NavItem";
@@ -16,7 +17,7 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Pools", to: "/pools", icon: FiPieChart },
   { name: "Stake", to: "/stake", icon: FiWind },
   { name: "Vote", to: "/vote", icon: MdBallot },
-  { name: "Gauges", to: "/gauges", icon: MdOutlineBallot },
+  { name: "Gauges", to: "/gauges", icon: FaBalanceScaleLeft },
 ];
 
 interface SidebarContentProps extends BoxProps {
