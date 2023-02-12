@@ -12,6 +12,7 @@ import {
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { balanceSelector } from "./clients/cw20";
 import { vestingSelector } from "./clients/cw20vesting";
+import { claimsSelector } from "./clients/daostake";
 import { allStakedSelector } from "./clients/stake";
 
 export const cosmWasmClientSelector = selector({
@@ -84,13 +85,15 @@ export const getBalanceByAsset = selectorFamily<Coin, { address: string; asset: 
       const { stakes } = get(
         allStakedSelector({ contractAddress: DAO_STAKING_ADDRESS, params: [{ address }] }),
       );
-
       const totalStaked = stakes.reduce(
-        (prevStake, stakedRes) => BigInt(prevStake) + BigInt(stakedRes.stake),
-        BigInt(0),
+        (prevStake, stakedRes) => Number(prevStake) + Number(stakedRes.stake),
+        0,
       );
 
-      const _amount = BigInt(balance) + totalStaked - BigInt(locked);
+      // Add currently unstaking tokens
+      const { claims } = get(claimsSelector({ contractAddress: DAO_STAKING_ADDRESS, params: [{ address }] }));
+      const claimSum = claims ? claims.reduce((acc, curr) => acc + Number(curr.amount), 0) : 0;
+      const _amount = Number(balance) + claimSum + totalStaked - Number(locked);
 
       let amount = "0";
 
