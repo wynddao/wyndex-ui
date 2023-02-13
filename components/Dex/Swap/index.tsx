@@ -1,14 +1,15 @@
 import { Box, Button, Collapse, Flex, Icon, Image, keyframes, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
-import React, { startTransition, useCallback, useMemo, useState } from "react";
+import React, { startTransition, useMemo, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../../state";
 import { useSend } from "../../../state/hooks/clients/Cw20";
 import { useExecuteSwapOperations } from "../../../state/hooks/clients/WyndexMultiHop";
-import { useSimulateOperationInfos } from "../../../state/hooks/useSimulateOperationInfos";
+import { useReverseSimulateSwap } from "../../../state/hooks/useReverseSimulateSwap";
+import { useSimulateSwap } from "../../../state/hooks/useSimulateSwap";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../../utils";
 import { getAssetInfo } from "../../../utils/assets";
 import { getAssetList } from "../../../utils/getAssetList";
@@ -27,19 +28,24 @@ const spin = keyframes`
 `;
 
 const Swap: React.FC = () => {
-  const assetList = getAssetList();
+  const { address: walletAddress, connect, isWalletConnected } = useWallet();
+  const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { txToast, isTxLoading } = useToast();
+
+  const [slippage, setSlippage] = useState<number>(1);
   const [showHistorical, setShowHistorical] = useState<boolean>(false);
+
+  const assetList = getAssetList();
   const [fromToken, setFromToken] = useState<Asset>(
     assetList.tokens.find((asset) => asset.denom.includes("juno")) ?? assetList.tokens[3],
   );
   const [toToken, setToToken] = useState<Asset>(
     assetList.tokens.find((asset) => asset.denom.includes("wynd")) ?? assetList.tokens[4],
   );
-  const { address: walletAddress, connect, isWalletConnected } = useWallet();
-  const [inputAmount, setInputAmount] = useState<string>("1");
-  const [slippage, setSlippage] = useState<number>(1);
-  const { txToast, isTxLoading } = useToast();
-  const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const operations = useRecoilValue(
+    swapOperationRoutes({ offerAsset: getAssetInfo(fromToken), askAsset: getAssetInfo(toToken) }),
+  );
+
   const fromBalanceSelector = getBalanceByAsset({ address: walletAddress || "", asset: fromToken });
   const fromBalance = useRecoilValue(fromBalanceSelector);
   const refreshFromBalance = useRecoilRefresher_UNSTABLE(fromBalanceSelector);
@@ -47,14 +53,27 @@ const Swap: React.FC = () => {
     getBalanceByAsset({ address: walletAddress || "", asset: toToken }),
   );
 
-  const operations = useRecoilValue(
-    swapOperationRoutes({ askAsset: getAssetInfo(toToken), offerAsset: getAssetInfo(fromToken) }),
-  );
-
-  const { simulatedOperation } = useSimulateOperationInfos(
-    amountToMicroamount(inputAmount, fromToken.decimals),
+  const [fromTokenAmount, setFromTokenAmount] = useState<string | null>("1");
+  const { simulatedSwap: toTokenSimulated } = useSimulateSwap(
+    fromTokenAmount ? amountToMicroamount(fromTokenAmount, fromToken.decimals) : "0",
     operations,
   );
+  const [toTokenAmount, setToTokenAmount] = useState<string | null>(
+    microamountToAmount(toTokenSimulated.amount, fromToken.decimals, 4),
+  );
+  const { reverseSimulatedSwap: fromTokenSimulated } = useReverseSimulateSwap(
+    toTokenAmount ? amountToMicroamount(toTokenAmount, toToken.decimals) : "0",
+    operations,
+  );
+
+  const swapTokenPosition = () => {
+    startTransition(() => {
+      setFromToken(toToken);
+      setToToken(fromToken);
+      setFromTokenAmount(null);
+      setToTokenAmount(null);
+    });
+  };
 
   const swapNative = useExecuteSwapOperations({
     contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
@@ -66,12 +85,14 @@ const Swap: React.FC = () => {
     sender: walletAddress || "",
   });
 
-  const swap = useCallback(async () => {
+  const swap = async () => {
     const spread = (slippage / 100).toString();
 
     if (fromToken.tags.includes("cw20")) {
       return await sendCW20({
-        amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(),
+        amount: fromTokenAmount
+          ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+          : fromTokenSimulated.amount,
         contract: MULTI_HOP_CONTRACT_ADDRESS,
         msg: toBase64(
           toUtf8(JSON.stringify({ execute_swap_operations: { operations, max_spread: spread } })),
@@ -81,20 +102,15 @@ const Swap: React.FC = () => {
 
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
       {
-        amount: amountToMicroamount(inputAmount, fromToken.decimals).toString(),
-        denom: fromToken.tags.includes("ibc") ? (fromToken as IBCAsset).juno_denom : fromToken.denom,
+        amount: fromTokenAmount
+          ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+          : fromTokenSimulated.amount,
+        denom: fromToken.denom,
       },
     ]);
-  }, [fromToken, inputAmount, operations, sendCW20, slippage, swapNative]);
-
-  const swapTokenPosition = () => {
-    startTransition(() => {
-      setFromToken(toToken);
-      setToToken(fromToken);
-    });
   };
 
-  const handlerSwap = useCallback(async () => {
+  const handlerSwap = async () => {
     if (isTxLoading) return;
     if (walletAddress) {
       await txToast(swap);
@@ -115,27 +131,15 @@ const Swap: React.FC = () => {
     } else {
       connect();
     }
-  }, [
-    connect,
-    fromToken,
-    isTxLoading,
-    refreshCw20Balances,
-    refreshFromBalance,
-    refreshIbcBalances,
-    refreshToBalance,
-    swap,
-    toToken,
-    txToast,
-    walletAddress,
-  ]);
+  };
 
   const buttonText = useMemo(() => {
     if (isTxLoading) return "";
     if (!walletAddress) return "Connect Wallet";
-    if (Number(inputAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
+    if (Number(fromTokenAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
       return "Insufficient Amount";
     if (walletAddress) return "Swap";
-  }, [fromBalance.amount, fromToken.decimals, inputAmount, isTxLoading, walletAddress]);
+  }, [fromBalance.amount, fromToken.decimals, fromTokenAmount, isTxLoading, walletAddress]);
 
   return (
     <Flex
@@ -153,8 +157,11 @@ const Swap: React.FC = () => {
           toToken={toToken}
           fromToken={fromToken}
           setFromToken={setFromToken}
-          inputAmount={inputAmount}
-          setInputAmount={setInputAmount}
+          inputAmount={fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
+          setInputAmount={(amount) => {
+            setFromTokenAmount(amount);
+            setToTokenAmount(null);
+          }}
           balance={fromBalance}
         />
         <SwapIcon swapTokens={swapTokenPosition} />
@@ -162,8 +169,12 @@ const Swap: React.FC = () => {
           fromToken={fromToken}
           toToken={toToken}
           setToToken={setToToken}
-          inputAmount={inputAmount}
-          expectedAmount={simulatedOperation.amount}
+          inputAmount={toTokenAmount ?? microamountToAmount(toTokenSimulated.amount, toToken.decimals)}
+          fromAmount={fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
+          setInputAmount={(amount) => {
+            setToTokenAmount(amount);
+            setFromTokenAmount(null);
+          }}
         />
       </Box>
       <Box mt={{ lg: -16 }}>
@@ -184,7 +195,6 @@ const Swap: React.FC = () => {
           <LineChart toToken={toToken} fromToken={fromToken} open={showHistorical} />
         </Collapse>
       </Box>
-
       <Button
         h={{ base: 12, lg: 16 }}
         w="full"
@@ -193,7 +203,11 @@ const Swap: React.FC = () => {
         disabled={
           !isTxLoading &&
           isWalletConnected &&
-          Number(inputAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals))
+          ((!fromTokenAmount && !toTokenAmount) ||
+            fromTokenAmount === "0" ||
+            toTokenAmount === "0" ||
+            Number(fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)) >
+              Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
         }
         bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
@@ -223,12 +237,14 @@ const Swap: React.FC = () => {
       </Button>
       {operations.length > 0 && (
         <Rate
-          slippage={slippage}
-          fromToken={fromToken}
           logo-black-no-text
+          fromToken={fromToken}
           toToken={toToken}
-          simulatedOperation={simulatedOperation}
-          inputAmount={inputAmount}
+          inputFrom={fromTokenAmount}
+          inputTo={toTokenAmount}
+          simulatedFrom={fromTokenSimulated}
+          simulatedTo={toTokenSimulated}
+          slippage={slippage}
           route={getRouteByOperations(operations)}
         />
       )}
