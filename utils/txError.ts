@@ -1,42 +1,9 @@
-export class TxError extends Error {
-  constructor(msg: string) {
-    super(msg);
-    console.debug(msg);
-  }
+import { CustomError } from "./customError";
 
-  pretty() {
-    const parsedMsg = this.parser();
-
-    if (!Array.isArray(parsedMsg)) return parsedMsg;
-    const [msg] = parsedMsg;
-
-    if(msg.includes('The transfer would have moved tokens still locked by a vesting schedule')) return 'The transfer would have moved tokens still locked by a vesting schedule.';
-
-    // Support new cases
-    if (msg.includes("contract: ")) return this.formatContractErr(msg);
-    if (msg.includes("exceeds max spread limit")) return "The operation has exceeded the slippage limit";
-
-    return "Something went wrong";
-  }
-
-  parser() {
-    const match = this.re.exec(this.message);
-
-    if (this.message.includes("Unknown desc =")) {
-      return this.message.split("Unknown desc =")[1]?.split("[CosmWasm");
-    }
-
-    if (match != null) {
-      return match[1];
-    }
-
-    return "Something went wrong";
-  }
-
-  private formatContractErr(msg: string): string {
-    this.cause = "contract";
-    return msg.split("contract: ")[1];
-  }
-
-  private re = /message index: [0-9]: (.+?):/;
-}
+export const txError = new CustomError([
+  ["Cannot transfer tokens locked by a vesting schedule", "still locked by a vesting schedule"],
+  ["The operation has exceeded the slippage limit", "exceeds max spread limit"],
+  ["Not enough balance", "insufficient funds"],
+  ["Not enough gas was provided", "out of gas"],
+  ["Too many decimals provided", "error parsing decimal"],
+]);
