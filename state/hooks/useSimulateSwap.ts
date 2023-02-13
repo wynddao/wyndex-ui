@@ -3,28 +3,25 @@ import { MULTI_HOP_CONTRACT_ADDRESS } from "../../utils";
 import { SimulateSwapOperationsResponse, SwapOperation } from "../clients/types/WyndexMultiHop.types";
 import { WyndexMultiHopSelectors } from "../recoil";
 
-interface UseSimulateOperationInfosResponse {
-  simulatedOperation: SimulateSwapOperationsResponse;
+interface UseSimulateSwapResponse {
+  simulatedSwap: SimulateSwapOperationsResponse;
 }
 
-export const useSimulateOperationInfos = (
+export const useSimulateSwap = (
   offerAmount: string,
   operations: SwapOperation[],
-): UseSimulateOperationInfosResponse => {
+): UseSimulateSwapResponse => {
   try {
-    const simulatedOperation = useRecoilValue(
+    const simulatedSwap = useRecoilValue(
       WyndexMultiHopSelectors.simulateSwapOperationsSelector({
         contractAddress: MULTI_HOP_CONTRACT_ADDRESS,
         params: [{ offerAmount, operations, referral: false }],
       }),
     );
-
-    return {
-      simulatedOperation,
-    };
+    return { simulatedSwap };
   } catch (err) {
     return {
-      simulatedOperation: {
+      simulatedSwap: {
         amount: "0",
         commission_amounts: [],
         referral_amount: { amount: "0", info: { native: "" } },

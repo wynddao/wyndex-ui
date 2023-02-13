@@ -1,41 +1,46 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { SimulateSwapOperationsResponse } from "../../../../state/clients/types/WyndexMultiHop.types";
-import React, { useMemo } from "react";
 import { Asset } from "@wynddao/asset-list";
-import { microamountToAmount } from "../../../../utils/tokens";
-import { getAssetPriceByCurrency, getDenom } from "../../../../utils/assets";
 import { useRecoilValue } from "recoil";
-import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { useIndexerInfos } from "../../../../state";
+import { SimulateSwapOperationsResponse } from "../../../../state/clients/types/WyndexMultiHop.types";
+import { currencyAtom } from "../../../../state/recoil/atoms/settings";
+import { getAssetPriceByCurrency, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
+import { microamountToAmount } from "../../../../utils/tokens";
 import SwapRoute from "./SwapRoute";
 
 interface IProps {
   fromToken: Asset;
   toToken: Asset;
-  simulatedOperation: SimulateSwapOperationsResponse;
-  inputAmount: string;
+  inputFrom: string | null;
+  inputTo: string | null;
+  simulatedFrom: SimulateSwapOperationsResponse;
+  simulatedTo: SimulateSwapOperationsResponse;
   slippage: number;
   route: { from: string | undefined; to: string | undefined }[];
 }
 
-const Rate: React.FC<IProps> = ({ fromToken, toToken, simulatedOperation, inputAmount, slippage, route }) => {
+const Rate: React.FC<IProps> = ({
+  fromToken,
+  toToken,
+  inputFrom,
+  inputTo,
+  simulatedFrom,
+  simulatedTo,
+  slippage,
+  route,
+}) => {
+  const simulatedOperation = inputFrom ? simulatedTo : simulatedFrom;
   const minimumReceived = ((100 - slippage) / 100) * Number(simulatedOperation.amount);
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-  const totalFee = useMemo(
-    () =>
-      simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
-        const price = getAssetPriceByCurrency(currency, info, assetPrices);
-        return acc + price * Number(amount);
-      }, 0),
-    [assetPrices, currency, simulatedOperation.commission_amounts],
-  );
 
-  const minSlippage = useMemo(
-    () => (+Number(simulatedOperation.spread).toFixed(4) * 100).toFixed(2),
-    [simulatedOperation.spread],
-  );
+  const totalFee = simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
+    const price = getAssetPriceByCurrency(currency, info, assetPrices);
+    return acc + price * Number(amount);
+  }, 0);
+
+  const minSlippage = (Number(Number(simulatedOperation.spread).toFixed(4)) * 100).toFixed(2);
 
   return (
     <Flex
@@ -54,11 +59,11 @@ const Rate: React.FC<IProps> = ({ fromToken, toToken, simulatedOperation, inputA
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Rate</Text>
         <Text>
-          {inputAmount}{" "}
+          {inputFrom ?? microamountToAmount(simulatedOperation.amount, fromToken.decimals, 6)}{" "}
           <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
             {getDenom(fromToken)}
           </Text>{" "}
-          ≈ {microamountToAmount(simulatedOperation.amount, toToken.decimals, 6)}{" "}
+          ≈ {inputTo ?? microamountToAmount(simulatedOperation.amount, toToken.decimals, 6)}
           <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
             {getDenom(toToken)}
           </Text>
@@ -78,7 +83,7 @@ const Rate: React.FC<IProps> = ({ fromToken, toToken, simulatedOperation, inputA
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Minimum Received Amount</Text>
-        <Text>{microamountToAmount(minimumReceived, toToken.decimals, 6)}</Text>
+        <Text>{inputTo ?? microamountToAmount(minimumReceived, toToken.decimals, 6)}</Text>
       </Flex>
     </Flex>
   );
