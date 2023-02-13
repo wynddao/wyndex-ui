@@ -124,7 +124,6 @@ export const LineChart = ({
     },
     xaxis: {
       type: "datetime",
-      min: new Date("25 Jan 2023 16:10").getTime(),
       tickAmount: 6,
       labels: {
         style: {
