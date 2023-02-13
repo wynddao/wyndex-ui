@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
 import { useRef } from "react";
 import { toast } from "react-hot-toast";
 import { FiCopy } from "react-icons/fi";
@@ -22,10 +22,12 @@ export default function TxToastError({ txError }: { txError: CustomError }) {
             portalProps={{ containerRef: portalContainerRef }}
           >
             <Button bgColor="wynd.alert.error.200" onClick={onCopy} size="xs" marginTop={1} p={1}>
-              <Icon fontSize="xs" as={FiCopy} />
-              <Text marginTop={0.5} marginLeft={1}>
-                Copy full error to clipboard
-              </Text>
+              <Flex p={1} alignItems="center" justifyContent="space-between">
+                <Icon fontSize="xs" as={FiCopy} />
+                <Text marginLeft={1}>
+                  Copy full error to clipboard
+                </Text>
+              </Flex>
             </Button>
           </Tooltip>
         </Box>
