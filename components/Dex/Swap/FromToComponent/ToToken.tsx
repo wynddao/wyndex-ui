@@ -30,7 +30,7 @@ const ToToken: React.FC<IProps> = ({
   const priceTo = getAmountByPrice(inputAmount, currency, toToken, assetPrices);
 
   const impact = 100 - (priceFrom / priceTo) * 100;
-
+  console.log(!isFinite(impact))
   return (
     <Box flex="1">
       <Box
@@ -69,7 +69,7 @@ const ToToken: React.FC<IProps> = ({
                 />
                 <Text position="absolute" right="0" bottom="-4" fontSize="10px" color="wynd.neutral.500">
                   ≈ {formatCurrency(currency, `${priceTo.toFixed(6)}`)} (
-                  {isNaN(impact) ? "0" : impact.toFixed(2)} %)
+                  {isNaN(impact) || !isFinite(impact) ? "0" : impact.toFixed(2)} %)
                 </Text>
               </Flex>
               <Text textTransform="uppercase" minW="55px">
