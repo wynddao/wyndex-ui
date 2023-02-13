@@ -94,38 +94,25 @@ export const LsdCard = () => {
                 MY STAKED TOKENS
               </Text>
               <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-                1
+                10,000 $JUNO
               </Text>
             </GridItem>
             <GridItem>
               <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
-                MY TVL
+                APR
               </Text>
-              <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-                1
+              <Text
+                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                bgClip="text"
+                display="inline-block"
+                fontSize={{ base: "md", sm: "lg" }}
+                fontWeight="extrabold"
+              >
+                20%
               </Text>
             </GridItem>
           </Grid>
         </Flex>
-        <Box
-          w={"5rem"}
-          h="5rem"
-          borderTop="0"
-          clipPath="polygon(0% 0%, 100% 0%, 0% 100%)"
-          position="absolute"
-          bgGradient="linear(to-l, wynd.green.200, wynd.cyan.200)"
-          top="0"
-          left="0"
-        >
-          <Flex h="100%" direction="column" justifyContent="start" ml={1} mt={1}>
-            <Text fontSize="xs" as="samp" color="white">
-              NET APR
-            </Text>
-            <Text as="b" fontSize="md" color="white">
-              10%
-            </Text>
-          </Flex>
-        </Box>
       </Link>
     </Box>
   );
