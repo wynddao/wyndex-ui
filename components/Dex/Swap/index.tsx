@@ -99,13 +99,13 @@ const Swap: React.FC = () => {
         ),
       });
     }
-
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
       {
         amount: fromTokenAmount
           ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
           : fromTokenSimulated.amount,
-        denom: fromToken.denom,
+        // @ts-ignore
+        denom: fromToken.hasOwnProperty("juno_denom") ? fromToken.juno_denom : fromToken.denom,
       },
     ]);
   };
