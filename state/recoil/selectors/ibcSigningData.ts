@@ -43,22 +43,25 @@ export const getKeplrIbcSigningData = selectorFamily<
   get:
     ({ chainId }) =>
     async () => {
+
       if (!chainId) return {};
 
       try {
         const chainInfo = chainInfos[chainId];
+
         if (!chainInfo) return {};
 
         const assets: readonly Asset[] = getAssetList().tokens;
         const ibcAssets: readonly IBCAsset[] = assets.filter(
           (asset): asset is IBCAsset => asset.tags !== "cw20",
         );
+
         const feeAsset = ibcAssets.find((asset) => asset.chain_id === chainId);
         if (!feeAsset) return {};
 
         const keplrWallet = new KeplrExtensionWallet(
           { name: walletNames.keplr, prettyName: "Keplr", mode: "extension", mobileDisabled: true },
-          { [chainInfo.chainName]: { rpc: [chainInfo.rpc] } },
+          { [chainInfo.chainName]: { rpc: [feeAsset.rpc] } },
         );
         const keplrClient = await keplrWallet.fetchClient();
         await keplrClient.client.experimentalSuggestChain(chainInfo);
@@ -71,7 +74,7 @@ export const getKeplrIbcSigningData = selectorFamily<
           ) + feeAsset.denom,
         );
         let ibcSigningClientAny: any = await SigningStargateClient.connectWithSigner(
-          chainInfo.rpc,
+          feeAsset.rpc,
           keplrSigner,
           {
             gasPrice,
@@ -80,11 +83,12 @@ export const getKeplrIbcSigningData = selectorFamily<
         // NOTE ibc deposit fails without manually adding this field
         ibcSigningClientAny.chainId = chainInfo.chainId;
         const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
-
+          console.log(1)
         const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
 
         return { feeAsset, ibcSigningClient, nativeAddress };
-      } catch {
+      } catch (e) {
+        console.log(e)
         return {};
       }
     },
@@ -120,7 +124,7 @@ export const getLeapIbcSigningData = selectorFamily<
         const leapClient = await leapWallet.fetchClient();
 
         const leapSigner = await leapClient.getOfflineSigner(chainInfo.chainId);
-        const gasPrice = GasPrice.fromString(
+       const gasPrice = GasPrice.fromString(
           String(
             chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === feeAsset.denom)
               ?.gasPriceStep?.average,

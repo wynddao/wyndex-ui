@@ -195,6 +195,7 @@ export const ManageTokens = ({
                     vestedBalance={vestedBalance}
                     walletStakedTokens={walletStakedTokens}
                     unstakedAmount={unstakedAmount}
+                    claims={claims}
                   />
                 </TabPanel>
                 <TabPanel p={0}>

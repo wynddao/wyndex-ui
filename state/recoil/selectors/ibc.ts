@@ -2,7 +2,6 @@ import { Asset, IBCAsset } from "@wynddao/asset-list";
 import { CosmWasmClient } from "cosmwasm";
 import { selectorFamily } from "recoil";
 import { INDEXER_API_ENDPOINT } from "../../../utils";
-import { ChainInfo, chainInfos } from "../../../utils/chaindata/keplr/chainInfos";
 import { getAssetList } from "../../../utils/getAssetList";
 import { microamountToAmount } from "../../../utils/tokens";
 import { ibcBalanceSelector } from "./clients/indexer";
@@ -42,11 +41,10 @@ export const getTransferIbcData = selectorFamily<
         const asset = ibcAssets.find((asset) => asset.chain_id === chainId);
         if (!asset) return {};
 
-        const chainInfo: ChainInfo | undefined = chainInfos[chainId];
         const ibcBalance = get(
           ibcBalanceSelector({ apiUrl: INDEXER_API_ENDPOINT, params: [address, asset?.juno_denom ?? ""] }),
         );
-        const cwClient = await CosmWasmClient.connect(chainInfo.rpc);
+        const cwClient = await CosmWasmClient.connect((asset as IBCAsset).rpc);
         const nativeBalance = await cwClient.getBalance(nativeAddress, asset.denom);
 
         const transferIbcData: TransferIbcData = {

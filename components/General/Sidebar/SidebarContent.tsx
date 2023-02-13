@@ -1,20 +1,25 @@
 "use client";
 import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import Image from "next/image";
-import { FiActivity, FiPieChart, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { TbPills } from "react-icons/tb";
+import { FiActivity, FiPieChart, FiRefreshCw, FiWind } from "react-icons/fi";
+import { MdBallot } from "react-icons/md";
+import { FaBalanceScaleLeft } from "react-icons/fa";
+
 import wyndLogoWhite from "../../../public/logo-white.svg";
 import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem, { LinkItemProps } from "./NavItem";
 import OnRampButton from "./OnRamp/OnRampButton";
 import Settings from "./Options/Settings";
-import { SidebarMenu } from "./SidebarMenu";
 
 const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
   { name: "LSD", to: "/lsd", icon: TbPills },
+  { name: "Stake", to: "/stake", icon: FiWind },
+  { name: "Vote", to: "/vote", icon: MdBallot },
+  { name: "Gauges", to: "/gauges", icon: FaBalanceScaleLeft },
 ];
 
 interface SidebarContentProps extends BoxProps {
@@ -52,7 +57,6 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
             isExternalLink={link.isExternalLink}
           />
         ))}
-        <SidebarMenu />
       </Box>
       <Flex
         direction="column"
