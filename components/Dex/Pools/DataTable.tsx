@@ -1,36 +1,36 @@
-import React, { Suspense, useState } from "react";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  chakra,
-  Stack,
-  IconButton,
-  Flex,
-  Text,
-  Select,
   Box,
+  chakra,
+  Flex,
+  Icon,
+  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
-  Icon,
+  Select,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
-import { RxTriangleDown, RxTriangleUp } from "react-icons/rx";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import {
-  useReactTable,
+  ColumnDef,
+  FilterFn,
   flexRender,
   getCoreRowModel,
-  ColumnDef,
-  SortingState,
-  getSortedRowModel,
-  getPaginationRowModel,
-  FilterFn,
   getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
 } from "@tanstack/react-table";
+import React, { Suspense, useState } from "react";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { RxTriangleDown, RxTriangleUp } from "react-icons/rx";
 
 import { useRouter } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
@@ -41,9 +41,8 @@ import {
   getAssetInfoDetails,
   getAssetPrice,
 } from "../../../utils/assets";
-import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
 import { microamountToAmount } from "../../../utils/tokens";
-import { getAprForPool } from "../../../utils/apr";
+import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
@@ -190,7 +189,7 @@ export function DataTable<Data extends object>({
       <Box borderRadius="lg" overflow="auto">
         <Suspense fallback={<DataTableSkeleton />}>
           <Table variant="simple">
-            <Thead>
+            <Thead display={{ base: "none", md: "table-header-group" }}>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Tr key={headerGroup.id} bgColor={"wynd.base.sidebar"}>
                   {headerGroup.headers.map((header) => {
@@ -243,6 +242,8 @@ export function DataTable<Data extends object>({
                     backgroundSize="cover"
                     backgroundRepeat="repeat"
                     backgroundAttachment="fixed"
+                    borderBottom="1px solid"
+                    borderColor="gray.700"
                     _hover={{
                       backgroundColor: "wynd.gray.alpha.10",
                     }}
@@ -251,7 +252,43 @@ export function DataTable<Data extends object>({
                       // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                       const meta: any = cell.column.columnDef.meta;
                       return (
-                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                        <Td
+                          key={cell.id}
+                          isNumeric={meta?.isNumeric}
+                          border="none"
+                          display={{ base: "inline-block", md: "table-cell" }}
+                        >
+                          <chakra.div
+                            display={{ base: "inline-block", md: "none" }}
+                            bg="wynd.base.sidebar"
+                            p={2}
+                            mr={2}
+                            mb={2}
+                            borderRadius="md"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              cell.column.toggleSorting();
+                            }}
+                          >
+                            {cell.column.columnDef.header?.toString()}
+                            {cell.column.getCanSort() &&
+                              (cell.column.getIsSorted() ? (
+                                cell.column.getIsSorted() === "desc" ? (
+                                  <RxTriangleDown
+                                    style={{ display: "inline-block" }}
+                                    aria-label="sorted descending"
+                                  />
+                                ) : (
+                                  cell.column.getIsSorted() === "asc" && (
+                                    <RxTriangleUp
+                                      style={{ display: "inline-block" }}
+                                      aria-label="sorted ascending"
+                                    />
+                                  )
+                                )
+                              ) : null)}
+                          </chakra.div>
+                          <br />
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Td>
                       );
