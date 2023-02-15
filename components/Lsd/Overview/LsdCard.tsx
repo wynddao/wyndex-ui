@@ -17,11 +17,12 @@ export const LsdCard = () => {
       border="1px solid"
       borderColor={"wynd.neutral.100"}
       position="relative"
+      boxShadow="md"
+      borderRadius="lg"
     >
-      <Link href="#">
+      <Link href="/lsd/1">
         <Flex
           borderRadius="lg"
-          boxShadow="md"
           backgroundColor={"wynd.gray.alpha.10"}
           backgroundImage={
             randomIntFromInterval(1, 2) === 1 ? "url(/trippy_bg_2.png)" : "url(/trippy_bg.png)"
