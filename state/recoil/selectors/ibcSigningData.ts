@@ -43,7 +43,6 @@ export const getKeplrIbcSigningData = selectorFamily<
   get:
     ({ chainId }) =>
     async () => {
-
       if (!chainId) return {};
 
       try {
@@ -83,12 +82,11 @@ export const getKeplrIbcSigningData = selectorFamily<
         // NOTE ibc deposit fails without manually adding this field
         ibcSigningClientAny.chainId = chainInfo.chainId;
         const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
-          console.log(1)
         const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
 
         return { feeAsset, ibcSigningClient, nativeAddress };
       } catch (e) {
-        console.log(e)
+        console.error(e);
         return {};
       }
     },
@@ -124,7 +122,7 @@ export const getLeapIbcSigningData = selectorFamily<
         const leapClient = await leapWallet.fetchClient();
 
         const leapSigner = await leapClient.getOfflineSigner(chainInfo.chainId);
-       const gasPrice = GasPrice.fromString(
+        const gasPrice = GasPrice.fromString(
           String(
             chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === feeAsset.denom)
               ?.gasPriceStep?.average,
