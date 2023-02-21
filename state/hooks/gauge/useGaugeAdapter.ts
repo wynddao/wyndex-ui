@@ -19,7 +19,7 @@ export const useGaugeAdapter = (id: number) => {
   const { options } = useRecoilValue(
     WyndGaugeOrchestratorSelectors.listOptionsSelector({
       contractAddress: orchestratorAddress,
-      params: [{ gauge: id }],
+      params: [{ gauge: id, limit: 100 }],
     }),
   );
 
