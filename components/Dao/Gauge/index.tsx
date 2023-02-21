@@ -516,7 +516,9 @@ export const Gauge = ({
                       ).toString(),
                     )}
                   </Flex>
-                  <Flex align="center">{((pool.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
+                  <Tooltip placement="left" label={`Voting Power: ${pool.currentVotePower} / ${totalVotes}`}>
+                    <Flex align="center">{((pool.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
+                  </Tooltip>
                 </Grid>
               ))}
           </Box>
