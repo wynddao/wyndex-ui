@@ -184,8 +184,18 @@ export default function AddLiquidity({
       assets.find(
         (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
-    const maxMicroBalanceA = microamountToAmount(assetABalance.amount, decimalsA);
-    const maxMicroBalanceB = microamountToAmount(assetBBalance.amount, decimalsB);
+
+    const isAJuno = newInputValueA.id === "ujunox" || newInputValueA.id === "ujuno";
+    const isBJuno = newInputValueB.id === "ujunox" || newInputValueB.id === "ujuno";
+
+    const maxMicroBalanceA = microamountToAmount(
+      isAJuno ? Number(assetABalance.amount) - 50000 : assetABalance.amount,
+      decimalsA,
+    );
+    const maxMicroBalanceB = microamountToAmount(
+      isBJuno ? Number(assetBBalance.amount) - 50000 : assetBBalance.amount,
+      decimalsB,
+    );
 
     if (Number(maxMicroBalanceA) / ratioB < Number(maxMicroBalanceB)) {
       newInputValueA.value = maxMicroBalanceA;
