@@ -12,6 +12,7 @@ import "../components/Dex/Carousel/index.css";
 import "../components/Dex/Swap/LineChart/style.css";
 import { WYND_MAINTANANCE_MODE } from "../utils";
 import Maintanance from "../components/General/Maintanance";
+import "../components/Dex/MysteryBox/index.css";
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
