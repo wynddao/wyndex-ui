@@ -15,13 +15,14 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
-import { useRecoilState, useRecoilValueLoadable } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValueLoadable } from "recoil";
 import { useIndexerInfos, useToast } from "../../../state";
 import { depositIbcModalAtom } from "../../../state/recoil/atoms/modal";
 import { getTransferIbcData } from "../../../state/recoil/selectors/ibc";
-import { getIbcSigningDataSelector } from "../../../state/recoil/selectors/ibcSigningData";
+import { getIbcSigningDataSelector, walletNames } from "../../../state/recoil/selectors/ibcSigningData";
+import { keplrAccountChangeKey } from "../../../utils/account";
 import { amountToMicroamount } from "../../../utils/tokens";
 
 export default function DepositIbcModal() {
@@ -31,9 +32,12 @@ export default function DepositIbcModal() {
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
   const { refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
 
-  const loadableIbcSigningData = useRecoilValueLoadable(
-    getIbcSigningDataSelector(depositIbcModalOpen.chainId ?? "", currentWalletName),
+  const ibcSigningDataSelector = getIbcSigningDataSelector(
+    depositIbcModalOpen.chainId ?? "",
+    currentWalletName,
   );
+  const loadableIbcSigningData = useRecoilValueLoadable(ibcSigningDataSelector);
+  const refreshIbcSigningData = useRecoilRefresher_UNSTABLE(ibcSigningDataSelector);
   const loadableTransferIbcData = useRecoilValueLoadable(
     getTransferIbcData({
       chainId: depositIbcModalOpen.chainId,
@@ -42,6 +46,14 @@ export default function DepositIbcModal() {
         loadableIbcSigningData.state === "hasValue" ? loadableIbcSigningData.contents.nativeAddress : null,
     }),
   );
+
+  useEffect(() => {
+    if (currentWalletName === walletNames.keplr) {
+      window.addEventListener(keplrAccountChangeKey, refreshIbcSigningData);
+    } else {
+      window.removeEventListener(keplrAccountChangeKey, refreshIbcSigningData);
+    }
+  }, [currentWalletName, refreshIbcSigningData]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");

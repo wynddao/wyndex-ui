@@ -1,6 +1,10 @@
 import { Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../../../state";
 import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
+import { currencyAtom } from "../../../../state/recoil/atoms/settings";
+import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { secondsToDays } from "../../../../utils/time";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { getPendingRebonding } from "../../../Dex/Pool/PendingBoundingsTable/util";
@@ -12,10 +16,16 @@ interface RebondingTokensOptions {
 
 export const RebondingTokens = (props: RebondingTokensOptions) => {
   const { wyndexStake, walletAddress } = props;
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
   const { unbondingPeriods } = useDaoStakingInfos();
 
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
   const [hasAnyRebondings, setHasAnyRebondings] = useState<boolean>(false);
+
+  const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
+  const wyndexPrice =
+    currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
 
   useEffect(() => {
     const pendingRebonding = unbondingPeriods.map(async (info: any) => {
@@ -71,7 +81,9 @@ export const RebondingTokens = (props: RebondingTokensOptions) => {
                     gap="4"
                   >
                     <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-                      {microamountToAmount(amount[1], 6)} $WYND
+                      {microamountToAmount(amount[1], 6)} $WYND (~
+                      {microamountToAmount(Number(amount[1]) * wyndexPrice, 6, 2)}{" "}
+                      {currency === "USD" ? "$" : "€"})
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
                       <Text fontSize="lg">

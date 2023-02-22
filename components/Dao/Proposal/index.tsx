@@ -159,9 +159,9 @@ export const ProposalComponent = ({
       </Box>
       <Grid templateColumns={{ base: "1fr, 1fr", lg: "6fr 2fr" }} mt={4} gap={30}>
         <Box>
-          <BorderedBox bgImageActive={false}>
+          <BorderedBox bgImageActive={false} width="fit-content">
             <Text fontSize={"4xl"}>Description</Text>
-            <BorderedBox bgImageActive={false}>
+            <BorderedBox bgImageActive={false} maxW={{ base: "300px", sm: "440px", md: "500px", lg: "100%" }}>
               <Text>
                 <ReactMarkdown components={ChakraUIRenderer()}>{proposalResponse.description}</ReactMarkdown>
               </Text>
@@ -172,7 +172,7 @@ export const ProposalComponent = ({
               const msgType = getMsgType(msg);
               return (
                 <Box key={i} mb={5}>
-                  <BorderedBox>
+                  <BorderedBox maxW={{ base: "300px", sm: "440px", md: "500px", lg: "100%" }}>
                     <Message type={msgType} />{" "}
                   </BorderedBox>
                 </Box>
