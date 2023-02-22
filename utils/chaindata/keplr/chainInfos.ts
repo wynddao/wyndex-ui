@@ -281,4 +281,43 @@ export const chainInfos: Record<string, ChainInfo> = {
       },
     ],
   },
+  "mars-1": {
+    rpc: "https://rpc.expedition-mars.com",
+    rest: "https://lcd.expedition-mars.com",
+    chainId: "mars-1",
+    chainName: "mars",
+    stakeCurrency: {
+      coinDenom: "mars",
+      coinMinimalDenom: "umars",
+      coinDecimals: 6,
+    },
+    bip44: { coinType: 118 },
+    bech32Config: {
+      bech32PrefixAccAddr: "mars",
+      bech32PrefixAccPub: "mars",
+      bech32PrefixValAddr: "mars",
+      bech32PrefixValPub: "mars",
+      bech32PrefixConsAddr: "mars",
+      bech32PrefixConsPub: "mars",
+    },
+    currencies: [
+      {
+        coinDenom: "mars",
+        coinMinimalDenom: "umars",
+        coinDecimals: 6,
+      },
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: "mars",
+        coinMinimalDenom: "umars",
+        coinDecimals: 6,
+        gasPriceStep: {
+          low: 0.03,
+          average: 0.04,
+          high: 0.05,
+        },
+      },
+    ],
+  },
 };

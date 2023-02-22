@@ -7,10 +7,12 @@ import "../components/Dex/Swap/LineChart/style.css";
 import ErrorBoundary from "../components/General/ErrorBoundary";
 import Loader from "../components/General/Loader";
 import Maintanance from "../components/General/Maintanance";
+import "../components/Dex/MysteryBox/index.css";
 import Sidebar from "../components/General/Sidebar";
 import ToSModal from "../components/General/ToSModal";
 import Providers from "../providers/providers";
 import { WYND_MAINTANANCE_MODE } from "../utils";
+
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
