@@ -3,7 +3,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { MsgType } from "./types";
 import { Box, Input, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { FocusEvent, useState } from "react";
 
 export const Migrate = ({
   msg,
@@ -14,9 +14,12 @@ export const Migrate = ({
   edit?: boolean;
   setMsg?: (msg: MsgType) => void;
 }) => {
-  const [newMsg, setNewMsg] = useState<string>("{}");
   const setContractAddress = (contract_addr: string) => {
     setMsg({ ...msg, contract_addr });
+  };
+
+  const setMsgBeautified = (e: FocusEvent<HTMLParagraphElement, Element>) => {
+    setMsg({ ...msg, msgBeautified: e.currentTarget.textContent || "{}" });
   };
 
   const setNewCodeId = (new_code_id: string) => {
@@ -60,14 +63,15 @@ export const Migrate = ({
       <Text fontSize={"xl"} mt={5}>
         Message:
       </Text>
-      {msg ? (
+      {!edit ? (
         <SyntaxHighlighter language="json" style={vscDarkPlus}>
           {msg.msgBeautified}
         </SyntaxHighlighter>
       ) : (
-        <p contentEditable={true} onInput={(e) => setNewMsg(e.currentTarget.textContent || "{}")}>
-          {/* eslint-disable-next-line react/no-children-prop */}
-          <SyntaxHighlighter language="json" style={vscDarkPlus} children={newMsg} />
+        <p contentEditable={true} onBlur={(e) => setMsgBeautified(e)}>
+          <SyntaxHighlighter language="json" style={vscDarkPlus}>
+            {msg.msgBeautified}
+          </SyntaxHighlighter>
         </p>
       )}
     </>

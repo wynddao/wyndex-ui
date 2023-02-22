@@ -51,11 +51,9 @@ export const getResultInText = (quorum: number, totalVotes: number, votes: any, 
 
 export const simulateProposal = async (sender: string, proposal: CosmosMsg_for_Empty[]): Promise<any> => {
   try {
-    const gasPrice = GasPrice.fromString("0.01ujuno");
-    const feeToken = "ujuno";
-
-    // Setup signer
+    // Setup signer & Gas Price
     const signer = new FakeDAOWallet(WYND_VOTE_MODULE_ADDRESS);
+    const gasPrice = GasPrice.fromString("0.01ujuno");
 
     // Init SigningCosmWasmClient client
     const client = await SigningCosmWasmClient.connectWithSigner(CHAIN_RPC_ENDPOINT, signer, {
@@ -64,14 +62,12 @@ export const simulateProposal = async (sender: string, proposal: CosmosMsg_for_E
       gasPrice,
     });
 
-    console.log(`Testing if valid proposal:`);
-
     const simMsg = {
       execute_proposal_hook: {
         msgs: proposal,
       },
     };
-
+  
     const msg = {
       typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
       value: MsgExecuteContract.fromPartial({

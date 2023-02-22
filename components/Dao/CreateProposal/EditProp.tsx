@@ -16,6 +16,7 @@ interface CreateProposalProps {
   setDescription: (description: string) => void;
   setTabIndex: (n: number) => void;
   error: FormError;
+  preview: boolean;
 }
 
 export const EditProp = ({
@@ -27,6 +28,7 @@ export const EditProp = ({
   setDescription,
   setTabIndex,
   error,
+  preview,
 }: CreateProposalProps) => {
   const addNewMsg = () => {
     const _msgs: MsgType[] = [
@@ -128,7 +130,7 @@ export const EditProp = ({
             })}
           </BorderedBox>
           <Box w="100%" mt={3}>
-            <Button w="100%" onClick={() => setTabIndex(1)}>
+            <Button disabled={preview} w="100%" onClick={() => setTabIndex(1)}>
               Preview Proposal
             </Button>
           </Box>

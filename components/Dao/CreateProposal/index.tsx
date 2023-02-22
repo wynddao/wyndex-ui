@@ -1,6 +1,18 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Grid,
+  GridItem,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from "@chakra-ui/react";
 import { toBase64 } from "cosmwasm";
 import { useState } from "react";
+import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { MsgType } from "../Actions/types";
 import { EditProp } from "./EditProp";
 import { CreateProposalHeader } from "./Header";
@@ -17,8 +29,15 @@ export const CreateProposal = () => {
   const [description, setDescription] = useState<string>("");
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [error, setError] = useState<FormError>({ title: false, desc: false });
+  const { walletStakedTokens } = useDaoStakingInfos({
+    fetchWalletStakedValue: true,
+  });
 
   const checkAndSet = (index: number) => {
+    if (Number(walletStakedTokens) <= 0) {
+      return;
+    }
+
     if (index === 1) {
       const _error: FormError = {
         title: title.length <= 0,
@@ -62,7 +81,7 @@ export const CreateProposal = () => {
           wasm: {
             migrate: {
               contract_addr: msg.contract_addr,
-              new_code_id: msg.new_code_id,
+              new_code_id: Number(msg.new_code_id),
               msg: btoa(msg.msgBeautified),
             },
           },
@@ -83,9 +102,21 @@ export const CreateProposal = () => {
             Preview
           </Tab>
         </TabList>
+        <Grid templateColumns="1fr 3fr 1fr">
+          {Number(walletStakedTokens) <= 0 && (
+            <GridItem colStart={2} colSpan={1}>
+              <Alert status="warning">
+                <AlertIcon />
+                <Text fontWeight="bold">Warning: </Text>
+                <Text>{" "}You need to stake $WYND to create a proposal!</Text>
+              </Alert>
+            </GridItem>
+          )}
+        </Grid>
         <TabPanels>
           <TabPanel>
             <EditProp
+              preview={Number(walletStakedTokens) <= 0}
               msgs={msgs}
               setMsgs={setMsgs}
               title={title}
