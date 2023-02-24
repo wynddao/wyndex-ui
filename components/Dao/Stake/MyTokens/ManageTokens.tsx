@@ -27,6 +27,7 @@ import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
+import { formatCurrency } from "../../../../utils/currency";
 import { secondsToDays } from "../../../../utils/time";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
@@ -172,10 +173,9 @@ export const ManageTokens = ({
                       <Text fontSize="lg">{secondsToDays(stake.unbonding_period)} days</Text>
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
-                      <Text fontSize="lg">
-                        {microamountToAmount(stake.stake, 6)} $WYND (~
-                        {microamountToAmount(Number(stake.stake) * wyndexPrice, 6, 2)}{" "}
-                        {currency === "USD" ? "$" : "€"})
+                      <Text fontSize="lg">{microamountToAmount(stake.stake, 6)} $WYND</Text>
+                      <Text fontSize="sm">
+                        {formatCurrency(currency, (Number(microamountToAmount(stake.stake, 6)) * wyndexPrice).toString() )}
                       </Text>
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>

@@ -4,6 +4,7 @@ import { useIndexerInfos } from "../../../state";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { WYND_TOKEN_ADDRESS } from "../../../utils";
+import { formatCurrency } from "../../../utils/currency";
 import { secondsToDays } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
 
@@ -26,21 +27,11 @@ export const StakeHeader = ({
   const treasuryBalanceWyndFormatted = Number(
     microamountToAmount(treasuryBalanceWynd || 0, 6),
   ).toLocaleString(undefined, { maximumFractionDigits: 0 });
-  const treasuryBalanceFiatFormatted = Number(microamountToAmount(treasuryBalanceFiat, 6, 2)).toLocaleString(
-    undefined,
-    { maximumFractionDigits: 0 },
-  );
 
   const totalStakedFiat = Number(totalStakedWynd) * wyndexPrice;
   const totalStakedWyndFormatted = Number(microamountToAmount(totalStakedWynd || 0, 6)).toLocaleString(
     undefined,
     { maximumFractionDigits: 0 },
-  );
-  const totalStakedFiatFormatted = Number(microamountToAmount(totalStakedFiat, 6, 2)).toLocaleString(
-    undefined,
-    {
-      maximumFractionDigits: 0,
-    },
   );
 
   return (
@@ -64,8 +55,7 @@ export const StakeHeader = ({
               DAO Treasury
             </Text>
             <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
-              {treasuryBalanceWyndFormatted} $WYND (~{treasuryBalanceFiatFormatted}{" "}
-              {currency === "USD" ? "$" : "€"})
+              {treasuryBalanceWyndFormatted} $WYND <Text fontSize="sm">≈ ({formatCurrency(currency, microamountToAmount(treasuryBalanceFiat, 6))})</Text>
             </Text>
           </Box>
           <Box py={{ md: 2 }} textAlign={{ base: "center", md: "right" }}>
@@ -73,7 +63,7 @@ export const StakeHeader = ({
               Total staked
             </Text>
             <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
-              {totalStakedWyndFormatted} $WYND (~{totalStakedFiatFormatted} {currency === "USD" ? "$" : "€"})
+              {totalStakedWyndFormatted} $WYND <Text fontSize="sm">≈ ({formatCurrency(currency, microamountToAmount(totalStakedFiat, 6))})</Text>
             </Text>
           </Box>
         </Flex>

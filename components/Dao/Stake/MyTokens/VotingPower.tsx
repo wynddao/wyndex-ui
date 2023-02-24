@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { WYND_TOKEN_ADDRESS } from "../../../../utils";
+import { formatCurrency } from "../../../../utils/currency";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
 
@@ -38,11 +39,16 @@ export const VotingPower = ({
             )
           </Text>
           {Number(walletStakedTokens) > 0 && (
-            <Text>
-              {microamountToAmount(walletStakedTokens ?? 0, 6)} $WYND (~
-              {microamountToAmount(Number(walletStakedTokens ?? 0) * wyndexPrice, 6, 2)}{" "}
-              {currency === "USD" ? "$" : "€"}) staked
-            </Text>
+            <>
+              <Text>{microamountToAmount(walletStakedTokens ?? 0, 6)} $WYND staked</Text>
+              <Text fontSize="sm">
+                {"≈ "}
+                {formatCurrency(
+                  currency,
+                  (Number(microamountToAmount(walletStakedTokens || 0, 6)) * wyndexPrice).toString(),
+                )}
+              </Text>
+            </>
           )}
         </Box>
       </Flex>
