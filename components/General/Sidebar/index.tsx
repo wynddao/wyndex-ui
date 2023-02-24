@@ -23,8 +23,8 @@ export default function Sidebar({ children }: SidebarProps) {
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "flex" }}
-        overflowX="clip"
-        overflowY="auto"
+        overflowX={{ base: "clip", md: "visible" }}
+        overflowY={{ base: "auto", md: "visible" }}
         width={{ base: 0, md: 60 }}
         position="sticky"
         top="0"

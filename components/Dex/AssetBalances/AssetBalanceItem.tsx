@@ -28,13 +28,13 @@ interface AssetBalanceItemProps {
 }
 
 export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemProps) {
-  const { onCopy, hasCopied } = useClipboard("token_address" in asset ? asset.token_address : asset.denom);
+  const { onCopy, hasCopied } = useClipboard(asset.tags.includes("cw20") ? (asset as CW20Asset).token_address : asset.tags.includes("ibc") ? (asset as IBCAsset).juno_denom : asset.denom);
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
 
-  const toCopy = "token_address" in asset ? "address" : "denom";
+  const toCopy = "token_address" in asset ? "address" : "juno denom";
   const tooltipLabel = hasCopied ? `${capitalizeFirstLetter(toCopy)} copied!` : `Copy ${toCopy}`;
 
   return (
