@@ -1,9 +1,6 @@
-"use client";
-
-import { Box, Drawer, DrawerContent, Flex, useDisclosure } from "@chakra-ui/react";
+import { Box, Drawer, DrawerContent, Flex, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
-import { useMediaQuery } from "@chakra-ui/react";
 import { CHAIN_NAME } from "../../../utils";
 import Hamburguer from "./Hamburguer";
 import SidebarContent from "./SidebarContent";
@@ -26,6 +23,8 @@ export default function Sidebar({ children }: SidebarProps) {
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "flex" }}
+        overflowX={{ base: "clip", md: "visible" }}
+        overflowY={{ base: "auto", md: "visible" }}
         width={{ base: 0, md: 60 }}
         position="sticky"
         top="0"
@@ -39,6 +38,7 @@ export default function Sidebar({ children }: SidebarProps) {
         returnFocusOnClose={false}
         onOverlayClick={onClose}
         size="full"
+        styleConfig={{ overflowX: "clip", overflowY: "auto" }}
       >
         <DrawerContent>
           <SidebarContent onClose={onClose} />

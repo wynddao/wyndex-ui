@@ -3,5 +3,6 @@ export interface MsgType {
   msg: string;
   msgBeautified: string;
   contract_addr: string;
-  rawMsg: Record<string, any>;
+  rawMsg: CosmosMsg_for_Empty;
+  new_code_id?: string;
 }

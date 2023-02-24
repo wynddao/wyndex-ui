@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useRouter } from "next/navigation";
 import { BsCheck2Circle, BsQuestionCircle, BsXCircle } from "react-icons/bs";
@@ -56,7 +56,9 @@ export const PropList = ({ limit }: { limit: number }) => {
   const { address: walletAddress } = useWallet();
 
   const propCount = useProposalCount(voteModule);
-  const allProps = useListAllProposalInfos(voteModule, propCount - limit * 10, limit * 10).reverse();
+  const allProps = useListAllProposalInfos(voteModule, propCount - limit * 10, limit * 10).sort(
+    (a, b) => b.proposalNumber - a.proposalNumber,
+  );
 
   const router = useRouter();
   const handleRowClick = (prop: any) => {

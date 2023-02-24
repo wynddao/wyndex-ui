@@ -13,12 +13,21 @@ import {
 } from "@chakra-ui/react";
 import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
-import { useCw20UserInfos, useToast, useTokenInfo, WyndDaoBaseHooks } from "../../../../state";
+import { useRecoilValue } from "recoil";
+import {
+  useCw20UserInfos,
+  useIndexerInfos,
+  useToast,
+  useTokenInfo,
+  WyndDaoBaseHooks,
+} from "../../../../state";
 import { Claim } from "../../../../state/clients/types/WyndDaoStake.types";
 import { BondingPeriodInfo, StakedResponse } from "../../../../state/clients/types/WyndexStake.types";
 import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
+import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
+import { formatCurrency } from "../../../../utils/currency";
 import { secondsToDays } from "../../../../utils/time";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
@@ -51,6 +60,8 @@ export const ManageTokens = ({
   const { balance, refreshBalance } = useCw20UserInfos(WYND_TOKEN_ADDRESS);
   const { unbondingPeriods } = useDaoStakingInfos();
   const { txToast } = useToast();
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
   const tokenInfo = useTokenInfo(WYND_TOKEN_ADDRESS);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -59,6 +70,10 @@ export const ManageTokens = ({
   const [nextDuration, setNextDuration] = useState<BondingPeriodInfo | undefined>(undefined);
   const [prevDuration, setPrevDuration] = useState<BondingPeriodInfo | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
+  const wyndexPrice =
+    currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
 
   const stake = WyndDaoBaseHooks.useDelegate({
     contractAddress: WYND_TOKEN_ADDRESS,
@@ -159,6 +174,9 @@ export const ManageTokens = ({
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
                       <Text fontSize="lg">{microamountToAmount(stake.stake, 6)} $WYND</Text>
+                      <Text fontSize="sm">
+                        {formatCurrency(currency, (Number(microamountToAmount(stake.stake, 6)) * wyndexPrice).toString() )}
+                      </Text>
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
                       <Button
