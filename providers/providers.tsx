@@ -55,7 +55,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <WalletProvider
           chains={[...chains, junoTestnet]}
           assetLists={[...assets, junoAssets]}
-          // FIXME type mismatch, try fixing after updating all @cosmos-kit
+          //! FIXME type missmatch, try fixing after updating all @cosmos-kit
+          // @ts-ignore
           wallets={[...keplrWallets, ...(leapwallets as unknown as MainWalletBase[]), ...cosmostationWallets]}
           signerOptions={signerOptions}
           endpointOptions={{

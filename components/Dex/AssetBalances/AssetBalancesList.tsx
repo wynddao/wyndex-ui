@@ -28,7 +28,7 @@ export default function AssetBalancesList() {
   const readyAssets = prepareAssets(assets, ibcBalances, cw20Balances, favAssets, filterOption, searchText);
 
   return (
-    <Box>
+    <Box sx={{ mt: "0!important"}}>
       <HStack
         position="sticky"
         top={0}
