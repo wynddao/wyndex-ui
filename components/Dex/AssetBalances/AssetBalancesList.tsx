@@ -37,9 +37,10 @@ export default function AssetBalancesList() {
         alignItems="center"
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.gray.alpha.20"}
+        bg={"wynd.base.sidebar"}
         roundedTop="md"
         boxShadow="base"
+        zIndex={10}
         py={2}
         px={4}
       >

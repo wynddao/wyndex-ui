@@ -10,7 +10,7 @@ import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../../utils";
 import { getAssetInfoDetails, RequestAssetPrice } from "../../../utils/assets";
-import { formatCurrency } from "../../../utils/currency";
+import { formatCryptoCurrency, formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
 import { UnvotedPropCount } from "../../General/Sidebar/UnvotedPropCount";
 import { getRewards } from "../Pool/PendingBoundingsTable/util";
@@ -40,21 +40,12 @@ export default function AssetsRecapGallery() {
   });
   const currency = useRecoilValue(currencyAtom);
   const router = useRouter();
-  const {
-    walletStakedPower,
-    walletStakedTokens,
-    totalStakedValue,
-    totalStaked,
-    treasuryBalance,
-    rewards,
-    vestedBalance,
-    claims,
-    claimsAvailable,
-    claimsPending,
-  } = useDaoStakingInfos({
+  const { walletStakedTokens, claims } = useDaoStakingInfos({
     fetchWalletStakedValue: true,
     fetchClaims: true,
   });
+
+  const claimSum = claims ? claims.reduce((acc, curr) => acc + Number(curr.amount) / 10 ** 6, 0) : 0;
 
   const junoAssetPrice = assetPrices.find((el) => el.asset === FEE_DENOM);
   const junoPrice = currency === "USD" ? junoAssetPrice?.priceInUsd : junoAssetPrice?.priceInEur;
@@ -62,6 +53,8 @@ export default function AssetsRecapGallery() {
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice = currency === "USD" ? wyndexAssetPrice?.priceInUsd : wyndexAssetPrice?.priceInEur;
   const wyndexPriceFormatted = formatCurrency(currency, String(wyndexPrice ?? "0"));
+  const claimPrice = Number(wyndexPrice) * claimSum;
+  const stakedWyndPrice = Number(wyndexPrice) * Number(microamountToAmount(walletStakedTokens || 0, 6));
 
   const doWithdrawAll = CustomHooks.useCustomWithdrawAllRewards({
     sender: walletAddress || "",
@@ -126,11 +119,11 @@ export default function AssetsRecapGallery() {
 
   return (
     <Box bg="url(/bg_castle_png.png)" bgPosition="center" py={12} bgSize="70%" bgRepeat="no-repeat">
-      <Box rounded="lg" bgPosition="top" bgSize="cover">
+      <Box rounded="lg" bgPosition="top" bgSize="cover" maxW="1920px" margin="auto">
         <Grid
           gap={8}
           p={3}
-          templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
+          templateColumns={{ base: "repeat(1, 1fr)", sm:"repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
         >
           <Flex
             bg="rgba(0, 0, 0, 0.7)"
@@ -149,7 +142,9 @@ export default function AssetsRecapGallery() {
                     currency,
                     `${
                       (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
-                      (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur)
+                      (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur) +
+                      claimPrice +
+                      stakedWyndPrice
                     }`,
                   )
                 : "-"}
@@ -164,13 +159,16 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Bonded Assets
+              Locked Assets
             </Text>
             <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
               {walletAddress
                 ? formatCurrency(
                     currency,
-                    `${currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur}`,
+                    `${
+                      (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur) +
+                      stakedWyndPrice
+                    }`,
                   )
                 : "-"}
             </Text>
@@ -207,7 +205,9 @@ export default function AssetsRecapGallery() {
               Staked WYND
             </Text>
             <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-              {walletAddress ? microamountToAmount(walletStakedTokens || 0, 6, 2) : "-"}
+              {walletAddress
+                ? formatCryptoCurrency.format(Number(microamountToAmount(Number(walletStakedTokens) || 0, 6)))
+                : "-"}
             </Text>
           </Flex>
           <Flex
@@ -312,136 +312,5 @@ export default function AssetsRecapGallery() {
         </Grid>
       </Box>
     </Box>
-  );
-
-  return (
-    <>
-      <Heading pt="8">My Assets</Heading>
-      <Box bg="url(/castle.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
-        <Box bg="rgba(16, 11, 22,0.4)" w="full" h="full">
-          <Grid
-            templateColumns={{
-              base: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-            }}
-            maxW="4xl"
-            gap={6}
-            px={8}
-            py={4}
-          >
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Total Assets
-              </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${
-                        (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
-                        (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur)
-                      }`,
-                    )
-                  : "-"}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Bonded Assets
-              </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur}`,
-                    )
-                  : "-"}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Available Assets
-              </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
-                    )
-                  : "-"}
-              </Text>
-            </Box>
-          </Grid>
-          <Grid
-            templateColumns={{
-              base: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-            }}
-            maxW="4xl"
-            gap={6}
-            px={8}
-            py={4}
-          >
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                JUNO Price
-              </Text>
-              <Text
-                fontSize={{ base: "3xl", md: "4xl" }}
-                fontWeight="extrabold"
-                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-                bgClip="text"
-              >
-                {junoPriceFormatted}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                WYND Price
-              </Text>
-              <Text
-                fontSize={{ base: "3xl", md: "4xl" }}
-                fontWeight="extrabold"
-                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-                bgClip="text"
-              >
-                {wyndexPriceFormatted}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Total Rewards
-              </Text>
-              <Text
-                fontSize={{ base: "3xl", md: "4xl" }}
-                fontWeight="extrabold"
-                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-                bgClip="text"
-              >
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${
-                        currency === "USD"
-                          ? totalAvailableRewardValue.priceInUsd
-                          : totalAvailableRewardValue.priceInEur
-                      }`,
-                    )
-                  : "-"}
-              </Text>
-              {walletAddress && (
-                <Button
-                  backgroundColor={"wynd.gray.alpha.20"}
-                  onClick={() => withdrawAll()}
-                  variant={"ghost"}
-                >
-                  Claim all!
-                </Button>
-              )}
-            </Box>
-          </Grid>
-        </Box>
-      </Box>
-    </>
   );
 }
