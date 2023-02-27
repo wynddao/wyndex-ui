@@ -37,7 +37,7 @@ export const LsdSingleHeader = () => {
             Tokens staked
           </Text>
           <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-            1,000,000 $JUNO
+            @TODO
           </Text>
         </Box>
         <Box>
@@ -51,7 +51,7 @@ export const LsdSingleHeader = () => {
             Total TVL
           </Text>
           <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-            1,000,000 $
+             @TODO
           </Text>
         </Box>
       </Flex>
