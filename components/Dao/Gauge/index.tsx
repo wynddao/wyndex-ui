@@ -85,6 +85,10 @@ export const Gauge = ({
       currentVotePower: optionPower,
     };
   });
+  const totalValidVotes: number = poolsWithStakingAddress.reduce((acc, red) => {
+    return acc + (0.1 < (red.currentVotePower / totalVotes) * 100 ? red.currentVotePower : 0);
+  }, 0);
+
   const [selectedPool, setSelectedPool] = useState<PoolWithAddresses>(poolsWithStakingAddress[0]);
   const [availablePools, setAvailablePools] = useState<PoolWithAddresses[]>(poolsWithStakingAddress);
   const assetDetails = getAssetInfoDetails(config.rewards_asset.info);
@@ -498,10 +502,8 @@ export const Gauge = ({
                   <Flex>
                     {(
                       ((Number(config.rewards_asset.amount) / 10 ** assetDetails.decimals) *
-                        (pool.currentVotePower > (pool.currentVotePower / totalVotes) * 100 * 0.01
-                          ? pool.currentVotePower
-                          : 0)) /
-                      totalVotes
+                        (0.1 < (pool.currentVotePower / totalVotes) * 100 ? pool.currentVotePower : 0)) /
+                      totalValidVotes
                     ).toFixed(2)}{" "}
                     ${microdenomToDenom(assetDetails.denom)}
                   </Flex>
