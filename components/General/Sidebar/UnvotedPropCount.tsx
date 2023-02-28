@@ -1,10 +1,10 @@
-import { Badge } from "@chakra-ui/react";
+import { Badge, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useIndexerInfos, useListAllProposalInfos } from "../../../state";
 import { useProposalCount } from "../../../state/hooks/proposal/useProposalCount";
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 
-export const UnvotedPropCount = () => {
+export const UnvotedPropCount = ({ dashboard = false }: { dashboard?: boolean }) => {
   const { address: walletAddress } = useWallet();
   const { userVotes } = useIndexerInfos({});
   const voteModule = {
@@ -26,6 +26,19 @@ export const UnvotedPropCount = () => {
         count++;
       }
     });
+
+    if (dashboard) {
+      return (
+        <Text
+          fontSize={{ base: "3xl", md: "4xl" }}
+          fontWeight="extrabold"
+          bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+          bgClip="text"
+        >
+          {count}
+        </Text>
+      );
+    }
 
     return count > 0 ? (
       <Badge

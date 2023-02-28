@@ -4565,13 +4565,6 @@
   dependencies:
     tslib "1.14.1"
 
-"@walletconnect/window-metadata@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@walletconnect/window-metadata/-/window-metadata-1.0.0.tgz#93b1cc685e6b9b202f29c26be550fde97800c4e5"
-  integrity sha512-9eFvmJxIKCC3YWOL97SgRkKhlyGXkrHwamfechmqszbypFspaSk+t2jQXAEU7YClHF6Qjw5eYOmy1//zFi9/GA==
-  dependencies:
-    "@walletconnect/window-getters" "^1.0.0"
-
 "@walletconnect/window-metadata@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@walletconnect/window-metadata/-/window-metadata-1.0.1.tgz#2124f75447b7e989e4e4e1581d55d25bc75f7be5"
@@ -4606,10 +4599,11 @@
     motion "10.15.5"
     qrcode "1.5.1"
 
-"@wynddao/asset-list@^0.0.26":
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.26.tgz#036548043c45949293803945ead4d2b917cfe3d6"
-  integrity sha512-30o687yL+2cbmq0rcpVra8SCv6PXWTPBmURmz/VDsbxPecMm+YwS0heCPERP+9xGuYBVWDrHU56X3+rbr/wmPg==
+"@wynddao/asset-list@^0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.27.tgz#c0b532880236f4ed91308af50f579ff9c79ad823"
+  integrity sha512-yEJPLRNP9pAq9AoPhw77tKt9EMEaLyYFv8/I6ph8adhKE447ggieY+ipPezPt/Xrgj7Q488WlApjs1IObmCgLw==
+
 
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"
