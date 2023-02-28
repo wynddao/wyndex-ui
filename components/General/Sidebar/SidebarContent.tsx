@@ -1,9 +1,9 @@
-"use client";
 import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import Image from "next/image";
+import { FaBalanceScaleLeft, FaEthereum } from "react-icons/fa";
 import { FiActivity, FiPieChart, FiRefreshCw, FiWind } from "react-icons/fi";
-import { MdBallot, MdOutlineBallot } from "react-icons/md";
-import { FaBalanceScaleLeft } from "react-icons/fa";
+import { MdBallot } from "react-icons/md";
+import { SiConvertio } from "react-icons/si";
 import { TbPills } from "react-icons/tb";
 import wyndLogoWhite from "../../../public/logo-white.svg";
 import ConnectWalletButton from "./ConnectWalletButton";
@@ -19,6 +19,8 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Stake", to: "/stake", icon: FiWind },
   { name: "Vote", to: "/vote", icon: MdBallot },
   { name: "Gauges", to: "/gauges", icon: FaBalanceScaleLeft },
+  { name: "Convert", to: "/convert", icon: SiConvertio },
+  { name: "ETHDenver", to: "/eth", icon: FaEthereum },
 ];
 
 interface SidebarContentProps extends BoxProps {
