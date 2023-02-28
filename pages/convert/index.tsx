@@ -35,14 +35,6 @@ export default function Page() {
             infiniteApproval: false,
             instantExec: false,
             apiUrl: "https://api.squidrouter.com",
-            comingSoonChainIds: [
-              42161,
-              "cosmoshub-4",
-              "injective-1",
-              "axelar-dojo-1",
-              "fetchhub-4",
-              "kichain-2",
-            ],
             titles: {
               swap: "Convert",
               settings: "Settings",
