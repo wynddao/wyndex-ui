@@ -85,6 +85,7 @@ export default function Pools() {
   };
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const data: PoolListEntry[] = Object.keys(pools)
