@@ -54,7 +54,7 @@ export default function Page() {
             roundedTop="lg"
           >
             <Heading textAlign="center" fontSize={{ base: "4xl", md: "5xl" }}>
-              Welcome to the Cosmos ecosystem! 
+              Welcome to the CØSMOS ecosystem! 
             </Heading>
           </Flex>
         </Box>
