@@ -39,7 +39,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>WYND | DAO - ETH Denver</title>
+        <title>WYND | DAO - Welcome to the cosmos!</title>
       </Head>
       <Box margin={{ sm: 4, md: 8, lg: 16 }}>
         <Box bg="url(/cosmos.png)" rounded="lg" py={12} bgPosition="center" bgSize="cover">
