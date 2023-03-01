@@ -54,21 +54,24 @@ export default function Page() {
             roundedTop="lg"
           >
             <Heading textAlign="center" fontSize={{ base: "4xl", md: "5xl" }}>
-              Welcome to the CØSMOS ecosystem! 
+              Welcome to the CØSMOS Ecosystem! 
             </Heading>
           </Flex>
         </Box>
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
-          <BorderedBox my={4} px={8}>
-            You want to enter the cosmos? Then a DEX, like WYND is, can help you get your first tokens. Please
-            keep in mind that you have to pay fees in JUNO for every transaction on the WYND DAO platform.
-            Below we have summarized a few first steps to support you in your cosmonaut journey.
+          <BorderedBox my={4} p={8}>
+            WYND is a multiprotocol DAO deployed on Juno Network. WYND DAO hosts a DEX and LSD with more DeFi
+            protocols coming soon. All protocols are governed by gauges, similar to the Curve model. Please
+            keep in mind fees are paid in JUNO. Below we have summarized a few steps to begin your cosmonaut
+            journey.
           </BorderedBox>
-          <BorderedBox my={4} px={8}>
-            You already know your way around?
-            <Box width="fit-content" mt={2}>
-              <ConnectWalletButton />
-            </Box>
+          <BorderedBox my={4}>
+            <Flex flexDir="column" alignItems="center" justifyContent="center">
+              You already know your way around?
+              <Box mt={2}>
+                <ConnectWalletButton />
+              </Box>
+            </Flex>
           </BorderedBox>
         </Grid>
 
@@ -209,6 +212,61 @@ export default function Page() {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
+        </BorderedBox>
+        <BorderedBox mt={4} textAlign="center">
+          <Text fontSize="2xl" mb={2}>
+            Useful Links & Ressources
+          </Text>
+          <Flex justifyContent="space-evenly" alignItems="center">
+            <Box>
+              <Link sx={linkSx} target="_blank" href="https://www.youtube.com/watch?v=Eb8xkDi_PUg">
+                Cosmos YouTube Introduction
+              </Link>
+              <Text fontSize="sm">A short YouTube intro video about Cosmos</Text>
+            </Box>
+            <Box>
+              <Link sx={linkSx} target="_blank" href="https://tendermint.com/">
+                Core Technologies of Cosmos
+              </Link>
+              <Text fontSize="sm">Tendermint</Text>
+            </Box>
+            <Box>
+              <Link sx={linkSx} target="_blank" href="https://cosmwasm.com/">
+                CosmWasm
+              </Link>
+              <Text fontSize="sm">Smart contract platform</Text>
+            </Box>
+            <Box>
+              <Link
+                sx={linkSx}
+                target="_blank"
+                href="https://medium.com/wynddao/rebonding-has-arrived-74a21bc86017"
+              >
+                WYND Rebonding
+              </Link>
+              <Text fontSize="sm">{"WYND DAO's pioneering rebonding features"}</Text>
+            </Box>
+            <Box>
+              <Link
+                sx={linkSx}
+                target="_blank"
+                href="https://medium.com/wynddao/liquidity-gauges-on-wynd-dex-c886477848bc"
+              >
+                WYND Gauges
+              </Link>
+              <Text fontSize="sm">{"WYND DAO's innovative gauge vote system"}</Text>
+            </Box>
+            <Box>
+              <Link
+                sx={linkSx}
+                target="_blank"
+                href="https://medium.com/wynddao/lsd-on-wynd-dao-6afb16751889"
+              >
+                WYND LSD
+              </Link>
+              <Text fontSize="sm">WYND DAOs Liquid Staking Derivatives</Text>
+            </Box>
+          </Flex>
         </BorderedBox>
       </Box>
       <OnRampModal isOpen={isOpen} onClose={onClose} />
