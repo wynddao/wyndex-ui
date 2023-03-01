@@ -36,6 +36,7 @@ export const GaugeItem = ({ gauge }: { gauge: GaugeResponse }) => {
     };
   
     setGaugesDailyRewards([...gaugesDailyRewards.filter(el => el.asset !== dailyReward.asset), dailyReward]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

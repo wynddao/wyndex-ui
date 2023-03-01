@@ -30,6 +30,9 @@ export default function Page() {
               roundedBox: "5px",
               roundedDropDown: "7px",
               displayDivider: true,
+              advanced: {
+                transparentWidget: true,
+              },
             },
             slippage: 1.5,
             infiniteApproval: false,
