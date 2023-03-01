@@ -1,14 +1,18 @@
-import { Box, Button, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
+import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../../utils";
 import { getAssetInfoDetails, RequestAssetPrice } from "../../../utils/assets";
-import { formatCurrency } from "../../../utils/currency";
+import { formatCryptoCurrency, formatCurrency } from "../../../utils/currency";
+import { microamountToAmount } from "../../../utils/tokens";
+import { UnvotedPropCount } from "../../General/Sidebar/UnvotedPropCount";
 import { getRewards } from "../Pool/PendingBoundingsTable/util";
 
 export interface AssetsRecap {
@@ -35,6 +39,13 @@ export default function AssetsRecapGallery() {
     fetchPoolData: true,
   });
   const currency = useRecoilValue(currencyAtom);
+  const router = useRouter();
+  const { walletStakedTokens, claims } = useDaoStakingInfos({
+    fetchWalletStakedValue: true,
+    fetchClaims: true,
+  });
+
+  const claimSum = claims ? claims.reduce((acc, curr) => acc + Number(curr.amount) / 10 ** 6, 0) : 0;
 
   const junoAssetPrice = assetPrices.find((el) => el.asset === FEE_DENOM);
   const junoPrice = currency === "USD" ? junoAssetPrice?.priceInUsd : junoAssetPrice?.priceInEur;
@@ -42,6 +53,8 @@ export default function AssetsRecapGallery() {
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice = currency === "USD" ? wyndexAssetPrice?.priceInUsd : wyndexAssetPrice?.priceInEur;
   const wyndexPriceFormatted = formatCurrency(currency, String(wyndexPrice ?? "0"));
+  const claimPrice = Number(wyndexPrice) * claimSum;
+  const stakedWyndPrice = Number(wyndexPrice) * Number(microamountToAmount(walletStakedTokens || 0, 6));
 
   const doWithdrawAll = CustomHooks.useCustomWithdrawAllRewards({
     sender: walletAddress || "",
@@ -105,103 +118,110 @@ export default function AssetsRecapGallery() {
   }, [walletAddress]);
 
   return (
-    <>
-      <Heading pt="8">My Assets</Heading>
-      <Box bg="url(/castle.jpeg)" rounded="lg" bgPosition="center" bgSize="cover">
-        <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
-          <Grid
-            templateColumns={{
-              base: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-            }}
-            maxW="4xl"
-            gap={6}
-            px={8}
-            py={4}
+    <Box bg="url(/bg_castle_png.png)" bgPosition="center" py={12} bgSize="70%" bgRepeat="no-repeat">
+      <Box rounded="lg" bgPosition="top" bgSize="cover" maxW="1920px" margin="auto">
+        <Grid
+          gap={8}
+          p={3}
+          templateColumns={{ base: "repeat(1, 1fr)", sm:"repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
+        >
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
           >
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Total Assets
-              </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${
-                        (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
-                        (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur)
-                      }`,
-                    )
-                  : "-"}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Bonded Assets
-              </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur}`,
-                    )
-                  : "-"}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Available Assets
-              </Text>
-              <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
-                {walletAddress
-                  ? formatCurrency(
-                      currency,
-                      `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
-                    )
-                  : "-"}
-              </Text>
-            </Box>
-          </Grid>
-          <Grid
-            templateColumns={{
-              base: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-            }}
-            maxW="4xl"
-            gap={6}
-            px={8}
-            py={4}
+            <Text fontWeight="semibold" opacity={0.7}>
+              Total Assets
+            </Text>
+            <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+              {walletAddress
+                ? formatCurrency(
+                    currency,
+                    `${
+                      (currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur) +
+                      (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur) +
+                      claimPrice +
+                      stakedWyndPrice
+                    }`,
+                  )
+                : "-"}
+            </Text>
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
           >
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                JUNO Price
-              </Text>
-              <Text
-                fontSize={{ base: "3xl", md: "4xl" }}
-                fontWeight="extrabold"
-                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-                bgClip="text"
-              >
-                {junoPriceFormatted}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                WYND Price
-              </Text>
-              <Text
-                fontSize={{ base: "3xl", md: "4xl" }}
-                fontWeight="extrabold"
-                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
-                bgClip="text"
-              >
-                {wyndexPriceFormatted}
-              </Text>
-            </Box>
-            <Box py={{ md: 2 }}>
-              <Text fontWeight="semibold" opacity={0.7}>
-                Total Rewards
-              </Text>
+            <Text fontWeight="semibold" opacity={0.7}>
+              Locked Assets
+            </Text>
+            <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+              {walletAddress
+                ? formatCurrency(
+                    currency,
+                    `${
+                      (currency === "USD" ? userFiat.lockedBalance.usd : userFiat.lockedBalance.eur) +
+                      stakedWyndPrice
+                    }`,
+                  )
+                : "-"}
+            </Text>
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontWeight="semibold" opacity={0.7}>
+              Available Assets
+            </Text>
+            <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+              {walletAddress
+                ? formatCurrency(
+                    currency,
+                    `${currency === "USD" ? userFiat.availableBalance.usd : userFiat.availableBalance.eur}`,
+                  )
+                : "-"}
+            </Text>
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontWeight="semibold" opacity={0.7}>
+              Staked WYND
+            </Text>
+            <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
+              {walletAddress
+                ? formatCryptoCurrency.format(Number(microamountToAmount(Number(walletStakedTokens) || 0, 6)))
+                : "-"}
+            </Text>
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontWeight="semibold" opacity={0.7}>
+              Total Rewards
+            </Text>
+            <Flex alignItems="center" justifyContent="center">
               <Text
                 fontSize={{ base: "3xl", md: "4xl" }}
                 fontWeight="extrabold"
@@ -220,18 +240,77 @@ export default function AssetsRecapGallery() {
                   : "-"}
               </Text>
               {walletAddress && (
-                <Button
-                  backgroundColor={"wynd.gray.alpha.20"}
-                  onClick={() => withdrawAll()}
-                  variant={"ghost"}
-                >
+                <Button variant="ghost" _hover={{ bg: "none" }} onClick={() => withdrawAll()}>
                   Claim all!
                 </Button>
               )}
-            </Box>
-          </Grid>
-        </Box>
+            </Flex>
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontWeight="semibold" opacity={0.7}>
+              New Proposals
+            </Text>
+
+            {walletAddress ? (
+              <Flex justifyContent="center" alignItems="center">
+                <UnvotedPropCount dashboard={true} />{" "}
+                <Button variant="ghost" _hover={{ bg: "none" }} onClick={() => router.push("/vote")}>
+                  Vote!
+                </Button>
+              </Flex>
+            ) : (
+              "-"
+            )}
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontWeight="semibold" opacity={0.7}>
+              WYND Price
+            </Text>
+            <Text
+              fontSize={{ base: "3xl", md: "4xl" }}
+              fontWeight="extrabold"
+              bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+              bgClip="text"
+            >
+              ≈{wyndexPriceFormatted}
+            </Text>
+          </Flex>
+          <Flex
+            bg="rgba(0, 0, 0, 0.7)"
+            flexDir="column"
+            padding={3}
+            borderRadius="xl"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontWeight="semibold" opacity={0.7}>
+              Juno Price
+            </Text>
+            <Text
+              fontSize={{ base: "3xl", md: "4xl" }}
+              fontWeight="extrabold"
+              bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+              bgClip="text"
+            >
+              ≈{junoPriceFormatted}
+            </Text>
+          </Flex>
+        </Grid>
       </Box>
-    </>
+    </Box>
   );
 }

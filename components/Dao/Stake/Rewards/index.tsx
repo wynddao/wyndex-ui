@@ -24,7 +24,7 @@ export const Rewards = ({
 
   const rewardsFiat = Number(rewardsWynd) * wyndexPrice;
   const rewardsWyndFormatted = Number(microamountToAmount(rewardsWynd || 0, 6)).toLocaleString(undefined, {
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 6,
   });
   const rewardsFiatFormatted = Number(microamountToAmount(rewardsFiat, 6, 2)).toLocaleString(undefined, {
     maximumFractionDigits: 0,

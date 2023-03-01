@@ -4,6 +4,8 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    env: # Squid Router
+      NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - run: yarn install
@@ -11,6 +13,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env: # Squid Router
+      NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - run: yarn install

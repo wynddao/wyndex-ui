@@ -28,7 +28,7 @@ export default function AssetBalancesList() {
   const readyAssets = prepareAssets(assets, ibcBalances, cw20Balances, favAssets, filterOption, searchText);
 
   return (
-    <Box>
+    <Box sx={{ mt: "0!important"}}>
       <HStack
         position="sticky"
         top={0}
@@ -37,9 +37,10 @@ export default function AssetBalancesList() {
         alignItems="center"
         fontSize="sm"
         fontWeight="semibold"
-        bg={"wynd.gray.alpha.20"}
+        bg={"wynd.base.sidebar"}
         roundedTop="md"
         boxShadow="base"
+        zIndex={10}
         py={2}
         px={4}
       >
