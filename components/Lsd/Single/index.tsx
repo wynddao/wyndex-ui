@@ -23,6 +23,7 @@ import { formatCurrency } from "../../../utils/currency";
 import { APYCalc } from "./APYCalc";
 import { UnstakingModal } from "./UnstakingModal";
 import { lsdEntries } from "../Overview";
+import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 
 export const LsdSingle = ({ id }: { id: string }) => {
   const lsdEntry = lsdEntries.find((el) => el.id === Number(id))!;
@@ -116,25 +117,34 @@ export const LsdSingle = ({ id }: { id: string }) => {
                 </Box>
               </Flex>
             </Box>
-            <Box w="100%">
-              <Button borderBottomRadius={0} onClick={() => setModalOpen(true)} variant="solid" width="100%">
-                Unstake
-              </Button>
-            </Box>
-            <Box w="100%">
-              <Button
-                borderTopRadius={0}
-                bgGradient="linear(to-l, wynd.green.300, wynd.cyan.300)"
-                _hover={{
-                  bgGradient: "linear(to-l, wynd.green.200, wynd.cyan.200)"
-                }}
-                onClick={() => setModalOpen(true)}
-                variant="solid"
-                width="100%"
-              >
-                Quick Burn
-              </Button>
-            </Box>
+            {walletAddress && (
+              <>
+                <Box w="100%">
+                  <Button
+                    borderBottomRadius={0}
+                    onClick={() => setModalOpen(true)}
+                    variant="solid"
+                    width="100%"
+                  >
+                    Unstake
+                  </Button>
+                </Box>
+                <Box w="100%">
+                  <Button
+                    borderTopRadius={0}
+                    bgGradient="linear(to-l, wynd.green.300, wynd.cyan.300)"
+                    _hover={{
+                      bgGradient: "linear(to-l, wynd.green.200, wynd.cyan.200)",
+                    }}
+                    onClick={() => setModalOpen(true)}
+                    variant="solid"
+                    width="100%"
+                  >
+                    Quick Burn
+                  </Button>
+                </Box>
+              </>
+            )}
           </BorderedBox>
         </GridItem>
         <BorderedBox py={4} display="flex" justifyContent="center" alignItems="center">
@@ -275,19 +285,23 @@ export const LsdSingle = ({ id }: { id: string }) => {
             </Flex>
           </Flex>
           <Box mt={3}>
-            <Button
-              w="100%"
-              p={4}
-              fontSize="xl"
-              bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-              _hover={{
-                bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
-              }}
-              onClick={() => bond()}
-              isLoading={loading}
-            >
-              Stake
-            </Button>
+            {walletAddress ? (
+              <Button
+                w="100%"
+                p={4}
+                fontSize="xl"
+                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                _hover={{
+                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                }}
+                onClick={() => bond()}
+                isLoading={loading}
+              >
+                Stake
+              </Button>
+            ) : (
+              <ConnectWalletButton />
+            )}
           </Box>
         </GridItem>
       </Grid>
