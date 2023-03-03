@@ -117,7 +117,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
                 </Box>
               </Flex>
             </Box>
-            {walletAddress && (
+            {walletAddress && Number(balance) > 0 && (
               <>
                 <Box w="100%">
                   <Button
