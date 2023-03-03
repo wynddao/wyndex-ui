@@ -82,8 +82,12 @@ export const listProposalsSelector = selectorFamily<
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
-
-      return await client.listProposals(...params);
+      try {
+        return await client.listProposals(...params);
+      } catch (e) {
+        console.log(e);
+        return { proposals: [] };
+      }
     },
 });
 

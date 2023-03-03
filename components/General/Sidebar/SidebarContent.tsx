@@ -1,5 +1,6 @@
 import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import Image from "next/image";
+
 import { FaBalanceScaleLeft, FaEthereum } from "react-icons/fa";
 import { FiActivity, FiPieChart, FiRefreshCw, FiWind } from "react-icons/fi";
 import { MdBallot } from "react-icons/md";
@@ -16,7 +17,7 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
   { name: "Convert", to: "/convert", icon: SiConvertio },
-  { name: "LSD", to: "/lsd", icon: TbPills, comingSoon: true },
+  { name: "LSD", to: "/lsd", icon: TbPills},
   { name: "Stake", to: "/stake", icon: FiWind },
   { name: "Vote", to: "/vote", icon: MdBallot },
   { name: "Gauges", to: "/gauges", icon: FaBalanceScaleLeft },

@@ -61,7 +61,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           signerOptions={signerOptions}
           endpointOptions={{
             junotestnet1: {
-              rpc: ["https://juno-uni-5.mib.tech/"],
+              rpc: ["https://rpc.uni.juno.deuslabs.fi/"],
               rest: ["https://juno-testnet-api.polkachu.com/"],
             },
           }}

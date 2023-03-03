@@ -5,6 +5,7 @@ export interface UseTokenNameResponse {
   tokenName: string;
   tokenSymbol: string;
   tokenDecimals: number;
+  totalSupply: string;
 }
 
 export const useTokenInfo = (tokenAddress: string): UseTokenNameResponse => {
@@ -19,5 +20,6 @@ export const useTokenInfo = (tokenAddress: string): UseTokenNameResponse => {
     tokenName: tokenInfo.name,
     tokenSymbol: tokenInfo.symbol,
     tokenDecimals: tokenInfo.decimals,
+    totalSupply: tokenInfo.total_supply,
   };
 };

@@ -5,7 +5,7 @@ export const testnet: Chain = {
   status: "live",
   network_type: "testnet",
   pretty_name: "Juno Testnet",
-  chain_id: "uni-5",
+  chain_id: "uni-6",
   bech32_prefix: "juno",
   daemon_name: "junod",
   node_home: "$HOME/.juno",

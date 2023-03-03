@@ -1,13 +1,16 @@
+import { Box } from "@chakra-ui/react";
 import Head from "next/head";
-import MysteryBoxContainer from "../../components/Dex/MysteryBox";
+import { LsdOverview } from "../../components/Lsd/Overview";
 
-export default function Page() {
-  return (
-    <>
-      <Head>
-        <title>WYND | Liquid Staking</title>
-      </Head>
-      <MysteryBoxContainer />
-    </>
-  );
-}
+const Page = () => (
+  <>
+    <Head>
+      <title>WYND DEX - Liquid Staking</title>
+    </Head>
+    <Box p="4">
+      <LsdOverview />
+    </Box>
+  </>
+);
+
+export default Page;
