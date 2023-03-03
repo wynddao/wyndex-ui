@@ -22,14 +22,15 @@ import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { formatCurrency } from "../../../utils/currency";
 import { APYCalc } from "./APYCalc";
 import { UnstakingModal } from "./UnstakingModal";
+import { lsdEntries } from "../Overview";
 
 export const LsdSingle = ({ id }: { id: string }) => {
-  //! TODO: Fetch LSD contract addr
-  const lsdContract = "juno1ek4ed6yevgx4x0mnce4h58y4p30ay7k35g2vrt0nmnlt6ttsmpmq270tee";
+  const lsdEntry = lsdEntries.find((el) => el.id === Number(id))!;
+  const lsdContract = lsdEntry.contractAddr;
 
   // Wallet & LSD Infos
   const { address: walletAddress } = useWallet();
-  const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos();
+  const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos(lsdContract);
   const { balance: _balance, refreshBalance } = useCw20UserInfos(config.token_contract);
 
   // Fetch AssetPrices to calculate TVL
@@ -38,8 +39,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
 
   // Get assetlist to find decimals
   const assets = getAssetList().tokens;
-  const lsdAsset = assets.find((el) => el.denom === FEE_DENOM)!;
-  const decimals = lsdAsset.decimals;
+  const lsdAsset = assets.find((el) => el.denom === lsdEntry.tokenDenom)!;
 
   // Get token symbol of wyLSD
   const { tokenSymbol, tokenName } = useTokenInfo(config.token_contract);

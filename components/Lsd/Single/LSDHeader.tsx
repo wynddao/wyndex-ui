@@ -1,11 +1,19 @@
 import { Box, Flex, Heading, Text, Tooltip } from "@chakra-ui/react";
 import { IoIosHelp, IoIosHelpCircleOutline } from "react-icons/io";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../../state";
 import { Supply } from "../../../state/clients/types/WyndLsdHub.types";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { getAssetList } from "../../../utils/getAssetList";
+import { getAssetPriceByCurrency } from "../../../utils/assets";
+import { formatCurrency } from "../../../utils/currency";
 
 export const LsdSingleHeader = ({ supply }: { supply: Supply }) => {
   const assetList = getAssetList().tokens;
   const decimals = assetList.find((el) => el.denom === supply.bond_denom)?.decimals ?? 6;
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
+  const assetPrice = getAssetPriceByCurrency(currency, { native: supply.bond_denom }, assetPrices);
   return (
     <Box bg="url(/trippy2.png)" pt={36} rounded="lg" bgPosition="center" bgSize="cover">
       <Flex
@@ -64,7 +72,11 @@ export const LsdSingleHeader = ({ supply }: { supply: Supply }) => {
           </Text>
           <Flex justifyContent="center" alignItems="center">
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-              {((Number(supply.total_bonded) + Number(supply.total_unbonding)) / 10 ** decimals).toFixed(2)}
+              {formatCurrency(
+                currency,
+                (assetPrice *
+                  ((Number(supply.total_bonded) + Number(supply.total_unbonding)) / 10 ** decimals)).toFixed(2),
+              )}
             </Text>
             <Tooltip label="This value is updated once per day.">
               <span>

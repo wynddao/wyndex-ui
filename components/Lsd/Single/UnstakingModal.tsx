@@ -149,7 +149,7 @@ const UnstakingModalContent = ({
               {((removeValue / 100) * removeableTokens).toFixed(6)}
             </Text>
             <Flex justify="center" pb={10}>
-              ≈ {((removeValue / 100) * removeableTokens * exchangeRate).toFixed(6)} JUNO
+              ≈ {((removeValue / 100) * removeableTokens / exchangeRate).toFixed(6)} JUNO
             </Flex>
             <Slider
               min={0}
