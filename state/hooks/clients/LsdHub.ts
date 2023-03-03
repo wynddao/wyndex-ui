@@ -28,3 +28,4 @@ const wrapExecuteHook =
   };
 
 export const useBond = wrapExecuteHook("bond");
+export const useClaim = wrapExecuteHook("claim");

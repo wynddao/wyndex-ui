@@ -1,6 +1,11 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Tooltip } from "@chakra-ui/react";
+import { IoIosHelp, IoIosHelpCircleOutline } from "react-icons/io";
+import { Supply } from "../../../state/clients/types/WyndLsdHub.types";
+import { getAssetList } from "../../../utils/getAssetList";
 
-export const LsdSingleHeader = () => {
+export const LsdSingleHeader = ({ supply }: { supply: Supply }) => {
+  const assetList = getAssetList().tokens;
+  const decimals = assetList.find((el) => el.denom === supply.bond_denom)?.decimals ?? 6;
   return (
     <Box bg="url(/trippy2.png)" pt={36} rounded="lg" bgPosition="center" bgSize="cover">
       <Flex
@@ -36,9 +41,16 @@ export const LsdSingleHeader = () => {
           >
             Tokens staked
           </Text>
-          <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-            @TODO
-          </Text>
+          <Flex justifyContent="center" alignItems="center">
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
+              {(Number(supply.total_bonded) / 10 ** decimals).toFixed(2)}
+            </Text>
+            <Tooltip label="This value is updated once per day.">
+              <span>
+                <IoIosHelp color="yellow" style={{ cursor: "pointer" }} size="30" />
+              </span>
+            </Tooltip>
+          </Flex>
         </Box>
         <Box>
           <Text
@@ -50,9 +62,16 @@ export const LsdSingleHeader = () => {
           >
             Total TVL
           </Text>
-          <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-             @TODO
-          </Text>
+          <Flex justifyContent="center" alignItems="center">
+            <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
+              {((Number(supply.total_bonded) + Number(supply.total_unbonding)) / 10 ** decimals).toFixed(2)}
+            </Text>
+            <Tooltip label="This value is updated once per day.">
+              <span>
+                <IoIosHelp color="yellow" style={{ cursor: "pointer" }} size="30" />
+              </span>
+            </Tooltip>
+          </Flex>
         </Box>
       </Flex>
     </Box>

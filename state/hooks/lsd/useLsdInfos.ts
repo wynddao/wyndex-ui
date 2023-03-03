@@ -1,5 +1,5 @@
 import { useWallet } from "@cosmos-kit/react";
-import { constSelector, useRecoilValue } from "recoil";
+import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { WyndLsdHubSelectors } from "../../recoil";
 
 export const useLsdInfos = () => {
@@ -12,18 +12,19 @@ export const useLsdInfos = () => {
     }),
   );
 
-  const { claims } = useRecoilValue(
-    address
-      ? WyndLsdHubSelectors.claimsSelector({
-          contractAddress: JUNO_LSD_ADDRESS,
-          params: [
-            {
-              address,
-            },
-          ],
-        })
-      : constSelector({ claims: [] }),
-  );
+  const claimSelector = address
+    ? WyndLsdHubSelectors.claimsSelector({
+        contractAddress: JUNO_LSD_ADDRESS,
+        params: [
+          {
+            address,
+          },
+        ],
+      })
+    : constSelector({ claims: [] });
+
+  const { claims } = useRecoilValue(claimSelector);
+  const refreshClaims = useRecoilRefresher_UNSTABLE(claimSelector);
 
   const { validator_set: validatorSet } = useRecoilValue(
     WyndLsdHubSelectors.validatorSetSelector({
@@ -39,10 +40,19 @@ export const useLsdInfos = () => {
     }),
   );
 
+  const { supply } = useRecoilValue(
+    WyndLsdHubSelectors.supplySelector({
+      contractAddress: JUNO_LSD_ADDRESS,
+      params: [],
+    }),
+  );
+
   return {
     config,
     claims,
     validatorSet,
     exchange_rate,
+    supply,
+    refreshClaims,
   };
 };

@@ -5,6 +5,7 @@ import {
   ConfigResponse,
   ExchangeRateResponse,
   ReinvestResponse,
+  SupplyResponse,
   TargetValueResponse,
   ValidatorSetResponse,
 } from "../../../clients/types/WyndLsdHub.types";
@@ -92,6 +93,20 @@ export const lastReinvestSelector = selectorFamily<
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.lastReinvest(...params);
+    },
+});
+export const supplySelector = selectorFamily<
+  SupplyResponse,
+  QueryClientParams & {
+    params: Parameters<WyndLsdHubQueryClient["supply"]>;
+  }
+>({
+  key: "wyndLsdHubSupply",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.supply(...params);
     },
 });
 export const exchangeRateSelector = selectorFamily<

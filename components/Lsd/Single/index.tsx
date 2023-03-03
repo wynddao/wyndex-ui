@@ -16,59 +16,69 @@ import {
 } from "../../../state";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { FEE_DENOM } from "../../../utils";
-import { useRecoilValue } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getAssetList } from "../../../utils/getAssetList";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { formatCurrency } from "../../../utils/currency";
+import { APYCalc } from "./APYCalc";
+import { UnstakingModal } from "./UnstakingModal";
 
 export const LsdSingle = ({ id }: { id: string }) => {
+  //! TODO: Fetch LSD contract addr
+  const lsdContract = "juno1ek4ed6yevgx4x0mnce4h58y4p30ay7k35g2vrt0nmnlt6ttsmpmq270tee";
+
+  // Wallet & LSD Infos
   const { address: walletAddress } = useWallet();
-  const { config, exchange_rate } = useLsdInfos();
-  const { balance: _balance } = useCw20UserInfos(config.token_contract);
+  const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos();
+  const { balance: _balance, refreshBalance } = useCw20UserInfos(config.token_contract);
+
+  // Fetch AssetPrices to calculate TVL
   const { assetPrices } = useIndexerInfos({});
   const lsdAssetPrice = assetPrices.find((el) => el.asset === "ujuno")!;
+
+  // Get assetlist to find decimals
   const assets = getAssetList().tokens;
   const lsdAsset = assets.find((el) => el.denom === FEE_DENOM)!;
-  const { tokenSymbol } = useTokenInfo(config.token_contract);
+  const decimals = lsdAsset.decimals;
+
+  // Get token symbol of wyLSD
+  const { tokenSymbol, tokenName } = useTokenInfo(config.token_contract);
   const fromBalanceSelector = getBalanceByAsset({
     address: walletAddress || "",
     asset: lsdAsset,
   });
 
+  // fromBalance = Wallet Balance //? Possible todo, write one function for both swap & lsd balances
   const fromBalance = useRecoilValue(fromBalanceSelector);
+  const refreshFromBalance = useRecoilRefresher_UNSTABLE(fromBalanceSelector);
   const balance = microamountToAmount(_balance, 6);
   const currency = useRecoilValue(currencyAtom);
+
+  // Toast hook for errors and success
   const { txToast } = useToast();
-  console.log(config);
+
+  // Loading state hooks
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingUnbonding, setLoadingUnbonding] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [amount, setAmount] = useState<string | undefined>(undefined);
 
+  // Bond, Claim & Withdraw hooks
   const doBond = LsdHooks.useBond({
-    contractAddress: "juno1ek4ed6yevgx4x0mnce4h58y4p30ay7k35g2vrt0nmnlt6ttsmpmq270tee",
+    contractAddress: lsdContract,
     sender: walletAddress || "",
   });
-
   const doWithdraw = Cw20Hooks.useSend({
     contractAddress: config.token_contract,
     sender: walletAddress || "",
   });
+  const doClaim = LsdHooks.useClaim({
+    contractAddress: lsdContract,
+    sender: walletAddress || "",
+  });
 
-  const unbond = async () => {
-    setLoadingUnbonding(true);
-    await txToast(async (): Promise<ExecuteResult> => {
-      const result = await doWithdraw({
-        amount: "10000",
-        contract: "juno1ek4ed6yevgx4x0mnce4h58y4p30ay7k35g2vrt0nmnlt6ttsmpmq270tee",
-        msg: btoa(`{"unbond": {}}`),
-      });
-      await new Promise((resolve) => setTimeout(resolve, 6500));
-
-      return result;
-    });
-    setLoading(false);
-  };
-
+  /**
+   * Bonding
+   */
   const bond = async () => {
     setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
@@ -80,59 +90,69 @@ export const LsdSingle = ({ id }: { id: string }) => {
 
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
+      refreshBalance();
+      refreshFromBalance();
       return result;
     });
     setLoading(false);
   };
 
+  // Render!
   return (
     <>
-      <LsdSingleHeader />
-      <Grid mt={4} templateColumns="1fr 1fr 1fr 1fr 1fr" gap={8}>
-        <GridItem colStart={2}>
-          <BorderedBox py={10}>
-            <Flex justifyContent={"space-between"} flexDir="column" alignItems="center">
-              <Text fontSize="md" fontWeight="semibold" display="inline-block">
-                Your staked amount
-              </Text>
-              <Box>
-                <Text fontSize="xl" fontWeight="bold" color="wynd.cyan.500" display="inline-block">
-                  {balance} ${tokenSymbol}
+      <LsdSingleHeader supply={supply} />
+      <Grid mt={4} templateColumns={{ base: "repeat(1fr)", md: "1fr 1fr 1fr 1fr 1fr" }} gap={8}>
+        <GridItem colStart={{ base: 1, md: 2 }}>
+          <BorderedBox p={0}>
+            <Box py={4} display="flex" justifyContent="center" alignItems="center">
+              <Flex justifyContent={"space-between"} flexDir="column" alignItems="center">
+                <Text fontSize="md" fontWeight="semibold" display="inline-block">
+                  Your staked amount
                 </Text>
-              </Box>
-            </Flex>
+                <Box>
+                  <Text fontSize="3xl" fontWeight="bold" color="wynd.cyan.500" display="inline-block">
+                    {balance} ${tokenSymbol}
+                  </Text>
+                </Box>
+              </Flex>
+            </Box>
+            <Box w="100%">
+              <Button onClick={() => setModalOpen(true)} variant="solid" width="100%">
+                Unstake
+              </Button>
+            </Box>
           </BorderedBox>
         </GridItem>
-        <BorderedBox py={10}>
+        <BorderedBox py={4} display="flex" justifyContent="center" alignItems="center">
           <Flex justifyContent={"space-between"} flexDir="column" alignItems="center">
             <Text fontSize="md" fontWeight="semibold" display="inline-block">
               Available to stake
             </Text>
             <Box>
-              <Text fontSize="xl" fontWeight="bold" color="wynd.green.500" display="inline-block">
+              <Text fontSize="2xl" fontWeight="bold" color="wynd.green.500" display="inline-block">
                 {microamountToAmount(fromBalance.amount, lsdAsset.decimals)}{" "}
                 {microdenomToDenom(fromBalance.denom)}
               </Text>
             </Box>
           </Flex>
         </BorderedBox>
-        <BorderedBox py={10}>
+        <BorderedBox py={4} display="flex" justifyContent="center" alignItems="center">
           <Flex justifyContent={"space-between"} flexDir="column" alignItems="center">
             <Text fontSize="md" fontWeight="semibold" display="inline-block">
-              Current APR
+              Current APY
             </Text>
             <Box>
               <Text fontSize="xl" fontWeight="bold" color="wynd.purple.400" display="inline-block">
-                5.04%
+                <APYCalc validatorSet={validatorSet} lsdCommission={Number(config.commission)} />
               </Text>
             </Box>
           </Flex>
         </BorderedBox>
       </Grid>
-      <Grid templateColumns="1fr 1fr 1fr" mt={8} gap={8}>
-        <GridItem colStart={2}>
+      <Grid templateColumns={{ base: "repeat(1fr)", md: "1fr 1fr 1fr" }} mt={8} gap={8}>
+        <GridItem colStart={{ base: 1, md: 2 }}>
           <BorderedBox bgImageActive={true} mb={8}>
-            <Grid templateColumns="1fr 2fr">
+            <Grid templateColumns={{ base: "repeat(1fr)", md: "1fr 2fr" }}>
               <Flex alignItems="center" justifyContent="center">
                 <Text fontSize="xl" fontWeight="bold" color="wynd.green.500" display="inline-block">
                   Stake now
@@ -249,13 +269,27 @@ export const LsdSingle = ({ id }: { id: string }) => {
               _hover={{
                 bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
               }}
-              onClick={() => unbond()}
+              onClick={() => bond()}
+              isLoading={loading}
             >
               Stake
             </Button>
           </Box>
         </GridItem>
       </Grid>
+      <UnstakingModal
+        exchangeRate={Number(exchange_rate)}
+        tokenName={tokenName}
+        removeableTokens={Number(balance)}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        doWithdraw={doWithdraw}
+        refreshBalance={refreshBalance}
+        refreshFromBalance={refreshFromBalance}
+        claims={claims}
+        refreshClaims={refreshClaims}
+        doClaim={doClaim}
+      />
     </>
   );
 };

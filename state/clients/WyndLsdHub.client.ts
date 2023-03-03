@@ -8,6 +8,7 @@ import {
   ConfigResponse,
   ExchangeRateResponse,
   ReinvestResponse,
+  SupplyResponse,
   TargetValueResponse,
   ValidatorSetResponse,
 } from "./types/WyndLsdHub.types";
@@ -17,6 +18,7 @@ export interface WyndLsdHubReadOnlyInterface {
   claims: ({ address }: { address: string }) => Promise<ClaimsResponse>;
   validatorSet: () => Promise<ValidatorSetResponse>;
   lastReinvest: () => Promise<ReinvestResponse>;
+  supply: () => Promise<SupplyResponse>;
   exchangeRate: () => Promise<ExchangeRateResponse>;
   targetValue: () => Promise<TargetValueResponse>;
 }
@@ -31,6 +33,7 @@ export class WyndLsdHubQueryClient implements WyndLsdHubReadOnlyInterface {
     this.claims = this.claims.bind(this);
     this.validatorSet = this.validatorSet.bind(this);
     this.lastReinvest = this.lastReinvest.bind(this);
+    this.supply = this.supply.bind(this);
     this.exchangeRate = this.exchangeRate.bind(this);
     this.targetValue = this.targetValue.bind(this);
   }
@@ -55,6 +58,11 @@ export class WyndLsdHubQueryClient implements WyndLsdHubReadOnlyInterface {
   lastReinvest = async (): Promise<ReinvestResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       last_reinvest: {},
+    });
+  };
+  supply = async (): Promise<SupplyResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      supply: {},
     });
   };
   exchangeRate = async (): Promise<ExchangeRateResponse> => {

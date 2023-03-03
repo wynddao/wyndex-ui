@@ -89,6 +89,9 @@ export type QueryMsg =
       last_reinvest: {};
     }
   | {
+      supply: {};
+    }
+  | {
       exchange_rate: {};
     }
   | {
@@ -128,6 +131,23 @@ export interface ExchangeRateResponse {
 export interface ReinvestResponse {
   last_reinvest: number;
   next_reinvest: number;
+}
+export interface SupplyResponse {
+  supply: Supply;
+}
+export interface Supply {
+  bond_denom: string;
+  bonded: [string, Uint128][];
+  claims: Uint128;
+  issued: Uint128;
+  total_bonded: Uint128;
+  total_unbonding: Uint128;
+  unbonding: Unbonding[];
+}
+export interface Unbonding {
+  a: Uint128;
+  e: Expiration;
+  v: string;
 }
 export interface TargetValueResponse {
   target_value: Decimal;
