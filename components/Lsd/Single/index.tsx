@@ -117,8 +117,22 @@ export const LsdSingle = ({ id }: { id: string }) => {
               </Flex>
             </Box>
             <Box w="100%">
-              <Button onClick={() => setModalOpen(true)} variant="solid" width="100%">
+              <Button borderBottomRadius={0} onClick={() => setModalOpen(true)} variant="solid" width="100%">
                 Unstake
+              </Button>
+            </Box>
+            <Box w="100%">
+              <Button
+                borderTopRadius={0}
+                bgGradient="linear(to-l, wynd.green.300, wynd.cyan.300)"
+                _hover={{
+                  bgGradient: "linear(to-l, wynd.green.200, wynd.cyan.200)"
+                }}
+                onClick={() => setModalOpen(true)}
+                variant="solid"
+                width="100%"
+              >
+                Quick Burn
               </Button>
             </Box>
           </BorderedBox>
