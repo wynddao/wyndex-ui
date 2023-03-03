@@ -1,16 +1,39 @@
-import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos } from "../../../state";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { WYND_TOKEN_ADDRESS } from "../../../utils";
+import { formatCurrency } from "../../../utils/currency";
 import { secondsToDays } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
 
 export const StakeHeader = ({
-  totalStaked,
-  treasuryBalance,
+  totalStaked: totalStakedWynd,
+  treasuryBalance: treasuryBalanceWynd,
 }: {
   totalStaked: string | undefined;
   treasuryBalance: string;
 }) => {
   const { unbondingPeriods: bondingInfos } = useDaoStakingInfos();
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
+
+  const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
+  const wyndexPrice =
+    currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
+
+  const treasuryBalanceFiat = Number(treasuryBalanceWynd) * wyndexPrice;
+  const treasuryBalanceWyndFormatted = Number(
+    microamountToAmount(treasuryBalanceWynd || 0, 6),
+  ).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+  const totalStakedFiat = Number(totalStakedWynd) * wyndexPrice;
+  const totalStakedWyndFormatted = Number(microamountToAmount(totalStakedWynd || 0, 6)).toLocaleString(
+    undefined,
+    { maximumFractionDigits: 0 },
+  );
+
   return (
     <Box bg="url(/moonforest.png)" rounded="lg" bgPosition="center" bgSize="cover">
       <Flex
@@ -32,10 +55,7 @@ export const StakeHeader = ({
               DAO Treasury
             </Text>
             <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
-              {Number(microamountToAmount(treasuryBalance || 0, 6)).toLocaleString(undefined, {
-                maximumFractionDigits: 0,
-              })}{" "}
-              $WYND
+              {treasuryBalanceWyndFormatted} $WYND <Text fontSize="sm">≈ ({formatCurrency(currency, microamountToAmount(treasuryBalanceFiat, 6))})</Text>
             </Text>
           </Box>
           <Box py={{ md: 2 }} textAlign={{ base: "center", md: "right" }}>
@@ -43,10 +63,7 @@ export const StakeHeader = ({
               Total staked
             </Text>
             <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
-              {Number(microamountToAmount(totalStaked || 0, 6)).toLocaleString(undefined, {
-                maximumFractionDigits: 0,
-              })}{" "}
-              $WYND
+              {totalStakedWyndFormatted} $WYND <Text fontSize="sm">≈ ({formatCurrency(currency, microamountToAmount(totalStakedFiat, 6))})</Text>
             </Text>
           </Box>
         </Flex>

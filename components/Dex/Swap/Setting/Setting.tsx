@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
 import {
+  Box,
   Button,
+  Flex,
   Icon,
   Popover,
   PopoverBody,
@@ -8,12 +9,10 @@ import {
   PopoverTrigger,
   Text,
   useDisclosure,
-  Box,
-  Flex,
 } from "@chakra-ui/react";
-import { BsHexagon, BsHexagonFill, BsExclamationCircleFill } from "react-icons/bs";
+import { useRef } from "react";
+import { BsExclamationCircleFill, BsHexagon, BsHexagonFill } from "react-icons/bs";
 import { RiSettings4Fill } from "react-icons/ri";
-
 import RadioTag from "./RadioTag";
 
 interface IProps {
@@ -58,12 +57,12 @@ const Settings: React.FC<IProps> = ({ slippage, setSlippage }) => {
         bg={"wynd.base.sidebar"}
         borderColor={"WhiteAlpha.700"}
         boxShadow="md"
-        w={{ xl: "fit-content" }}
-        right={4} 
+        w="min-content"
+        right={4}
         className="swap-popover"
       >
         <PopoverBody>
-          <Flex flexFlow="column" fontSize={{ base: "sm", md: "md" }} p={{ base: 2, md: 8 }}>
+          <Flex flexFlow="column" fontSize={{ base: "sm", md: "md" }} p={2}>
             <Text fontWeight="semibold" mb={1.5}>
               Transaction Setting
             </Text>

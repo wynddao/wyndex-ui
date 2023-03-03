@@ -10,13 +10,21 @@ export interface LinkItemProps {
   readonly to: string;
   readonly icon: IconType;
   readonly isExternalLink?: boolean;
+  readonly comingSoon?: boolean;
 }
 
 import React, { Suspense } from "react";
 import { CgExternal } from "react-icons/cg";
 import { UnvotedPropCount } from "./UnvotedPropCount";
 
-const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExternalLink, ...restProps }) => {
+const NavItem: React.FC<LinkItemProps & FlexProps> = ({
+  to,
+  icon,
+  name,
+  isExternalLink,
+  comingSoon,
+  ...restProps
+}) => {
   const pathname = usePathname();
 
   // Set styles for active link and children routes, but avoid Dashboard being always styled
@@ -68,7 +76,25 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({ to, icon, name, isExtern
           >
             {name}
           </Text>
-          {name === "Vote" && <Suspense fallback={<span>...</span>}><UnvotedPropCount /></Suspense>}
+          {name === "Vote" && (
+            <Suspense fallback={<span>...</span>}>
+              <UnvotedPropCount />
+            </Suspense>
+          )}
+          {comingSoon && (
+            <Badge
+              zIndex="4"
+              borderRadius="50%"
+              display="flex"
+              justifyContent="center"
+              ml="1"
+              alignItems="center"
+              fontSize="0.8em"
+              colorScheme="blue"
+            >
+              soon
+            </Badge>
+          )}
         </Flex>
         {isExternalLink && (
           <Icon

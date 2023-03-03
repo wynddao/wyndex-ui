@@ -1,6 +1,7 @@
 "use client";
-import { Box, keyframes } from "@chakra-ui/react";
+import { Box, Flex, keyframes, Text } from "@chakra-ui/react";
 import { usePrefersReducedMotion } from "@chakra-ui/react";
+import Link from "next/link";
 import { useState } from "react";
 
 const floating = keyframes`
@@ -96,7 +97,6 @@ export default function MysteryBoxContainer() {
         </Box>
         <Box
           zIndex={open ? 9 : 2}
-          bgImage="linear-gradient(to bottom, transparent 70%, rgba(0,0,0, 1)), url('/druid.gif')"
           backgroundSize="cover"
           backgroundPosition="center"
           width="7rem"
@@ -111,7 +111,21 @@ export default function MysteryBoxContainer() {
           transition="all ease-in 1s"
           transform="scale(0)"
           className={`druid ${open ? "druid-open" : ""}`}
-        />
+        >
+          <Link target="_blank" href="https://medium.com/wynddao/lsd-on-wynd-dao-6afb16751889">
+            <Flex flexDir="column" alignItems="center" justifyContent="center">
+              <Text
+                bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+                bgClip="text"
+                display="inline"
+                fontSize="xl"
+              >
+                Liquid Staking
+              </Text>
+              <Text fontSize="xs">soon!</Text>
+            </Flex>
+          </Link>
+        </Box>
         <Box
           zIndex={open ? 8 : 1}
           width="7rem"

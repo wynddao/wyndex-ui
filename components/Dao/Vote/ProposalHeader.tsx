@@ -1,4 +1,5 @@
-import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useSingleProposalInfo } from "../../../state/hooks/proposal";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { secondsToDays } from "../../../utils/time";
@@ -7,7 +8,7 @@ import { microamountToAmount } from "../../../utils/tokens";
 export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
   const { config } = useSingleProposalInfo(voteModule.address);
   const { governanceTokenInfo, totalStaked } = useDaoStakingInfos();
-
+  const router = useRouter();
   return (
     <>
       <Box bg="url(/mooncastle.png)" rounded="lg" bgPosition="center" bgSize="cover">
@@ -131,6 +132,18 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               {secondsToDays(config.max_voting_period.time)} Days
             </Text>
           </Box>
+          <Flex alignItems="center">
+            <Button
+              bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
+              bgClip="text"
+              display="inline-block"
+              variant="ghost"
+              onClick={() => router.push("/vote/create")}
+              _hover={{ bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)"}}
+            >
+              Create Proposal
+            </Button>
+          </Flex>
         </Flex>
       </Box>
     </>

@@ -85,6 +85,10 @@ export const Gauge = ({
       currentVotePower: optionPower,
     };
   });
+  const totalValidVotes: number = poolsWithStakingAddress.reduce((acc, red) => {
+    return acc + (0.1 < (red.currentVotePower / totalVotes) * 100 ? red.currentVotePower : 0);
+  }, 0);
+
   const [selectedPool, setSelectedPool] = useState<PoolWithAddresses>(poolsWithStakingAddress[0]);
   const [availablePools, setAvailablePools] = useState<PoolWithAddresses[]>(poolsWithStakingAddress);
   const assetDetails = getAssetInfoDetails(config.rewards_asset.info);
@@ -218,7 +222,7 @@ export const Gauge = ({
     <>
       <GaugeHeader gauge={gauge} />
       <Grid gap={6} mt={8} templateColumns={{ base: "repeat(1, 1fr)", lg: "1fr 1fr" }}>
-        <BorderedBox>
+        <BorderedBox mb={10}>
           <Text mb={4} fontSize="2xl">
             Place Your Vote
           </Text>
@@ -392,7 +396,7 @@ export const Gauge = ({
             )}
           </Grid>
         </BorderedBox>
-        <BorderedBox>
+        <BorderedBox mb={10}>
           <Text fontSize="2xl">Current Votes For Next Epoch</Text>
           <Text mb={4} fontSize="sm">
             (Starting {new Date(gauge.next_epoch * 1000).toLocaleDateString()})
@@ -417,7 +421,8 @@ export const Gauge = ({
           </Grid>
           <Box
             overflowY="auto"
-            maxHeight={80}
+            h={80}
+            resize="vertical"
             borderTop="1px white solid"
             css={{
               "&::-webkit-scrollbar": {
@@ -497,23 +502,25 @@ export const Gauge = ({
                   <Flex>
                     {(
                       ((Number(config.rewards_asset.amount) / 10 ** assetDetails.decimals) *
-                        (pool.currentVotePower > (pool.currentVotePower / totalVotes) * 100 * 0.01
-                          ? pool.currentVotePower
-                          : 0)) /
-                      totalVotes
+                        (0.1 < (pool.currentVotePower / totalVotes) * 100 ? pool.currentVotePower : 0)) /
+                      totalValidVotes
                     ).toFixed(2)}{" "}
                     ${microdenomToDenom(assetDetails.denom)}
                   </Flex>
                   <Flex align="center">
                     {formatCurrency(
                       currency,
-                      (getAssetPriceByCurrency(currency, pool.assets[0], assetPrices) *
+                      (
+                        getAssetPriceByCurrency(currency, pool.assets[0], assetPrices) *
                         // @ts-ignore
                         Number(pool.assets[0].amount / 10 ** getAssetInfoDetails(pool.assets[0]).decimals) *
-                        2).toString(),
+                        2
+                      ).toString(),
                     )}
                   </Flex>
-                  <Flex align="center">{((pool.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
+                  <Tooltip placement="left" label={`Voting Power: ${pool.currentVotePower} / ${totalVotes}`}>
+                    <Flex align="center">{((pool.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
+                  </Tooltip>
                 </Grid>
               ))}
           </Box>

@@ -1,11 +1,11 @@
-"use client";
 import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import Image from "next/image";
-import { TbPills } from "react-icons/tb";
+
+import { FaBalanceScaleLeft, FaEthereum } from "react-icons/fa";
 import { FiActivity, FiPieChart, FiRefreshCw, FiWind } from "react-icons/fi";
 import { MdBallot } from "react-icons/md";
-import { FaBalanceScaleLeft } from "react-icons/fa";
-
+import { SiConvertio } from "react-icons/si";
+import { TbPills } from "react-icons/tb";
 import wyndLogoWhite from "../../../public/logo-white.svg";
 import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem, { LinkItemProps } from "./NavItem";
@@ -16,10 +16,12 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Dashboard", to: "/", icon: FiActivity },
   { name: "Swap", to: "/swap", icon: FiRefreshCw },
   { name: "Pools", to: "/pools", icon: FiPieChart },
-  { name: "LSD", to: "/lsd", icon: TbPills },
+  { name: "Convert", to: "/convert", icon: SiConvertio },
+  { name: "LSD", to: "/lsd", icon: TbPills},
   { name: "Stake", to: "/stake", icon: FiWind },
   { name: "Vote", to: "/vote", icon: MdBallot },
   { name: "Gauges", to: "/gauges", icon: FaBalanceScaleLeft },
+  { name: "New to the cosmos?", to: "/eth", icon: FaEthereum },
 ];
 
 interface SidebarContentProps extends BoxProps {
@@ -53,6 +55,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
             key={link.name}
             to={link.to}
             icon={link.icon}
+            comingSoon={link.comingSoon}
             name={link.name}
             isExternalLink={link.isExternalLink}
           />

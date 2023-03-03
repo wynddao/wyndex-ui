@@ -11,3 +11,5 @@ export const formatCurrencyStatic = new Intl.NumberFormat(undefined, {
   style: "currency",
   currency: "USD",
 });
+
+export const formatCryptoCurrency = new Intl.NumberFormat();

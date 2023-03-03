@@ -1,23 +1,24 @@
 import {
   Badge,
-  Box,
   Button,
   Flex,
   Grid,
   GridItem,
   Icon,
-  IconButton,
   Image,
   Text,
   Tooltip,
+  useClipboard,
 } from "@chakra-ui/react";
 import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { FiCopy } from "react-icons/fi";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useIndexerInfos } from "../../../state";
 import { depositIbcModalAtom, withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { formatCurrency } from "../../../utils/currency";
+import { capitalizeFirstLetter } from "../../../utils/text";
 import { microamountToAmount } from "../../../utils/tokens";
 import { ExtendedAsset } from "./utils";
 
@@ -27,10 +28,14 @@ interface AssetBalanceItemProps {
 }
 
 export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemProps) {
+  const { onCopy, hasCopied } = useClipboard(asset.tags.includes("cw20") ? (asset as CW20Asset).token_address : asset.tags.includes("ibc") ? (asset as IBCAsset).juno_denom : asset.denom);
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
+
+  const toCopy = "token_address" in asset ? "address" : "juno denom";
+  const tooltipLabel = hasCopied ? `${capitalizeFirstLetter(toCopy)} copied!` : `Copy ${toCopy}`;
 
   return (
     <Grid
@@ -62,14 +67,20 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
           h={{ base: "2rem", lg: "3rem" }}
         />
         <Text fontSize="lg">{asset.name}</Text>
-        <Badge rounded="md" py="1" px="2" fontSize="x-small">
-          {asset.tags}
-        </Badge>
+        <Tooltip label={tooltipLabel} hasArrow={true} closeDelay={1000}>
+          <Badge as={Button} onClick={onCopy} rounded="md" fontSize="x-small" height="auto" p={2}>
+            <Flex alignItems="center" justifyContent="space-between">
+              <Icon fontSize="xs" as={FiCopy} />
+              <Text marginLeft={1}>{asset.tags}</Text>
+            </Flex>
+          </Badge>
+        </Tooltip>
       </GridItem>
       <GridItem display="flex" alignItems="center" flexDir="column" justifyContent="end">
         <Text fontSize="lg">{microamountToAmount(asset.balance, asset.decimals)}</Text>
         <Text fontSize="xs">
-          (≈{formatCurrency(
+          (≈
+          {formatCurrency(
             currency,
             (
               ((currency === "EUR"
@@ -86,7 +97,8 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
                       (asset as CW20Asset).token_address === el.asset,
                   )?.priceInUsd) || 0) * Number(microamountToAmount(asset.balance, asset.decimals))
             ).toString(),
-          )})
+          )}
+          )
         </Text>
       </GridItem>
       <GridItem colSpan={{ base: 2, lg: 1 }} display="flex" alignItems="end" justifyContent="end" gap="2">

@@ -1,9 +1,9 @@
 import { Button, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useToast, WyndexStakeHooks } from "../../../../state";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos, useToast, WyndexStakeHooks } from "../../../../state";
 import { Claim } from "../../../../state/clients/types/WyndDaoStake.types";
-import { useDaoStakingInfos } from "../../../../state/hooks/useDaoStakingInfos";
-import { useStakeInfos } from "../../../../state/hooks/useStakeInfos";
+import { currencyAtom } from "../../../../state/recoil/atoms/settings";
+import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { microamountToAmount } from "../../../../utils/tokens";
 
 interface UnstakingTokensProps {
@@ -17,6 +17,13 @@ interface UnstakingTokensProps {
 export const UnstakingTokens = (props: UnstakingTokensProps) => {
   const { claimsPending, claimsAvailable, stakeAddress, walletAddress } = props;
   const { txToast } = useToast();
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
+
+  const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
+  const wyndexPrice =
+    currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
+
   const doClaim = WyndexStakeHooks.useClaim({
     contractAddress: stakeAddress,
     sender: walletAddress,
@@ -64,7 +71,8 @@ export const UnstakingTokens = (props: UnstakingTokensProps) => {
           gap="4"
         >
           <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-            {microamountToAmount(claim.amount, 6)} $WYND
+            {microamountToAmount(claim.amount, 6)} $WYND (~
+            {microamountToAmount(Number(claim.amount) * wyndexPrice, 6, 2)} {currency === "USD" ? "$" : "€"})
           </GridItem>
           <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
             <Text fontSize="lg">
