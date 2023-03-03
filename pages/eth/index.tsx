@@ -5,23 +5,17 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Card,
-  CardBody,
-  CardHeader,
   Flex,
   Grid,
   Heading,
   Link,
   ListItem,
-  Stack,
-  StackDivider,
   Text,
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import Head from "next/head";
-import { IoRocket } from "react-icons/io5";
 import { BorderedBox } from "../../components/Dao/Stake/MyTokens/BorderedBox";
 import ConnectWalletButton from "../../components/General/Sidebar/ConnectWalletButton";
 import OnRampModal from "../../components/General/Sidebar/OnRamp/OnRampModal";
@@ -54,20 +48,20 @@ export default function Page() {
             roundedTop="lg"
           >
             <Heading textAlign="center" fontSize={{ base: "4xl", md: "5xl" }}>
-              Welcome to the CØSMOS Ecosystem! 
+              Welcome to the CØSMOS Ecosystem!
             </Heading>
           </Flex>
         </Box>
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
-          <BorderedBox my={4} p={8}>
-            WYND is a multiprotocol DAO deployed on Juno Network. WYND DAO hosts a DEX and LSD with more DeFi
-            protocols coming soon. All protocols are governed by gauges, similar to the Curve model. Please
-            keep in mind fees are paid in JUNO. Below we have summarized a few steps to begin your cosmonaut
-            journey.
+          <BorderedBox my={4} p={8} display="flex" alignItems="center">
+            <Text fontSize="xl">
+              Want to explore the Cosmos? The WYND ecosystem on Juno network is the perfect place to start!
+              Below are instructions on how you can get started as a Cosmonaut!
+            </Text>
           </BorderedBox>
           <BorderedBox my={4}>
             <Flex flexDir="column" alignItems="center" justifyContent="center">
-              You already know your way around?
+              <Text fontSize="xl">You already know your way around?</Text>
               <Box mt={2}>
                 <ConnectWalletButton />
               </Box>
@@ -132,15 +126,15 @@ export default function Page() {
             <AccordionItem>
               <AccordionButton>
                 <Box as="span" flex="1" textAlign="left">
-                  <Text fontSize="xl">Get some assets!</Text>
+                  <Text fontSize="xl">Accumulate assets!</Text>
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
               <AccordionPanel pb={4}>
                 <Text fontSize="lg" mt={2}>
                   You can{" "}
-                  <Link href="/convert" sx={linkSx}>
-                    Convert
+                  <Link href="/bridge" sx={linkSx}>
+                    bridge
                   </Link>{" "}
                   your EVM tokens into Cosmos ones, or you can buy some with fiat using{" "}
                   <Link onClick={onOpen} sx={linkSx}>
@@ -163,8 +157,8 @@ export default function Page() {
                   this app. You can do that from the{" "}
                   <Link href="/" sx={linkSx}>
                     Dashboard
-                  </Link>
-                  .
+                  </Link>{" "}
+                  by clicking on "IBC Deposit".
                 </Text>
               </AccordionPanel>
             </AccordionItem>
@@ -180,7 +174,7 @@ export default function Page() {
                 <Text fontSize="lg" mt={2}>
                   Now that you have some tokens on the Juno network, you can freely{" "}
                   <Link href="/swap" sx={linkSx}>
-                    Swap
+                    swap
                   </Link>{" "}
                   them.
                 </Text>
@@ -189,7 +183,7 @@ export default function Page() {
             <AccordionItem>
               <AccordionButton>
                 <Box as="span" flex="1" textAlign="left">
-                  <Text fontSize="xl">Earn some rewards!</Text>
+                  <Text fontSize="xl">Earn rewards!</Text>
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
@@ -197,16 +191,16 @@ export default function Page() {
               <AccordionPanel pb={4}>
                 <Box>
                   <Text fontSize="lg" mt={2}>
-                    Once you have two tokens on the Juno network, you can{" "}
+                    You can{" "}
                     <Link href="/stake" sx={linkSx}>
                       stake
                     </Link>{" "}
-                    numerous assets such as Juno or WYND and earn additional tokens, or you can{" "}
+                    numerous tokens such as JUNO or WYND and earn additional tokens, or you can{" "}
                     <Link href="/pools" sx={linkSx}>
                       pool
                     </Link>{" "}
-                    two tokens together and bond your liqudity to earn additional rewards. The longer you bond
-                    your liquidity for, the greater the rewards
+                    two tokens together and bond your liquidity to earn additional rewards. The longer you
+                    bond your liquidity for, the greater the rewards.
                   </Text>
                 </Box>
               </AccordionPanel>
@@ -215,7 +209,7 @@ export default function Page() {
         </BorderedBox>
         <BorderedBox mt={4} textAlign="center">
           <Text fontSize="2xl" mb={2}>
-            Useful Links & Ressources
+            Useful Links & Resources
           </Text>
           <Flex justifyContent="space-evenly" alignItems="center">
             <Box>
