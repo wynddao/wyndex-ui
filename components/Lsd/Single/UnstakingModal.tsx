@@ -184,7 +184,7 @@ const UnstakingModalContent = ({
                 loadingText={"Executing"}
                 onClick={() => unbond()}
               >
-                Remove Liquidity
+                Unbond
               </Button>
             </Box>
           </Box>
