@@ -6,7 +6,7 @@ import { useIndexerInfos } from "../../../../state";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAmountByPrice, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
-import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
+import { microamountToAmount } from "../../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
 
 interface IProps {
@@ -104,7 +104,7 @@ const FromToken: React.FC<IProps> = ({
                 </Text>
               </Flex>
               <Text textTransform="uppercase" minW="55px">
-                {microdenomToDenom(fromToken.denom)}
+                {fromToken.symbol}
               </Text>
             </Flex>
           </Flex>
