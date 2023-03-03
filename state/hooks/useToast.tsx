@@ -34,6 +34,7 @@ export const useToast = () => {
             style: {
               background: "var(--chakra-colors-chakra-body-bg)",
               color: "var(--chakra-colors-chakra-body-text)",
+              marginTop: "80px",
             },
           },
           success: {
@@ -42,6 +43,7 @@ export const useToast = () => {
             style: {
               background: "var(--chakra-colors-chakra-body-bg)",
               color: "var(--chakra-colors-chakra-body-text)",
+              marginTop: "80px",
             },
           },
           loading: {
@@ -49,6 +51,7 @@ export const useToast = () => {
             style: {
               background: "var(--chakra-colors-chakra-body-bg)",
               color: "var(--chakra-colors-chakra-body-text)",
+              marginTop: "80px",
             },
           },
         },
@@ -60,6 +63,7 @@ export const useToast = () => {
         style: {
           background: "var(--chakra-colors-chakra-body-bg)",
           color: "var(--chakra-colors-chakra-body-text)",
+          marginTop: "80px",
         },
       });
     }
