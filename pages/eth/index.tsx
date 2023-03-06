@@ -158,7 +158,7 @@ export default function Page() {
                   <Link href="/" sx={linkSx}>
                     Dashboard
                   </Link>{" "}
-                  by clicking on "IBC Deposit".
+                  by clicking on &quot;IBC Deposit&quot;.
                 </Text>
               </AccordionPanel>
             </AccordionItem>
