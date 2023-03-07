@@ -37,6 +37,8 @@ export default function BoundingsTable({
   const [nextDuration, setNextDuration] = useState<BondingPeriodInfo | undefined>(undefined);
   const [prevDuration, setPrevDuration] = useState<BondingPeriodInfo | undefined>(undefined);
 
+  const filteredStakes = allStakes.filter(({ stake }) => Number(stake) >= 10_000);
+
   const getNextOrPrevDurationTime = (
     stake: StakedResponse,
     higher: boolean,
@@ -72,8 +74,8 @@ export default function BoundingsTable({
               </Tr>
             </Thead>
             <Tbody>
-              {allStakes.length > 0 ? (
-                allStakes.map(({ stake, unbonding_period }, i) => {
+              {filteredStakes.length > 0 ? (
+                filteredStakes.map(({ stake, unbonding_period }, i) => {
                   return (
                     <Tr key={i}>
                       <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days Unbonding</Td>
@@ -87,9 +89,9 @@ export default function BoundingsTable({
                           <Button
                             onClick={() => {
                               setModalOpen(true);
-                              setActiveStake(allStakes[i]);
-                              setPrevDuration(getNextOrPrevDurationTime(allStakes[i], false));
-                              setNextDuration(getNextOrPrevDurationTime(allStakes[i], true));
+                              setActiveStake(filteredStakes[i]);
+                              setPrevDuration(getNextOrPrevDurationTime(filteredStakes[i], false));
+                              setNextDuration(getNextOrPrevDurationTime(filteredStakes[i], true));
                             }}
                             variant="outline"
                             bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
