@@ -96,7 +96,7 @@ const UnstakingModalContent = ({
     await txToast(async (): Promise<ExecuteResult> => {
       const result = await doWithdraw({
         amount: (Number((removeValue / 100) * removeableTokens) * 10 ** 6).toFixed(0),
-        contract: "juno1ek4ed6yevgx4x0mnce4h58y4p30ay7k35g2vrt0nmnlt6ttsmpmq270tee",
+        contract: "juno1ja9eyz4x7lnnvv56k30t2dfv68ln9hzkkfaj3uthvwzj2ppc470qyylhwv",
         msg: btoa(`{"unbond": {}}`),
       });
       await new Promise((resolve) => setTimeout(resolve, 6500));

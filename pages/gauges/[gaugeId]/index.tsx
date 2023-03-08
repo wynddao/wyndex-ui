@@ -1,14 +1,17 @@
 import { Box } from "@chakra-ui/react";
-import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
+import { GetStaticPaths, GetStaticPropsContext } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Gauge } from "../../../components/Dao/Gauge";
+import { LSDGauge } from "../../../components/Dao/LSDGauge";
+import { PoolGauge } from "../../../components/Dao/PoolGauge";
 import { useGaugeAdapter, useGaugeConfigs } from "../../../state";
 
 export default function Page() {
   const router = useRouter();
   const { gaugeId } = router.query;
   const { options, gauge, refresh_votes } = useGaugeAdapter(Number(gaugeId));
+  const { config } = useGaugeConfigs(gauge.adapter);
+  const isRewardGauge = config.hasOwnProperty("rewards_asset");
 
   return (
     <>
@@ -16,7 +19,11 @@ export default function Page() {
         <title>WYND | DAO - Gauge #{gauge.id}</title>
       </Head>
       <Box p="4">
-        <Gauge options={options} gauge={gauge} refreshVotes={refresh_votes} />
+        {/* Pools Incentives Gauge */}
+        {isRewardGauge && <PoolGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />}
+
+        {/* LSD Gauge */}
+        {!isRewardGauge && <LSDGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />}
       </Box>
     </>
   );
