@@ -64,15 +64,16 @@ export const SquidWidgetStylesOverride: React.FC<PropsWithChildren> = ({ childre
             },
           },
 
-          "& + a:hover #squid-secondary-hover-button:hover": {
-            bgGradient: "linear(to-l, wynd.green.400, wynd.cyan.400) !important",
+          "& + span:hover #squid-secondary-hover-button:hover, & + a:hover #squid-secondary-hover-button:hover":
+            {
+              bgGradient: "linear(to-l, wynd.green.400, wynd.cyan.400) !important",
 
-            "& span": {
-              fontSize: "sm !important",
-              color: "white",
-              marginBottom: 0.5,
+              "& span": {
+                fontSize: "sm !important",
+                color: "white",
+                marginBottom: 0.25,
+              },
             },
-          },
         },
         "#squid-secondary-hover-button > span:nth-of-type(1) span": {
           fontSize: "sm !important",
