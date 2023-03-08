@@ -3,14 +3,14 @@ import { PropsWithChildren } from "react";
 
 const squidWidgetContentSelector = "#squid-widget > div";
 const squidWidgetBodySelector = "#squid-widget-header + div";
-const fromToBoxSelector = `${squidWidgetBodySelector} > span:nth-child(1)`;
+const fromToBoxSelector = `${squidWidgetBodySelector} > span:nth-of-type(1)`;
 const swapBoxSelector = "#squid-swap-source + span";
-const swapLineSelector = `${swapBoxSelector} > span:nth-child(1)`;
-const swapButtonBoxSelector = `${swapBoxSelector} > span:nth-child(2)`;
+const swapLineSelector = `${swapBoxSelector} > span:nth-of-type(1)`;
+const swapButtonBoxSelector = `${swapBoxSelector} > span:nth-of-type(2)`;
 const swapButtonSelector = `${swapButtonBoxSelector} > button`;
 const swapButtonSvgSelector = `${swapButtonSelector} > svg`;
-const rateBoxSelector = `${squidWidgetBodySelector} > span:nth-child(2)`;
-const buttonBoxSelector = `${squidWidgetBodySelector} > span:nth-child(3)`;
+const rateBoxSelector = `${squidWidgetBodySelector} > span:nth-of-type(2)`;
+const buttonBoxSelector = `${squidWidgetBodySelector} > span:nth-of-type(3)`;
 
 export const SquidWidgetStylesOverride: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -74,7 +74,7 @@ export const SquidWidgetStylesOverride: React.FC<PropsWithChildren> = ({ childre
             },
           },
         },
-        "#squid-secondary-hover-button > span:nth-child(1) span": {
+        "#squid-secondary-hover-button > span:nth-of-type(1) span": {
           fontSize: "sm !important",
         },
         [swapLineSelector]: {
