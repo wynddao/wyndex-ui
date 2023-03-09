@@ -5,7 +5,7 @@ import { useLocalStorage } from "react-use";
 
 export enum ThemeModes {
   light = "light",
-  dark = "dark",
+  dark = "dark"
 }
 
 interface IThemeContext {

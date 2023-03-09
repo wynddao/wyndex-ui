@@ -3,7 +3,7 @@ import { Asset } from "@wynddao/asset-list";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
-import { getAmountByPrice, getDenom } from "../../../../utils/assets";
+import { getAmountByPrice } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
 import AssetSelector from "./AssetSelector";
 
@@ -28,9 +28,8 @@ const ToToken: React.FC<IProps> = ({
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const priceFrom = getAmountByPrice(fromAmount, currency, fromToken, assetPrices);
   const priceTo = getAmountByPrice(inputAmount, currency, toToken, assetPrices);
-
   const impact = 100 - (priceFrom / priceTo) * 100;
-  console.log(!isFinite(impact))
+
   return (
     <Box flex="1">
       <Box
@@ -73,7 +72,7 @@ const ToToken: React.FC<IProps> = ({
                 </Text>
               </Flex>
               <Text textTransform="uppercase" minW="55px">
-                {getDenom(toToken)}
+                {toToken.symbol}
               </Text>
             </Flex>
           </Flex>

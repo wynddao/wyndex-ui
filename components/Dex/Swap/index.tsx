@@ -3,6 +3,7 @@ import { useWallet } from "@cosmos-kit/react";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
 import React, { startTransition, useMemo, useState } from "react";
+import { AiFillWarning } from "react-icons/ai";
 import { IoChevronDown } from "react-icons/io5";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../../state";
@@ -141,6 +142,13 @@ const Swap: React.FC = () => {
     if (walletAddress) return "Swap";
   }, [fromBalance.amount, fromToken.decimals, fromTokenAmount, isTxLoading, walletAddress]);
 
+  const isFromJuno = fromToken.denom === "ujunox" || fromToken.denom === "ujuno";
+  const hasJunoBalance = fromBalance.amount !== "0";
+  const isJunoAmountMax =
+    Number(fromTokenAmount) >
+    Number(microamountToAmount(Number(fromBalance.amount) - 50000, fromToken.decimals));
+  const showJunoWarning = isFromJuno && hasJunoBalance && isJunoAmountMax;
+
   return (
     <Flex
       gap={{ base: "2rem", lg: "4rem" }}
@@ -195,6 +203,24 @@ const Swap: React.FC = () => {
           <LineChart toToken={toToken} fromToken={fromToken} open={showHistorical} />
         </Collapse>
       </Box>
+      {showJunoWarning ? (
+        <Box
+          w="full"
+          display="flex"
+          alignItems="center"
+          gap={2}
+          p={4}
+          borderRadius="lg"
+          backgroundColor="wynd.alert.warning.500"
+          color="black"
+        >
+          <AiFillWarning size={32} />
+          <Text>
+            If you spend all your {fromToken.symbol}, you won&apos;t be able to pay for the fees of future
+            transactions.
+          </Text>
+        </Box>
+      ) : null}
       <Button
         h={{ base: 12, lg: 16 }}
         w="full"

@@ -10,3 +10,4 @@ export * as WyndBaseSelectors from "./cw20vesting";
 export * as CwProposalSingleSelectors from "./cw-proposal-single";
 export * as WyndGaugeAdapterSelectors from "./wyndex-gauge-adapter";
 export * as WyndGaugeOrchestratorSelectors from "./wyndex-gauge-orchestrator";
+export * as WyndLsdHubSelectors from "./wynd-lsd-hub";

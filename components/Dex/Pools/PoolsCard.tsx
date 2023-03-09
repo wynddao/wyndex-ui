@@ -1,17 +1,18 @@
-"use client";
 import { Box, Divider, Flex, Grid, GridItem, Text, useBreakpointValue } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import Link from "next/link";
+import { useRecoilValue } from "recoil";
+import { useCw20UserInfos, usePairInfos, usePoolInfos } from "../../../state";
+import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
+import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { getAssetInfoDetails, getAssetPrice, getNativeIbcTokenDenom } from "../../../utils/assets";
-import { formatCurrency, formatCurrencyStatic } from "../../../utils/currency";
+import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../AssetImage";
+import Carousel from "../Carousel";
 import TokenName from "../TokenName";
 import MaxApr from "./MaxApr";
-import { useRecoilValue } from "recoil";
-import { currencyAtom } from "../../../state/recoil/atoms/settings";
-import MyShares from "./MyShares";
-import Carousel from "../Carousel";
-import { Asset } from "@wynddao/asset-list";
 
 interface PoolsCardProps {
   readonly poolsData: readonly any[];
@@ -19,21 +20,74 @@ interface PoolsCardProps {
   readonly assetPrices: any[];
 }
 
-function PoolCard({
-  index,
-  pool,
-  tokens,
-  tvl,
-}: {
-  index: number;
-  pool: any;
-  tokens: [Asset & { amount: string }, Asset & { amount: string }];
-  tvl: string;
-}) {
-  const [token1, token2] = tokens;
+export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCardProps) {
+  const slides = useBreakpointValue({ base: 1, lg: 2, xl: 3, "2xl": 4, "4xl": 6 }) || 1;
 
   return (
-    <Link key={index} href={`/pools/${pool.address}`}>
+    <Carousel numOfSlides={slides}>
+      {poolsData.map((pool, index) => (
+        <PoolCard key={index} allPools={allPools} assetPrices={assetPrices} pool={pool} />
+      ))}
+    </Carousel>
+  );
+}
+
+interface PoolCardProps {
+  readonly allPools: any[];
+  readonly assetPrices: any[];
+  readonly pool: any;
+}
+
+function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
+  const currency = useRecoilValue(currencyAtom);
+  const [token1, token2] = allPools[pool.address];
+  const tokenPrice1 = getAssetPrice(token1, assetPrices);
+  const tokenPrice2 = getAssetPrice(token2, assetPrices);
+  const tokenInfo1 = getAssetInfoDetails(token1);
+  const tokenInfo2 = getAssetInfoDetails(token2);
+
+  const tvl = formatCurrency(
+    currency,
+    Number(
+      (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) *
+        Number(microamountToAmount(token1.amount, tokenInfo1.decimals)) +
+        (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur) *
+          Number(microamountToAmount(token2.amount, tokenInfo2.decimals)),
+    ).toString(),
+  );
+
+  const { pool: chainData } = usePoolInfos(pool.address);
+  const assetInfo = [chainData.assets[0].info, chainData.assets[1].info];
+  const { pair: pairData } = usePairInfos(assetInfo);
+  const wyndexStake = pairData.staking_addr;
+  const { address: walletAddress } = useWallet();
+  const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress || "");
+
+  // Calculate total share in USD
+  const totalFiatShares =
+    Number(microamountToAmount(chainData.assets[0].amount, tokenInfo1.decimals)) *
+      (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) +
+    Number(microamountToAmount(chainData.assets[1].amount, tokenInfo2.decimals)) *
+      (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur);
+  const { balance: lpBalance } = useCw20UserInfos(pairData.liquidity_token);
+
+  //  Add currently unstaking amounts
+  const { pendingUnstaking } = useStakeInfos(pairData.staking_addr, true);
+
+  const unstakesSum = pendingUnstaking.reduce((acc, obj) => {
+    return acc + Number(obj.amount);
+  }, 0);
+
+  const allStakesSum = allStakes.reduce((acc: number, obj) => {
+    return acc + Number(obj.stake);
+  }, 0);
+
+  const totalTokens = unstakesSum + allStakesSum + Number(lpBalance);
+  const myShare = totalTokens / Number(chainData.total_share);
+  const myFiatShare = myShare * totalFiatShares;
+
+  return myFiatShare > 0.01 ? (
+    <Link href={`/pools/${pool.address}`}>
       <Flex
         borderRadius="lg"
         border="1px solid"
@@ -147,9 +201,9 @@ function PoolCard({
             </Text>
 
             <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-              {microamountToAmount(token1.amount, token1.decimals, 0)} {token1.symbol}
+              {microamountToAmount(token1.amount, tokenInfo1.decimals, 0)} {tokenInfo1.symbol}
               <br />
-              {microamountToAmount(token2.amount, token2.decimals, 0)} {token2.symbol}
+              {microamountToAmount(token2.amount, tokenInfo2.decimals, 0)} {tokenInfo2.symbol}
             </Text>
           </GridItem>
           <GridItem>
@@ -157,57 +211,11 @@ function PoolCard({
               My Shares
             </Text>
             <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-              <MyShares poolAddress={pool.address} />
+              {formatCurrency(currency, `${myFiatShare}`)}
             </Text>
           </GridItem>
         </Grid>
       </Flex>
     </Link>
-  );
-}
-
-export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCardProps) {
-  const currency = useRecoilValue(currencyAtom);
-  const items = poolsData.map((pool, index) => {
-    const [token1, token2] = allPools[pool.address];
-    const tokenPrice1 = getAssetPrice(token1, assetPrices);
-    const tokenPrice2 = getAssetPrice(token2, assetPrices);
-    const tokenInfo1 = getAssetInfoDetails(token1);
-    const tokenInfo2 = getAssetInfoDetails(token2);
-
-    const tvl = formatCurrency(
-      currency,
-      Number(
-        (currency === "USD" ? tokenPrice1.priceInUsd : tokenPrice1.priceInEur) *
-          Number(microamountToAmount(token1.amount, tokenInfo1.decimals)) +
-          (currency === "USD" ? tokenPrice2.priceInUsd : tokenPrice2.priceInEur) *
-            Number(microamountToAmount(token2.amount, tokenInfo2.decimals)),
-      ).toString(),
-    );
-
-    return (
-      <div key={index}>
-        <PoolCard
-          tvl={tvl}
-          pool={pool}
-          tokens={[
-            { ...tokenInfo1, amount: token1.amount },
-            { ...tokenInfo2, amount: token2.amount },
-          ]}
-          index={index}
-        />
-      </div>
-    );
-  });
-
-  const slides =
-    useBreakpointValue({
-      base: 1,
-      lg: 2,
-      xl: 3,
-      "2xl": 4,
-      "4xl": 6,
-    }) || 1;
-
-  return <Carousel numOfSlides={slides}>{items}</Carousel>;
+  ) : null;
 }

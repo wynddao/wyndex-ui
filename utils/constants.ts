@@ -12,4 +12,6 @@ export const DAO_DIST_ADDRESS = process.env.NEXT_PUBLIC_DIST_ADDRESS || "";
 export const DAO_STAKING_ADDRESS = process.env.NEXT_PUBLIC_STAKING_ADDRESS || "";
 export const DAO_ADDRESS = process.env.NEXT_PUBLIC_DAO_ADDRESS || "";
 export const WYND_VOTE_MODULE_ADDRESS = process.env.NEXT_PUBLIC_WYND_VOTE_MODULE_ADDRESS || "";
-export const WYND_MAINTANANCE_MODE = process.env.NEXT_PUBLIC_WYND_MAINTANANCE_MODE === "true" ? true : false || "";
+export const WYND_MAINTANANCE_MODE =
+  process.env.NEXT_PUBLIC_WYND_MAINTANANCE_MODE === "true" ? true : false || "";
+export const ENVOIRMENT = process.env.NEXT_PUBLIC_ENVIRONMENT || "";

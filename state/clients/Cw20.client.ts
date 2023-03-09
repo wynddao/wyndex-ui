@@ -376,6 +376,7 @@ export class Cw20Client extends Cw20QueryClient implements Cw20Interface {
       funds,
     );
   };
+
   burn = async (
     {
       amount,

@@ -137,6 +137,13 @@ export const darkColors = {
         20: "rgba(28, 175, 237, 0.2)",
       },
     },
+    purple: {
+      500: "#790fff",
+      400: "#a03eff",
+      300: "#c561ff",
+      200: "#eb83ff",
+      100: "#ffa5ff",
+    },
     gray: {
       cultured: "#EEEEEE",
       900: "#F8F5FB",
