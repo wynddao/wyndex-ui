@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>WYND | DAO - Convert Tokens</title>
+        <title>WYND | DAO - Bridge Tokens</title>
       </Head>
       <Box p="4" width="fit-content" marginBlock={{ sm: 4, md: 8, lg: 16 }} marginInline="auto">
         <SquidWidget
@@ -39,7 +39,7 @@ export default function Page() {
             instantExec: false,
             apiUrl: "https://api.squidrouter.com",
             titles: {
-              swap: "Convert",
+              swap: "Bridge",
               settings: "Settings",
               wallets: "Wallets",
               tokens: "Tokens",
