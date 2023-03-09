@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, HStack, Input, Stack } from "@chakra-ui/react";
+import { Box, Grid, GridItem, HStack, Input } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
@@ -28,7 +28,7 @@ export default function AssetBalancesList() {
   const readyAssets = prepareAssets(assets, ibcBalances, cw20Balances, favAssets, filterOption, searchText);
 
   return (
-    <Box sx={{ mt: "0!important"}}>
+    <Box sx={{ mt: "0 !important" }}>
       <HStack
         position="sticky"
         top={0}
@@ -40,7 +40,7 @@ export default function AssetBalancesList() {
         bg={"wynd.base.sidebar"}
         roundedTop="md"
         boxShadow="base"
-        zIndex={10}
+        zIndex={0.5}
         py={2}
         px={4}
       >
