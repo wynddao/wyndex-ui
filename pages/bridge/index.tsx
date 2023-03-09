@@ -1,6 +1,8 @@
 import { SquidWidget } from "@0xsquid/widget";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import Head from "next/head";
+import SquidWidgetStylesOverride from "../../components/Dex/SquidWidgetStylesOverride";
+import { squidWidgetConfig } from "../../utils/squidWidget";
 
 export default function Page() {
   return (
@@ -8,55 +10,31 @@ export default function Page() {
       <Head>
         <title>WYND | DAO - Bridge Tokens</title>
       </Head>
-      <Box p="4" width="fit-content" marginBlock={{ sm: 4, md: 8, lg: 16 }} marginInline="auto">
-        <SquidWidget
-          config={{
-            companyName: "WYND",
-            mainLogoUrl: "",
-            style: {
-              neutralContent: "#959BB2",
-              baseContent: "#E8ECF2",
-              base100: "#10151B",
-              base200: "#272D3D",
-              base300: "#171D2B",
-              error: "#ED6A5E",
-              warning: "#F4D06C",
-              success: "#75B54A",
-              primary: "#47BEC2",
-              secondary: "#47BEC2",
-              secondaryContent: "#191C29",
-              neutral: "#191C29",
-              roundedBtn: "5px",
-              roundedBox: "5px",
-              roundedDropDown: "7px",
-              displayDivider: true,
-              advanced: {
-                transparentWidget: true,
-              },
-            },
-            slippage: 1.5,
-            infiniteApproval: false,
-            instantExec: false,
-            apiUrl: "https://api.squidrouter.com",
-            titles: {
-              swap: "Bridge",
-              settings: "Settings",
-              wallets: "Wallets",
-              tokens: "Tokens",
-              chains: "Chains",
-              history: "History",
-              transaction: "Transaction",
-              destination: "Destination address",
-            },
-            priceImpactWarnings: {
-              warning: 3,
-              critical: 5,
-            },
-            initialFromChainId: 1, // Ethereum
-            initialToChainId: "juno-1" as unknown as number, // Juno
-          }}
-        />
-      </Box>
+      <Flex
+        overflow="hidden"
+        alignItems="center"
+        justifyContent="center"
+        bgImage={"/images/Vector.png"}
+        bgRepeat={"no-repeat"}
+        bgSize={"cover"}
+        bgPos="left"
+        minH="100vh"
+      >
+        <SquidWidgetStylesOverride>
+          <SquidWidget config={squidWidgetConfig} />
+        </SquidWidgetStylesOverride>
+      </Flex>
+      <Box
+        bgImage={"/flute.png"}
+        bgRepeat={"no-repeat"}
+        bgSize={"cover"}
+        bgPos={"center"}
+        position="absolute"
+        h={{ xl: "400px", "2xl": "520px" }}
+        w={{ xl: "260px", "2xl": "400px" }}
+        bottom="0.5rem"
+        right="0.5rem"
+      />
     </>
   );
 }
