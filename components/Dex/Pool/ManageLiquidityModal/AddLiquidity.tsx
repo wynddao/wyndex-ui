@@ -314,11 +314,15 @@ export default function AddLiquidity({
       <Stack spacing={2} mb={6}>
         {poolData.map(({ denomOrAddr, show, name }, i) => {
           const asset = assets.find(
-            (asset) => denomOrAddr === asset.denom || denomOrAddr === asset.token_address,
+            (asset) =>
+              denomOrAddr === asset.denom ||
+              denomOrAddr === asset.token_address ||
+              denomOrAddr === asset.juno_denom,
           );
 
           let maxInput = "0";
           if (assetABalanceState === "hasValue" && assetBBalanceState === "hasValue") {
+            console.log(asset);
             maxInput = microamountToAmount(
               i === 0 ? assetABalance.amount : assetBBalance.amount,
               asset?.decimals ?? 6,
