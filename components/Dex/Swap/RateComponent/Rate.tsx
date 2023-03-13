@@ -6,6 +6,7 @@ import { SimulateSwapOperationsResponse } from "../../../../state/clients/types/
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAssetPriceByCurrency, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
+import { getAssetList } from "../../../../utils/getAssetList";
 import { microamountToAmount } from "../../../../utils/tokens";
 import SwapRoute from "./SwapRoute";
 
@@ -34,10 +35,20 @@ const Rate: React.FC<IProps> = ({
   const minimumReceived = ((100 - slippage) / 100) * Number(simulatedOperation.amount);
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
+  const assetList = getAssetList().tokens;
 
   const totalFee = simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
     const price = getAssetPriceByCurrency(currency, info, assetPrices);
-    return acc + price * Number(amount);
+    const decimals =
+      assetList.find((el) =>
+        info.hasOwnProperty("native")
+          ? // @ts-ignore
+            el.denom === info.native || el.juno_denom === info.native
+          : // @ts-ignore
+            el.token_address === info.token,
+      )?.decimals || 6;
+
+    return acc + price * Number(microamountToAmount(amount, decimals));
   }, 0);
 
   const minSlippage = (Number(Number(simulatedOperation.spread).toFixed(4)) * 100).toFixed(2);
@@ -75,7 +86,7 @@ const Rate: React.FC<IProps> = ({
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Swap Fee</Text>
-        <Text>{formatCurrency(currency, microamountToAmount(totalFee, fromToken.decimals, 6))}</Text>
+        <Text>{formatCurrency(currency, totalFee.toString())}</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
