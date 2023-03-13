@@ -21,7 +21,7 @@ import { CustomHooks, getBalanceByAsset, useIndexerInfos, useToast } from "../..
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
-import { CW20Asset } from "@wynddao/asset-list";
+import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { AiFillWarning } from "react-icons/ai";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
@@ -131,12 +131,19 @@ export default function AddLiquidity({
     const assets = getAssetList().tokens;
     const decimalsA =
       assets.find(
-        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+        (el) =>
+          newInputValueA.id === el.denom ||
+          newInputValueA.id === (el as IBCAsset).juno_denom ||
+          newInputValueA.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
     const decimalsB =
       assets.find(
-        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
-      )?.decimals || 6;
+        (el) =>
+          newInputValueB.id === el.denom ||
+          newInputValueB.id === (el as IBCAsset).juno_denom ||
+          newInputValueB.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+
     const ratioA =
       Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
     const ratioB =
@@ -147,7 +154,6 @@ export default function AddLiquidity({
   const calculateInputValues = useCallback(
     (denom: string, inputValue: string) => {
       if (assetABalanceState !== "hasValue" || assetBBalanceState !== "hasValue") return;
-
       const [newInputValueA, newInputValueB] = tokenInputValue;
       const [ratioA, ratioB] = calculateRatios();
       const assets = getAssetList().tokens;
@@ -208,14 +214,21 @@ export default function AddLiquidity({
 
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
+
     const assets = getAssetList().tokens;
     const decimalsA =
       assets.find(
-        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+        (el) =>
+          newInputValueA.id === el.denom ||
+          newInputValueA.id === el.juno_denom ||
+          newInputValueA.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
     const decimalsB =
       assets.find(
-        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+        (el) =>
+          newInputValueB.id === el.denom ||
+          newInputValueA.id === el.juno_denom ||
+          newInputValueB.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
 
     const isAJuno = newInputValueA.id === "ujunox" || newInputValueA.id === "ujuno";
@@ -322,7 +335,6 @@ export default function AddLiquidity({
 
           let maxInput = "0";
           if (assetABalanceState === "hasValue" && assetBBalanceState === "hasValue") {
-            console.log(asset);
             maxInput = microamountToAmount(
               i === 0 ? assetABalance.amount : assetBBalance.amount,
               asset?.decimals ?? 6,
