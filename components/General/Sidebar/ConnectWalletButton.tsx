@@ -1,15 +1,12 @@
-"use client";
-
 import { Box, Button, Divider, Flex, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Suspense, useEffect } from "react";
 import { FiCopy, FiCreditCard } from "react-icons/fi";
 import { VscDebugDisconnect } from "react-icons/vsc";
 import { useRecoilValueLoadable } from "recoil";
-import { coinByDenomSelector, useIndexerInfos } from "../../../state";
+import { coinByDenomSelector } from "../../../state";
 import { cw20BalancesSelector } from "../../../state/recoil/selectors/clients/indexer";
 import { INDEXER_API_ENDPOINT, WYND_TOKEN_ADDRESS } from "../../../utils";
-import { truncate } from "../../../utils/text";
 import { microamountToAmount } from "../../../utils/tokens";
 
 export default function ConnectWalletButton() {
@@ -38,16 +35,25 @@ export default function ConnectWalletButton() {
           }}
           as={Box}
           display={"block"}
-          pr={0}
           w="full"
           h="auto"
-          p={1}
+          px={2}
+          py={1}
         >
           <Box>
             <Flex alignItems="center" justifyContent="space-between" gap={2} w="full">
-              <Flex alignItems="center" justifyContent="center" gap={4} pl="4">
-                <Box fontSize="sm">
-                  <Text fontSize="lg">{truncate(username || "", 8)}</Text>
+              <Flex alignItems="center" justifyContent="flex-end" gap={2} w="full">
+                <Box
+                  w="full"
+                  fontSize="sm"
+                  textAlign="right"
+                  whiteSpace="pre-wrap"
+                  wordBreak="break-word"
+                  sx={{ wordWrap: "break-word" }}
+                >
+                  <Text fontSize="lg" textAlign="left">
+                    {username}
+                  </Text>
                   <Divider borderBottomWidth="3px" />
                   <Text fontSize="sm">
                     {loadableBalance.state === "hasValue"
@@ -72,26 +78,14 @@ export default function ConnectWalletButton() {
                       : "0"}{" "}
                   </Text>
                 </Box>
-                <Flex direction="column">
+                <Flex direction="column" gap={2}>
                   <Tooltip label={hasCopied ? "Copied!" : "Copy wallet address"}>
-                    <Button
-                      bgColor={"wynd.gray.100"}
-                      onClick={onCopy}
-                      sx={{ padding: 0, margin: 1 }}
-                      size="xs"
-                      m={0}
-                    >
+                    <Button bgColor={"wynd.gray.100"} onClick={onCopy} size="xs" p={0}>
                       <Icon fontSize="xs" as={FiCopy} />
                     </Button>
                   </Tooltip>
                   <Tooltip label="Disconnect wallet">
-                    <Button
-                      bgColor={"wynd.gray.100"}
-                      onClick={disconnect}
-                      sx={{ padding: 0, margin: 1 }}
-                      size="xs"
-                      m={0}
-                    >
+                    <Button bgColor={"wynd.gray.100"} onClick={disconnect} size="xs" p={0}>
                       <Icon fontSize="xs" as={VscDebugDisconnect} />
                     </Button>
                   </Tooltip>
