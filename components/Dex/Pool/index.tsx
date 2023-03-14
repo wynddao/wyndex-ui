@@ -90,7 +90,12 @@ export default function Pool({ poolAddress }: PoolProps) {
         <PoolCatalystSimple chainData={poolData} />
       )}
       {walletAddress ? (
-        <LiquidityMining pairData={pair} apr={aprCalculated} pairNames={pairNames} />
+        <LiquidityMining
+          poolAddress={poolAddress}
+          pairData={pair}
+          apr={aprCalculated}
+          pairNames={pairNames}
+        />
       ) : (
         <UnboundingsGrid stakeAddress={pair.staking_addr} apr={aprCalculated} />
       )}
