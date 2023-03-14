@@ -34,6 +34,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
       justifyContent="space-between"
       bg={"wynd.base.sidebar"}
       w={{ base: "full", md: "fit-content" }}
+      maxW="var(--chakra-sizes-60)"
       h="100vh"
       {...restProps}
     >
