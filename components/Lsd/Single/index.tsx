@@ -129,6 +129,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
                     Unstake
                   </Button>
                 </Box>
+                {/* Disable Quick Burn for now
                 <Box w="100%">
                   <Button
                     borderTopRadius={0}
@@ -143,6 +144,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
                     Quick Burn
                   </Button>
                 </Box>
+                  */}
               </>
             )}
           </BorderedBox>
