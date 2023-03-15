@@ -269,14 +269,14 @@ export const LsdSingle = ({ id }: { id: string }) => {
               <Text color={"wynd.neutral.500"}>You will recieve</Text>
               <Text>
                 <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
-                  {amount || 0} {tokenSymbol}
+                  {Number(amount) / Number(exchange_rate) || 0} {tokenSymbol}
                 </Text>
               </Text>
             </Flex>
             <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
               <Text color={"wynd.neutral.500"}>Exchange rate</Text>
               <Text>
-                1 {microdenomToDenom(lsdAsset.denom)} = {1 * Number(exchange_rate)} {tokenSymbol}
+                {1 * Number(exchange_rate)} {microdenomToDenom(lsdAsset.denom)} = 1 {tokenSymbol}
               </Text>
             </Flex>
             <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>

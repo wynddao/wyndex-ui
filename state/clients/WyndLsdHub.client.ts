@@ -34,6 +34,7 @@ export class WyndLsdHubQueryClient implements WyndLsdHubReadOnlyInterface {
     this.validatorSet = this.validatorSet.bind(this);
     this.lastReinvest = this.lastReinvest.bind(this);
     this.supply = this.supply.bind(this);
+    // amount of juno I get for wyJUNO
     this.exchangeRate = this.exchangeRate.bind(this);
     this.targetValue = this.targetValue.bind(this);
   }
