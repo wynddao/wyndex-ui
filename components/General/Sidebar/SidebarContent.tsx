@@ -20,7 +20,7 @@ const LinkItems: readonly LinkItemProps[] = [
   { name: "Stake", to: "/stake", icon: FiWind },
   { name: "Vote", to: "/vote", icon: MdBallot },
   { name: "Gauges", to: "/gauges", icon: FaBalanceScaleLeft },
-  { name: "New to Cosmos?", to: "/eth", icon: FaEthereum },
+  { name: "New to cosmos?", to: "/eth", icon: FaEthereum },
 ];
 
 interface SidebarContentProps extends BoxProps {
