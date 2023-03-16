@@ -2,7 +2,7 @@ import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { MsgType } from "./types";
-import { Input, Text } from "@chakra-ui/react";
+import { Container, Input, Text } from "@chakra-ui/react";
 import { FocusEvent, useState } from "react";
 
 export const Execute = ({
@@ -26,7 +26,7 @@ export const Execute = ({
   return (
     <>
       <Text fontSize={"xl"}>Execute</Text>
-      <BorderedBox bgImageActive={false}>
+      <BorderedBox bgImageActive={false} overflowX={"auto"}>
         Contract Address:{" "}
         {edit ? (
           <Input
@@ -43,9 +43,17 @@ export const Execute = ({
         Message:
       </Text>
       {!edit ? (
-        <SyntaxHighlighter language="json" style={vscDarkPlus}>
-          {msg.msgBeautified}
-        </SyntaxHighlighter>
+        <Container maxW="container.md">
+          <SyntaxHighlighter
+            customStyle={{ maxWidth: "100%" }}
+            wrapLongLines={true}
+            wrapLines={true}
+            language="json"
+            style={vscDarkPlus}
+          >
+            {msg.msgBeautified}
+          </SyntaxHighlighter>
+        </Container>
       ) : (
         <p contentEditable={true} onBlur={(e) => setMsgBeautified(e)}>
           <SyntaxHighlighter language="json" style={vscDarkPlus}>
