@@ -69,10 +69,6 @@ export const GaugeItem = ({ gauge }: { gauge: GaugeResponse }) => {
             <TokenName symbol={true} address={config.rewards_asset.info.token} />
           ) : (
             <span>
-              {
-                // @ts-ignore
-                convertFromMicroDenom(config.rewards_asset.info.native)
-              }
             </span>
           )}
         </Text>
