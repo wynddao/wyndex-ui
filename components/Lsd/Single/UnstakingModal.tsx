@@ -35,6 +35,7 @@ import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { useToast } from "../../../state";
 import { Claim } from "../../../state/clients/types/WyndLsdHub.types";
 import { microamountToAmount } from "../../../utils/tokens";
+import { lsdEntries } from "../Overview";
 
 const gaps = [25, 50, 75, 100];
 const tabName = ["Unbond", "Pending Unbondings"];
@@ -96,7 +97,7 @@ const UnstakingModalContent = ({
     await txToast(async (): Promise<ExecuteResult> => {
       const result = await doWithdraw({
         amount: (Number((removeValue / 100) * removeableTokens) * 10 ** 6).toFixed(0),
-        contract: "juno1ja9eyz4x7lnnvv56k30t2dfv68ln9hzkkfaj3uthvwzj2ppc470qyylhwv",
+        contract: lsdEntries[0].contractAddr,
         msg: btoa(`{"unbond": {}}`),
       });
       await new Promise((resolve) => setTimeout(resolve, 6500));

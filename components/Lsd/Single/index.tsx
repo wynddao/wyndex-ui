@@ -84,7 +84,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
     setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
       const coin: Coin = {
-        denom: "ujunox",
+        denom: "ujuno",
         amount: amountToMicroamount(Number(amount), lsdAsset.decimals),
       };
       const result = await doBond(undefined, undefined, [coin]);
@@ -101,7 +101,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
   // Render!
   return (
     <>
-      <LsdSingleHeader supply={supply} />
+      <LsdSingleHeader supply={supply} token={config.token_contract} exchangeRate={exchange_rate}/>
       <Grid mt={4} templateColumns={{ base: "repeat(1fr)", md: "1fr 1fr 1fr 1fr 1fr" }} gap={8}>
         <GridItem colStart={{ base: 1, md: 2 }}>
           <BorderedBox p={0}>

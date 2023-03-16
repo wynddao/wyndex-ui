@@ -89,44 +89,42 @@ export const APYCalc = ({
                   <Text fontSize="sm">JUNO APR</Text>
                   <Text fontSize="sm">{(aprData.nominalApr * 100).toFixed(2)}%</Text>
                 </Flex>
-                <Divider my={2} />
-                <Flex justifyContent="start">
-                  <Text fontSize="sm" fontWeight="bold">
-                    Commisions
-                  </Text>
-                </Flex>
-                <Flex justifyContent="space-between">
-                  <Text fontSize="sm">Weighted Average Validator</Text>
-                  <Text fontSize="sm">{aprData.validatorAvgCommission * 100}%</Text>
-                </Flex>
-                <Flex justifyContent="space-between">
-                  <Text fontSize="sm">WYND LSD</Text>
-                  <Text fontSize="sm">{lsdCommission * 100}%</Text>
-                </Flex>
-                <Divider my={2} />
                 <Flex justifyContent="space-between">
                   <Text fontSize="sm">JUNO NET APR</Text>
                   <Text fontSize="sm">
                     {(
-                      (aprData.nominalApr -
-                        (aprData.nominalApr * aprData.validatorAvgCommission +
-                          aprData.nominalApr * lsdCommission)) *
+                      (aprData.nominalApr - aprData.nominalApr * aprData.validatorAvgCommission) *
                       100
                     ).toFixed(2)}
                     %
                   </Text>
                 </Flex>
-                <Divider my={2} />
+                <Divider my={1} />
                 <Flex justifyContent="space-between">
-                  <Flex alignItems="center">
+                  <Flex fontSize="md" color="wynd.purple.200" alignItems="center">
                     <Text>wyJUNO APY</Text>
                     <Text fontSize="sm" ml={1}>
-                      {" "}
-                      (compounded daily)
+                      <Text fontSize="xs">(compounded daily)</Text>
                     </Text>
                   </Flex>
-                  <Text>{aprData.wyndLSDnominal && aprData.wyndLSDnominal.toFixed(2)}%</Text>
+                  <Text fontSize="lg" color="wynd.purple.200">
+                    {aprData.wyndLSDnominal && aprData.wyndLSDnominal.toFixed(2)}%
+                  </Text>
                 </Flex>
+                <Flex fontSize="xs" justifyContent="space-between">
+                  <Text>Compared to NET JUNO APR</Text>
+                  <Text color={"wynd.green.400"}>
+                    +
+                    {aprData.wyndLSDnominal &&
+                      (
+                        aprData.wyndLSDnominal -
+                        (aprData.nominalApr - aprData.nominalApr * aprData.validatorAvgCommission) * 100
+                      ).toFixed(2)}
+                    %
+                  </Text>
+                </Flex>
+                <Divider my={2} />
+                <Text fontSize="xs">Juno NET APR accounts for weight average validator commissions of {(aprData.validatorAvgCommission * 100).toFixed(2)}%.</Text>
               </PopoverBody>
             </PopoverContent>
           </Portal>

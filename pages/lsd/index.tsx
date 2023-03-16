@@ -5,7 +5,7 @@ import { LsdOverview } from "../../components/Lsd/Overview";
 const Page = () => (
   <>
     <Head>
-      <title>WYND DEX - Liquid Staking</title>
+      <title>WYND | Liquid Staking Derivatives</title>
     </Head>
     <Box p="4">
       <LsdOverview />

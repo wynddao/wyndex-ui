@@ -18,9 +18,9 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
   const lsdContract = lsdEntry.contractAddr;
 
   // Wallet & LSD Infos
-  const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos(lsdContract);
+  const { config, exchange_rate, supply, validatorSet } = useLsdInfos(lsdContract);
   const { balance: _balance, refreshBalance } = useCw20UserInfos(config.token_contract);
-
+  const { totalSupply } = useTokenInfo(config.token_contract);
   // Fetch AssetPrices to calculate TVL
   const { assetPrices } = useIndexerInfos({});
   const lsdAssetPrice = assetPrices.find((el) => el.asset === "ujuno")!;
@@ -145,21 +145,18 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
               <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
                 TVL
               </Text>
-              <Flex justifyContent="left" alignItems="center">
+              <Flex mt={"2px"} justifyContent="left" alignItems="center">
                 <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
                   {formatCurrency(
                     currency,
                     (
-                      (currency === "EUR" ? lsdAssetPrice.priceInEur : lsdAssetPrice.priceInUsd) *
-                      ((Number(supply.total_bonded) + Number(supply.total_unbonding)) / 10 ** 6)
+                      ((currency === "EUR" ? lsdAssetPrice.priceInEur : lsdAssetPrice.priceInUsd) *
+                        Number(exchange_rate) *
+                        Number(totalSupply)) /
+                      10 ** 6
                     ).toFixed(2),
                   )}
                 </Text>
-                <Tooltip label="This value is updated once per day.">
-                  <span>
-                    <IoIosHelp color="yellow" style={{ cursor: "pointer" }} size="30" />
-                  </span>
-                </Tooltip>
               </Flex>
             </GridItem>
             <GridItem colSpan={2}>

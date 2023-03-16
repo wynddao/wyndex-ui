@@ -14,7 +14,7 @@ export interface LsdEntry {
 export const lsdEntries: LsdEntry[] = [
   {
     id: 1,
-    contractAddr: "juno1ja9eyz4x7lnnvv56k30t2dfv68ln9hzkkfaj3uthvwzj2ppc470qyylhwv",
+    contractAddr: "juno1snv8z7j75jwfce4uhkjh5fedpxjnrx9v20ffflzws57atshr79yqnw032r",
     tokenDenom: FEE_DENOM,
     chainName: "Juno",
   },
