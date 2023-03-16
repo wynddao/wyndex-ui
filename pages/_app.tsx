@@ -11,8 +11,8 @@ import "../components/Dex/MysteryBox/index.css";
 import Sidebar from "../components/General/Sidebar";
 import ToSModal from "../components/General/ToSModal";
 import Providers from "../providers/providers";
-import { WYND_MAINTANANCE_MODE } from "../utils";
-
+import { STATUS_BAR, STATUS_TEXT, WYND_MAINTANANCE_MODE } from "../utils";
+import { Alert, AlertIcon } from "@chakra-ui/react";
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -33,6 +33,12 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
       <ErrorBoundary>
         <Providers>
           <Toaster />
+          {STATUS_BAR && (
+            <Alert status="warning">
+              <AlertIcon />
+              {STATUS_TEXT}
+            </Alert>
+          )}
           <Sidebar>
             <Suspense fallback={<Loader />}>
               <Component {...pageProps} />
