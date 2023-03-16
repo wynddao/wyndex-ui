@@ -13,8 +13,15 @@ import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import { startTransition, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { Cw20Hooks, getBalanceByAsset, useIndexerInfos, useToast, useTokenInfo } from "../../../../state";
-import { PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
+import {
+  Cw20Hooks,
+  getBalanceByAsset,
+  useIndexerInfos,
+  usePoolInfos,
+  useToast,
+  useTokenInfo,
+} from "../../../../state";
+import { PairInfo } from "../../../../state/clients/types/WyndexPair.types";
 import { getAssetByInfo, getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import TokenName from "../../TokenName";
@@ -23,17 +30,18 @@ const gaps = [25, 50, 75, 100];
 
 export default function RemoveLiquidity({
   availableTokens,
-  poolData,
+  poolAddress,
   pairData,
   onClose,
   refreshLpBalance,
 }: {
   availableTokens: number;
-  poolData: PoolResponse;
+  poolAddress: string;
   pairData: PairInfo;
   onClose: () => void;
   refreshLpBalance: () => void;
 }) {
+  const { pool: poolData, refreshPool } = usePoolInfos(poolAddress);
   const [removeValue, setRemoveValue] = useState(35);
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
@@ -70,14 +78,17 @@ export default function RemoveLiquidity({
       return result;
     });
     setLoading(false);
-    // New balances will not appear until the next block.
-    await new Promise((resolve) => setTimeout(resolve, 6500));
+
     const hasCw20 = !!pairData.asset_infos.find((info) => "token" in info);
     const hasNative = !!pairData.asset_infos.find((info) => "native" in info);
+
+    // New balances will not appear until the next block.
+    await new Promise((resolve) => setTimeout(resolve, 6500));
     //FIXME - This startTransition does not work
     startTransition(() => {
       refreshBalanceA();
       refreshBalanceB();
+      refreshPool();
       refreshLpBalance();
 
       if (hasCw20) refreshCw20Balances();

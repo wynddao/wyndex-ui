@@ -1,13 +1,15 @@
-import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
-import { useState } from "react";
-import { Cw20Hooks } from "../../../state";
+import { startTransition, useState } from "react";
+import { useRecoilRefresher_UNSTABLE } from "recoil";
+import { Cw20Hooks, getBalanceByAsset } from "../../../state";
 import { PairInfo } from "../../../state/clients/types/WyndexPair.types";
-import { useToast, useTokenInfo } from "../../../state/hooks";
+import { usePoolInfos, useToast, useTokenInfo } from "../../../state/hooks";
 import { useCw20UserInfos } from "../../../state/hooks/useCw20UserInfos";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
+import { getAssetByInfo } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 import TokenName from "../TokenName";
 import BoundingsTable from "./BoundingsTable";
@@ -18,6 +20,7 @@ import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnbondingsGrid";
 
 interface LiquidityMiningOptions {
+  poolAddress: string;
   apr: {
     unbonding_period: number;
     apr: number;
@@ -26,10 +29,11 @@ interface LiquidityMiningOptions {
   pairNames: JSX.Element[];
 }
 
-export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityMiningOptions) {
+export default function LiquidityMining({ poolAddress, pairData, apr, pairNames }: LiquidityMiningOptions) {
+  const { refreshPool } = usePoolInfos(poolAddress);
   const wyndexStake = pairData.staking_addr;
   const { txToast } = useToast();
-  const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
+  const { balance: lpBalance, refreshBalance: refreshLpBalance } = useCw20UserInfos(pairData.liquidity_token);
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,6 +44,17 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
     contractAddress: pairData.liquidity_token,
     sender: walletAddress ?? "",
   });
+
+  const assetASelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[0]),
+  });
+  const assetBSelector = getBalanceByAsset({
+    address: walletAddress || "",
+    asset: getAssetByInfo(pairData.asset_infos[1]),
+  });
+  const refreshBalanceA = useRecoilRefresher_UNSTABLE(assetASelector);
+  const refreshBalanceB = useRecoilRefresher_UNSTABLE(assetBSelector);
 
   const doStake = async (amount: number, duration: number) => {
     setLoading(true);
@@ -53,8 +68,15 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
 
       // New balances will not appear until the next block.
       await new Promise((resolve) => setTimeout(resolve, 6500));
-      refreshBondings();
-      refreshBalance();
+      //FIXME - This startTransition does not work
+      startTransition(() => {
+        refreshBalanceA();
+        refreshBalanceB();
+        refreshPool();
+        refreshBondings();
+        refreshLpBalance();
+      });
+
       return result;
     });
     setLoading(false);
