@@ -14,21 +14,21 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
-import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { startTransition, useCallback, useState } from "react";
-import { AiFillWarning } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
+import { CustomHooks, getBalanceByAsset, useIndexerInfos, useToast } from "../../../../state";
+import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
+import TokenName from "../../TokenName";
+
+import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { AiFillWarning } from "react-icons/ai";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
-import { CustomHooks, getBalanceByAsset, useIndexerInfos, usePoolInfos, useToast } from "../../../../state";
-import { Asset as WyndAsset, PairInfo } from "../../../../state/clients/types/WyndexPair.types";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
 import { getAssetByInfo, getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { getAssetList } from "../../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import AssetImage from "../../AssetImage";
-import TokenName from "../../TokenName";
-
 interface inputType {
   id: string;
   value: string;
@@ -57,12 +57,12 @@ export default function AddLiquidity({
   data: pairData,
   onClose,
   refreshLpBalance,
-  poolAddress,
+  poolData: chainData,
 }: {
   data: PairInfo;
   onClose: () => void;
   refreshLpBalance: () => void;
-  poolAddress: string;
+  poolData: PoolResponse;
 }) {
   const poolData: readonly DataType[] = pairData.asset_infos.map((asset) => {
     const isCw20Asset = "token" in asset;
@@ -83,7 +83,6 @@ export default function AddLiquidity({
   const { address: walletAddress } = useWallet();
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-  const { pool: chainData, refreshPool } = usePoolInfos(poolAddress);
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -143,7 +142,7 @@ export default function AddLiquidity({
           newInputValueB.id === el.denom ||
           newInputValueB.id === (el as IBCAsset).juno_denom ||
           newInputValueB.id === (el as CW20Asset).token_address,
-      )?.decimals || 6;
+      )?.decimals || 6;
 
     const ratioA =
       Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
@@ -305,17 +304,14 @@ export default function AddLiquidity({
       return res;
     });
     setLoading(false);
-
-    const hasCw20 = !!assets.find(({ info }) => "token" in info);
-    const hasNative = !!assets.find(({ info }) => "native" in info);
-
     // New balances will not appear until the next block.
     await new Promise((resolve) => setTimeout(resolve, 6500));
+    const hasCw20 = !!assets.find(({ info }) => "token" in info);
+    const hasNative = !!assets.find(({ info }) => "native" in info);
     //FIXME - This startTransition does not work
     startTransition(() => {
       refreshBalanceA();
       refreshBalanceB();
-      refreshPool();
       refreshBondings();
       refreshLpBalance();
 

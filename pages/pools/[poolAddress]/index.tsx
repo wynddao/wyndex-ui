@@ -1,14 +1,9 @@
-import { Box } from "@chakra-ui/react";
-import { GetStaticPaths, GetStaticPropsContext } from "next";
 import Pool from "../../../components/Dex/Pool";
+import { GetStaticPaths, GetStaticPropsContext } from "next";
 import { INDEXER_API_ENDPOINT, WYND_MAINTANANCE_MODE } from "../../../utils";
 
 export default function Page({ poolAddress }: { poolAddress: string }) {
-  return (
-    <Box p="4">
-      <Pool poolAddress={poolAddress} />
-    </Box>
-  );
+  return <Pool poolAddress={poolAddress} />;
 }
 
 export async function getStaticProps(context: GetStaticPropsContext) {

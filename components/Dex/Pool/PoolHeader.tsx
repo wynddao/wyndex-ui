@@ -17,8 +17,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { FiCreditCard } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
-import { Cw20Hooks, useCw20UserInfos, usePoolInfos, useToast, useTokenInfo } from "../../../state";
-import { PairInfo } from "../../../state/clients/types/WyndexPair.types";
+import { Cw20Hooks, useCw20UserInfos, useToast, useTokenInfo } from "../../../state";
+import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
@@ -28,7 +28,7 @@ import ManageLiquidityModal from "./ManageLiquidityModal";
 import StartEarningModal from "./StartEarningModal";
 
 interface PoolHeaderProps {
-  readonly poolAddress: string;
+  readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
   readonly walletAddress: string;
   readonly totalInFiat: number;
@@ -40,14 +40,13 @@ interface PoolHeaderProps {
 }
 
 interface PoolHeaderUserProps {
-  poolAddress: string;
+  chainData: PoolResponse;
   pairData: PairInfo;
   totalFiatShares: any;
   walletAddress: string;
 }
 
-function PoolHeaderUserInfo({ poolAddress, pairData, totalFiatShares, walletAddress }: PoolHeaderUserProps) {
-  const { pool: chainData } = usePoolInfos(poolAddress);
+function PoolHeaderUserInfo({ chainData, pairData, totalFiatShares, walletAddress }: PoolHeaderUserProps) {
   const wyndexStake = pairData.staking_addr;
   //@ts-ignore
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress);
@@ -74,7 +73,7 @@ function PoolHeaderUserInfo({ poolAddress, pairData, totalFiatShares, walletAddr
 }
 
 export default function PoolHeader({
-  poolAddress,
+  chainData,
   pairData,
   walletAddress,
   totalInFiat,
@@ -163,7 +162,7 @@ export default function PoolHeader({
             {walletAddress ? (
               <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
                 <PoolHeaderUserInfo
-                  poolAddress={poolAddress}
+                  chainData={chainData}
                   pairData={pairData}
                   totalFiatShares={totalInFiat}
                   walletAddress={walletAddress}
@@ -219,7 +218,8 @@ export default function PoolHeader({
       </Box>
 
       <ManageLiquidityModal
-        poolAddress={poolAddress}
+        walletAddress={walletAddress}
+        poolData={chainData}
         data={pairData}
         isOpen={isLiquidityOpen}
         onClose={onCloseLiquidity}
