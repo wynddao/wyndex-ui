@@ -1,9 +1,9 @@
-import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { MsgType } from "./types";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { FocusEvent, useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
+import { MsgType } from "./types";
 
 export const Migrate = ({
   msg,
@@ -56,7 +56,7 @@ export const Migrate = ({
               value={codeId}
             />
           ) : (
-            (msg && msg.rawMsg.wasm?.migrate.new_code_id) || ""
+            (msg && msg.rawMsg.wasm?.migrate?.new_code_id) || ""
           )}
         </BorderedBox>
       </Box>
