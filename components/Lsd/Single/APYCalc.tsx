@@ -15,6 +15,7 @@ import {
   Portal,
   Spinner,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Suspense, useEffect, useState } from "react";
 import { getApr, getValidatorAvgCommission } from "../../../utils/chain";
@@ -72,7 +73,7 @@ export const APYCalc = ({
         <Popover placement="top">
           {aprData.wyndLSDnominal ? (
             <PopoverTrigger>
-              <Button variant="ghost" color="inherit" fontSize="3xl">
+              <Button textDecor="underline dotted" variant="ghost" color="inherit" fontSize="3xl">
                 {aprData.wyndLSDnominal.toFixed(2)}%
               </Button>
             </PopoverTrigger>
@@ -124,7 +125,10 @@ export const APYCalc = ({
                   </Text>
                 </Flex>
                 <Divider my={2} />
-                <Text fontSize="xs">Juno NET APR accounts for weight average validator commissions of {(aprData.validatorAvgCommission * 100).toFixed(2)}%.</Text>
+                <Text fontSize="xs">
+                  Juno NET APR accounts for weight average validator commissions of{" "}
+                  {(aprData.validatorAvgCommission * 100).toFixed(2)}%.
+                </Text>
               </PopoverBody>
             </PopoverContent>
           </Portal>
