@@ -1,11 +1,28 @@
 import { Box, Flex, Heading, Text, Tooltip } from "@chakra-ui/react";
 import { IoIosHelp, IoIosHelpCircleOutline } from "react-icons/io";
+import { useRecoilValue } from "recoil";
+import { useIndexerInfos, useTokenInfo } from "../../../state";
 import { Supply } from "../../../state/clients/types/WyndLsdHub.types";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { getAssetList } from "../../../utils/getAssetList";
+import { getAssetPriceByCurrency } from "../../../utils/assets";
+import { formatCurrency } from "../../../utils/currency";
 
-export const LsdSingleHeader = ({ supply }: { supply: Supply }) => {
+export const LsdSingleHeader = ({
+  supply,
+  token,
+  exchangeRate,
+}: {
+  supply: Supply;
+  token: string;
+  exchangeRate: string;
+}) => {
   const assetList = getAssetList().tokens;
   const decimals = assetList.find((el) => el.denom === supply.bond_denom)?.decimals ?? 6;
+  const { assetPrices } = useIndexerInfos({});
+  const currency = useRecoilValue(currencyAtom);
+  const { totalSupply } = useTokenInfo(token);
+  const assetPrice = getAssetPriceByCurrency(currency, { native: supply.bond_denom }, assetPrices);
   return (
     <Box bg="url(/trippy2.png)" pt={36} rounded="lg" bgPosition="center" bgSize="cover">
       <Flex
@@ -62,15 +79,13 @@ export const LsdSingleHeader = ({ supply }: { supply: Supply }) => {
           >
             Total TVL
           </Text>
-          <Flex justifyContent="center" alignItems="center">
+          <Flex mt={"4px"} justifyContent="center" alignItems="center">
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-              {((Number(supply.total_bonded) + Number(supply.total_unbonding)) / 10 ** decimals).toFixed(2)}
+              {formatCurrency(
+                currency,
+                ((assetPrice * Number(exchangeRate) * Number(totalSupply)) / 10 ** decimals).toFixed(2),
+              )}
             </Text>
-            <Tooltip label="This value is updated once per day.">
-              <span>
-                <IoIosHelp color="yellow" style={{ cursor: "pointer" }} size="30" />
-              </span>
-            </Tooltip>
           </Flex>
         </Box>
       </Flex>

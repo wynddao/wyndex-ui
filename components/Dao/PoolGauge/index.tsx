@@ -49,12 +49,12 @@ interface BallotEntry {
   votingWeight: string;
 }
 
-export const Gauge = ({
+export const PoolGauge = ({
   options,
   gauge,
   refreshVotes,
 }: {
-  options: [string, string][];
+  options: string[][];
   gauge: GaugeResponse;
   refreshVotes: () => void;
 }) => {

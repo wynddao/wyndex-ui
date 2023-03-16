@@ -106,3 +106,8 @@ export const getValidatorAvgCommission = async (validatorSet: [string, string][]
 
   return weightedAvg;
 };
+
+export const getAllValidators = async () => {
+  const { result: validatorList } = await (await fetch(lcdApi + "/staking/validators")).json();
+  return validatorList;
+};
