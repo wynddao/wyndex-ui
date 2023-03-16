@@ -69,6 +69,7 @@ export const LSDGauge = ({
         votingWeight: weightInput || "0",
       },
     ];
+
     // Check if valid
     const sumVotes = _selectedVotes.reduce(
       (accumulator, currentValue) => accumulator + Number(currentValue.votingWeight),
@@ -121,7 +122,6 @@ export const LSDGauge = ({
   const executeVote = async () => {
     setLoadingSubmit(true);
     const voteOptions: Vote[] = selectedVotes.map((vote) => {
-      console.log(vote.option.operator_address);
       return {
         option: vote.option.operator_address,
         weight: (Number(vote.votingWeight) / 100).toString(),
@@ -151,6 +151,7 @@ export const LSDGauge = ({
 
   const getData = async () => {
     const _allValidators = await getAllValidators();
+
     const _allValidValidatorsWithOptions = options.map((option) => {
       const validator = _allValidators.find((el: any) => el.operator_address === option[0])!;
       return {
@@ -158,6 +159,7 @@ export const LSDGauge = ({
         votes: option[1],
       };
     });
+
     setAllValidators(_allValidValidatorsWithOptions);
     setSelectedValidator(_allValidValidatorsWithOptions[0]);
 
@@ -166,15 +168,16 @@ export const LSDGauge = ({
         // Set current votes of user
         const _predefinedVotes: any[] = userVotes.votes.map((vote) => {
           return {
-            option: availableValidators.find((el) => el.operator_address === vote.option)!,
+            option: _allValidValidatorsWithOptions.find((el) => el.operator_address === vote.option)!,
             votingWeight: (Number(vote.weight) * 100).toString(),
           };
         });
         setSelectedVotes(_predefinedVotes);
 
         // Remove those from available ones
-        const _availableValidators = [...availableValidators].filter((el) => {
+        const _availableValidators = [..._allValidValidatorsWithOptions].filter((el) => {
           let check = true;
+
           _predefinedVotes.map((ele) => {
             if (ele.option.operator_address === el.operator_address) {
               check = false;

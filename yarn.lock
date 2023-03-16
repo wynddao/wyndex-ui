@@ -4606,11 +4606,10 @@
     motion "10.15.5"
     qrcode "1.5.1"
 
-
-"@wynddao/asset-list@^0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.32.tgz#fe0bc1332e552cdba801a183b442cf737491a608"
-  integrity sha512-9p5LjRUONs22BTubfpu8vAHXys0wCR1rJSugvmqr2+Apnj+p9QDh9UZOtYgDEb38ZVw9OoXLmzDy3JyIewLsow==
+"@wynddao/asset-list@^0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@wynddao/asset-list/-/asset-list-0.0.33.tgz#b8d6b3fdd2cd139509568ba5ea30a4d03cae1c02"
+  integrity sha512-aZvUyAPS3o4LpZOZep0FLoa5dnnppm3/n1DKlDiKLfUHTSsTLlqyTQC2sa1lyxhupESrUCKmBlruWk8lVus5rA==
 
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"
