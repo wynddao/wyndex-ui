@@ -22,14 +22,16 @@ import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { formatCurrency } from "../../../utils/currency";
 import { APYCalc } from "./APYCalc";
 import { UnstakingModal } from "./UnstakingModal";
+import { lsdEntries } from "../Overview";
+import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 
 export const LsdSingle = ({ id }: { id: string }) => {
-  //! TODO: Fetch LSD contract addr
-  const lsdContract = "juno1ek4ed6yevgx4x0mnce4h58y4p30ay7k35g2vrt0nmnlt6ttsmpmq270tee";
+  const lsdEntry = lsdEntries.find((el) => el.id === Number(id))!;
+  const lsdContract = lsdEntry.contractAddr;
 
   // Wallet & LSD Infos
   const { address: walletAddress } = useWallet();
-  const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos();
+  const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos(lsdContract);
   const { balance: _balance, refreshBalance } = useCw20UserInfos(config.token_contract);
 
   // Fetch AssetPrices to calculate TVL
@@ -38,8 +40,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
 
   // Get assetlist to find decimals
   const assets = getAssetList().tokens;
-  const lsdAsset = assets.find((el) => el.denom === FEE_DENOM)!;
-  const decimals = lsdAsset.decimals;
+  const lsdAsset = assets.find((el) => el.denom === lsdEntry.tokenDenom)!;
 
   // Get token symbol of wyLSD
   const { tokenSymbol, tokenName } = useTokenInfo(config.token_contract);
@@ -83,7 +84,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
     setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
       const coin: Coin = {
-        denom: "ujunox",
+        denom: "ujuno",
         amount: amountToMicroamount(Number(amount), lsdAsset.decimals),
       };
       const result = await doBond(undefined, undefined, [coin]);
@@ -100,7 +101,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
   // Render!
   return (
     <>
-      <LsdSingleHeader supply={supply} />
+      <LsdSingleHeader supply={supply} token={config.token_contract} exchangeRate={exchange_rate}/>
       <Grid mt={4} templateColumns={{ base: "repeat(1fr)", md: "1fr 1fr 1fr 1fr 1fr" }} gap={8}>
         <GridItem colStart={{ base: 1, md: 2 }}>
           <BorderedBox p={0}>
@@ -116,11 +117,36 @@ export const LsdSingle = ({ id }: { id: string }) => {
                 </Box>
               </Flex>
             </Box>
-            <Box w="100%">
-              <Button onClick={() => setModalOpen(true)} variant="solid" width="100%">
-                Unstake
-              </Button>
-            </Box>
+            {walletAddress && Number(balance) > 0 && (
+              <>
+                <Box w="100%">
+                  <Button
+                    borderBottomRadius={0}
+                    onClick={() => setModalOpen(true)}
+                    variant="solid"
+                    width="100%"
+                  >
+                    Unstake
+                  </Button>
+                </Box>
+                {/* Disable Quick Burn for now
+                <Box w="100%">
+                  <Button
+                    borderTopRadius={0}
+                    bgGradient="linear(to-l, wynd.green.300, wynd.cyan.300)"
+                    _hover={{
+                      bgGradient: "linear(to-l, wynd.green.200, wynd.cyan.200)",
+                    }}
+                    onClick={() => setModalOpen(true)}
+                    variant="solid"
+                    width="100%"
+                  >
+                    Quick Burn
+                  </Button>
+                </Box>
+                  */}
+              </>
+            )}
           </BorderedBox>
         </GridItem>
         <BorderedBox py={4} display="flex" justifyContent="center" alignItems="center">
@@ -245,14 +271,14 @@ export const LsdSingle = ({ id }: { id: string }) => {
               <Text color={"wynd.neutral.500"}>You will recieve</Text>
               <Text>
                 <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
-                  {amount || 0} {tokenSymbol}
+                  {Number(amount) / Number(exchange_rate) || 0} {tokenSymbol}
                 </Text>
               </Text>
             </Flex>
             <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
               <Text color={"wynd.neutral.500"}>Exchange rate</Text>
               <Text>
-                1 {microdenomToDenom(lsdAsset.denom)} = {1 * Number(exchange_rate)} {tokenSymbol}
+                {1 * Number(exchange_rate)} {microdenomToDenom(lsdAsset.denom)} = 1 {tokenSymbol}
               </Text>
             </Flex>
             <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
@@ -261,19 +287,23 @@ export const LsdSingle = ({ id }: { id: string }) => {
             </Flex>
           </Flex>
           <Box mt={3}>
-            <Button
-              w="100%"
-              p={4}
-              fontSize="xl"
-              bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
-              _hover={{
-                bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
-              }}
-              onClick={() => bond()}
-              isLoading={loading}
-            >
-              Stake
-            </Button>
+            {walletAddress ? (
+              <Button
+                w="100%"
+                p={4}
+                fontSize="xl"
+                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                _hover={{
+                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                }}
+                onClick={() => bond()}
+                isLoading={loading}
+              >
+                Stake
+              </Button>
+            ) : (
+              <ConnectWalletButton />
+            )}
           </Box>
         </GridItem>
       </Grid>

@@ -11,7 +11,7 @@ const ProposalSingle = () => {
   return (
     <>
       <Head>
-        <title>WYND | DAO - Proposal {lsdId}</title>
+        <title>WYND | Liquid Staking Derivatives - JUNO</title>
       </Head>
       <Box p="4">
         <LsdSingle id={lsdId?.toString() || ""} />

@@ -1,13 +1,64 @@
-import { Box, Divider, Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
+import { Box, Divider, Flex, Grid, GridItem, Progress, Spinner, Text, Tooltip } from "@chakra-ui/react";
+import { useWallet } from "@cosmos-kit/react";
 import Link from "next/link";
-import { WYND_TOKEN_ADDRESS } from "../../../utils";
+import { useEffect, useState } from "react";
+import { IoIosHelp } from "react-icons/io";
+import { useRecoilValue } from "recoil";
+import { LsdEntry } from ".";
+import { useCw20UserInfos, useIndexerInfos, useTokenInfo } from "../../../state";
+import { useLsdInfos } from "../../../state/hooks/lsd/useLsdInfos";
+import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { getApr, getValidatorAvgCommission } from "../../../utils/chain";
+import { formatCurrency } from "../../../utils/currency";
+import { getAssetList } from "../../../utils/getAssetList";
+import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../Dex/AssetImage";
 
-export const LsdCard = () => {
-  function randomIntFromInterval(min: number, max: number) {
+export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
+  const lsdContract = lsdEntry.contractAddr;
+
+  // Wallet & LSD Infos
+  const { config, exchange_rate, supply, validatorSet } = useLsdInfos(lsdContract);
+  const { balance: _balance, refreshBalance } = useCw20UserInfos(config.token_contract);
+  const { totalSupply } = useTokenInfo(config.token_contract);
+  // Fetch AssetPrices to calculate TVL
+  const { assetPrices } = useIndexerInfos({});
+  const lsdAssetPrice = assetPrices.find((el) => el.asset === "ujuno")!;
+
+  // Random background image
+  const randomIntFromInterval = (min: number, max: number) => {
     // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
-  }
+  };
+
+  const currency = useRecoilValue(currencyAtom);
+
+  const [apy, setAPY] = useState<number | undefined>(undefined);
+
+  const unstakedRatio =
+    Number(supply.total_bonded) > 0 && Number(supply.total_unbonding) > 0
+      ? Number(supply.total_bonded) / Number(supply.total_unbonding)
+      : 1;
+
+  // Calculate JUNO APR
+  const fetchData = async () => {
+    const { nominalAPR } = await getApr();
+    const validatorAvgCommission = await getValidatorAvgCommission(validatorSet);
+    const wyndNominalAPY =
+      100 *
+        (1 +
+          (nominalAPR - (nominalAPR * validatorAvgCommission + nominalAPR * Number(config.commission))) /
+            365) **
+          365 -
+      100;
+    setAPY(wyndNominalAPY);
+  };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Box
       _hover={{
@@ -20,7 +71,7 @@ export const LsdCard = () => {
       boxShadow="md"
       borderRadius="lg"
     >
-      <Link href="/lsd/1">
+      <Link href={`/lsd/${lsdEntry.id}`}>
         <Flex
           borderRadius="lg"
           backgroundColor={"wynd.gray.alpha.10"}
@@ -45,17 +96,23 @@ export const LsdCard = () => {
                 overflow="hidden"
                 p={0.5}
               >
-                <AssetImage asset={WYND_TOKEN_ADDRESS} />
+                <AssetImage asset={lsdEntry.tokenDenom} />
               </Box>
             </Flex>
             <Flex flexDirection="column" justify="center">
               <Text fontSize="xl" fontWeight="extrabold">
-                Juno
+                {lsdEntry.chainName}
               </Text>
               <Text fontWeight="bold" color={"wynd.neutral.600"} wordBreak="break-word"></Text>
             </Flex>
             <Box position="relative" ml={4} w={"100%"}>
-              <Progress height={6} width={"100%"} bg={"wynd.gray.700"} colorScheme={"teal"} value={48} />
+              <Progress
+                height={6}
+                width={"100%"}
+                bg={"wynd.gray.700"}
+                colorScheme={"teal"}
+                value={unstakedRatio * 100}
+              />
               <Text
                 top={0}
                 ml={2}
@@ -64,7 +121,7 @@ export const LsdCard = () => {
                 bgClip="text"
                 display="inline-block"
               >
-                Unstaked: 48%
+                Unstaked: {unstakedRatio * 100}%
               </Text>
             </Box>
           </Flex>
@@ -73,17 +130,34 @@ export const LsdCard = () => {
               <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
                 Tokens Staked
               </Text>
-              <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-                1,000,000 $JUNO
-              </Text>
+              <Flex justifyContent="left" alignItems="center">
+                <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
+                  {(Number(supply.total_bonded) / 10 ** 6).toFixed(2)} {microdenomToDenom(supply.bond_denom)}
+                </Text>
+                <Tooltip label="This value is updated once per day.">
+                  <span>
+                    <IoIosHelp color="yellow" style={{ cursor: "pointer" }} size="30" />
+                  </span>
+                </Tooltip>
+              </Flex>
             </GridItem>
             <GridItem>
               <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
                 TVL
               </Text>
-              <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-                1,000,000 $JUNO
-              </Text>
+              <Flex mt={"2px"} justifyContent="left" alignItems="center">
+                <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
+                  {formatCurrency(
+                    currency,
+                    (
+                      ((currency === "EUR" ? lsdAssetPrice.priceInEur : lsdAssetPrice.priceInUsd) *
+                        Number(exchange_rate) *
+                        Number(totalSupply)) /
+                      10 ** 6
+                    ).toFixed(2),
+                  )}
+                </Text>
+              </Flex>
             </GridItem>
             <GridItem colSpan={2}>
               <Divider borderColor={"wynd.cyan.300"} />
@@ -95,12 +169,13 @@ export const LsdCard = () => {
                 MY STAKED TOKENS
               </Text>
               <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-                10,000 $JUNO
+                {microamountToAmount(Number(_balance) / Number(exchange_rate), 6)}{" "}
+                {microdenomToDenom(supply.bond_denom)}
               </Text>
             </GridItem>
             <GridItem>
               <Text fontWeight="semibold" color={"wynd.neutral.500"} fontSize={{ base: "xs", md: "sm" }}>
-                APR
+                APY
               </Text>
               <Text
                 bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
@@ -109,7 +184,7 @@ export const LsdCard = () => {
                 fontSize={{ base: "md", sm: "lg" }}
                 fontWeight="extrabold"
               >
-                20%
+                {apy ? apy.toFixed(2) + "%" : <Spinner color="blue" />}
               </Text>
             </GridItem>
           </Grid>
