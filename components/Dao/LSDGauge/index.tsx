@@ -332,7 +332,7 @@ export const LSDGauge = ({
           </Text>
           <Grid
             display="grid"
-            templateColumns={"5fr 1fr"}
+            templateColumns={"5fr 1fr 1fr"}
             fontSize="xs"
             fontWeight="semibold"
             color={"wynd.neutral.900"}
@@ -342,6 +342,7 @@ export const LSDGauge = ({
             borderTopRadius="lg"
           >
             <GridItem textAlign="start">Validator</GridItem>
+            <GridItem>Commision</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
             </GridItem>
@@ -368,7 +369,7 @@ export const LSDGauge = ({
               .sort((a, b) => b.currentVotePower - a.currentVotePower)
               .map((validator, i) => (
                 <Grid
-                  templateColumns={"5fr 1fr"}
+                  templateColumns={"5fr 1fr 1fr"}
                   py={2}
                   key={i}
                   borderBottom="solid 1px white"
@@ -377,9 +378,10 @@ export const LSDGauge = ({
                 >
                   <Flex align="center">
                     <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                    {validator.description?.moniker || ""}
+                      {validator.description?.moniker || ""}
                     </Flex>
                   </Flex>
+                  <Flex>{(Number(validator.commission.commission_rates.rate) * 100).toFixed(0)}%</Flex>
                   <Flex align="center">{validator.votes}</Flex>
                 </Grid>
               ))}
