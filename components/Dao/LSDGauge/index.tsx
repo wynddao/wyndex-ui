@@ -48,6 +48,7 @@ export const LSDGauge = ({
 
   const [selectedVotes, setSelectedVotes] = useState<any[]>([]);
   const [allValidators, setAllValidators] = useState<any[]>([]);
+  const [sumVotes, setSumVotes] = useState<SVGAnimatedNumber>(0);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
   const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
   const [error, setError] = useState<any>(undefined);
@@ -159,7 +160,12 @@ export const LSDGauge = ({
         votes: option[1],
       };
     });
+    const _sumVotes = _allValidValidatorsWithOptions.reduce(
+      (accumulator, currentValue) => accumulator + Number(currentValue.votes),
+      0,
+    );
 
+    setSumVotes(_sumVotes);
     setAllValidators(_allValidValidatorsWithOptions);
     setSelectedValidator(_allValidValidatorsWithOptions[0]);
 
@@ -369,7 +375,7 @@ export const LSDGauge = ({
             }}
           >
             {[...allValidators]
-              .sort((a, b) => b.currentVotePower - a.currentVotePower)
+              .sort((a, b) => b.votes - a.votes)
               .map((validator, i) => (
                 <Grid
                   templateColumns={"5fr 1fr 1fr"}
@@ -385,7 +391,11 @@ export const LSDGauge = ({
                     </Flex>
                   </Flex>
                   <Flex>{(Number(validator.commission.commission_rates.rate) * 100).toFixed(0)}%</Flex>
-                  <Flex align="center">{validator.votes}</Flex>
+                  <Flex align="center">
+                    <Tooltip label={validator.votes}>
+                      <Text>{((100 / Number(sumVotes)) * Number(validator.votes)).toFixed(2)}%</Text>
+                    </Tooltip>
+                  </Flex>
                 </Grid>
               ))}
           </Box>
