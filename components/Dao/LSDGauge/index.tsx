@@ -48,7 +48,7 @@ export const LSDGauge = ({
 
   const [selectedVotes, setSelectedVotes] = useState<any[]>([]);
   const [allValidators, setAllValidators] = useState<any[]>([]);
-  const [sumVotes, setSumVotes] = useState<SVGAnimatedNumber>(0);
+  const [sumVotes, setSumVotes] = useState<number>(0);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
   const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
   const [error, setError] = useState<any>(undefined);
