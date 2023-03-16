@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
-import { LsdOverview } from "../../components/Lsd/Overview";
+import MysteryBoxContainer from "../../components/Dex/MysteryBox";
 
 const Page = () => (
   <>
@@ -8,7 +8,7 @@ const Page = () => (
       <title>WYND | Liquid Staking Derivatives</title>
     </Head>
     <Box p="4">
-      <LsdOverview />
+      <MysteryBoxContainer />
     </Box>
   </>
 );

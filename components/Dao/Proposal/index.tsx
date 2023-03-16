@@ -11,22 +11,22 @@ import {
   useClipboard,
   useRadioGroup,
 } from "@chakra-ui/react";
-import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
-import ReactMarkdown from "react-markdown";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-import { Proposal, Status, Vote } from "../../../state/clients/Cw-proposal-single";
-import { getMsgType, getResultInText } from "../../../utils/proposals";
-import { Message } from "./Message";
-import { VoteRadio } from "./VoteRadio";
-import { Suspense, useState } from "react";
-import { truncate, capitalizeFirstLetter } from "../../../utils/text";
-import { BsChevronLeft, BsClipboard } from "react-icons/bs";
-import { CwProposalSingleHooks, useIndexerInfos, useToast } from "../../../state";
 import { useWallet } from "@cosmos-kit/react";
-import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { ExecuteResult } from "cosmwasm";
 import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { BsChevronLeft, BsClipboard } from "react-icons/bs";
+import ReactMarkdown from "react-markdown";
+import { CwProposalSingleHooks, useIndexerInfos, useToast } from "../../../state";
+import { Proposal, Status, Vote } from "../../../state/clients/Cw-proposal-single";
+import { getMsgType, getResultInText } from "../../../utils/proposals";
+import { capitalizeFirstLetter, truncate } from "../../../utils/text";
+import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
+import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
+import { Message } from "./Message";
 import { VoteRatioSkeleton } from "./Skeletons/VoteRatioSkeleton";
+import { VoteRadio } from "./VoteRadio";
 
 const ColoredVote = ({ vote }: { vote: Vote }) => {
   switch (vote) {
@@ -162,7 +162,7 @@ export const ProposalComponent = ({
           <BorderedBox bgImageActive={false} width="fit-content">
             <Text fontSize={"4xl"}>Description</Text>
             <BorderedBox bgImageActive={false} maxW={{ base: "300px", sm: "440px", md: "500px", lg: "100%" }}>
-              <Text>
+              <Text sx={{ "& a": { color: "wynd.cyan.500", textDecoration: "underline" } }}>
                 <ReactMarkdown components={ChakraUIRenderer()}>{proposalResponse.description}</ReactMarkdown>
               </Text>
             </BorderedBox>

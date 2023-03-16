@@ -21,7 +21,8 @@ import { CustomHooks, getBalanceByAsset, useIndexerInfos, useToast } from "../..
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
 
-import { CW20Asset } from "@wynddao/asset-list";
+import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { AiFillWarning } from "react-icons/ai";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
 import { getAssetByInfo, getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../../utils/assets";
@@ -91,6 +92,7 @@ export default function AddLiquidity({
     contract: contractAddress,
   }));
   const [tokenInputValue, setTokenInputValue] = useState<inputType[]>(defaultInput);
+  const [[showJunoWarning, junoSymbol], setShowJunoWarning] = useState<[boolean, string]>([false, "JUNO"]);
   const [single, setSingle] = useState<singleType>({ selectedIndex: 0, isSingle: false });
   const [openPop, setOpenPop] = useState<popType>({ optionsIndex: [], isOpen: false });
   const { txToast } = useToast();
@@ -129,12 +131,19 @@ export default function AddLiquidity({
     const assets = getAssetList().tokens;
     const decimalsA =
       assets.find(
-        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+        (el) =>
+          newInputValueA.id === el.denom ||
+          newInputValueA.id === (el as IBCAsset).juno_denom ||
+          newInputValueA.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
     const decimalsB =
       assets.find(
-        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
-      )?.decimals || 6;
+        (el) =>
+          newInputValueB.id === el.denom ||
+          newInputValueB.id === (el as IBCAsset).juno_denom ||
+          newInputValueB.id === (el as CW20Asset).token_address,
+      )?.decimals || 6;
+
     const ratioA =
       Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
     const ratioB =
@@ -144,6 +153,7 @@ export default function AddLiquidity({
 
   const calculateInputValues = useCallback(
     (denom: string, inputValue: string) => {
+      if (assetABalanceState !== "hasValue" || assetBBalanceState !== "hasValue") return;
       const [newInputValueA, newInputValueB] = tokenInputValue;
       const [ratioA, ratioB] = calculateRatios();
       const assets = getAssetList().tokens;
@@ -166,8 +176,37 @@ export default function AddLiquidity({
       }
 
       setTokenInputValue([newInputValueA, newInputValueB]);
+
+      const isAJuno = newInputValueA.id === "ujunox" || newInputValueA.id === "ujuno";
+      const isBJuno = newInputValueB.id === "ujunox" || newInputValueB.id === "ujuno";
+      const isSomeJuno = isAJuno || isBJuno;
+
+      const junoBalance = (() => {
+        if (!isSomeJuno) return "0";
+        return isAJuno ? assetABalance.amount : assetBBalance.amount;
+      })();
+      const hasJunoBalance = junoBalance !== "0";
+
+      const junoInputValue = (() => {
+        if (!isSomeJuno) return "0";
+        return isAJuno ? newInputValueA.value : newInputValueB.value;
+      })();
+      const isJunoAmountMax =
+        Number(junoInputValue) >
+        Number(microamountToAmount(Number(junoBalance) - 50000, isAJuno ? decimalsA : decimalsB));
+
+      const showJunoWarning = isSomeJuno && hasJunoBalance && isJunoAmountMax;
+      const junoSymbol = assets.find((el) => el.denom === "ujunox" || el.denom === "ujuno")?.symbol || "JUNO";
+      setShowJunoWarning([showJunoWarning, junoSymbol]);
     },
-    [calculateRatios, tokenInputValue],
+    [
+      assetABalance.amount,
+      assetABalanceState,
+      assetBBalance.amount,
+      assetBBalanceState,
+      calculateRatios,
+      tokenInputValue,
+    ],
   );
 
   const calculateMaxValues = useCallback(() => {
@@ -175,14 +214,21 @@ export default function AddLiquidity({
 
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
+
     const assets = getAssetList().tokens;
     const decimalsA =
       assets.find(
-        (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
+        (el) =>
+          newInputValueA.id === el.denom ||
+          newInputValueA.id === el.juno_denom ||
+          newInputValueA.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
     const decimalsB =
       assets.find(
-        (el) => newInputValueB.id === el.denom || newInputValueB.id === (el as CW20Asset).token_address,
+        (el) =>
+          newInputValueB.id === el.denom ||
+          newInputValueA.id === el.juno_denom ||
+          newInputValueB.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
 
     const isAJuno = newInputValueA.id === "ujunox" || newInputValueA.id === "ujuno";
@@ -281,7 +327,10 @@ export default function AddLiquidity({
       <Stack spacing={2} mb={6}>
         {poolData.map(({ denomOrAddr, show, name }, i) => {
           const asset = assets.find(
-            (asset) => denomOrAddr === asset.denom || denomOrAddr === asset.token_address,
+            (asset) =>
+              denomOrAddr === asset.denom ||
+              denomOrAddr === asset.token_address ||
+              denomOrAddr === asset.juno_denom,
           );
 
           let maxInput = "0";
@@ -433,6 +482,24 @@ export default function AddLiquidity({
             )
           );
         })}
+        {showJunoWarning ? (
+          <Box
+            w="full"
+            display="flex"
+            alignItems="center"
+            gap={2}
+            p={4}
+            borderRadius="lg"
+            backgroundColor="wynd.alert.warning.500"
+            color="black"
+          >
+            <AiFillWarning size={64} />
+            <Text>
+              If you spend all your {junoSymbol}, you won&apos;t be able to pay for the fees of future
+              transactions.
+            </Text>
+          </Box>
+        ) : null}
       </Stack>
       <Box px={{ sm: 12 }}>
         <Button
