@@ -234,7 +234,7 @@ export const LSDGauge = ({
                     vote.option && (
                       <Box key={i} mb={i === selectedVotes.length - 1 ? 0 : 3}>
                         <Flex justifyContent="space-between">
-                          <Flex align="center">{vote.option.description.moniker}</Flex>
+                          <Flex align="center">{vote.option.description?.moniker}</Flex>
                           <Flex alignItems="center">
                             <Text mr={3}>{vote.votingWeight} %</Text>
                             <Tooltip title="Remove from votes">
@@ -377,7 +377,7 @@ export const LSDGauge = ({
                 >
                   <Flex align="center">
                     <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                      {validator.description.moniker}
+                    {validator.description?.moniker || ""}
                     </Flex>
                   </Flex>
                   <Flex align="center">{validator.votes}</Flex>

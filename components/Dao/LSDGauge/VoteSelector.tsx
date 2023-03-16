@@ -3,23 +3,17 @@ import {
   Button,
   Flex,
   Icon,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
   List,
   ListItem,
-  Text,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import React, { useCallback, useRef, useState, useTransition } from "react";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
-import TokenName from "../../Dex/TokenName";
-import { getAssetByDenom, getAssetInfoDetails } from "../../../utils/assets";
-import AssetImage from "../../Dex/AssetImage";
-import { microdenomToDenom } from "../../../utils/tokens";
 
 interface IProps {
   options: any[];
@@ -61,7 +55,7 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-              {validator.description.moniker}
+            {validator.description?.moniker || ""}
             </Flex>
           </Flex>
         </Flex>
@@ -84,7 +78,7 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
         bg={open ? "whiteAlpha.200" : "transparent"}
       >
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
-          <Flex alignItems="center">{selectedValidator && selectedValidator.description.moniker}</Flex>
+          <Flex alignItems="center">{selectedValidator && selectedValidator.description?.moniker}</Flex>
         </Flex>
         <Icon
           as={IoIosArrowDown}
