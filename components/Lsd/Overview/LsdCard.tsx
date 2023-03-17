@@ -35,9 +35,11 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
 
   const [apy, setAPY] = useState<number | undefined>(undefined);
 
+  const totalJunoSupply = Number(exchange_rate) * Number(totalSupply)
+
   const unstakedRatio =
-    Number(supply.total_bonded) > 0 && Number(supply.total_unbonding) > 0
-      ? Number(supply.total_bonded) / Number(supply.total_unbonding)
+    Number(supply.total_bonded) > 0 && Number(exchange_rate) * Number(totalSupply) > 0
+      ? 100 / totalJunoSupply * Number(supply.total_bonded)
       : 1;
 
   // Calculate JUNO APR
@@ -111,7 +113,7 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
                 width={"100%"}
                 bg={"wynd.gray.700"}
                 colorScheme={"teal"}
-                value={unstakedRatio * 100}
+                value={unstakedRatio}
               />
               <Text
                 top={0}
@@ -121,7 +123,7 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
                 bgClip="text"
                 display="inline-block"
               >
-                Unstaked: {unstakedRatio * 100}%
+                Staked: {unstakedRatio.toFixed(2)}%
               </Text>
             </Box>
           </Flex>
