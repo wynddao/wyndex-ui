@@ -390,7 +390,7 @@ export const LSDGauge = ({
                       {validator.description?.moniker || ""}
                     </Flex>
                   </Flex>
-                  <Flex>{(Number(validator.commission.commission_rates.rate) * 100).toFixed(0)}%</Flex>
+                  <Flex>{(Number(validator.commission?.commission_rates.rate) * 100).toFixed(0)}%</Flex>
                   <Flex align="center">
                     <Tooltip label={validator.votes}>
                       <Text>{((100 / Number(sumVotes)) * Number(validator.votes)).toFixed(2)}%</Text>
