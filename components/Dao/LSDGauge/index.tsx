@@ -29,7 +29,7 @@ import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeHeader } from "./GaugeHeader";
 import ValidatorSelector from "./VoteSelector";
-
+import { useTranslation } from "i18next-ssg";
 export const LSDGauge = ({
   options,
   gauge,
@@ -40,25 +40,22 @@ export const LSDGauge = ({
   refreshVotes: () => void;
 }) => {
   const { address: walletAddress } = useWallet();
-  const { config } = useGaugeConfigs(gauge.adapter);
 
   const { vote: userVotes } = useUserVotes(gauge.id, walletAddress || "");
   const { txToast } = useToast();
-  const currency = useRecoilValue(currencyAtom);
 
   const [selectedVotes, setSelectedVotes] = useState<any[]>([]);
   const [allValidators, setAllValidators] = useState<any[]>([]);
   const [sumVotes, setSumVotes] = useState<number>(0);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
-  const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
   const [error, setError] = useState<any>(undefined);
   const [loadingReset, setLoadingReset] = useState<boolean>(false);
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
-  let totalVotes = 0;
-
   const [selectedValidator, setSelectedValidator] = useState<any>(allValidators[0]);
   const [availableValidators, setAvailableValidators] = useState<any[]>([]);
+
+  const { t } = useTranslation("common");
 
   const addToBallot = () => {
     setError(undefined);
@@ -79,8 +76,10 @@ export const LSDGauge = ({
     if (sumVotes > 100) {
       setError(
         <>
-          <Text>{"You can't vote with more then 100% of your total voting power!"}</Text>
-          <Text fontSize="sm">(Tried to vote with {sumVotes}%)</Text>
+          <Text>{t("gauges.cantVoteWithMoreThenUserPower")}</Text>
+          <Text fontSize="sm">
+            ({t("gauges.triedToVoteWith")} {sumVotes}%)
+          </Text>
         </>,
       );
       return;
@@ -218,7 +217,7 @@ export const LSDGauge = ({
       <Grid gap={6} mt={8} templateColumns={{ base: "repeat(1, 1fr)", lg: "1fr 1fr" }}>
         <BorderedBox mb={10}>
           <Text mb={4} fontSize="2xl">
-            Place Your Vote
+            {t("gauges.placeYourVote")}
           </Text>
           <Grid gap={4} templateColumns={{ base: "repeat(1, 1fr)", lg: "4fr 3fr" }}>
             <Box
@@ -263,9 +262,9 @@ export const LSDGauge = ({
               </BorderedBox>
             </Box>
             <Box>
-              <Text fontSize="xl">Add to your votes</Text>
+              <Text fontSize="xl"> {t("gauges.addToYourVotes")}</Text>
               <Divider my={2} />
-              <Text>Choose a validator</Text>{" "}
+              <Text> {t("gauges.chooseAValidator")}</Text>{" "}
               <Flex justifyContent="space-between" alignItems="center">
                 {allValidators.length > 0 && (
                   <ValidatorSelector
@@ -276,7 +275,7 @@ export const LSDGauge = ({
                 )}
               </Flex>
               <Flex mt={2} justifyContent="space-between" alignItems="center">
-                Voting Weight
+                {t("gauges.votingWeigth")}
                 <InputGroup w={"50%"}>
                   <Input
                     type="number"
@@ -295,7 +294,7 @@ export const LSDGauge = ({
               )}
               <Flex justifyContent="end">
                 <Button onClick={() => addToBallot()} mt={2}>
-                  Add
+                  {t("actions.add")}
                 </Button>
               </Flex>
             </Box>
@@ -313,7 +312,7 @@ export const LSDGauge = ({
                   isLoading={loadingReset}
                   onClick={() => resetAllVotes()}
                 >
-                  Delete previous votes
+                  {t("gauges.deletePreviousVotes")}
                 </Button>
                 <Button
                   bgGradient="linear(to-l, wynd.green.200, wynd.cyan.200)"
@@ -326,7 +325,7 @@ export const LSDGauge = ({
                   }}
                   onClick={() => executeVote()}
                 >
-                  Submit Vote
+                  {t("gauges.submitVote")}
                 </Button>
               </Flex>
             ) : (
@@ -335,9 +334,9 @@ export const LSDGauge = ({
           </Grid>
         </BorderedBox>
         <BorderedBox mb={10}>
-          <Text fontSize="2xl">Current Votes For Next Epoch</Text>
+          <Text fontSize="2xl"> {t("gauges.currentVotingsForNextEpoch")}</Text>
           <Text mb={4} fontSize="sm">
-            (Starting {new Date(gauge.next_epoch * 1000).toLocaleDateString()})
+            ({t("general.starting")} {new Date(gauge.next_epoch * 1000).toLocaleDateString()})
           </Text>
           <Grid
             display="grid"
@@ -350,10 +349,10 @@ export const LSDGauge = ({
             bg="wynd.gray.alpha.20"
             borderTopRadius="lg"
           >
-            <GridItem textAlign="start">Validator</GridItem>
-            <GridItem>Commision</GridItem>
+            <GridItem textAlign="start"> {t("gauges.validator")}</GridItem>
+            <GridItem>{t("gauges.commision")}</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
-              Votes
+              {t("gauges.votes")}
             </GridItem>
           </Grid>
           <Box

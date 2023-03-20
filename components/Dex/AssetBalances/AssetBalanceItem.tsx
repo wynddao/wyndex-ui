@@ -21,6 +21,7 @@ import { formatCurrency } from "../../../utils/currency";
 import { capitalizeFirstLetter } from "../../../utils/text";
 import { microamountToAmount } from "../../../utils/tokens";
 import { ExtendedAsset } from "./utils";
+import { useTranslation } from "i18next-ssg";
 
 interface AssetBalanceItemProps {
   readonly asset: ExtendedAsset;
@@ -28,7 +29,14 @@ interface AssetBalanceItemProps {
 }
 
 export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemProps) {
-  const { onCopy, hasCopied } = useClipboard(asset.tags.includes("cw20") ? (asset as CW20Asset).token_address : asset.tags.includes("ibc") ? (asset as IBCAsset).juno_denom : asset.denom);
+  const { t } = useTranslation("common");
+  const { onCopy, hasCopied } = useClipboard(
+    asset.tags.includes("cw20")
+      ? (asset as CW20Asset).token_address
+      : asset.tags.includes("ibc")
+      ? (asset as IBCAsset).juno_denom
+      : asset.denom,
+  );
   const setDepositIbcModalOpen = useSetRecoilState(depositIbcModalAtom);
   const setWithdrawIbcModalOpen = useSetRecoilState(withdrawIbcModalAtom);
   const { assetPrices } = useIndexerInfos({});
@@ -79,7 +87,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
       <GridItem display="flex" alignItems="center" flexDir="column" justifyContent="end">
         <Text fontSize="lg">{microamountToAmount(asset.balance, asset.decimals)}</Text>
         <Text fontSize="xs">
-          (≈
+          ({"≈"}
           {formatCurrency(
             currency,
             (
@@ -119,7 +127,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
             }}
             onClick={() => window.open((asset as IBCAsset).external_deposit_uri)}
           >
-            IBC Transfer
+            {t("pages.dashboard.ibcTransfer")}
           </Button>
         )}
         {asset.tags === "ibc" && !(asset as IBCAsset).external_deposit_uri ? (
@@ -144,7 +152,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
               px="4"
               py="2"
             >
-              IBC Deposit
+              {t("pages.dashboard.ibcDeposit")}
             </Button>
             <Button
               fontSize={{ base: "sm" }}
@@ -164,7 +172,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
               px="4"
               py="2"
             >
-              IBC Withdraw
+              {t("pages.dashboard.ibcWithdraw")}
             </Button>
           </Flex>
         ) : (

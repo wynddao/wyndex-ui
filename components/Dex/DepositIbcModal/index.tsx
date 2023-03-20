@@ -24,6 +24,7 @@ import { getTransferIbcData } from "../../../state/recoil/selectors/ibc";
 import { getIbcSigningDataSelector, walletNames } from "../../../state/recoil/selectors/ibcSigningData";
 import { keplrAccountChangeKey } from "../../../utils/account";
 import { amountToMicroamount } from "../../../utils/tokens";
+import { useTranslation } from "i18next-ssg";
 
 export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
@@ -31,7 +32,7 @@ export default function DepositIbcModal() {
   const { address, currentWalletName } = useWallet();
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
   const { refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
-
+  const { t } = useTranslation("common");
   const ibcSigningDataSelector = getIbcSigningDataSelector(
     depositIbcModalOpen.chainId ?? "",
     currentWalletName,
@@ -106,11 +107,11 @@ export default function DepositIbcModal() {
       <ModalOverlay />
       <ModalContent maxW={{ md: "2xl" }} borderRadius="2xl" p={6} mx={2} bgColor="wynd.base.subBg">
         <ModalHeader fontSize="2xl" fontWeight="bold" p={0} mb={6}>
-          Deposit IBC Asset
+          {t("ibc.depositIBCAsset")}
         </ModalHeader>
         <ModalCloseButton top={6} right={6} />
         <Text fontSize="xl" fontWeight="bold" mb={3}>
-          IBC Transfer
+          {t("ibc.ibcTransfer")}
         </Text>
         <Grid
           templateColumns={{ base: "1fr", md: "1fr auto 1fr" }}
@@ -120,7 +121,7 @@ export default function DepositIbcModal() {
         >
           <GridItem border="1px solid" borderColor={"wynd.neutral.800"} borderRadius="2xl" p={4}>
             <Text fontWeight="semibold" mr={4}>
-              From
+              {t("general.from")}
             </Text>
             <Text
               maxW={64}
@@ -154,7 +155,7 @@ export default function DepositIbcModal() {
           </GridItem>
           <GridItem border="1px solid" borderColor={"wynd.neutral.800"} borderRadius="2xl" p={4}>
             <Text fontWeight="semibold" mr={4}>
-              To
+              {t("general.to")}
             </Text>
             <Text
               maxW={64}
@@ -185,11 +186,11 @@ export default function DepositIbcModal() {
           </GridItem>
         </Grid>
         <Text fontSize="xl" fontWeight="bold" mb={3}>
-          Amount To Deposit
+          {t("ibc.amountToDeposit")}
         </Text>
         <Box borderRadius="2xl" border="1px solid" borderColor="wynd.neutral.800" px={4} py={6} mb={12}>
           <Text fontWeight="semibold" mr={4} mb={3}>
-            Available balance:&ensp;
+            {t("general.availableBalance")}&ensp;
             <Text as="span" color={"wynd.cyan.500"}>
               {loadableTransferIbcData.state === "hasValue"
                 ? loadableTransferIbcData.contents.nativeChain?.balance
@@ -260,7 +261,7 @@ export default function DepositIbcModal() {
           }
           onClick={submitDepositIbc}
         >
-          Deposit
+          {t("general.deposit")}
         </Button>
       </ModalContent>
     </Modal>

@@ -5,6 +5,7 @@ import { Claim } from "../../../../state/clients/types/WyndDaoStake.types";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { microamountToAmount } from "../../../../utils/tokens";
+import { useTranslation } from "i18next-ssg";
 
 export const VestedTokens = ({
   vestedBalance,
@@ -17,6 +18,7 @@ export const VestedTokens = ({
   unstakedAmount: number;
   claims?: Claim[];
 }) => {
+  const { t } = useTranslation("common");
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
@@ -30,15 +32,15 @@ export const VestedTokens = ({
     <>
       <Flex justifyContent={"space-around"} my={4}>
         <Text fontSize="xl" fontWeight="bold" color="wynd.green.500" display="inline-block">
-          Locked due vesting:
+          {t("stake.lockedDueVesting")}:
         </Text>
         <Box>
           <Text fontSize="xl" fontWeight="bold" color="wynd.green.500" display="inline-block">
-            {microamountToAmount(vestedBalance, 6)} $WYND (~
+            {microamountToAmount(vestedBalance, 6)} {"$WYND"} (~
             {microamountToAmount(Number(vestedBalance) * wyndexPrice, 6, 2)} {currency === "USD" ? "$" : "€"})
           </Text>
           <Text fontSize="small">
-            ({((100 / totalBalance) * Number(vestedBalance)).toFixed(2)}% of your total balance)
+            ({((100 / totalBalance) * Number(vestedBalance)).toFixed(2)}% {t("stake.ofYourTotalBalance")})
           </Text>
         </Box>
       </Flex>

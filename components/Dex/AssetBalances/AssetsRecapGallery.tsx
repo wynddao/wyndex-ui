@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
 import { useRouter } from "next/router";
@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
-import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../../utils";
 import { getAssetInfoDetails, RequestAssetPrice } from "../../../utils/assets";
@@ -14,6 +13,7 @@ import { formatCryptoCurrency, formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
 import { UnvotedPropCount } from "../../General/Sidebar/UnvotedPropCount";
 import { getRewards } from "../Pool/PendingBoundingsTable/util";
+import { useTranslation } from "i18next-ssg";
 
 export interface AssetsRecap {
   readonly total: string;
@@ -22,6 +22,7 @@ export interface AssetsRecap {
 }
 
 export default function AssetsRecapGallery() {
+  const { t } = useTranslation("common");
   const { address: walletAddress } = useWallet();
   const [totalAvailableRewardValue, setTotalAvailableRewardValue] = useState<{
     priceInJuno: number;
@@ -123,7 +124,12 @@ export default function AssetsRecapGallery() {
         <Grid
           gap={8}
           p={3}
-          templateColumns={{ base: "repeat(1, 1fr)", sm:"repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
         >
           <Flex
             bg="rgba(0, 0, 0, 0.7)"
@@ -134,7 +140,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Total Assets
+              {t("pages.dashboard.totalAssets")}
             </Text>
             <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
               {walletAddress
@@ -159,7 +165,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Locked Assets
+              {t("pages.dashboard.lockedAssets")}
             </Text>
             <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
               {walletAddress
@@ -182,7 +188,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Available Assets
+              {t("pages.dashboard.availableAssets")}
             </Text>
             <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
               {walletAddress
@@ -202,7 +208,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Staked WYND
+              {t("pages.dashboard.staked")} WYND
             </Text>
             <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
               {walletAddress
@@ -219,7 +225,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Total Rewards
+              {t("pages.dashboard.totalRewards")}
             </Text>
             <Flex alignItems="center" justifyContent="center">
               <Text
@@ -241,7 +247,7 @@ export default function AssetsRecapGallery() {
               </Text>
               {walletAddress && (
                 <Button variant="ghost" _hover={{ bg: "none" }} onClick={() => withdrawAll()}>
-                  Claim all!
+                  {t("pages.dashboard.claimAll")}
                 </Button>
               )}
             </Flex>
@@ -255,14 +261,14 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              New Proposals
+              {t("pages.dashboard.newProposals")}
             </Text>
 
             {walletAddress ? (
               <Flex justifyContent="center" alignItems="center">
                 <UnvotedPropCount dashboard={true} />{" "}
                 <Button variant="ghost" _hover={{ bg: "none" }} onClick={() => router.push("/vote")}>
-                  Vote!
+                  {t("pages.dashboard.vote")}
                 </Button>
               </Flex>
             ) : (
@@ -278,7 +284,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              WYND Price
+              WYND {t("general.price")}
             </Text>
             <Text
               fontSize={{ base: "3xl", md: "4xl" }}
@@ -286,7 +292,8 @@ export default function AssetsRecapGallery() {
               bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
               bgClip="text"
             >
-              ≈{wyndexPriceFormatted}
+              {"≈"}
+              {wyndexPriceFormatted}
             </Text>
           </Flex>
           <Flex
@@ -298,7 +305,7 @@ export default function AssetsRecapGallery() {
             alignItems="center"
           >
             <Text fontWeight="semibold" opacity={0.7}>
-              Juno Price
+              {"Juno"} {t("general.price")}
             </Text>
             <Text
               fontSize={{ base: "3xl", md: "4xl" }}
@@ -306,7 +313,7 @@ export default function AssetsRecapGallery() {
               bgGradient="linear(to-l, wynd.green.500, wynd.cyan.500)"
               bgClip="text"
             >
-              ≈{junoPriceFormatted}
+              {"≈"}{junoPriceFormatted}
             </Text>
           </Flex>
         </Grid>

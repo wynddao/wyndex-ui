@@ -3,16 +3,13 @@ import {
   Button,
   Flex,
   Icon,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
   List,
   ListItem,
-  Text,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Asset } from "@wynddao/asset-list";
+import React, { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
@@ -22,6 +19,7 @@ import TokenName from "../../Dex/TokenName";
 import { getAssetByDenom, getAssetInfoDetails } from "../../../utils/assets";
 import AssetImage from "../../Dex/AssetImage";
 import { microdenomToDenom } from "../../../utils/tokens";
+import { useTranslation } from "i18next-ssg";
 
 interface IProps {
   options: PoolWithAddresses[];
@@ -35,7 +33,7 @@ const PoolSelector: React.FC<IProps> = ({ options, selectedPool, setSelectedPool
   const [filter, setFilter] = useState<string>("");
   const dropdownRef = useRef(null);
   const [isPending, startTransition] = useTransition();
-
+  const { t } = useTranslation("common");
   const handlerAssetSelector = useCallback(() => {
     if (!open) filterRef.current?.focus();
     setOpen(!open);

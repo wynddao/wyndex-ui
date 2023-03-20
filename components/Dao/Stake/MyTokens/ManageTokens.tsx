@@ -36,6 +36,7 @@ import StakeModal from "./Modals/StakeModal";
 import { RebondingTokens } from "./RebondingTokens";
 import { UnstakingTokens } from "./UnstakingTokens";
 import { VestedTokens } from "./VestedTokens";
+import { useTranslation } from "i18next-ssg";
 
 export const ManageTokens = ({
   stakeContract,
@@ -70,7 +71,7 @@ export const ManageTokens = ({
   const [nextDuration, setNextDuration] = useState<BondingPeriodInfo | undefined>(undefined);
   const [prevDuration, setPrevDuration] = useState<BondingPeriodInfo | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const { t } = useTranslation("common");
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice =
     currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
@@ -119,7 +120,7 @@ export const ManageTokens = ({
         <Box>
           <Flex mb={2} justifyContent={"space-between"}>
             <Text fontSize="2xl" fontWeight="bold">
-              Manage Stakes
+              {t("stake.manageStakes")}
             </Text>
             <Button
               fontSize="xs"
@@ -132,7 +133,7 @@ export const ManageTokens = ({
               }}
               onClick={() => setStakeModalOpen(true)}
             >
-              Stake!
+              {t("stake.actions.stake")}
             </Button>
           </Flex>
           <BorderedBox bgImageActive={false}>
@@ -147,10 +148,10 @@ export const ManageTokens = ({
               px={4}
               bg="whiteAlpha.100"
             >
-              <GridItem>Duration</GridItem>
-              <GridItem textAlign="end">Stakes</GridItem>
+              <GridItem>{t("time.duration")}</GridItem>
+              <GridItem textAlign="end">{t("stakes.stakes")}</GridItem>
               <GridItem textAlign="end" display={{ base: "none", lg: "block" }}>
-                Actions
+                {t("general.actions")}
               </GridItem>
             </Grid>
             {allStakes.map((stake, i) => {
@@ -170,12 +171,19 @@ export const ManageTokens = ({
                     gap="4"
                   >
                     <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-                      <Text fontSize="lg">{secondsToDays(stake.unbonding_period)} days</Text>
+                      <Text fontSize="lg">
+                        {secondsToDays(stake.unbonding_period)} {t("time.days")}
+                      </Text>
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
-                      <Text fontSize="lg">{microamountToAmount(stake.stake, 6)} $WYND</Text>
+                      <Text fontSize="lg">
+                        {microamountToAmount(stake.stake, 6)} {"$WYND"}
+                      </Text>
                       <Text fontSize="sm">
-                        {formatCurrency(currency, (Number(microamountToAmount(stake.stake, 6)) * wyndexPrice).toString() )}
+                        {formatCurrency(
+                          currency,
+                          (Number(microamountToAmount(stake.stake, 6)) * wyndexPrice).toString(),
+                        )}
                       </Text>
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
@@ -187,7 +195,7 @@ export const ManageTokens = ({
                           setNextDuration(getNextOrPrevDurationTime(allStakes[i], true));
                         }}
                       >
-                        Manage
+                        {t("stake.actions.manage")}
                       </Button>
                     </GridItem>
                   </Grid>
@@ -198,14 +206,14 @@ export const ManageTokens = ({
         </Box>
         <Box>
           <Text fontSize="2xl" fontWeight="bold" mb={2}>
-            Locked Tokens
+            {t("stake.lockedTokens")}
           </Text>
           <BorderedBox bgImageActive={false}>
             <Tabs isFitted>
               <TabList>
-                <Tab>Vesting</Tab>
-                <Tab>Rebonding</Tab>
-                <Tab>Unstaking</Tab>
+                <Tab> {t("stake.vesting")}</Tab>
+                <Tab> {t("stake.rebonding")}</Tab>
+                <Tab> {t("stake.unstaking")}</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel p={0}>

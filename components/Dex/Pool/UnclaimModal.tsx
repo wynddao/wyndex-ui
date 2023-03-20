@@ -22,7 +22,7 @@ import {
 import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
 import { getAssetByInfo } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
-
+import { useTranslation } from "i18next-ssg";
 interface UnclaimModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
@@ -44,7 +44,7 @@ export default function UnclaimModal({
 }: UnclaimModalProps) {
   const { address: walletAddress } = useWallet();
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-
+  const { t } = useTranslation("common");
   const assetASelector = getBalanceByAsset({
     address: walletAddress || "",
     asset: getAssetByInfo(pairData.asset_infos[0]),
@@ -82,15 +82,15 @@ export default function UnclaimModal({
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Claim Unstaked LP Tokens</ModalHeader>
+        <ModalHeader>{"pool.claimUnstakedLPTokens"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text>
-            Total available: {microamountToAmount(totalUnstakingAvailable, tokenInfo.tokenDecimals)}{" "}
+            {t("pool.totalAvailable")} {microamountToAmount(totalUnstakingAvailable, tokenInfo.tokenDecimals)}{" "}
             {tokenInfo.tokenSymbol}
           </Text>
           <Flex justifyContent="end">
-            <Button onClick={() => claim()}>Claim now!</Button>
+            <Button onClick={() => claim()}>{t("pool.actions.claimNow")}</Button>
           </Flex>
         </ModalBody>
       </ModalContent>

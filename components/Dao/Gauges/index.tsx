@@ -3,10 +3,10 @@ import { useGaugeOrchestrator } from "../../../state";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeItem } from "./GaugeItem";
 import { GaugesHeader } from "./GaugesHeader";
-
+import { useTranslation } from "i18next-ssg";
 export const Gauges = () => {
   const { gauges } = useGaugeOrchestrator();
-
+  const { t } = useTranslation("common");
   return (
     <>
       <GaugesHeader gauges={gauges} />
@@ -22,14 +22,14 @@ export const Gauges = () => {
           px={4}
           bg="whiteAlpha.100"
         >
-          <GridItem>Gauge ID</GridItem>
-          <GridItem textAlign="start">Rewards per Epoch </GridItem>
-          <GridItem textAlign="start">Epoch</GridItem>
+          <GridItem>{t("gauges.gaugesID")}</GridItem>
+          <GridItem textAlign="start">{t("gauges.rewardsPerEoch")}</GridItem>
+          <GridItem textAlign="start">{t("time.epoch")}</GridItem>
           <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
-            Title
+            {t("general.title")}
           </GridItem>
           <GridItem textAlign="end" display={{ base: "none", lg: "block" }}>
-            Next Epoch
+            {t("time.nextEpoch")}
           </GridItem>
         </Grid>
         {gauges.map((gauge, i) => (

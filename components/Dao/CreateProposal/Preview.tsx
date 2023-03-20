@@ -23,7 +23,7 @@ import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { useWallet } from "@cosmos-kit/react";
 import { CwProposalSingleHooks, useToast } from "../../../state";
 import { ExecuteResult } from "cosmwasm";
-
+import { useTranslation } from "i18next-ssg";
 interface PreviewProps {
   msgs: MsgType[];
   title: string;
@@ -43,7 +43,7 @@ export const Preview = ({ msgs, title, description }: PreviewProps) => {
   const [loadingTest, setLoadingTest] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
   const { txToast } = useToast();
-
+  const { t } = useTranslation("common");
   const testMsgsInProp = async () => {
     setLoadingTest(true);
     const res = await simulateProposal(
@@ -88,9 +88,13 @@ export const Preview = ({ msgs, title, description }: PreviewProps) => {
     <Grid templateColumns="1fr 3fr 1fr">
       <GridItem colStart={2} colSpan={1}>
         <Box>
-          <Text fontSize="4xl">Title: {title}</Text>
+          <Text fontSize="4xl">
+            {t("general.title")}
+            {": "}
+            {title}
+          </Text>
           <BorderedBox bgImageActive={false}>
-            <Text fontSize={"4xl"}>Description</Text>
+            <Text fontSize={"4xl"}>{t("general.description")}</Text>
             <BorderedBox bgImageActive={false}>
               <Text>
                 <ReactMarkdown components={ChakraUIRenderer()}>{description}</ReactMarkdown>
@@ -117,14 +121,16 @@ export const Preview = ({ msgs, title, description }: PreviewProps) => {
           </Alert>
         )}
         <Flex justifyContent="space-between">
-          <Button isLoading={loadingTest} onClick={() => testMsgsInProp()}>Test Proposal</Button>
+          <Button isLoading={loadingTest} onClick={() => testMsgsInProp()}>
+            {t("proposal.buttons.testProposal")}
+          </Button>
           {!isTested ? (
             <Tooltip label="You need to test your proposal before submitting">
-              <Button disabled>Submit Proposal</Button>
+              <Button disabled> {t("proposal.buttons.submitProposal")}</Button>
             </Tooltip>
           ) : (
             <Button isLoading={loading} onClick={() => submitProp()}>
-              Submit Proposal
+              {t("proposal.buttons.submitProposal")}
             </Button>
           )}
         </Flex>

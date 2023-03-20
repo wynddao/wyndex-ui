@@ -6,7 +6,7 @@ import { NotVotedAlert } from "./NotVotedAlert";
 import { PropList } from "./PropList";
 import { ProposalHeader } from "./ProposalHeader";
 import { PropListSkeleton } from "./Skeletons/PropListSkeleton";
-
+import { useTranslation } from "i18next-ssg";
 export const Vote = () => {
   const voteModule = {
     contractName: "CwProposalSingle",
@@ -15,6 +15,7 @@ export const Vote = () => {
   };
   const { address: walletAddress } = useWallet();
   const [limit, setLimit] = useState<number>(1);
+  const { t } = useTranslation("common");
   return (
     <Flex gap="8" flexFlow="column">
       <ProposalHeader voteModule={voteModule} />
@@ -34,27 +35,27 @@ export const Vote = () => {
           bg="wynd.gray.alpha.20"
           borderTopRadius="lg"
         >
-          {walletAddress && <GridItem>Your vote</GridItem>}
-          <GridItem>Proposal ID</GridItem>
-          <GridItem textAlign="start">Status</GridItem>
+          {walletAddress && <GridItem>{t("vote.yourVote")}</GridItem>}
+          <GridItem>{t("vote.proposalID")}</GridItem>
+          <GridItem textAlign="start">{t("vote.status")}</GridItem>
           <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
-            Title
+            {t("vote.title")}
           </GridItem>
           <GridItem textAlign="center" display={{ base: "none", lg: "block" }}>
-            Expiration
+            {t("vote.expiration")}
           </GridItem>
           <GridItem textAlign="center" display={{ base: "none", lg: "block" }}>
-            Votes
+            {t("vote.votes")}
           </GridItem>
           <GridItem textAlign="center" display={{ base: "none", lg: "block" }}>
-            Quorum
+            {t("vote.quorum")}
           </GridItem>
         </Grid>
         <Suspense fallback={<PropListSkeleton limit={limit} />}>
           <PropList limit={limit} />
         </Suspense>
         <Button onClick={() => setLimit(limit + 1)} mt={3}>
-          Load More
+          {t("vote.learnMore")}
         </Button>
       </Box>
     </Flex>

@@ -7,14 +7,14 @@ import { PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { getAssetInfoDetails } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 import AssetImage from "../AssetImage";
-
+import { useTranslation } from "i18next-ssg";
 interface PoolCatalystProps {
   readonly chainData: PoolResponse;
 }
 
 export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
   const [show, setShow] = useState<boolean>(true);
-
+  const { t } = useTranslation("common");
   return (
     <>
       <Flex alignItems="center" mt={4} justifyContent="center">
@@ -27,7 +27,7 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
               m="0 0 4px 0"
             />
             {show ? "Hide " : "Show "}
-            liquidity pool assets
+            {t("pool.liquidityPoolAssets")}
           </Text>
         </Button>
       </Flex>
@@ -75,7 +75,7 @@ export default function PoolCatalyst({ chainData }: PoolCatalystProps) {
                     </Flex>
                     <Box>
                       <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                        Total amount
+                        {t("pool.totalAmount")}
                       </Text>
                       <Text fontSize="xl" fontWeight="bold" mb={2}>
                         {microamountToAmount(asset.amount, tokenInfo.decimals)}

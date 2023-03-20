@@ -5,6 +5,7 @@ import { Claim } from "../../../../state/clients/types/WyndDaoStake.types";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { microamountToAmount } from "../../../../utils/tokens";
+import { useTranslation } from "i18next-ssg";
 
 interface UnstakingTokensProps {
   stakeAddress: string;
@@ -19,7 +20,7 @@ export const UnstakingTokens = (props: UnstakingTokensProps) => {
   const { txToast } = useToast();
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
-
+  const { t } = useTranslation("common");
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice =
     currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
@@ -38,7 +39,7 @@ export const UnstakingTokens = (props: UnstakingTokensProps) => {
       {claimsAvailable && claimsAvailable?.length > 0 && (
         <Flex justifyContent={"end"}>
           <Button variant={"ghost"} onClick={() => claim()}>
-            Claim all
+            {t("stake.actions.claimAll")}
           </Button>
         </Flex>
       )}
@@ -53,8 +54,8 @@ export const UnstakingTokens = (props: UnstakingTokensProps) => {
         px={4}
         bg="whiteAlpha.100"
       >
-        <GridItem>Stakes</GridItem>
-        <GridItem textAlign="end">Unlocks</GridItem>
+        <GridItem> {t("stake.stakes")}</GridItem>
+        <GridItem textAlign="end"> {t("stake.unlocks")}</GridItem>
       </Grid>
       {[...(claimsAvailable || []), ...(claimsPending || [])].map((claim, i) => (
         <Grid
@@ -71,7 +72,7 @@ export const UnstakingTokens = (props: UnstakingTokensProps) => {
           gap="4"
         >
           <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-            {microamountToAmount(claim.amount, 6)} $WYND (~
+            {microamountToAmount(claim.amount, 6)} {"$WYND"} (~
             {microamountToAmount(Number(claim.amount) * wyndexPrice, 6, 2)} {currency === "USD" ? "$" : "€"})
           </GridItem>
           <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>

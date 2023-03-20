@@ -1,0 +1,33 @@
+{
+  "general": {
+    "from": "From",
+    "to": "To",
+    "balance": "Balance",
+    "price": "Price",
+    "deposit": "Deposit",
+    "stake": "Stake",
+    "availableBalance": "Available Balance",
+    "asset": "Asset",
+    "chain": "Chain",
+    "actions": "Actions"
+  },
+  "pages": {
+    "dashboard": {
+      "totalAssets": "Total Assets",
+      "lockedAssets": "Locked Assets",
+      "availableAssets": "Available Assets",
+      "staked": "Staked",
+      "totalRewards": "Total Rewards",
+      "newProposals": "New Proposals",
+      "all": "All",
+      "native": "Native",
+      "searchToken": "Search token",
+      "ibcDeposit": "IBC Deposit",
+      "ibcWithdraw": "IBC Withdraw",
+      "ibcTransfer": "IBC Transfer",
+      "amountToDeposit": "Amount to Deposit",
+      "claimAll": "Claim all!",
+      "vote": "Vote!"
+    }
+  }
+}

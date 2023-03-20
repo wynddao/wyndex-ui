@@ -4,12 +4,11 @@ import { BsChevronLeft } from "react-icons/bs";
 import { useGaugeConfigs } from "../../../state";
 import { GaugeResponse } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { secondsToDays, secondsToWdhms } from "../../../utils/time";
-import { microamountToAmount } from "../../../utils/tokens";
-import TokenName from "../../Dex/TokenName";
+import { useTranslation } from "i18next-ssg";
 
 export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
   const router = useRouter();
-  const { config } = useGaugeConfigs(gauge.adapter);
+  const { t } = useTranslation("common");
   return (
     <Box bg="url(/castle.jpeg)" position="relative" rounded="lg" bgPosition="bottom" bgSize="cover">
       <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
@@ -46,11 +45,11 @@ export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Epoch length
+              {t("time.epochLength")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
-              {secondsToDays(gauge.epoch_size)} Days
+              {secondsToDays(gauge.epoch_size)} {t("time.days")}
             </Text>
           </Box>
           <Box>
@@ -61,17 +60,16 @@ export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Next epoch
+              {t("time.nextEpoch")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
-              {/* @ts-ignore */}
-              in {secondsToWdhms(gauge.next_epoch - Date.now() / 1000)}
+              {"in"} {secondsToWdhms(gauge.next_epoch - Date.now() / 1000)}
             </Text>
           </Box>
         </Flex>
       </Box>
       <Button
-        onClick={() => router.push(`/gauges`)}
+        onClick={() => router.push("/gauges")}
         position="absolute"
         width="200px"
         height="100%"
@@ -80,7 +78,7 @@ export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
         bgGradient={"linear-gradient(90deg, rgba(113,204,152,0.5) 0%, rgba(0,0,0,0) 100%)"}
         _hover={{ bgColor: "transparent" }}
       >
-        <BsChevronLeft /> Gauges Overview
+        <BsChevronLeft /> {t("gauges.gaugesOverview")}
       </Button>
     </Box>
   );

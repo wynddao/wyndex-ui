@@ -17,7 +17,7 @@ import { MsgType } from "../Actions/types";
 import { EditProp } from "./EditProp";
 import { CreateProposalHeader } from "./Header";
 import { Preview } from "./Preview";
-
+import { useTranslation } from "i18next-ssg";
 export interface FormError {
   title: boolean;
   desc: boolean;
@@ -89,17 +89,17 @@ export const CreateProposal = () => {
       }
     }
   };
-
+  const { t } = useTranslation("common");
   return (
     <>
       <CreateProposalHeader />
       <Tabs index={tabIndex} onChange={(n) => checkAndSet(n)} isFitted variant="enclosed">
         <TabList mb="1em">
           <Tab _selected={{ bgGradient: "linear(to-l, wynd.green.100, wynd.cyan.200)", color: "white" }}>
-            Edit
+            {t("general.edit")}
           </Tab>
           <Tab _selected={{ bgGradient: "linear(to-l, wynd.green.100, wynd.cyan.200)", color: "white" }}>
-            Preview
+            {t("general.preview")}
           </Tab>
         </TabList>
         <Grid templateColumns="1fr 3fr 1fr">
@@ -107,8 +107,8 @@ export const CreateProposal = () => {
             <GridItem colStart={2} colSpan={1}>
               <Alert status="warning">
                 <AlertIcon />
-                <Text fontWeight="bold">Warning: </Text>
-                <Text>{" "}You need to stake $WYND to create a proposal!</Text>
+                <Text fontWeight="bold"> {t("alerts.warning")}</Text>
+                <Text> {t("general.needToStakeWyndToCreateProp")}</Text>
               </Alert>
             </GridItem>
           )}

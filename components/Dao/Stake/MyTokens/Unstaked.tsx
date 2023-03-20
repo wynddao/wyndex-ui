@@ -6,6 +6,7 @@ import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
+import { useTranslation } from "i18next-ssg";
 
 export const Unstaked = ({
   unstakedAmount,
@@ -32,22 +33,22 @@ export const Unstaked = ({
   );
 
   const _unstakedAmount = Number(microamountToAmount(unstakedAmount, 6) || 0);
-
+  const { t } = useTranslation("common");
   return (
     <BorderedBox>
       <Flex justifyContent={"space-between"}>
         <Text fontSize="xl" fontWeight="bold" my={4} color="wynd.green.500" display="inline-block">
-          Unstaked Tokens
+          {t("stake.unstakedTokens")}
         </Text>
         <Box>
           <Text fontSize="xl" fontWeight="bold" mt={4} color="wynd.green.500" display="inline-block">
-            {microamountToAmount(unstakedAmount, 6) || 0} $WYND (~
+            {microamountToAmount(unstakedAmount, 6) || 0} {"$WYND"} (~
             {microamountToAmount(unstakedAmount * wyndexPrice, 6, 2)} {currency === "USD" ? "$" : "€"})
           </Text>
           <Text fontSize="sm">
-            Transferable: {availableAmount < 0 && "0"}
+            {t("stake.transferable")}: {availableAmount < 0 && "0"}
             {availableAmount > 0 && availableAmount < _unstakedAmount && availableAmount}
-            {availableAmount > 0 && availableAmount > _unstakedAmount && _unstakedAmount} $WYND
+            {availableAmount > 0 && availableAmount > _unstakedAmount && _unstakedAmount} {"$WYND"}
           </Text>
         </Box>
       </Flex>

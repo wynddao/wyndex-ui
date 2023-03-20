@@ -3,6 +3,7 @@ import { Select } from "chakra-react-select";
 import { useState } from "react";
 import { Custom, Execute, Migrate } from "../Actions";
 import { MsgType } from "../Actions/types";
+import { useTranslation } from "i18next-ssg";
 
 export const ActionItem = ({
   id,
@@ -16,10 +17,11 @@ export const ActionItem = ({
   changeMsg: (id: number, newMsg: MsgType) => void;
 }) => {
   const [selected, setSelected] = useState<string | undefined>(undefined);
+  const { t } = useTranslation("common");
 
   const options = [
     { value: "execute", label: "Execute Contract" },
-    { value: "migrate", label: "Migrate Contract" }
+    { value: "migrate", label: "Migrate Contract" },
   ];
 
   const setMsg = (newMsg: MsgType) => {
@@ -52,7 +54,7 @@ export const ActionItem = ({
             _hover={{ backgroundColor: "wynd.alert.error.300" }}
             onClick={() => deleteMsg(id)}
           >
-            Delete Message
+            {t("actions.deleteMessage")}
           </Button>
         </Flex>
       </Box>

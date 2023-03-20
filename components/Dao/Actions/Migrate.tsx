@@ -4,6 +4,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { MsgType } from "./types";
+import { useTranslation } from "i18next-ssg";
 
 export const Migrate = ({
   msg,
@@ -29,11 +30,14 @@ export const Migrate = ({
   const [contractAddr, setContractAddr] = useState<string>(msg.contract_addr);
   const [codeId, setCodeId] = useState<string>(msg.new_code_id || "");
 
+  const { t } = useTranslation("common");
+
   return (
     <>
-      <Text fontSize={"xl"}>Migrate</Text>
+      <Text fontSize={"xl"}>{t("actions.migrate")}</Text>
       <BorderedBox bgImageActive={false}>
-        Contract Address:{" "}
+        {t("general.contractAddress")}
+        {": "}
         {edit ? (
           <Input
             type="text"
@@ -47,7 +51,8 @@ export const Migrate = ({
       </BorderedBox>
       <Box mt={4}>
         <BorderedBox>
-          New Code Id:{" "}
+          {t("actions.newCodeId")}
+          {": "}
           {edit ? (
             <Input
               type="text"
@@ -61,7 +66,8 @@ export const Migrate = ({
         </BorderedBox>
       </Box>
       <Text fontSize={"xl"} mt={5}>
-        Message:
+        {t("general.message")}
+        {":"}
       </Text>
       {!edit ? (
         <SyntaxHighlighter language="json" style={vscDarkPlus}>

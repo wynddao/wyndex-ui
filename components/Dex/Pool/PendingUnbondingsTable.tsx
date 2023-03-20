@@ -6,7 +6,7 @@ import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { microamountToAmount } from "../../../utils/tokens";
 import UnclaimModal from "./UnclaimModal";
-
+import { useTranslation } from "i18next-ssg";
 interface PendingUnbondingsTableProps {
   stakeAddress: string;
   tokenInfo: UseTokenNameResponse;
@@ -19,7 +19,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
   const [claimable, setClaimable] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [totalUnstakingAvaiable, setTotalUnstakingAvaiable] = useState<number>(0);
-
+  const { t } = useTranslation("common");
   const tableHeaders = ["Amount", "Available"];
 
   useEffect(() => {
@@ -39,9 +39,9 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
       <Box p={4}>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline">
-            My Pending Unbondings
+            {t("pool.myPendingUnbondings")}
           </Text>
-          {claimable && <Button onClick={() => setModalOpen(true)}>Claim now!</Button>}
+          {claimable && <Button onClick={() => setModalOpen(true)}> {t("pool.actions.claimNow")}</Button>}
         </Flex>
         <TableContainer>
           <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
@@ -73,7 +73,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
                           </>
                         ) : (
                           <Text noOfLines={1}>
-                            <BsPatchCheckFill style={{ display: "inline" }} /> Ready to claim!
+                            <BsPatchCheckFill style={{ display: "inline" }} /> {t("pool.readyToClaim")}
                           </Text>
                         )}
                       </Td>
@@ -83,7 +83,7 @@ export default function PendingUnbondingsTable(props: PendingUnbondingsTableProp
               ) : (
                 <Tr>
                   <Td fontWeight="semibold" colSpan={4}>
-                    You currently have no bondings.
+                  {t("pool.youCurrentlyHaveNoBondings")}
                   </Td>
                 </Tr>
               )}

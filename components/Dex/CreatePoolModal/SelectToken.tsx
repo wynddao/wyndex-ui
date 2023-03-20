@@ -15,7 +15,7 @@ import { useRef } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { dataType } from ".";
 import TokenDropdown from "./TokenDropdown";
-
+import { useTranslation } from "i18next-ssg";
 interface SelectTokenProps {
   readonly tokens: dataType[];
   readonly selectedToken: dataType;
@@ -24,7 +24,7 @@ interface SelectTokenProps {
 
 export default function SelectToken({ tokens, selectedToken, selectToken }: SelectTokenProps) {
   const { isOpen, onToggle, onClose } = useDisclosure();
-
+  const { t } = useTranslation("common");
   const selectMenuRef = useRef<HTMLDivElement | null>(null);
   useOutsideClick({ ref: selectMenuRef, handler: () => onClose() });
 
@@ -39,7 +39,7 @@ export default function SelectToken({ tokens, selectedToken, selectToken }: Sele
       gap={2}
     >
       <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="bold">
-        Choose asset
+        {t("pool.chooseAsset")}
       </Text>
       <Flex align="center" maxW="full" h="fit-content">
         <Button

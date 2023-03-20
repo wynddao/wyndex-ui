@@ -26,6 +26,7 @@ import { secondsToDays } from "../../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../../utils/tokens";
 import RadioCard from "../../../General/RadioCard";
 import { getApr } from "../util/apr";
+import { useTranslation } from "i18next-ssg";
 
 interface StartEarningModalProps {
   isOpen: boolean;
@@ -53,14 +54,14 @@ export default function StartEarningModal(props: StartEarningModalProps) {
     },
     defaultValue: "1",
   });
-
+  const { t } = useTranslation("common");
   const group = getRootProps();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent bgColor="wynd.base.subBg">
-        <ModalHeader>Start WYNNING!</ModalHeader>
+        <ModalHeader> {t("pool.startWynning")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex
@@ -92,7 +93,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                 mb={2}
               >
                 <Text fontWeight="medium" textAlign="center">
-                  Available&nbsp;
+                  {t("general.available")}&nbsp;
                   <Text as="span" color={"wynd.cyan.600"}></Text>
                   <strong>{microamountToAmount(balance, tokenInfo.tokenDecimals)}</strong>
                 </Text>
@@ -119,7 +120,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           </Flex>
           <Divider marginTop={5} />
           <Text fontWeight="bold" fontSize={{ base: "xl" }} marginY={5}>
-            Unbonding Period
+            {t("pool.unbondingPeriod")}
           </Text>
           {bondingInfos && bondingInfos.length > 0 && (
             <VStack {...group}>
@@ -133,10 +134,10 @@ export default function StartEarningModal(props: StartEarningModalProps) {
                   >
                     <Flex>
                       <Text as="p" flex="0.7">
-                        {secondsToDays(unbonding_period)} Days
+                        {secondsToDays(unbonding_period)} {t("time.days")}
                       </Text>
                       <Text as="p">
-                        APR: <strong>{getApr(apr, unbonding_period)}</strong>
+                        {"APR"}: <strong>{getApr(apr, unbonding_period)}</strong>
                       </Text>
                     </Flex>
                   </RadioCard>
@@ -146,7 +147,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
           )}
           <Alert marginTop={5} status="warning">
             <AlertIcon />
-            The unbonding period starts with the unstaking of the tokens.
+            {t("pool.info.periodStartsWithUnbonding")}
           </Alert>
           <Box px={{ sm: 12 }} marginY={5}>
             <Button
@@ -163,7 +164,7 @@ export default function StartEarningModal(props: StartEarningModalProps) {
               size="lg"
               h={{ base: 12, sm: 14 }}
             >
-              Stake
+              {t("pool.actions.stake")}
             </Button>
           </Box>
         </ModalBody>

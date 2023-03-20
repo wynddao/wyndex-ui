@@ -6,6 +6,7 @@ import { FormError } from ".";
 import { MsgType } from "../Actions/types";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { ActionItem } from "./ActionItem";
+import { useTranslation } from "i18next-ssg";
 
 interface CreateProposalProps {
   msgs: MsgType[];
@@ -55,7 +56,7 @@ export const EditProp = ({
     _msgs[id] = msg;
     setMsgs(_msgs);
   };
-
+  const { t } = useTranslation("common");
   return (
     <>
       <Grid templateColumns="1fr 3fr 1fr">
@@ -66,12 +67,12 @@ export const EditProp = ({
             bgClip="text"
             display="inline"
           >
-            General
+            {t("general.general")}
           </Text>
           <BorderedBox mb={4}>
             <Grid templateColumns="1fr 1fr">
               <Flex alignItems="center">
-                <Text>Proposal Title</Text>
+                <Text>{t("proposal.proposalTitle")}</Text>
               </Flex>
               <Input
                 isInvalid={error.title}
@@ -82,7 +83,7 @@ export const EditProp = ({
             </Grid>
             <Grid mt={3} templateColumns="1fr 1fr">
               <Flex alignItems="center">
-                <Text>Proposal Description</Text>
+                <Text>{t("proposal.proposalDescription")}</Text>
               </Flex>
               <Textarea
                 isInvalid={error.desc}
@@ -97,7 +98,7 @@ export const EditProp = ({
             bgClip="text"
             display="inline"
           >
-            Actions
+            {t("general.actions")}
           </Text>
           <BorderedBox>
             <Flex
@@ -131,7 +132,7 @@ export const EditProp = ({
           </BorderedBox>
           <Box w="100%" mt={3}>
             <Button disabled={preview} w="100%" onClick={() => setTabIndex(1)}>
-              Preview Proposal
+              {t("proposal.previewProposal")}
             </Button>
           </Box>
         </GridItem>

@@ -4,11 +4,13 @@ import { useSingleProposalInfo } from "../../../state/hooks/proposal";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { secondsToDays } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
+import { useTranslation } from "i18next-ssg";
 
 export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
   const { config } = useSingleProposalInfo(voteModule.address);
   const { governanceTokenInfo, totalStaked } = useDaoStakingInfos();
   const router = useRouter();
+  const { t } = useTranslation("common");
   return (
     <>
       <Box bg="url(/mooncastle.png)" rounded="lg" bgPosition="center" bgSize="cover">
@@ -22,12 +24,12 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
           rounded="lg"
         >
           <Heading textAlign="center" fontSize={{ base: "4xl", md: "5xl" }}>
-            Vote
+            {t("proposal.vote")}
           </Heading>
           <Flex gap={6} justifyContent={"space-around"} flexFlow={{ base: "column", md: "row" }}>
             <Box py={{ md: 2 }} textAlign={{ base: "center", md: "left" }}>
               <Text fontWeight="semibold" color="wynd.gray.500">
-                Total Supply
+                {t("proposal.totalSupply")}
               </Text>
               <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
                 {(
@@ -36,12 +38,12 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
                   ) /
                   10 ** 6
                 ).toFixed(1)}
-                M $WYND
+                {"M $WYND"}
               </Text>
             </Box>
             <Box py={{ md: 2 }} textAlign={{ base: "center", md: "right" }}>
               <Text fontWeight="semibold" color="wynd.gray.500">
-                Staked
+                {t("stake.staked")}
               </Text>
               <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
                 {((100 / Number(governanceTokenInfo.total_supply)) * Number(totalStaked)).toFixed(2)}%
@@ -66,11 +68,11 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Proposal deposit
+              {t("proposal.proposalDeposit")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
-              {microamountToAmount(config.deposit_info?.deposit, 6)} $WYND
+              {microamountToAmount(config.deposit_info?.deposit, 6)} {"$WYND"}
             </Text>
           </Box>
           <Box>
@@ -81,7 +83,7 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Refund failed proposals
+              {t("proposal.refundFailedProposals")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {config.deposit_info?.refund_failed_proposals ? "YES" : "NO"}
@@ -95,7 +97,7 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Passing threshold
+              {t("proposal.passingThreshold")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
@@ -110,7 +112,7 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Quorum
+              {t("proposal.quorum")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
@@ -125,11 +127,11 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               textTransform="uppercase"
               textAlign="center"
             >
-              Voting Period
+              {t("proposal.votingPeriod")}
             </Text>
             <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
               {/* @ts-ignore */}
-              {secondsToDays(config.max_voting_period.time)} Days
+              {secondsToDays(config.max_voting_period.time)} {t("time.days")}
             </Text>
           </Box>
           <Flex alignItems="center">
@@ -139,9 +141,9 @@ export const ProposalHeader = ({ voteModule }: { voteModule: any }) => {
               display="inline-block"
               variant="ghost"
               onClick={() => router.push("/vote/create")}
-              _hover={{ bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)"}}
+              _hover={{ bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)" }}
             >
-              Create Proposal
+              {t("proposal.actions.createProposal")}
             </Button>
           </Flex>
         </Flex>

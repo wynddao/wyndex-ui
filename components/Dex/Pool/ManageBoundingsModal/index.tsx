@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import {
   Box,
   Button,
@@ -15,6 +16,7 @@ import {
   useRadioGroup,
   VStack,
 } from "@chakra-ui/react";
+import { useTranslation } from "i18next-ssg";
 import { useWallet } from "@cosmos-kit/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { startTransition, useEffect, useRef, useState } from "react";
@@ -78,7 +80,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const maxAmount = roundForExecution(
     Number(microamountToAmount(Number(stake.stake) - Number(stake.total_locked), tokenInfo.tokenDecimals)),
   );
-
+  const { t } = useTranslation("common");
   const ChooseModeContent = () => {
     const mode = [];
 
@@ -92,7 +94,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
     return (
       <Flex flexDirection="column" justifyContent="center" alignItems="center">
         <Text align="center" marginTop={5} marginBottom={2} fontSize="xl">
-          What do you want to do?
+          {t("pool.whatDoYouWantToDo")}
         </Text>
         <VStack marginBottom={5} {...group}>
           {mode.map((value) => {
@@ -149,7 +151,7 @@ export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
             mb={2}
           >
             <Text fontWeight="medium" textAlign="center">
-              Available&nbsp;
+              {t("general.available")}&nbsp;
               <Text as="span" color={"wynd.cyan.700"}></Text>
               <strong>{maxAmount}</strong>
             </Text>

@@ -1,8 +1,7 @@
-import { Box, GridItem, ScaleFade, Text } from "@chakra-ui/react";
-import { useState } from "react";
-import { AnnualizedReward } from "../../../../state/clients/types/WyndexStake.types";
+import { Box, GridItem, Text } from "@chakra-ui/react";
 import { secondsToDays } from "../../../../utils/time";
 import { getApr } from "../util/apr";
+import { useTranslation } from "i18next-ssg";
 
 export default function UnbondingsItem({
   unbonding_period,
@@ -14,6 +13,7 @@ export default function UnbondingsItem({
     apr: number;
   }[];
 }) {
+  const { t } = useTranslation("common");
   return (
     <GridItem pos="relative">
       <Box
@@ -26,7 +26,7 @@ export default function UnbondingsItem({
         px={8}
       >
         <Text fontWeight="bold" fontSize="2xl">
-          {secondsToDays(unbonding_period)} Days
+          {secondsToDays(unbonding_period)} {t("time.days")}
         </Text>
         <Text fontWeight="bold" fontSize="xl">
           {getApr(apr, unbonding_period)}

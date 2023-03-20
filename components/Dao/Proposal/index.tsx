@@ -28,25 +28,27 @@ import { Message } from "./Message";
 import { VoteRatioSkeleton } from "./Skeletons/VoteRatioSkeleton";
 import { VoteRadio } from "./VoteRadio";
 
+import { useTranslation } from "i18next-ssg";
 const ColoredVote = ({ vote }: { vote: Vote }) => {
+  const { t } = useTranslation("common");
   switch (vote) {
     case "yes":
       return (
         <Text display="inline" color={"#9AE6B4"} fontSize={"xl"}>
-          YES
+          {t("proposal.choices.yes").toUpperCase()}
         </Text>
       );
 
     case "no":
       return (
         <Text display="inline" color={"#FEB2B2"} fontSize={"xl"}>
-          NO
+          {t("proposal.choices.no").toUpperCase()}
         </Text>
       );
     default:
       return (
         <Text display="inline" color={"#90cdf4"} fontSize={"xl"}>
-          ABSTAIN
+          {t("proposal.choices.abstain").toUpperCase()}
         </Text>
       );
   }
@@ -118,6 +120,7 @@ export const ProposalComponent = ({
   };
   const router = useRouter();
   const group = getRootProps();
+  const { t } = useTranslation("common");
   return (
     <Box p="4">
       <Box bg="url(/castle.jpeg)" position="relative" rounded="lg" bgPosition="bottom" bgSize="cover">
@@ -145,6 +148,7 @@ export const ProposalComponent = ({
           </Flex>
         </Box>
         <Button
+          // eslint-disable-next-line i18next/no-literal-string
           onClick={() => router.push(`/vote`)}
           position="absolute"
           width="200px"
@@ -154,13 +158,13 @@ export const ProposalComponent = ({
           bgGradient={"linear-gradient(90deg, rgba(113,204,152,0.5) 0%, rgba(0,0,0,0) 100%)"}
           _hover={{ bgColor: "transparent" }}
         >
-          <BsChevronLeft /> Proposal Overview
+          <BsChevronLeft /> {t("proposal.proposalOverview")}
         </Button>
       </Box>
       <Grid templateColumns={{ base: "1fr, 1fr", lg: "6fr 2fr" }} mt={4} gap={30}>
         <Box>
           <BorderedBox bgImageActive={false} width="fit-content">
-            <Text fontSize={"4xl"}>Description</Text>
+            <Text fontSize={"4xl"}>{t("proposal.proposalDescription")}</Text>
             <BorderedBox bgImageActive={false} maxW={{ base: "300px", sm: "440px", md: "500px", lg: "100%" }}>
               <Text sx={{ "& a": { color: "wynd.cyan.500", textDecoration: "underline" } }}>
                 <ReactMarkdown components={ChakraUIRenderer()}>{proposalResponse.description}</ReactMarkdown>
@@ -182,13 +186,16 @@ export const ProposalComponent = ({
         </Box>
         <Box>
           <BorderedBox>
-            <Text fontSize={"2xl"}>Proposal Information</Text>
+            <Text fontSize={"2xl"}>{t("proposal.proposalInformation")}</Text>
             <Grid columnGap={4} templateColumns="repeat(2, 1fr)">
-              <Text fontWeight={"bold"}>Proposal:</Text>
+              <Text fontWeight={"bold"}>
+                {t("proposal.proposal")}
+                {": "}
+              </Text>
               <Text>{propId}</Text>
-              <Text fontWeight={"bold"}>Status:</Text>
+              <Text fontWeight={"bold"}>{t("proposal.status")}:</Text>
               <Text>{capitalizeFirstLetter(proposalResponse.status)}</Text>
-              <Text fontWeight={"bold"}>Proposer:</Text>
+              <Text fontWeight={"bold"}>{t("proposal.proposer")}:</Text>
               <Flex
                 onClick={() => onCopy()}
                 alignItems={"center"}
@@ -197,7 +204,7 @@ export const ProposalComponent = ({
                 <Text>{truncate(proposalResponse.proposer, 10)}</Text>
                 <BsClipboard style={{ marginLeft: 8 }} />
               </Flex>
-              <Text fontWeight={"bold"}>Expiration:</Text>
+              <Text fontWeight={"bold"}>{t("proposal.expiration")}:</Text>
               <Text>
                 {/* @ts-ignore */}
                 {new Date(proposalResponse.expiration.at_time / 10 ** 6).toLocaleDateString()}{" "}
@@ -208,22 +215,22 @@ export const ProposalComponent = ({
             <Divider mt={5} />
             <Suspense fallback={<VoteRatioSkeleton />}>
               <Box mt={5}>
-                <Text fontSize={"2xl"}>Vote Status</Text>
+                <Text fontSize={"2xl"}>{t("proposal.voteStatus")}</Text>
                 <Text fontSize={"sm"}>
                   {getResultInText(quorum, totalVoted, votesInPercent, proposalResponse.status)}
                 </Text>
                 <Text fontSize={"xl"} mt={8}>
-                  Ratio of Votes
+                  {t("proposal.ratioOfVotes")}
                 </Text>
                 <Flex justifyContent={"space-around"} mt={4}>
                   <Text color={"#9AE6B4"} fontSize={"small"}>
-                    {votesInPercent.yes.toFixed(2)}% Yes
+                    {votesInPercent.yes.toFixed(2)}% {t("proposal.choices.yes")}
                   </Text>
                   <Text color={"#90cdf4"} fontSize={"small"}>
-                    {votesInPercent.abstain.toFixed(2)}% Abstain
+                    {votesInPercent.abstain.toFixed(2)}% {t("proposal.choices.abstain")}
                   </Text>
                   <Text color={"#FEB2B2"} fontSize={"small"}>
-                    {votesInPercent.no.toFixed(2)}% No
+                    {votesInPercent.no.toFixed(2)}% {t("proposal.choices.no")}
                   </Text>
                 </Flex>
                 <Box mx={4} mt={3} position={"relative"}>
@@ -258,7 +265,7 @@ export const ProposalComponent = ({
                   </Tooltip>
                 </Box>
                 <Flex mt={16} justifyContent={"space-between"}>
-                  <Text fontSize={"xl"}>Turnout</Text>
+                  <Text fontSize={"xl"}>{t("proposal.turnout")}</Text>
                   <Text fontSize={"xl"}>{turnout.toFixed(3)}%</Text>
                 </Flex>
                 <Box position={"relative"} mb={16}>
@@ -285,7 +292,7 @@ export const ProposalComponent = ({
             </Suspense>
             <Divider my={5} />
             <Text fontSize={"2xl"} mb={4}>
-              Vote!
+              {t("proposal.doVote")}
             </Text>
             <BorderedBox>
               <Flex justifyContent={"space-between"} py={2} flexDir={"column"} gap={3} alignItems={"center"}>
@@ -321,7 +328,7 @@ export const ProposalComponent = ({
                             w={"100%"}
                             disabled={selectedVote === ""}
                           >
-                            Vote!
+                            {t("proposal.doVote")}
                           </Button>
                         </>
                       )}
@@ -330,7 +337,8 @@ export const ProposalComponent = ({
                     )}
                     {walletVote && (
                       <Text>
-                        You voted <ColoredVote vote={walletVote} />
+                        {t("proposal.youVotedFor")}
+                        <ColoredVote vote={walletVote} />
                       </Text>
                     )}
                     {!walletVote && proposalResponse.status !== Status.Open && (
