@@ -23,6 +23,15 @@ export const useGaugeAdapter = (id: number) => {
     }),
   );
 
+  const { options: _options } = useRecoilValue(
+    WyndGaugeOrchestratorSelectors.listOptionsSelector({
+      contractAddress: orchestratorAddress,
+      params: [{ gauge: id, startAfter: options[options.length -1][0], limit: 100 }],
+    }),
+  );
+
+  const optionsMerged = [..._options, ...options];
+
   const gauge = useRecoilValue(
     WyndGaugeOrchestratorSelectors.gaugeSelector({
       contractAddress: orchestratorAddress,
@@ -42,7 +51,7 @@ export const useGaugeAdapter = (id: number) => {
   );
 
   return {
-    options,
+    options: optionsMerged,
     votes,
     gauge,
     refresh_votes,

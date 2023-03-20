@@ -48,6 +48,7 @@ export const LSDGauge = ({
 
   const [selectedVotes, setSelectedVotes] = useState<any[]>([]);
   const [allValidators, setAllValidators] = useState<any[]>([]);
+  const [sumVotes, setSumVotes] = useState<number>(0);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
   const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
   const [error, setError] = useState<any>(undefined);
@@ -69,6 +70,7 @@ export const LSDGauge = ({
         votingWeight: weightInput || "0",
       },
     ];
+
     // Check if valid
     const sumVotes = _selectedVotes.reduce(
       (accumulator, currentValue) => accumulator + Number(currentValue.votingWeight),
@@ -121,7 +123,6 @@ export const LSDGauge = ({
   const executeVote = async () => {
     setLoadingSubmit(true);
     const voteOptions: Vote[] = selectedVotes.map((vote) => {
-      console.log(vote.option.operator_address);
       return {
         option: vote.option.operator_address,
         weight: (Number(vote.votingWeight) / 100).toString(),
@@ -151,6 +152,7 @@ export const LSDGauge = ({
 
   const getData = async () => {
     const _allValidators = await getAllValidators();
+
     const _allValidValidatorsWithOptions = options.map((option) => {
       const validator = _allValidators.find((el: any) => el.operator_address === option[0])!;
       return {
@@ -158,6 +160,12 @@ export const LSDGauge = ({
         votes: option[1],
       };
     });
+    const _sumVotes = _allValidValidatorsWithOptions.reduce(
+      (accumulator, currentValue) => accumulator + Number(currentValue.votes),
+      0,
+    );
+
+    setSumVotes(_sumVotes);
     setAllValidators(_allValidValidatorsWithOptions);
     setSelectedValidator(_allValidValidatorsWithOptions[0]);
 
@@ -166,15 +174,16 @@ export const LSDGauge = ({
         // Set current votes of user
         const _predefinedVotes: any[] = userVotes.votes.map((vote) => {
           return {
-            option: availableValidators.find((el) => el.operator_address === vote.option)!,
+            option: _allValidValidatorsWithOptions.find((el) => el.operator_address === vote.option)!,
             votingWeight: (Number(vote.weight) * 100).toString(),
           };
         });
         setSelectedVotes(_predefinedVotes);
 
         // Remove those from available ones
-        const _availableValidators = [...availableValidators].filter((el) => {
+        const _availableValidators = [..._allValidValidatorsWithOptions].filter((el) => {
           let check = true;
+
           _predefinedVotes.map((ele) => {
             if (ele.option.operator_address === el.operator_address) {
               check = false;
@@ -332,7 +341,7 @@ export const LSDGauge = ({
           </Text>
           <Grid
             display="grid"
-            templateColumns={"5fr 1fr"}
+            templateColumns={"5fr 1fr 1fr"}
             fontSize="xs"
             fontWeight="semibold"
             color={"wynd.neutral.900"}
@@ -342,6 +351,7 @@ export const LSDGauge = ({
             borderTopRadius="lg"
           >
             <GridItem textAlign="start">Validator</GridItem>
+            <GridItem>Commision</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
             </GridItem>
@@ -365,10 +375,10 @@ export const LSDGauge = ({
             }}
           >
             {[...allValidators]
-              .sort((a, b) => b.currentVotePower - a.currentVotePower)
+              .sort((a, b) => b.votes - a.votes)
               .map((validator, i) => (
                 <Grid
-                  templateColumns={"5fr 1fr"}
+                  templateColumns={"5fr 1fr 1fr"}
                   py={2}
                   key={i}
                   borderBottom="solid 1px white"
@@ -377,10 +387,15 @@ export const LSDGauge = ({
                 >
                   <Flex align="center">
                     <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                    {validator.description?.moniker || ""}
+                      {validator.description?.moniker || ""}
                     </Flex>
                   </Flex>
-                  <Flex align="center">{validator.votes}</Flex>
+                  <Flex>{(Number(validator.commission?.commission_rates.rate) * 100).toFixed(0)}%</Flex>
+                  <Flex align="center">
+                    <Tooltip label={validator.votes}>
+                      <Text>{((100 / Number(sumVotes)) * Number(validator.votes)).toFixed(2)}%</Text>
+                    </Tooltip>
+                  </Flex>
                 </Grid>
               ))}
           </Box>

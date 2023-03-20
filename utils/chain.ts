@@ -14,7 +14,7 @@ interface ValidatorComWithWeight {
 }
 
 //! TODO
-const lcdApi = "https://juno-api.polkachu.com";
+const lcdApi = "https://lcd-juno.mib.tech";
 
 export const getParams = async (): Promise<Params> => {
   const { annual_provisions } = await (await fetch(lcdApi + "/cosmos/mint/v1beta1/annual_provisions")).json();

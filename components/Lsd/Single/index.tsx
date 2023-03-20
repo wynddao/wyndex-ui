@@ -101,7 +101,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
   // Render!
   return (
     <>
-      <LsdSingleHeader supply={supply} token={config.token_contract} exchangeRate={exchange_rate}/>
+      <LsdSingleHeader supply={supply} token={config.token_contract} exchangeRate={exchange_rate} />
       <Grid mt={4} templateColumns={{ base: "repeat(1fr)", md: "1fr 1fr 1fr 1fr 1fr" }} gap={8}>
         <GridItem colStart={{ base: 1, md: 2 }}>
           <BorderedBox p={0}>
@@ -117,7 +117,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
                 </Box>
               </Flex>
             </Box>
-            {walletAddress && Number(balance) > 0 && (
+            {walletAddress && (Number(balance) > 0 || claims.length > 0) && (
               <>
                 <Box w="100%">
                   <Button

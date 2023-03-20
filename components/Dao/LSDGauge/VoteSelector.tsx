@@ -42,7 +42,11 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
 
   useClickAway(dropdownRef, () => setOpen(false));
 
-  const AssetsLi = options.map((validator) => {
+  const _options = options.filter((option) => {
+    return option.description?.moniker.toLowerCase().includes(filter.toLowerCase().trim());
+  });
+
+  const AssetsLi = _options.map((validator) => {
     return (
       <ListItem
         key={validator.operator_address}
@@ -55,7 +59,7 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-            {validator.description?.moniker || ""}
+              {validator.description?.moniker || ""}
             </Flex>
           </Flex>
         </Flex>
@@ -100,10 +104,11 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
         position="absolute"
         left="0"
         mt="0.5rem"
+        w={"150%"}
         borderRadius="lg"
         transform={open ? "scale(1)" : "scale(0)"}
         transition="all linear 0.2s"
-        maxH="15rem"
+        maxH="20rem"
         display="flex"
         alignItems="center"
         flexFlow="column"
