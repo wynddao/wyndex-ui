@@ -153,13 +153,15 @@ export const LSDGauge = ({
   const getData = async () => {
     const _allValidators = await getAllValidators();
 
-    const _allValidValidatorsWithOptions = options.map((option) => {
-      const validator = _allValidators.find((el: any) => el.operator_address === option[0])!;
-      return {
-        ...validator,
-        votes: option[1],
-      };
-    });
+    const _allValidValidatorsWithOptions = options
+      .map((option) => {
+        const validator = _allValidators.find((el: any) => el.operator_address === option[0])!;
+        return {
+          ...validator,
+          votes: option[1],
+        };
+      })
+      .filter((val) => "commission" in val); // There are some objects without commission, filter them out
     const _sumVotes = _allValidValidatorsWithOptions.reduce(
       (accumulator, currentValue) => accumulator + Number(currentValue.votes),
       0,
