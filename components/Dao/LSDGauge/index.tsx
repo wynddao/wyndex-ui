@@ -267,7 +267,7 @@ export const LSDGauge = ({
               <Divider my={2} />
               <Text>Choose a validator</Text>{" "}
               <Flex justifyContent="space-between" alignItems="center">
-                {allValidators.length > 0 && (
+                {availableValidators.length > 0 && (
                   <ValidatorSelector
                     selectedValidator={selectedValidator}
                     setSelectedValidator={setSelectedValidator}
