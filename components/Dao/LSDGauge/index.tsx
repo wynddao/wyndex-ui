@@ -171,19 +171,23 @@ export const LSDGauge = ({
     setAllValidators(_allValidValidatorsWithOptions);
     setSelectedValidator(_allValidValidatorsWithOptions[0]);
 
+    const littleCommissionVals = _allValidValidatorsWithOptions.filter(
+      ({ commission }) => commission.commission_rates.rate < 0.1,
+    );
+
     try {
       if (userVotes) {
         // Set current votes of user
         const _predefinedVotes: any[] = userVotes.votes.map((vote) => {
           return {
-            option: _allValidValidatorsWithOptions.find((el) => el.operator_address === vote.option)!,
+            option: littleCommissionVals.find((el) => el.operator_address === vote.option)!,
             votingWeight: (Number(vote.weight) * 100).toString(),
           };
         });
         setSelectedVotes(_predefinedVotes);
 
         // Remove those from available ones
-        const _availableValidators = [..._allValidValidatorsWithOptions].filter((el) => {
+        const _availableValidators = [...littleCommissionVals].filter((el) => {
           let check = true;
 
           _predefinedVotes.map((ele) => {
@@ -199,7 +203,7 @@ export const LSDGauge = ({
         // Set chosen pool to something realistic
         setSelectedValidator(_availableValidators[0]);
       } else {
-        setAvailableValidators(_allValidValidatorsWithOptions);
+        setAvailableValidators(littleCommissionVals);
         setSelectedVotes([]);
       }
     } catch (e) {
