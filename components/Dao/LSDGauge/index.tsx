@@ -351,7 +351,7 @@ export const LSDGauge = ({
             borderTopRadius="lg"
           >
             <GridItem textAlign="start">Validator</GridItem>
-            <GridItem>Commision</GridItem>
+            <GridItem>Commission</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
             </GridItem>
