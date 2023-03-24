@@ -53,6 +53,8 @@ const Rate: React.FC<IProps> = ({
 
   const minSlippage = (Number(Number(simulatedOperation.spread).toFixed(4)) * 100).toFixed(2);
 
+  const isWyJuno = fromToken.name.toLowerCase() === "wyjuno" || toToken.name.toLowerCase() === "wyjuno";
+
   return (
     <Flex
       bg="whiteAlpha.100"
@@ -90,7 +92,7 @@ const Rate: React.FC<IProps> = ({
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
-        <Text>{minSlippage} %</Text>
+        <Text>{!isWyJuno && minSlippage + "%"} {isWyJuno && <Text color={"wynd.neutral.300"}>Coming Soon</Text>}</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Minimum Received Amount</Text>

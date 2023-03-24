@@ -2,13 +2,15 @@ import { Box, Button, Collapse, Flex, Icon, Image, keyframes, Text } from "@chak
 import { useWallet } from "@cosmos-kit/react";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
-import React, { startTransition, useMemo, useState } from "react";
+import Link from "next/link";
+import React, { startTransition, useEffect, useMemo, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { IoChevronDown } from "react-icons/io5";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../../state";
 import { useSend } from "../../../state/hooks/clients/Cw20";
 import { useExecuteSwapOperations } from "../../../state/hooks/clients/WyndexMultiHop";
+import { useSwap } from "../../../state/hooks/clients/WyndexPair";
 import { useReverseSimulateSwap } from "../../../state/hooks/useReverseSimulateSwap";
 import { useSimulateSwap } from "../../../state/hooks/useSimulateSwap";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../../utils";
@@ -35,6 +37,7 @@ const Swap: React.FC = () => {
 
   const [slippage, setSlippage] = useState<number>(1);
   const [showHistorical, setShowHistorical] = useState<boolean>(false);
+  const [isWyJuno, setIsWyJuno] = useState<boolean>(false);
 
   const assetList = getAssetList();
   const [fromToken, setFromToken] = useState<Asset>(
@@ -86,29 +89,81 @@ const Swap: React.FC = () => {
     sender: walletAddress || "",
   });
 
+  const pairSwap = useSwap({
+    contractAddress: "juno1f9c60hyvzys5h7q0y4e995n8r9cchgpy8p3k4kw3sqsmut95ankq0chfv0",
+    sender: walletAddress || "",
+  });
+
+  useEffect(() => {
+    const wyJuno = fromToken.name === "wyJUNO" || toToken.name === "wyJUNO";
+    startTransition(() => {
+      setIsWyJuno(wyJuno);
+    });
+  }, [fromToken, toToken]);
+
   const swap = async () => {
     const spread = (slippage / 100).toString();
-
-    if (fromToken.tags.includes("cw20")) {
-      return await sendCW20({
-        amount: fromTokenAmount
-          ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
-          : fromTokenSimulated.amount,
-        contract: MULTI_HOP_CONTRACT_ADDRESS,
-        msg: toBase64(
-          toUtf8(JSON.stringify({ execute_swap_operations: { operations, max_spread: spread } })),
-        ),
-      });
+    if (!isWyJuno) {
+      if (fromToken.tags.includes("cw20")) {
+        return await sendCW20({
+          amount: fromTokenAmount
+            ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+            : fromTokenSimulated.amount,
+          contract: MULTI_HOP_CONTRACT_ADDRESS,
+          msg: toBase64(
+            toUtf8(JSON.stringify({ execute_swap_operations: { operations, max_spread: spread } })),
+          ),
+        });
+      }
+      return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
+        {
+          amount: fromTokenAmount
+            ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+            : fromTokenSimulated.amount,
+          // @ts-ignore
+          denom: fromToken.hasOwnProperty("juno_denom") ? fromToken.juno_denom : fromToken.denom,
+        },
+      ]);
+    } else {
+      if (fromToken.denom === "ujuno") {
+        return pairSwap(
+          {
+            maxSpread: spread,
+            askAssetInfo: operations[0].wyndex_swap.ask_asset_info,
+            offerAsset: {
+              amount: fromTokenAmount
+                ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+                : fromTokenSimulated.amount,
+              info: operations[0].wyndex_swap.offer_asset_info,
+            },
+          },
+          "auto",
+          undefined,
+          [
+            {
+              denom: fromToken.denom,
+              amount: fromTokenAmount
+                ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+                : fromTokenSimulated.amount,
+            },
+          ],
+        );
+      } else {
+        return await sendCW20({
+          amount: fromTokenAmount
+            ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+            : fromTokenSimulated.amount,
+          contract: "juno1f9c60hyvzys5h7q0y4e995n8r9cchgpy8p3k4kw3sqsmut95ankq0chfv0",
+          msg: toBase64(
+            toUtf8(
+              JSON.stringify({
+                swap: { ask_asset_info: operations[0].wyndex_swap.ask_asset_info, max_spread: spread },
+              }),
+            ),
+          ),
+        });
+      }
     }
-    return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
-      {
-        amount: fromTokenAmount
-          ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
-          : fromTokenSimulated.amount,
-        // @ts-ignore
-        denom: fromToken.hasOwnProperty("juno_denom") ? fromToken.juno_denom : fromToken.denom,
-      },
-    ]);
   };
 
   const handlerSwap = async () => {
@@ -164,6 +219,7 @@ const Swap: React.FC = () => {
         <FromToken
           toToken={toToken}
           fromToken={fromToken}
+          setToToken={setToToken}
           setFromToken={setFromToken}
           inputAmount={fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
           setInputAmount={(amount) => {
@@ -172,11 +228,15 @@ const Swap: React.FC = () => {
           }}
           balance={fromBalance}
         />
+
         <SwapIcon swapTokens={swapTokenPosition} />
+
         <ToToken
           fromToken={fromToken}
           toToken={toToken}
           setToToken={setToToken}
+          setFromToken={setFromToken}
+          isWyJuno={isWyJuno}
           inputAmount={toTokenAmount ?? microamountToAmount(toTokenSimulated.amount, toToken.decimals)}
           fromAmount={fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)}
           setInputAmount={(amount) => {
@@ -218,6 +278,27 @@ const Swap: React.FC = () => {
           <Text>
             If you spend all your {fromToken.symbol}, you won&apos;t be able to pay for the fees of future
             transactions.
+          </Text>
+        </Box>
+      ) : null}
+      {isWyJuno ? (
+        <Box
+          w="full"
+          display="flex"
+          alignItems="center"
+          gap={2}
+          p={4}
+          borderRadius="lg"
+          backgroundColor="wynd.alert.warning.500"
+          color="black"
+        >
+          <AiFillWarning size={32} />
+          <Text>
+            WyJUNO is the new LSD token. It is only tradeable with JUNO until the proposal{" "}
+            <Link href="/vote/107" style={{ textDecoration: "underline" }}>
+              107
+            </Link>{" "}
+            passed. After that, it will be tradeable with all tokens.
           </Text>
         </Box>
       ) : null}
