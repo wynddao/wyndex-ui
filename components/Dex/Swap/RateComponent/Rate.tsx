@@ -9,7 +9,7 @@ import { formatCurrency } from "../../../../utils/currency";
 import { getAssetList } from "../../../../utils/getAssetList";
 import { microamountToAmount } from "../../../../utils/tokens";
 import SwapRoute from "./SwapRoute";
-
+import { useTranslation } from "i18next-ssg";
 interface IProps {
   fromToken: Asset;
   toToken: Asset;
@@ -36,7 +36,7 @@ const Rate: React.FC<IProps> = ({
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const assetList = getAssetList().tokens;
-
+  const { t } = useTranslation("common");
   const totalFee = simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
     const price = getAssetPriceByCurrency(currency, info, assetPrices);
     const decimals =
@@ -68,7 +68,7 @@ const Rate: React.FC<IProps> = ({
       alignItems="center"
     >
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Rate</Text>
+        <Text color={"wynd.neutral.500"}>{t('swap.swapRate')}</Text>
         <Text>
           {inputFrom ?? microamountToAmount(simulatedOperation.amount, fromToken.decimals, 6)}{" "}
           <Text as="span" textTransform="uppercase" fontSize="sm" color="wynd.gray.600">
@@ -81,19 +81,19 @@ const Rate: React.FC<IProps> = ({
         </Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Swap Route</Text>
+        <Text color={"wynd.neutral.500"}>{t('swap.swapRoute')}</Text>
         <SwapRoute route={route} />
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Swap Fee</Text>
+        <Text color={"wynd.neutral.500"}>{t('swap.swapFee')}</Text>
         <Text>{formatCurrency(currency, totalFee.toString())}</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
+        <Text color={"wynd.neutral.500"}>{t('swap.estimatedSlippage')}</Text>
         <Text>{minSlippage} %</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Minimum Received Amount</Text>
+        <Text color={"wynd.neutral.500"}>{t('swap.minimumRecievedAmount')}</Text>
         <Text>{inputTo ?? microamountToAmount(minimumReceived, toToken.decimals, 6)}</Text>
       </Flex>
     </Flex>

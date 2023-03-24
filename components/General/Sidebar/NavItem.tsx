@@ -12,7 +12,7 @@ export interface LinkItemProps {
   readonly isExternalLink?: boolean;
   readonly comingSoon?: boolean;
 }
-
+import { useTranslation } from "i18next-ssg";
 import React, { Suspense } from "react";
 import { CgExternal } from "react-icons/cg";
 import { UnvotedPropCount } from "./UnvotedPropCount";
@@ -26,16 +26,28 @@ const NavItem: React.FC<LinkItemProps & FlexProps> = ({
   ...restProps
 }) => {
   const pathname = usePathname();
+  const { i18n } = useTranslation("common");
+  const langLink = `/${i18n.language}${to}`;
+  let isLinkActive: boolean = false;
 
   // Set styles for active link and children routes, but avoid Dashboard being always styled
-  const isExactlyDashboard = to === "/" && pathname === "/";
-  const toNoSlash = to.slice(1);
-  const pathnameNoSlash = pathname?.slice(1);
-  const isCurrentLinkPathname = toNoSlash && pathnameNoSlash && pathnameNoSlash.startsWith(toNoSlash);
-  const isLinkActive = isExactlyDashboard || isCurrentLinkPathname;
+  const isExactlyDashboard = langLink === `/${i18n.language}/` && pathname === `/${i18n.language}`;
+
+  if (isExactlyDashboard) {
+    isLinkActive = true;
+  }
+  const isCurrentLinkPathname =
+    langLink.startsWith(pathname || "") && pathname && pathname.length > i18n.language?.length + 1;
+  if (!isExactlyDashboard && isCurrentLinkPathname) {
+    isLinkActive = true;
+  }
 
   return (
-    <Link href={to} target={to.startsWith("http") ? "_blank" : "_self"} style={{ textDecoration: "none" }}>
+    <Link
+      href={langLink}
+      target={to.startsWith("http") ? "_blank" : "_self"}
+      style={{ textDecoration: "none" }}
+    >
       <Flex
         align="center"
         p={{ base: "4" }}

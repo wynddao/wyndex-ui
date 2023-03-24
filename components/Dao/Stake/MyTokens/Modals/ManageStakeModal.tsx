@@ -174,6 +174,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
           <Stack>
             <p>
               {t("aboutToRebondFromLowerToHigher", {
+                amount: amount || "0",
                 tokenSymbol: tokenInfo.tokenSymbol,
                 fromDuration: secondsToDays(stake.unbonding_period),
                 toDuration: secondsToDays(lowerDuration?.unbonding_period ?? 0),

@@ -1,4 +1,3 @@
-"use client";
 import { Box, Flex } from "@chakra-ui/react";
 import Head from "next/head";
 import Swap from "../../../components/Dex/Swap";

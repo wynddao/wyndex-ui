@@ -8,6 +8,7 @@ import { getAmountByPrice, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
 import { microamountToAmount } from "../../../../utils/tokens";
 import AssetSelector from "./AssetSelector";
+import { useTranslation } from "i18next-ssg";
 
 interface IProps {
   toToken: Asset;
@@ -30,7 +31,7 @@ const FromToken: React.FC<IProps> = ({
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const price = getAmountByPrice(inputAmount, currency, fromToken, assetPrices);
   const isJuno = fromToken.denom === "ujunox" || fromToken.denom === "ujuno";
-
+  const { t } = useTranslation("common");
   return (
     <Box flex="1" minH="120px">
       <Box
@@ -43,11 +44,12 @@ const FromToken: React.FC<IProps> = ({
       >
         <Flex justifyContent="space-between">
           <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }}>
-            From
+            {t("swap.from")}
           </Text>
           <Flex gap="0.5rem" alignSelf="end" alignItems="center" justifyContent="center">
             <Text color="wynd.neutral.500" textTransform="uppercase" fontSize="xs">
-              Available {microamountToAmount(balance.amount, fromToken.decimals)} {getDenom(fromToken)}
+              {t("general.available")} {microamountToAmount(balance.amount, fromToken.decimals)}{" "}
+              {getDenom(fromToken)}
             </Text>
             <Button
               variant="ghost"
@@ -74,7 +76,7 @@ const FromToken: React.FC<IProps> = ({
                 setInputAmount(microamountToAmount(Number(balance.amount) / 2, fromToken.decimals))
               }
             >
-              Half
+              {t("swap.half")}
             </Button>
           </Flex>
         </Flex>

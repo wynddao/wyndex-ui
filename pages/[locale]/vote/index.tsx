@@ -1,7 +1,8 @@
-"use client";;
+"use client";
 import { Box, Heading } from "@chakra-ui/react";
 import Head from "next/head";
 import { Vote } from "../../../components/Dao/Vote";
+import { makeStaticProps, getStaticPaths } from "i18next-ssg/server";
 
 export default function Page() {
   return (
@@ -15,3 +16,6 @@ export default function Page() {
     </>
   );
 }
+
+const getStaticProps = makeStaticProps(["common"]);
+export { getStaticPaths, getStaticProps };

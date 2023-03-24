@@ -1,33 +1,244 @@
 {
   "general": {
-    "from": "From",
-    "to": "To",
-    "balance": "Balance",
-    "price": "Price",
-    "deposit": "Deposit",
-    "stake": "Stake",
-    "availableBalance": "Available Balance",
+    "custom": "Custom",
+    "message": "Nachricht",
+    "contractAddress": "Contract Addresse",
+    "general": "Allgemein",
+    "actions": "Aktionen",
+    "edit": "Bearbeiten",
+    "preview": "Vorschau",
+    "needToStakeWyndToCreateProp": "Du musst WYND staken, um eine Proposal zu erstellen!",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "starting": "Startet",
+    "add": "Hinzufügen",
+    "available": "Verfügbar",
+    "stakeYourWynd": "Stake dein WYND",
+    "info": "Info",
     "asset": "Asset",
     "chain": "Chain",
-    "actions": "Actions"
+    "balance": "Guthaben",
+    "price": "Preis",
+    "from": "Von",
+    "to": "Zu",
+    "availableBalance": "Verfügbares Guthaben",
+    "deposit": "Einzahlen",
+    "amount": "Betrag",
+    "notConnected": "Nicht verbunden",
+    "connectWallet": "Verbinde deine Wallet!"
+  },
+  "actions": {
+    "execute": "Ausführen",
+    "migrate": "Migrieren",
+    "newCodeId": "Neue Code ID",
+    "deleteMessage": "Nachricht löschen",
+    "add": "Hinzufügen"
+  },
+  "proposal": {
+    "proposalTitle": "Titel",
+    "proposalDescription": "Beschreibung",
+    "previewProposal": "Vorschau",
+    "buttons": {
+      "testProposal": "Proposal testen",
+      "submitProposal": "Proposal senden"
+    },
+    "choices": {
+      "yes": "Ja",
+      "no": "Nein",
+      "abstain": "Enthaltung"
+    },
+    "proposalOverview": "Proposal Übersicht",
+    "proposalInformation": "Proposal Information",
+    "proposal": "Proposal",
+    "status": "Status",
+    "proposer": "Proposer",
+    "expiration": "Ablauf",
+    "voteStatus": "Vote Status",
+    "ratioOfVotes": "Stimmen-Verhältnis",
+    "turnout": "Turnout",
+    "doVote": "Abstimmen!",
+    "youVotedFor": "Du hast gewählt",
+    "vote": "Stimme",
+    "totalSupply": "Gesamte Supply",
+    "proposalDeposit": "Deposit",
+    "refundFailedProposals": "Refund Failed Proposal",
+    "passingThreshold": "Passing Threshold",
+    "quorum": "Quorum",
+    "votingPeriod": "Abstimmt Zeitraum",
+    "actions": {
+      "createProposal": "Erstelle eine Proposal!"
+    }
+  },
+  "alerts": {
+    "warning": "Warnung"
+  },
+  "time": {
+    "days": "Tage",
+    "epoch": "Epoche",
+    "nextEpoch": "Nächste Epoche",
+    "epochLength": "Epochendauer",
+    "duration": "Dauer"
+  },
+  "gauges": {
+    "gaugesID": "ID",
+    "rewardsPerEoch": "Belohnungen pro Epoche",
+    "gaugesOverview": "Gauges Übersicht",
+    "cantVoteWithMoreThenUserPower": "Du kannst nicht mit mehr als 100% deiner Stimmen abstimmen!",
+    "triedToVoteWith": "Du hast versucht mit Stimmen zu wählen",
+    "placeYourVote": "Stimme ab",
+    "addToYourVotes": "Füge deinen Stimmen hinzu",
+    "chooseAValidator": "Wähle einen Validator",
+    "votingWeigth": "Stimmengewichtung",
+    "deletePreviousVotes": "Lösche vorherige Stimme",
+    "submitVote": "Abstimmen",
+    "currentVotingsForNextEpoch": "Aktuelle Stimmen für die nächste Epoche",
+    "validator": "Validator",
+    "commision": "Commision",
+    "votes": "Votes",
+    "rewardsPerEpoch": "Belohnungen pro Epoche",
+    "chooseYourPools": "Wähle deine Pools",
+    "votingWeight": "Stimmengewichtung",
+    "currentVotesForNextEpoch": "Aktuelle Stimmen für die nächste Epoche",
+    "rewardsNextEpoch": "Belohnungen für nächste Epoche"
+  },
+  "pool": {
+    "pool": "Pool",
+    "noPoolYet": "Du hast derzeit keine deiner Assets in Pools.",
+    "createPool": "Pool erstellen",
+    "poolAlreadyExists": "Pool existiert bereits",
+    "actions": {
+      "create": "Erstellen",
+      "manage": "Bearbeiten",
+      "addLiquidity": "Liquidität hinzufügen",
+      "removeLiquidity": "Liquidität entfernen",
+      "claimNow": "Jetzt beanspruchen!",
+      "stake": "Stake!"
+    },
+    "chooseAsset": "Asset wählen",
+    "myBondedLiquidity": "Meine gebundene Liquidität",
+    "daysUnbonding": "Tage",
+    "youCurrentlyHaveNoBondings": "Du hast derzeit keine gebundene Liquidität.",
+    "startWynning": "Start WYNNING!",
+    "info": {
+      "BondLiquidityToVariousMinimumPeriods": "",
+      "periodStartsWithUnbonding": ""
+    },
+    "availableLPTokens": "Verfügbare LP Tokens",
+    "whatDoYouWantToDo": "Was möchtest du tun?",
+    "loadingBalance": "Guthaben wird geladen...",
+    "manageLiquidity": "Liquidität bearbeiten",
+    "myPendingRebondings": "Meine ausstehenden Rebondings",
+    "description": "Beschreibung",
+    "rebondedDownTo": "Rebonded zu",
+    "currentlyNoRebondings": "Derzeit keine Rebondings",
+    "myPendingUnbondings": "Meine ausstehenden Unbondings",
+    "readyToClaim": "Bereit zum Beanspruchen",
+    "liquidityPoolAssets": "Liquidity Pool Assets",
+    "totalAmount": "Gesamter Betrag",
+    "myAmount": "Mein Betrag",
+    "poolLiquidity": "Liquidität",
+    "poolSwapFee": "Swap Gebühr",
+    "myShares": "Meine Anteile",
+    "addRemoveLiquidity": "Liquidität hinzufügen / entfernen",
+    "myRewards": "Meine Belohnungen",
+    "action": {
+      "claim": "Beanspruchen!"
+    },
+    "youCurrentlyHaveNoRewards": "",
+    "unbondingPeriod": "",
+    "totalAvailable": ""
+  },
+  "stake": {
+    "myTokens": "Meine Tokens",
+    "stakeMoreToGetMorePower": "",
+    "manageStakes": "Stakes bearbeiten",
+    "actions": {
+      "stake": "Stake",
+      "manage": "Bearbeiten",
+      "claimAll": "Alles beanspruchen!",
+      "claim": "Beanspruchen!"
+    },
+    "lockedTokens": "Locked Tokens",
+    "vesting": "Freischalten",
+    "rebonding": "Rebonding",
+    "unstaking": "Unstaking",
+    "whatDoYouWantToDo": "Was möchtest du tun?",
+    "youreAboutToUnstake": "You're about to unstake",
+    "manageBonding": "Manage Bonding",
+    "reset": "Zurücksetzen",
+    "prev": "Vorherige",
+    "unbondingPeriod": "Unbonding Period",
+    "warning": {
+      "periodStartsWithUnbonding": ""
+    },
+    "stakes": "stakes",
+    "unlocks": "unlocks",
+    "rebondedDownTo": "Rebonded down to",
+    "unstakedTokens": "Unstaked Tokens",
+    "transferable": "Transferable",
+    "lockedDueVesting": "Locked due vesting",
+    "ofYourTotalBalance": "of your total balance",
+    "votingPower": "Voting Power",
+    "staked": "staked",
+    "rewards": "Rewards",
+    "stake": "Stake",
+    "daoTreasury": "DAO Treasury",
+    "totalStaked": "Total Staked"
+  },
+  "stakes": {
+    "stakes": "Stakes"
+  },
+  "aboutToRebondFromLowerToHigher": "Du wirst {{ amount }} {{ tokenSymbol }} von einer Unbonding Dauer von {{ fromDuration }} Tagen zu einer höheren Dauer von {{ toDuration }} Tagen rebonden!",
+  "aboutToRebondFromHigherToLower": "Du wirst {{ amount }} {{ tokenSymbol }} von einer Unbonding Dauer von {{ fromDuration }} Tagen zu einer niedrigeren Dauer von {{ toDuration }} Tagen rebonden!",
+  "vote": {
+    "yourVote": "Deine Stimme",
+    "proposalID": "Proposal ID",
+    "status": "Status",
+    "title": "Titel",
+    "expiration": "Ablauf",
+    "votes": "Stimmen",
+    "quorum": "Quorum",
+    "learnMore": "Mehr erfahren"
   },
   "pages": {
     "dashboard": {
-      "totalAssets": "Total Assets",
-      "lockedAssets": "Locked Assets",
-      "availableAssets": "Available Assets",
-      "staked": "Staked",
-      "totalRewards": "Total Rewards",
-      "newProposals": "New Proposals",
-      "all": "All",
-      "native": "Native",
-      "searchToken": "Search token",
-      "ibcDeposit": "IBC Deposit",
-      "ibcWithdraw": "IBC Withdraw",
       "ibcTransfer": "IBC Transfer",
-      "amountToDeposit": "Amount to Deposit",
-      "claimAll": "Claim all!",
-      "vote": "Vote!"
+      "ibcDeposit": "IBC Einzahlung",
+      "ibcWithdraw": "IBC Abhebung",
+      "totalAssets": "Gesamte Assets",
+      "lockedAssets": "Gesperrte Assets",
+      "availableAssets": "Verfügbare Assets",
+      "staked": "Staked",
+      "totalRewards": "Gesamte Belohnungen",
+      "claimAll": "Alles beanspruchen!",
+      "newProposals": "Neue Proposals",
+      "vote": "Abstimmen!"
     }
+  },
+  "ibc": {
+    "depositIBCAsset": "Deposit IBC Asset",
+    "ibcTransfer": "IBC Transfer",
+    "amountToDeposit": "Transferbetrag"
+  },
+  "warning": {
+    "ifYouSpendAllYourJunoWarning": "Wenn du alle deine JUNO Tokens verwendest, wirst du keine zukünftigen Transaktionen machen können!"
+  },
+  "search": {
+    "searchToken": "Asset suchen",
+    "all": "Alle"
+  },
+  "swap": {
+    "from": "Von",
+    "to": "Zu",
+    "half": "Hälfte",
+    "show": "Zeige",
+    "hide": "Verberge",
+    "historicalPrices": "Preishistorie",
+    "swapRate": "Rate",
+    "swapRoute": "Route",
+    "swapFee": "Gebühr",
+    "estimatedSlippage": "Geschätzte Slippage",
+    "minimumRecievedAmount": "Empfangener Mindestbetrag",
+    "insufficientAmount": "Kein ausreichendes Guthaben"
   }
 }

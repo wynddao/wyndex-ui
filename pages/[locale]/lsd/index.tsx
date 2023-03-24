@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
 import { LsdOverview } from "../../../components/Lsd/Overview";
+import { makeStaticProps, getStaticPaths } from "i18next-ssg/server";
 
 const Page = () => (
   <>
@@ -14,3 +15,6 @@ const Page = () => (
 );
 
 export default Page;
+
+const getStaticProps = makeStaticProps(["common"]);
+export { getStaticPaths, getStaticProps };

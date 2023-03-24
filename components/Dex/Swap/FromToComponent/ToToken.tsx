@@ -6,7 +6,7 @@ import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAmountByPrice } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
 import AssetSelector from "./AssetSelector";
-
+import { useTranslation } from "i18next-ssg";
 interface IProps {
   fromToken: Asset;
   toToken: Asset;
@@ -29,7 +29,7 @@ const ToToken: React.FC<IProps> = ({
   const priceFrom = getAmountByPrice(fromAmount, currency, fromToken, assetPrices);
   const priceTo = getAmountByPrice(inputAmount, currency, toToken, assetPrices);
   const impact = 100 - (priceFrom / priceTo) * 100;
-
+  const { t } = useTranslation("common");
   return (
     <Box flex="1">
       <Box
@@ -43,7 +43,7 @@ const ToToken: React.FC<IProps> = ({
         justifyContent="end"
       >
         <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }} textAlign="left">
-          To
+          {t("swap.to")}
         </Text>
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector

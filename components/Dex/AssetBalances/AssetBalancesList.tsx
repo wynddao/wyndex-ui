@@ -49,7 +49,7 @@ export default function AssetBalancesList() {
         <TokenFilter setFilterOption={setFilterOption} />
         <GridItem>
           <Input
-            placeholder="Search token"
+            placeholder={t("search.searchToken") || ""}
             value={searchText}
             onChange={({ target }) => setSearchText(target.value)}
           />

@@ -1,3 +1,230 @@
 {
-
+  "general": {
+    "custom": "Custom",
+    "message": "Message",
+    "contractAddress": "Contract Address",
+    "general": "General",
+    "actions": "Actions",
+    "edit": "Edit",
+    "preview": "Preview",
+    "needToStakeWyndToCreateProp": "You need to stake WYND to create a proposal!",
+    "title": "Title",
+    "description": "Description",
+    "starting": "Starting",
+    "add": "Add",
+    "available": "Available",
+    "stakeYourWynd": "Stake your WYND",
+    "info": "Info",
+    "asset": "Asset",
+    "chain": "Chain",
+    "balance": "Balance",
+    "price": "Price",
+    "from": "From",
+    "to": "To",
+    "availableBalance": "Available Balance",
+    "deposit": "Deposit",
+    "amount": "Amount",
+    "notConnected": "Not connected",
+    "connectWallet": "Connect your Wallet!"
+  },
+  "actions": {
+    "execute": "Execute",
+    "migrate": "Migrate",
+    "newCodeId": "New Code ID",
+    "deleteMessage": "Delete Message",
+    "add": "Add"
+  },
+  "proposal": {
+    "proposalTitle": "Title",
+    "proposalDescription": "Description",
+    "previewProposal": "Preview",
+    "buttons": {
+      "testProposal": "Test Proposal",
+      "submitProposal": "Submit Proposal"
+    },
+    "choices": {
+      "yes": "Yes",
+      "no": "No",
+      "abstain": "Abstain"
+    },
+    "proposalOverview": "Proposal Overview",
+    "proposalInformation": "Proposal Information",
+    "proposal": "Proposal",
+    "status": "Status",
+    "proposer": "Proposer",
+    "expiration": "Expiration",
+    "voteStatus": "Vote Status",
+    "ratioOfVotes": "Ratio of Votes",
+    "turnout": "Turnout",
+    "doVote": "Vote!",
+    "youVotedFor": "You voted for",
+    "vote": "Vote",
+    "totalSupply": "Total Supply",
+    "proposalDeposit": "Deposit",
+    "refundFailedProposals": "Refund Failed Proposal",
+    "passingThreshold": "Passing Threshold",
+    "quorum": "Quorum",
+    "votingPeriod": "Voting Period",
+    "actions": {
+      "createProposal": "Create a proposal!"
+    }
+  },
+  "alerts": {
+    "warning": "Warning"
+  },
+  "time": {
+    "days": "days",
+    "epoch": "epoch",
+    "nextEpoch": "next Epoch",
+    "epochLength": "Epoch length",
+    "duration": "Duration"
+  },
+  "gauges": {
+    "gaugesID": "ID",
+    "rewardsPerEoch": "Rewards per Epoch",
+    "gaugesOverview": "Gauges Overview",
+    "cantVoteWithMoreThenUserPower": "You can't vote with more voting power then 100%!",
+    "triedToVoteWith": "You tried to vote with",
+    "placeYourVote": "Place your vote",
+    "addToYourVotes": "Add to your votes",
+    "chooseAValidator": "Choose a validator",
+    "votingWeigth": "Voting Weight",
+    "deletePreviousVotes": "Delete previous votes",
+    "submitVote": "Submit Vote",
+    "currentVotingsForNextEpoch": "Current votings for next epoch",
+    "validator": "Validator",
+    "commision": "Commision",
+    "votes": "Votes",
+    "rewardsPerEpoch": "Rewards per Epoch",
+    "chooseYourPools": "Choose your pools",
+    "votingWeight": "Voting Weight",
+    "currentVotesForNextEpoch": "Current Votes for next Epoch",
+    "rewardsNextEpoch": "Rewards next Epoch"
+  },
+  "pool": {
+    "pool": "Pool",
+    "noPoolYet": "You don't have assets in any LP yet.",
+    "createPool": "Create pool",
+    "poolAlreadyExists": "Pool already exists",
+    "actions": {
+      "create": "Create",
+      "manage": "Manage",
+      "addLiquidity": "Add Liquidity",
+      "removeLiquidity": "Remove Liquidity",
+      "claimNow": "Claim now!",
+      "stake": "Stake!"
+    },
+    "chooseAsset": "Choose Asset",
+    "myBondedLiquidity": "My bonded liquidity",
+    "daysUnbonding": "Days unbonding",
+    "youCurrentlyHaveNoBondings": "You currently have no bondings.",
+    "startWynning": "Start WYNNING!",
+    "info": {
+      "BondLiquidityToVariousMinimumPeriods": "",
+      "periodStartsWithUnbonding": ""
+    },
+    "availableLPTokens": "Available LP Tokens",
+    "whatDoYouWantToDo": "What do you want to do?",
+    "loadingBalance": "Loading Balance...",
+    "manageLiquidity": "Manage Liquidity",
+    "myPendingRebondings": "My Pending Rebondings",
+    "description": "Description",
+    "rebondedDownTo": "Rebonded down to",
+    "currentlyNoRebondings": "Currently no rebondings",
+    "myPendingUnbondings": "My Pending Unbondings",
+    "readyToClaim": "Ready to claim",
+    "liquidityPoolAssets": "Liquidity Pool Assets",
+    "totalAmount": "Total Amount",
+    "myAmount": "My Amount",
+    "poolLiquidity": "Liquidity",
+    "poolSwapFee": "Swap Fee",
+    "myShares": "My Shares",
+    "addRemoveLiquidity": "Add / Remove Liquidity",
+    "myRewards": "My rewards",
+    "action": {
+      "claim": "Claim!"
+    },
+    "youCurrentlyHaveNoRewards": "",
+    "unbondingPeriod": "",
+    "totalAvailable": ""
+  },
+  "stake": {
+    "myTokens": "My Tokens",
+    "stakeMoreToGetMorePower": "",
+    "manageStakes": "Manage stakes",
+    "actions": {
+      "stake": "Stake",
+      "manage": "Manage",
+      "claimAll": "Claim all!",
+      "claim": "Claim!"
+    },
+    "lockedTokens": "Locked Tokens",
+    "vesting": "Vesting",
+    "rebonding": "Rebonding",
+    "unstaking": "Unstaking",
+    "whatDoYouWantToDo": "What do you want to do?",
+    "youreAboutToUnstake": "You're about to unstake",
+    "manageBonding": "Manage Bonding",
+    "reset": "Reset",
+    "prev": "Previous",
+    "unbondingPeriod": "Unbonding Period",
+    "warning": {
+      "periodStartsWithUnbonding": ""
+    },
+    "stakes": "stakes",
+    "unlocks": "unlocks",
+    "rebondedDownTo": "Rebonded down to",
+    "unstakedTokens": "Unstaked Tokens",
+    "transferable": "Transferable",
+    "lockedDueVesting": "Locked due vesting",
+    "ofYourTotalBalance": "of your total balance",
+    "votingPower": "Voting Power",
+    "staked": "staked",
+    "rewards": "Rewards",
+    "stake": "Stake",
+    "daoTreasury": "DAO Treasury",
+    "totalStaked": "Total Staked"
+  },
+  "stakes": {
+    "stakes": "Stakes"
+  },
+  "aboutToRebondFromLowerToHigher": "You're about to rebond {{ amount }} {tokenSymbol} from a duration of {{ fromDuration }} days to a higher duration of {{ toDuration }} days!",
+  "aboutToRebondFromHigherToLower": "You're about to rebond {{ amount }} {tokenSymbol} from a duration of {{ fromDuration }} days to a lower duration of {{ toDuration }} days!",
+  "vote": {
+    "yourVote": "Your Vote",
+    "proposalID": "Proposal ID",
+    "status": "Status",
+    "title": "Title",
+    "expiration": "Expiration",
+    "votes": "Votes",
+    "quorum": "Quorum",
+    "learnMore": "Learn More"
+  },
+  "pages": {
+    "dashboard": {
+      "ibcTransfer": "IBC Transfer",
+      "ibcDeposit": "IBC Deposit",
+      "ibcWithdraw": "IBC Withdraw",
+      "totalAssets": "Total Assets",
+      "lockedAssets": "Locked Assets",
+      "availableAssets": "Available Assets",
+      "staked": "staked",
+      "totalRewards": "Total Rewards",
+      "claimAll": "Claim All!",
+      "newProposals": "New Proposals",
+      "vote": "Vote!"
+    }
+  },
+  "ibc": {
+    "depositIBCAsset": "Depost IBC Asset",
+    "ibcTransfer": "IBC Transfer",
+    "amountToDeposit": "Amount to Transfer"
+  },
+  "warning": {
+    "ifYouSpendAllYourJunoWarning": "If you spend all your JUNO, you won't be able to pay for the fees of future transactions."
+  },
+  "search": {
+    "searchToken": "Search token",
+    "all": "All"
+  }
 }
