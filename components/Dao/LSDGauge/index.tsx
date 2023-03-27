@@ -29,6 +29,7 @@ import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeHeader } from "./GaugeHeader";
 import ValidatorSelector from "./VoteSelector";
+import _ from "lodash";
 
 export const LSDGauge = ({
   options,
@@ -153,17 +154,19 @@ export const LSDGauge = ({
   const getData = async () => {
     const _allValidators = await getAllValidators();
 
-    const _allValidValidatorsWithOptions = options.map((option) => {
+    const _allValidValidatorsWithOptionsSorted = options.map((option) => {
       const validator = _allValidators.find((el: any) => el.operator_address === option[0])!;
       return {
         ...validator,
         votes: option[1],
       };
     });
-    const _sumVotes = _allValidValidatorsWithOptions.reduce(
+    const _sumVotes = _allValidValidatorsWithOptionsSorted.reduce(
       (accumulator, currentValue) => accumulator + Number(currentValue.votes),
       0,
     );
+
+    const _allValidValidatorsWithOptions = _.shuffle(_allValidValidatorsWithOptionsSorted);
 
     setSumVotes(_sumVotes);
     setAllValidators(_allValidValidatorsWithOptions);
