@@ -1,5 +1,5 @@
 import { Box, Flex, Input, Text } from "@chakra-ui/react";
-import { Asset } from "@wynddao/asset-list";
+import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
@@ -14,15 +14,19 @@ interface IProps {
   fromAmount: string;
   inputAmount: string;
   setInputAmount: (amount: string) => void;
+  setFromToken: (asset: Asset) => void;
+  isWyJuno: boolean;
 }
 
 const ToToken: React.FC<IProps> = ({
   fromToken,
   toToken,
   setToToken,
+  setFromToken,
   fromAmount,
   inputAmount,
   setInputAmount,
+  isWyJuno,
 }) => {
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
@@ -47,14 +51,20 @@ const ToToken: React.FC<IProps> = ({
         </Text>
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector
+            disabled={
+              (fromToken as CW20Asset).token_address ===
+              "juno1naunqzk6jseqeqhq43nm6kdneraws2rkmteprjzppw6j9xcrurxqx0ld9e"
+            }
             selectedAsset={toToken}
             setAsset={setToToken}
+            setOtherToken={setFromToken}
             hiddenTokens={[fromToken.name.toLowerCase(), toToken.name.toLowerCase()]}
           />
           <Flex flexFlow="column">
             <Flex alignItems="center" gap="0.5rem">
               <Flex position="relative">
                 <Input
+                  disabled={isWyJuno}
                   textAlign="right"
                   border="none"
                   _focus={{ bg: "whiteAlpha.200" }}
