@@ -14,19 +14,15 @@ interface IProps {
   fromAmount: string;
   inputAmount: string;
   setInputAmount: (amount: string) => void;
-  setFromToken: (asset: Asset) => void;
-  isWyJuno: boolean;
 }
 
 const ToToken: React.FC<IProps> = ({
   fromToken,
   toToken,
   setToToken,
-  setFromToken,
   fromAmount,
   inputAmount,
   setInputAmount,
-  isWyJuno,
 }) => {
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
@@ -53,14 +49,12 @@ const ToToken: React.FC<IProps> = ({
           <AssetSelector
             selectedAsset={toToken}
             setAsset={setToToken}
-            setOtherToken={setFromToken}
             hiddenTokens={[fromToken.name.toLowerCase(), toToken.name.toLowerCase()]}
           />
           <Flex flexFlow="column">
             <Flex alignItems="center" gap="0.5rem">
               <Flex position="relative">
                 <Input
-                  disabled={isWyJuno}
                   textAlign="right"
                   border="none"
                   _focus={{ bg: "whiteAlpha.200" }}

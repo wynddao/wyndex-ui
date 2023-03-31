@@ -16,7 +16,6 @@ interface IProps {
   inputAmount: string;
   setInputAmount: (amount: string) => void;
   balance: Coin;
-  setToToken: (asset: Asset) => void;
 }
 
 const FromToken: React.FC<IProps> = ({
@@ -25,7 +24,6 @@ const FromToken: React.FC<IProps> = ({
   setFromToken,
   inputAmount,
   setInputAmount,
-  setToToken,
   balance,
 }) => {
   const currency = useRecoilValue(currencyAtom);
@@ -83,7 +81,6 @@ const FromToken: React.FC<IProps> = ({
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector
             selectedAsset={fromToken}
-            setOtherToken={setToToken}
             setAsset={setFromToken}
             hiddenTokens={[toToken.name.toLowerCase(), fromToken.name.toLowerCase()]}
           />
