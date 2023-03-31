@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Asset, assetList, CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { Asset } from "@wynddao/asset-list";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
@@ -23,19 +23,11 @@ import { microamountToAmount } from "../../../../utils/tokens";
 
 interface IProps {
   selectedAsset: Asset;
-  disabled: boolean;
   setAsset: (asset: Asset) => void;
-  setOtherToken: (asset: Asset) => void;
   hiddenTokens?: string[];
 }
 
-const AssetSelector: React.FC<IProps> = ({
-  selectedAsset,
-  disabled,
-  setAsset,
-  setOtherToken,
-  hiddenTokens = [],
-}) => {
+const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens = [] }) => {
   const [open, setOpen] = useState<boolean>(false);
   const filterRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useState<string>("");
@@ -63,14 +55,6 @@ const AssetSelector: React.FC<IProps> = ({
   const changeAsset = (asset: Asset) => {
     startTransition(() => {
       setAsset(asset);
-      // Temporary fix for wyJuno
-      if (
-        (asset as CW20Asset).token_address ===
-        "juno1naunqzk6jseqeqhq43nm6kdneraws2rkmteprjzppw6j9xcrurxqx0ld9e"
-      ) {
-        const junoToken = assetList.tokens.find((el) => el.symbol === "JUNO");
-        setOtherToken(junoToken as Asset);
-      }
       setOpen(false);
     });
   };
@@ -117,7 +101,6 @@ const AssetSelector: React.FC<IProps> = ({
   return (
     <Box position="relative" ref={dropdownRef}>
       <Button
-        disabled={disabled}
         as={motion.button}
         whileTap={{ scale: 0.95 }}
         onClick={handlerAssetSelector}

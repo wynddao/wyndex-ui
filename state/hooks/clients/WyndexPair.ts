@@ -29,4 +29,3 @@ const wrapExecuteHook =
 
 export const useProvideLiquidity = wrapExecuteHook("provideLiquidity");
 export const useRecieve = wrapExecuteHook("receive");
-export const useSwap = wrapExecuteHook("swap");
