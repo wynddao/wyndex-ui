@@ -23,19 +23,12 @@ import { microamountToAmount } from "../../../../utils/tokens";
 
 interface IProps {
   selectedAsset: Asset;
-  disabled: boolean;
   setAsset: (asset: Asset) => void;
   setOtherToken: (asset: Asset) => void;
   hiddenTokens?: string[];
 }
 
-const AssetSelector: React.FC<IProps> = ({
-  selectedAsset,
-  disabled,
-  setAsset,
-  setOtherToken,
-  hiddenTokens = [],
-}) => {
+const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, setOtherToken, hiddenTokens = [] }) => {
   const [open, setOpen] = useState<boolean>(false);
   const filterRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useState<string>("");
@@ -117,7 +110,6 @@ const AssetSelector: React.FC<IProps> = ({
   return (
     <Box position="relative" ref={dropdownRef}>
       <Button
-        disabled={disabled}
         as={motion.button}
         whileTap={{ scale: 0.95 }}
         onClick={handlerAssetSelector}

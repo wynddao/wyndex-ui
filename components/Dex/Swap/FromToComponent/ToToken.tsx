@@ -1,5 +1,5 @@
 import { Box, Flex, Input, Text } from "@chakra-ui/react";
-import { Asset, CW20Asset } from "@wynddao/asset-list";
+import { Asset } from "@wynddao/asset-list";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
@@ -51,10 +51,6 @@ const ToToken: React.FC<IProps> = ({
         </Text>
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector
-            disabled={
-              (fromToken as CW20Asset).token_address ===
-              "juno1naunqzk6jseqeqhq43nm6kdneraws2rkmteprjzppw6j9xcrurxqx0ld9e"
-            }
             selectedAsset={toToken}
             setAsset={setToToken}
             setOtherToken={setFromToken}
