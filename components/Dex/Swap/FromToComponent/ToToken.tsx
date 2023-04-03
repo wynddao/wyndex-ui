@@ -2,9 +2,11 @@ import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import { Asset } from "@wynddao/asset-list";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
+import { useLsdInfos } from "../../../../state/hooks/lsd/useLsdInfos";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAmountByPrice } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
+import { lsdEntries } from "../../../Lsd/Overview";
 import AssetSelector from "./AssetSelector";
 import { useTranslation } from "i18next-ssg";
 interface IProps {
@@ -26,8 +28,29 @@ const ToToken: React.FC<IProps> = ({
 }) => {
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-  const priceFrom = getAmountByPrice(fromAmount, currency, fromToken, assetPrices);
-  const priceTo = getAmountByPrice(inputAmount, currency, toToken, assetPrices);
+  let priceFrom = getAmountByPrice(fromAmount, currency, fromToken, assetPrices);
+  let priceTo = getAmountByPrice(inputAmount, currency, toToken, assetPrices);
+
+  const isWyJuno = fromToken.denom === "uwyjuno";
+  const isWyJunoTo = toToken.denom === "uwyjuno";
+
+  const lsdEntry = lsdEntries.find((el) => el.id === Number(1))!;
+  const lsdContract = lsdEntry.contractAddr;
+  const { exchange_rate: wyJunoJunoExchangeRate } = useLsdInfos(lsdContract);
+  const junoAssetPrice =
+    currency === "USD"
+      ? assetPrices.find((el) => el.asset === "ujuno")?.priceInUsd!
+      : assetPrices.find((el) => el.asset === "ujuno")?.priceInEur;
+
+  priceFrom = isWyJuno
+    ? Number(junoAssetPrice) * Number(wyJunoJunoExchangeRate) * Number(fromAmount)
+    : priceFrom;
+  priceTo = isWyJunoTo
+    ? Number(junoAssetPrice) * Number(wyJunoJunoExchangeRate) * Number(inputAmount)
+    : priceTo;
+
+  console.log(priceTo, priceFrom);
+
   const impact = 100 - (priceFrom / priceTo) * 100;
   const { t } = useTranslation("common");
   return (

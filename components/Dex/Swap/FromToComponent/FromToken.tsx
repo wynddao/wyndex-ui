@@ -3,10 +3,12 @@ import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
+import { useLsdInfos } from "../../../../state/hooks/lsd/useLsdInfos";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAmountByPrice, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
 import { microamountToAmount } from "../../../../utils/tokens";
+import { lsdEntries } from "../../../Lsd/Overview";
 import AssetSelector from "./AssetSelector";
 import { useTranslation } from "i18next-ssg";
 
@@ -29,9 +31,25 @@ const FromToken: React.FC<IProps> = ({
 }) => {
   const currency = useRecoilValue(currencyAtom);
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-  const price = getAmountByPrice(inputAmount, currency, fromToken, assetPrices);
+  let price = getAmountByPrice(inputAmount, currency, fromToken, assetPrices);
   const isJuno = fromToken.denom === "ujunox" || fromToken.denom === "ujuno";
+
   const { t } = useTranslation("common");
+
+
+  const isWyJuno = fromToken.denom === "uwyjuno";
+
+  const lsdEntry = lsdEntries.find((el) => el.id === Number(1))!;
+  const lsdContract = lsdEntry.contractAddr;
+  const { exchange_rate: wyJunoJunoExchangeRate } = useLsdInfos(lsdContract);
+  const junoAssetPrice =
+    currency === "USD"
+      ? assetPrices.find((el) => el.asset === "ujuno")?.priceInUsd!
+      : assetPrices.find((el) => el.asset === "ujuno")?.priceInEur;
+
+  price = isWyJuno ? Number(junoAssetPrice) * Number(wyJunoJunoExchangeRate) * Number(inputAmount) : price;
+
+
   return (
     <Box flex="1" minH="120px">
       <Box
