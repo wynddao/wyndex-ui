@@ -10,6 +10,7 @@ import { secondsToDays } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
 import ManageBoundingsModal from "./ManageBoundingsModal";
 import { getApr } from "./util/apr";
+import { useTranslation } from "i18next-ssg";
 interface BoundingsTableProps {
   readonly stakeContract: string;
   liquidityTokenInfo: UseTokenNameResponse;
@@ -36,7 +37,7 @@ export default function BoundingsTable({
   const [activeStake, setActiveStake] = useState<StakedResponse | undefined>(undefined);
   const [nextDuration, setNextDuration] = useState<BondingPeriodInfo | undefined>(undefined);
   const [prevDuration, setPrevDuration] = useState<BondingPeriodInfo | undefined>(undefined);
-
+  const { t } = useTranslation("common");
   const filteredStakes = allStakes.filter(({ stake }) => Number(stake) >= 10_000);
 
   const getNextOrPrevDurationTime = (
@@ -60,7 +61,7 @@ export default function BoundingsTable({
     <>
       <Box p={4}>
         <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline-block">
-          My Bonded Liquidity
+          {t("pool.myBondedLiquidity")}
         </Text>
         <TableContainer>
           <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
@@ -78,7 +79,9 @@ export default function BoundingsTable({
                 filteredStakes.map(({ stake, unbonding_period }, i) => {
                   return (
                     <Tr key={i}>
-                      <Td fontWeight="semibold">{secondsToDays(unbonding_period)} Days Unbonding</Td>
+                      <Td fontWeight="semibold">
+                        {secondsToDays(unbonding_period)} {t("pool.daysUnbonding")}
+                      </Td>
                       <Td fontWeight="semibold">{getApr(apr, unbonding_period)}</Td>
                       <Td fontWeight="semibold">
                         {microamountToAmount(stake, liquidityTokenInfo.tokenDecimals)}{" "}
@@ -102,7 +105,7 @@ export default function BoundingsTable({
                               bgClip: "text",
                             }}
                           >
-                            Manage
+                            {t("pool.actions.manage")}
                           </Button>
                         </Flex>
                       </Td>
@@ -112,7 +115,7 @@ export default function BoundingsTable({
               ) : (
                 <Tr>
                   <Td fontWeight="semibold" colSpan={4}>
-                    You currently have no bondings.
+                    {t("pool.youCurrentlyHaveNoBondings")}
                   </Td>
                 </Tr>
               )}

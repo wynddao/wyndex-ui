@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 import { assetList } from "@wynddao/asset-list";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -6,9 +6,8 @@ import { useIndexerInfos } from "../../../state";
 import { GaugeResponse } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { gaugesDailyRewardsAtom } from "../../../state/recoil/atoms/gauges";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
-import { getAssetPrice } from "../../../utils/assets";
 import { formatCurrency } from "../../../utils/currency";
-
+import { useTranslation } from "i18next-ssg";
 interface DailyRewards {
   eur: number;
   usd: number;
@@ -19,7 +18,7 @@ export const GaugesHeader = ({ gauges }: { gauges: GaugeResponse[] }) => {
   const [dailyRewards, setDailyRewards] = useState<DailyRewards>({ eur: 0, usd: 0 });
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
-
+  const { t } = useTranslation("common");
   useEffect(() => {
     let dailyReward = { usd: 0, eur: 0 };
     gaugesDailyRewards.map((rew) => {
@@ -43,7 +42,7 @@ export const GaugesHeader = ({ gauges }: { gauges: GaugeResponse[] }) => {
           <Grid textAlign="center" templateColumns={"1fr 1fr 1fr"} px={8} py={4}>
             <Box py={{ md: 2 }}>
               <Text fontWeight="semibold" opacity={0.7}>
-                Gauges Active
+                {"gauges.activeGauges"}
               </Text>
               <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
                 {gauges.length}
@@ -51,12 +50,12 @@ export const GaugesHeader = ({ gauges }: { gauges: GaugeResponse[] }) => {
             </Box>
             <Box py={{ md: 2 }}>
               <Heading fontSize={{ base: "3xl", md: "6xl" }} fontWeight="extrabold">
-                Gauges
+                {"gauges.gauges"}
               </Heading>
             </Box>
             <Box py={{ md: 2 }}>
               <Text fontWeight="semibold" opacity={0.7}>
-                Total Rewards Per Day
+                {"gauges.totalRewardsPerDays"}
               </Text>
               <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="extrabold">
                 {formatCurrency(

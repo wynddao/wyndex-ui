@@ -16,7 +16,7 @@ import PendingUnbondingsTable from "./PendingUnbondingsTable";
 import { Rewards } from "./Rewards";
 import StartEarningModal from "./StartEarningModal";
 import UnboundingsGrid from "./UnbondingsGrid";
-
+import { useTranslation } from "i18next-ssg";
 interface LiquidityMiningOptions {
   apr: {
     unbonding_period: number;
@@ -40,7 +40,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
     contractAddress: pairData.liquidity_token,
     sender: walletAddress ?? "",
   });
-
+  const { t } = useTranslation("common");
   const doStake = async (amount: number, duration: number) => {
     setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
@@ -75,15 +75,15 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
                   bgClip="text"
                   display="inline"
                 >
-                  Start WYNNING!
+                  {t("pool.startWynning")}
                 </Text>
                 <Text fontSize="lg" fontWeight="semibold" color="whiteAlpha.600" mb={{ base: 4, md: 2 }}>
-                  Bond liquidity to various minimum unbonding period to earn liquidity reward and swap fees
+                  {t("pool.info.BondLiquidityToVariousMinimumPeriods")}
                 </Text>
               </Box>
               <Flex flexDirection="column" align={{ md: "end" }}>
                 <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.600">
-                  Available LP tokens ({pairNames[0]} / {pairNames[1]})
+                  {t("pool.availableLPTokens")}({pairNames[0]} / {pairNames[1]})
                 </Text>
                 <Text fontSize="xl" fontWeight="bold" align={{ md: "end" }} mb={2}>
                   {microamountToAmount(lpBalance, 6)}{" "}
@@ -98,7 +98,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
                     bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
                   }}
                 >
-                  Start WYNNING!
+                  {t("pool.startWynning")}
                 </Button>
               </Flex>
             </Flex>

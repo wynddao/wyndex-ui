@@ -6,6 +6,7 @@ import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { formatCurrency } from "../../../../utils/currency";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "./BorderedBox";
+import { useTranslation } from "i18next-ssg";
 
 export const VotingPower = ({
   walletStakedPower,
@@ -18,7 +19,7 @@ export const VotingPower = ({
 }) => {
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
-
+  const { t } = useTranslation("common");
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice =
     currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
@@ -27,7 +28,7 @@ export const VotingPower = ({
     <BorderedBox>
       <Flex justifyContent={"space-between"}>
         <Text fontSize="xl" fontWeight="bold" my={4} color="wynd.green.500" display="inline-block">
-          Voting Power
+          {t("stake.votingPower")}
         </Text>
         <Box>
           <Text fontSize="xl" fontWeight="bold" mt={4} color="wynd.green.500" display="inline-block">
@@ -40,7 +41,9 @@ export const VotingPower = ({
           </Text>
           {Number(walletStakedTokens) > 0 && (
             <>
-              <Text>{microamountToAmount(walletStakedTokens ?? 0, 6)} $WYND staked</Text>
+              <Text>
+                {microamountToAmount(walletStakedTokens ?? 0, 6)} {"$WYND"} {t("stake.staked")}
+              </Text>
               <Text fontSize="sm">
                 {"≈ "}
                 {formatCurrency(

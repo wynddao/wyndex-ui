@@ -1,6 +1,7 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-
+import { useTranslation } from "i18next-ssg";
 export const CreateProposalHeader = () => {
+  const { t } = useTranslation();
   return (
     <Box bg="url(/castle.jpeg)" position="relative" rounded="lg" bgPosition="bottom" bgSize="cover">
       <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
@@ -12,10 +13,10 @@ export const CreateProposalHeader = () => {
             fontSize={{ base: "3xl", md: "6xl" }}
             pt="8"
           >
-            Create Proposal
+            {t("proposal.createProposal")}
           </Heading>
           <Text fontSize={{ base: "2xl", md: "2xl" }} fontWeight="bold">
-            Create a new proposal
+            {t("proposal.createaANewProposal")}
           </Text>
         </Flex>
       </Box>

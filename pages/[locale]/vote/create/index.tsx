@@ -1,7 +1,7 @@
 "use client";
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
-import { CreateProposal } from "../../../components/Dao/CreateProposal";
+import { CreateProposal } from "../../../../components/Dao/CreateProposal";
 
 export default function Page() {
   return (

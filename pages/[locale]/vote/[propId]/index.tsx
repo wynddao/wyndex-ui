@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSingleProposalInfo } from "../../../state/hooks/proposal/useSingleProposalInfo";
-import { ProposalComponent } from "../../../components/Dao/Proposal";
+import { useSingleProposalInfo } from "../../../../state/hooks/proposal/useSingleProposalInfo";
+import { ProposalComponent } from "../../../../components/Dao/Proposal";
 import { GetStaticPaths, GetStaticPropsContext } from "next";
-import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
+import { WYND_VOTE_MODULE_ADDRESS } from "../../../../utils";
 
 const ProposalSingle = () => {
   const router = useRouter();

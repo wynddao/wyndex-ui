@@ -4,14 +4,17 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { MsgType } from "./types";
 import { Input, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import { useTranslation } from "i18next-ssg";
 
 export const Custom = ({ msg, edit = false }: { msg?: MsgType; edit?: boolean }) => {
   const [newMsg, setNewMsg] = useState<string>("{}");
+  const { t } = useTranslation("common");
   return (
     <>
-      <Text fontSize={"xl"}>Custom</Text>
+      <Text fontSize={"xl"}>{t("general.custom")}</Text>
       <Text fontSize={"xl"} mt={5}>
-        Message:
+        {t("general.message")}
+        {":"}
       </Text>
       {msg ? (
         <SyntaxHighlighter language="json" style={vscDarkPlus}>

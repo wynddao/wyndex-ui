@@ -7,6 +7,7 @@ import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { assetList } from "@wynddao/asset-list";
 import TokenName from "../TokenName";
 import { Suspense } from "react";
+import { useTranslation } from "i18next-ssg";
 export const Rewards = ({ address, stakingContract }: { address: string; stakingContract: string }) => {
   const { rewards, refreshPendingUnstaking, refreshRewards } = useStakeInfos(stakingContract, true);
   const { txToast } = useToast();
@@ -37,12 +38,12 @@ export const Rewards = ({ address, stakingContract }: { address: string; staking
       return result;
     });
   };
-
+  const { t } = useTranslation("common");
   return (
     <>
       <Box p={4}>
         <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline-block">
-          My Rewards
+          {t("pool.myRewards")}
         </Text>
         <Suspense fallback={<Skeleton height={4} />}>
           {hasRewards && (
@@ -55,13 +56,13 @@ export const Rewards = ({ address, stakingContract }: { address: string; staking
                 bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
               }}
             >
-              Claim!
+              {t("pool.action.claim")}
             </Button>
           )}
         </Suspense>
         <Suspense fallback={<Skeleton height={4} />}>
           <Box display={"flex"}>
-            {!hasRewards && <Text>You currently have no rewards!</Text>}
+            {!hasRewards && <Text> {t("pool.youCurrentlyHaveNoRewards")}</Text>}
             <Box>
               {hasRewards &&
                 rewards &&
@@ -82,14 +83,12 @@ export const Rewards = ({ address, stakingContract }: { address: string; staking
                       <Box key={i}>
                         {reward.info.hasOwnProperty("native") ? (
                           <span>
-                            {microamountToAmount(reward.amount, decimals)}{" "}
-                            {/* @ts-ignore */}
+                            {microamountToAmount(reward.amount, decimals)} {/* @ts-ignore */}
                             {microdenomToDenom(getNativeIbcTokenDenom(reward.info.native))}
                           </span>
                         ) : (
                           <span>
-                            {microamountToAmount(reward.amount, decimals)}{" "}
-                            {/* @ts-ignore */}
+                            {microamountToAmount(reward.amount, decimals)} {/* @ts-ignore */}
                             <TokenName symbol={true} address={reward.info.token} />
                           </span>
                         )}

@@ -9,6 +9,7 @@ import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { capitalizeFirstLetter } from "../../../utils/text";
 import { expirationAtTimeToSecondsFromNow, secondsToWdhms } from "../../../utils/time";
 import { Quorum } from "./Quorum";
+import { useTranslation } from "i18next-ssg";
 
 const VoteStatus = ({ id }: { id: string }) => {
   const { userVotes } = useIndexerInfos({});
@@ -52,7 +53,7 @@ export const PropList = ({ limit }: { limit: number }) => {
     address: WYND_VOTE_MODULE_ADDRESS,
     prefix: "B",
   };
-
+  const { t } = useTranslation("common");
   const { address: walletAddress } = useWallet();
 
   const propCount = useProposalCount(voteModule);
@@ -126,7 +127,7 @@ export const PropList = ({ limit }: { limit: number }) => {
             <Grid templateColumns={"1fr 1fr 1fr"} bgColor="wynd.gray.alpha.10" borderTopRadius="lg">
               <Flex justifyContent="center" alignItems="center">
                 <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
-                  Yes:
+                  {t("proposal.choices.yes")}:
                 </Text>
                 <Text color="wynd.green.500" fontWeight="light" fontSize="sm" align="center">
                   {(
@@ -139,7 +140,7 @@ export const PropList = ({ limit }: { limit: number }) => {
               </Flex>
               <Flex justifyContent="center" alignItems="center">
                 <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
-                  Abstain:
+                  {t("proposal.choices.abstain")}:
                 </Text>
                 <Text color="wynd.cyan.500" fontWeight="light" fontSize="sm" align="center">
                   {(
@@ -152,7 +153,7 @@ export const PropList = ({ limit }: { limit: number }) => {
               </Flex>
               <Flex justifyContent="center" alignItems="center">
                 <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
-                  No:
+                  {t("proposal.choices.no")}:
                 </Text>
                 <Text color="wynd.alert.error.500" fontWeight="light" fontSize="sm" align="center">
                   {(

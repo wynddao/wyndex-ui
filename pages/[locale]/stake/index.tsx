@@ -1,13 +1,14 @@
 "use client";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import Head from "next/head";
-import { StakeHeader } from "../../components/Dao/Stake/StakeHeader";
-import { MyTokens } from "../../components/Dao/Stake/MyTokens";
-import { Rewards } from "../../components/Dao/Stake/Rewards";
+import { StakeHeader } from "../../../components/Dao/Stake/StakeHeader";
+import { MyTokens } from "../../../components/Dao/Stake/MyTokens";
+import { Rewards } from "../../../components/Dao/Stake/Rewards";
 import { useWallet } from "@cosmos-kit/react";
-import { useDaoStakingInfos } from "../../state/hooks/useDaoStakingInfos";
-import { BorderedBox } from "../../components/Dao/Stake/MyTokens/BorderedBox";
-import ConnectWalletButton from "../../components/General/Sidebar/ConnectWalletButton";
+import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
+import { BorderedBox } from "../../../components/Dao/Stake/MyTokens/BorderedBox";
+import ConnectWalletButton from "../../../components/General/Sidebar/ConnectWalletButton";
+import { makeStaticProps, getStaticPaths } from "i18next-ssg/server";
 
 export default function Page() {
   const { address: walletAddress } = useWallet();
@@ -63,3 +64,6 @@ export default function Page() {
     </>
   );
 }
+
+const getStaticProps = makeStaticProps(["common"]);
+export { getStaticPaths, getStaticProps };

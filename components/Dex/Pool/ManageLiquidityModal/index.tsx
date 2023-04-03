@@ -16,7 +16,7 @@ import { useCw20UserInfos, UseTokenNameResponse } from "../../../../state";
 import { PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
 import AddLiquidity from "./AddLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
-
+import { useTranslation } from "i18next-ssg";
 const tabName = ["Add Liquidity", "Remove Liquidity"];
 
 interface ManageLiquidityProps {
@@ -38,11 +38,12 @@ export default function ManageLiquidity({
 }: ManageLiquidityProps) {
   const [tabIndex, setTabIndex] = useState(0);
   const { balance: lpBalance, refreshBalance: refreshLpBalance } = useCw20UserInfos(data.liquidity_token);
+  const { t } = useTranslation("common");
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent bgColor="wynd.base.subBg">
-        <ModalHeader>Manage Liquidity</ModalHeader>
+        <ModalHeader> {t("pool.manageLiquidity")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Suspense fallback={<p>Loading...</p>}>

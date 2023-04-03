@@ -26,6 +26,7 @@ import { formatCurrency } from "../../../utils/currency";
 import druid from "./assets/druid.png";
 import ManageLiquidityModal from "./ManageLiquidityModal";
 import StartEarningModal from "./StartEarningModal";
+import { useTranslation } from "i18next-ssg";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -80,6 +81,7 @@ export default function PoolHeader({
   apr,
   pairNames,
 }: PoolHeaderProps) {
+  const { t } = useTranslation("common");
   const { txToast } = useToast();
   const { onOpen: onOpenLiquidity, isOpen: isLiquidityOpen, onClose: onCloseLiquidity } = useDisclosure();
   const { onOpen: onOpenBondings, isOpen: isBondingsOpen, onClose: onCloseBondings } = useDisclosure();
@@ -119,7 +121,7 @@ export default function PoolHeader({
     <>
       <Head>
         {/* TODO: Pool Title */}
-        <title>WYND | DEX - Pool</title>
+        <title>{"WYND | DEX - Pool"}</title>
       </Head>
       <Box
         bg={"wynd.base.sidebar"}
@@ -133,14 +135,14 @@ export default function PoolHeader({
       >
         <Flex align="center" wrap="wrap" mb={7}>
           <Heading as="h2" fontWeight="extrabold" fontSize="2xl" wordBreak="break-word" mr={8} py={1}>
-            Pool: {pairNames[0]} / {pairNames[1]}
+            {t("pool.pool")}: {pairNames[0]} / {pairNames[1]}
           </Heading>
         </Flex>
 
         <SimpleGrid columns={{ md: 2 }} gap={{ base: 2, md: 4 }} maxW={{ lg: "50%" }}>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"}>
-              Pool Liquidity
+              {t("pool.poolLiquidity")}
             </Text>
             <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
               <span>{formatCurrency(currency, `${totalInFiat}`)} </span>
@@ -148,7 +150,7 @@ export default function PoolHeader({
           </GridItem>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"}>
-              Swap Fee
+              {t("pool.poolSwapFee")}
             </Text>
             <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
               <span>{pairData.fee_config.total_fee_bps / 100}%</span>
@@ -156,7 +158,7 @@ export default function PoolHeader({
           </GridItem>
           <GridItem>
             <Text fontWeight="bold" color={"whiteAlpha.600"} mb={1}>
-              My Shares:
+              {t("pool.myShares")}
             </Text>
 
             {walletAddress ? (
@@ -170,7 +172,7 @@ export default function PoolHeader({
               </Text>
             ) : (
               <Text fontSize={{ base: "xl", sm: "2xl" }} fontWeight="extrabold" wordBreak="break-word">
-                <span>Not connected</span>
+                <span> {t("general.notConnected")}</span>
               </Text>
             )}
           </GridItem>
@@ -185,7 +187,7 @@ export default function PoolHeader({
                     bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
                   }}
                 >
-                  Add/Remove Liquidity
+                  {t("pool.addRemoveLiquidity")}
                 </Button>
               </Flex>
             ) : (
@@ -202,7 +204,7 @@ export default function PoolHeader({
                 }}
               >
                 <Icon as={FiCreditCard} />
-                <Text>Connect wallet</Text>
+                <Text> {t("general.connectWallet")}</Text>
               </Button>
             )}
           </GridItem>

@@ -13,8 +13,9 @@ import ToSModal from "../components/General/ToSModal";
 import Providers from "../providers/providers";
 import { STATUS_BAR, STATUS_TEXT, WYND_MAINTANANCE_MODE } from "../utils";
 import { Alert, AlertIcon } from "@chakra-ui/react";
+import { appWithTranslation } from "i18next-ssg";
 
-export default function RootLayout({ Component, pageProps }: AppProps) {
+function RootLayout({ Component, pageProps }: AppProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -52,3 +53,5 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     <Loader />
   );
 }
+
+export default appWithTranslation(RootLayout);

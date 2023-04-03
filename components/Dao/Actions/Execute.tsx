@@ -4,6 +4,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { MsgType } from "./types";
 import { Container, Input, Text } from "@chakra-ui/react";
 import { FocusEvent, useState } from "react";
+import { useTranslation } from "i18next-ssg";
 
 export const Execute = ({
   msg,
@@ -21,13 +22,15 @@ export const Execute = ({
   const setContractAddress = (contract_addr: string) => {
     setMsg({ ...msg, contract_addr });
   };
+  const { t } = useTranslation("common");
 
   const [contractAddr, setContractAddr] = useState<string>(msg.contract_addr);
   return (
     <>
-      <Text fontSize={"xl"}>Execute</Text>
+      <Text fontSize={"xl"}>{t("actions.execute")}</Text>
       <BorderedBox bgImageActive={false} overflowX={"auto"}>
-        Contract Address:{" "}
+        {t("general.contractAddress")}
+        {": "}
         {edit ? (
           <Input
             onChange={(e) => setContractAddr(e.target.value)}
@@ -40,7 +43,8 @@ export const Execute = ({
         )}
       </BorderedBox>
       <Text fontSize={"xl"} mt={5}>
-        Message:
+        {t("general.message")}
+        {":"}
       </Text>
       {!edit ? (
         <Container maxW="container.md">

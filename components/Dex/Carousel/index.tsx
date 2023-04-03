@@ -2,12 +2,14 @@ import { Box, Flex } from "@chakra-ui/react";
 import React, { Children, PropsWithChildren, useMemo, useRef, useState } from "react";
 import { Splide, SplideSlide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/splide/css/sea-green";
+import { useTranslation } from "i18next-ssg";
 
 interface IProps {
   numOfSlides: number;
 }
 
 const Carousel: React.FC<PropsWithChildren<IProps>> = ({ children, numOfSlides }) => {
+  const { t } = useTranslation("common");
   const child = Children.toArray(children);
 
   if (!child.length)
@@ -21,7 +23,7 @@ const Carousel: React.FC<PropsWithChildren<IProps>> = ({ children, numOfSlides }
         justifyContent="center"
         minH="5rem"
       >
-        <p color="wynd.neutral.500">You dont have any pool yet.</p>
+        <p color="wynd.neutral.500">{t("pool.noPoolYet")}</p>
       </Flex>
     );
   if (child.length <= numOfSlides)

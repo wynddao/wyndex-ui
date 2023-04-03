@@ -18,6 +18,7 @@ import { OptionBase } from "chakra-react-select";
 import { useState } from "react";
 import SelectToken from "./SelectToken";
 import { poolOptionTokens } from "./__mocks__/newPool";
+import { useTranslation } from "i18next-ssg";
 
 export interface dataType extends OptionBase {
   label?: string;
@@ -38,6 +39,7 @@ interface CreatePoolModalProps {
 export default function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
   const [selectedTokenA, setSelectedTokenA] = useState<dataType>(poolOptionTokens[0]);
   const [selectedTokenB, setSelectedTokenB] = useState<dataType>(poolOptionTokens[1]);
+  const { t } = useTranslation("common");
 
   const tokensToSelect = poolOptionTokens.filter(
     (token) => token.label !== selectedTokenA?.label && token.label !== selectedTokenB?.label,
@@ -50,7 +52,7 @@ export default function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProp
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create Pool</ModalHeader>
+        <ModalHeader> {t("pool.createPool")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Stack gap={4}>
@@ -68,12 +70,12 @@ export default function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProp
               <Flex justify="center" mb={6}>
                 <Alert status="error" borderRadius="md" w="fit-content">
                   <AlertIcon />
-                  <AlertTitle>That pool already exists</AlertTitle>
+                  <AlertTitle>{t("pool.poolAlreadyExists")}</AlertTitle>
                 </Alert>
               </Flex>
             ) : null}
             <Button type="submit" disabled={poolAlreadyExists}>
-              Create
+              {t("pool.actions.create")}
             </Button>
           </Stack>
         </ModalBody>

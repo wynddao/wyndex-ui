@@ -8,7 +8,7 @@ import { WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { secondsToDays } from "../../../../utils/time";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { getPendingRebonding } from "../../../Dex/Pool/PendingBoundingsTable/util";
-
+import { useTranslation } from "i18next-ssg";
 interface RebondingTokensOptions {
   wyndexStake: string;
   walletAddress: string;
@@ -19,7 +19,7 @@ export const RebondingTokens = (props: RebondingTokensOptions) => {
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
   const { unbondingPeriods } = useDaoStakingInfos();
-
+  const { t } = useTranslation("common");
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
   const [hasAnyRebondings, setHasAnyRebondings] = useState<boolean>(false);
 
@@ -55,9 +55,9 @@ export const RebondingTokens = (props: RebondingTokensOptions) => {
         px={4}
         bg="whiteAlpha.100"
       >
-        <GridItem>Stakes</GridItem>
-        <GridItem textAlign="center">Unlocks</GridItem>
-        <GridItem textAlign="end">Info</GridItem>
+        <GridItem> {t("stake.stakes")}</GridItem>
+        <GridItem textAlign="center"> {t("stake.unlocks")}</GridItem>
+        <GridItem textAlign="end"> {t("general.info")}</GridItem>
       </Grid>
       {rebondings &&
         rebondings.map(
@@ -81,7 +81,7 @@ export const RebondingTokens = (props: RebondingTokensOptions) => {
                     gap="4"
                   >
                     <GridItem display="flex" alignItems="center" gap={{ base: "2", lg: "4" }}>
-                      {microamountToAmount(amount[1], 6)} $WYND (~
+                      {microamountToAmount(amount[1], 6)} {"$WYND"} (~
                       {microamountToAmount(Number(amount[1]) * wyndexPrice, 6, 2)}{" "}
                       {currency === "USD" ? "$" : "€"})
                     </GridItem>
@@ -93,7 +93,8 @@ export const RebondingTokens = (props: RebondingTokensOptions) => {
                     </GridItem>
                     <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
                       <Text fontSize="lg">
-                        Rebonded down to {secondsToDays(unbondingPeriods[x].unbonding_period)} days
+                        {t("stake.rebondedDownTo")} {secondsToDays(unbondingPeriods[x].unbonding_period)}{" "}
+                        {t("time.days")}
                       </Text>
                     </GridItem>
                   </Grid>

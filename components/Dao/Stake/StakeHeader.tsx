@@ -7,6 +7,7 @@ import { WYND_TOKEN_ADDRESS } from "../../../utils";
 import { formatCurrency } from "../../../utils/currency";
 import { secondsToDays } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
+import { useTranslation } from "i18next-ssg";
 
 export const StakeHeader = ({
   totalStaked: totalStakedWynd,
@@ -18,6 +19,7 @@ export const StakeHeader = ({
   const { unbondingPeriods: bondingInfos } = useDaoStakingInfos();
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
+  const { t } = useTranslation("common");
 
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice =
@@ -47,23 +49,29 @@ export const StakeHeader = ({
         roundedTop="lg"
       >
         <Heading textAlign="center" fontSize={{ base: "4xl", md: "5xl" }}>
-          Stake
+          {t("stake.stake")}
         </Heading>
         <Flex gap={6} justifyContent={"space-around"} flexFlow={{ base: "column", md: "row" }}>
           <Box py={{ md: 2 }} textAlign={{ base: "center", md: "left" }}>
             <Text fontWeight="semibold" color="wynd.gray.500">
-              DAO Treasury
+              {t("stake.daoTreasury")}
             </Text>
             <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
-              {treasuryBalanceWyndFormatted} $WYND <Text fontSize="sm">≈ ({formatCurrency(currency, microamountToAmount(treasuryBalanceFiat, 6))})</Text>
+              {treasuryBalanceWyndFormatted} {"$WYND"}{" "}
+              <Text fontSize="sm">
+                {"≈"} ({formatCurrency(currency, microamountToAmount(treasuryBalanceFiat, 6))})
+              </Text>
             </Text>
           </Box>
           <Box py={{ md: 2 }} textAlign={{ base: "center", md: "right" }}>
             <Text fontWeight="semibold" color="wynd.gray.500">
-              Total staked
+              {t("stake.totalStaked")}
             </Text>
             <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="extrabold">
-              {totalStakedWyndFormatted} $WYND <Text fontSize="sm">≈ ({formatCurrency(currency, microamountToAmount(totalStakedFiat, 6))})</Text>
+              {totalStakedWyndFormatted} {"$WYND"}{" "}
+              <Text fontSize="sm">
+                {"≈"} ({formatCurrency(currency, microamountToAmount(totalStakedFiat, 6))})
+              </Text>
             </Text>
           </Box>
         </Flex>
@@ -89,7 +97,7 @@ export const StakeHeader = ({
                   textTransform="uppercase"
                   textAlign="center"
                 >
-                  APR {secondsToDays(unbonding_period)} Days
+                  APR {secondsToDays(unbonding_period)} {t("time.days")}
                 </Text>
                 <Text fontWeight="extrabold" fontSize={"sm"} textAlign="center">
                   {(apy * 100).toFixed(2)} %

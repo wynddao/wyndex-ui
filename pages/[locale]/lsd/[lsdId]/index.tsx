@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { GetStaticPaths, GetStaticPropsContext } from "next";
 import { Box } from "@chakra-ui/react";
-import { LsdSingle } from "../../../components/Lsd/Single";
+import { LsdSingle } from "../../../../components/Lsd/Single";
 
 const ProposalSingle = () => {
   const router = useRouter();

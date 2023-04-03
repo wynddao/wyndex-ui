@@ -8,8 +8,10 @@ import { getAssetList } from "../../../utils/getAssetList";
 import AssetBalanceItem from "./AssetBalanceItem";
 import TokenFilter, { TokenFilterOptions } from "./TokenFilter";
 import { getAssetId, prepareAssets } from "./utils";
+import { useTranslation } from "i18next-ssg";
 
 export default function AssetBalancesList() {
+  const { t } = useTranslation("common");
   const { ibcBalances, cw20Balances } = useIndexerInfos({ fetchIbcBalances: true, fetchCw20Balances: true });
   const [favAssets, setFavAssets] = useRecoilState(favAtom);
 
@@ -47,7 +49,7 @@ export default function AssetBalancesList() {
         <TokenFilter setFilterOption={setFilterOption} />
         <GridItem>
           <Input
-            placeholder="Search token"
+            placeholder={t("search.searchToken") || ""}
             value={searchText}
             onChange={({ target }) => setSearchText(target.value)}
           />
@@ -64,10 +66,15 @@ export default function AssetBalancesList() {
         px={4}
         bg="wynd.gray.alpha.10"
       >
-        <GridItem>Asset / Chain</GridItem>
-        <GridItem textAlign="end">Balance</GridItem>
+        <GridItem>
+          {" "}
+          {t("general.asset")}
+          {" / "}
+          {t("general.chain")}
+        </GridItem>
+        <GridItem textAlign="end">{t("general.balance")}</GridItem>
         <GridItem textAlign="end" display={{ base: "none", lg: "block" }}>
-          Actions
+          {t("general.actions")}
         </GridItem>
       </Grid>
       {readyAssets.map((asset) => (

@@ -6,6 +6,7 @@ import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { ManageTokens } from "./ManageTokens";
 import { Unstaked } from "./Unstaked";
 import { VotingPower } from "./VotingPower";
+import { useTranslation } from "i18next-ssg";
 
 export const MyTokens = ({
   walletAddress,
@@ -27,6 +28,7 @@ export const MyTokens = ({
   claimsAvailable?: Claim[];
 }) => {
   const { balance } = useCw20UserInfos(WYND_TOKEN_ADDRESS);
+  const { t } = useTranslation("common");
   return (
     <>
       <Box my={4}>
@@ -37,9 +39,9 @@ export const MyTokens = ({
           bgClip="text"
           display="inline"
         >
-          My Tokens
+          {t("stake.myTokens")}
         </Text>
-        <Text color="wynd.gray.600">Stake more WYND to increase yor voting power</Text>
+        <Text color="wynd.gray.600"> {t("stake.stakeMoreToGetMorePower")}</Text>
       </Box>
       <Grid templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }} gap={30}>
         <VotingPower

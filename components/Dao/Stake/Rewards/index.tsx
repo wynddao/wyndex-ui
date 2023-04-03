@@ -6,6 +6,7 @@ import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../../utils";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { BorderedBox } from "../MyTokens/BorderedBox";
+import { useTranslation } from "i18next-ssg";
 
 export const Rewards = ({
   rewards: rewardsWynd,
@@ -17,7 +18,7 @@ export const Rewards = ({
   const { txToast } = useToast();
   const { assetPrices } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
-
+  const { t } = useTranslation("common");
   const wyndexAssetPrice = assetPrices.find((el) => el.asset === WYND_TOKEN_ADDRESS);
   const wyndexPrice =
     currency === "USD" ? wyndexAssetPrice?.priceInUsd ?? 0 : wyndexAssetPrice?.priceInEur ?? 0;
@@ -50,12 +51,12 @@ export const Rewards = ({
       <BorderedBox bgImageActive={false}>
         <Flex gap={4} alignItems={"center"} justifyContent={"space-between"}>
           <Text fontSize="xl" fontWeight="bold">
-            Rewards:{" "}
+            {t("stake.rewards")}:{" "}
             <strong>
-              {rewardsWyndFormatted} $WYND (~{rewardsFiatFormatted} {currency === "USD" ? "$" : "€"})
+              {rewardsWyndFormatted} {"$WYND"} (~{rewardsFiatFormatted} {currency === "USD" ? "$" : "€"})
             </strong>
           </Text>
-          <Button onClick={() => claim()}>Claim!</Button>
+          <Button onClick={() => claim()}> {t("stake.actions.claim")}</Button>
         </Flex>
       </BorderedBox>
     </Box>

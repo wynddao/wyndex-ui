@@ -2,9 +2,9 @@ import { Box } from "@chakra-ui/react";
 import { GetStaticPaths, GetStaticPropsContext } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { LSDGauge } from "../../../components/Dao/LSDGauge";
-import { PoolGauge } from "../../../components/Dao/PoolGauge";
-import { useGaugeAdapter, useGaugeConfigs } from "../../../state";
+import { LSDGauge } from "../../../../components/Dao/LSDGauge";
+import { PoolGauge } from "../../../../components/Dao/PoolGauge";
+import { useGaugeAdapter, useGaugeConfigs } from "../../../../state";
 
 export default function Page() {
   const router = useRouter();

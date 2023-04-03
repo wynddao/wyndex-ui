@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 "use client";
 import { Box, Flex, keyframes, Text } from "@chakra-ui/react";
 import { usePrefersReducedMotion } from "@chakra-ui/react";

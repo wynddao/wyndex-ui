@@ -20,7 +20,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { CustomHooks, getBalanceByAsset, useIndexerInfos, useToast } from "../../../../state";
 import { Asset as WyndAsset, PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPair.types";
 import TokenName from "../../TokenName";
-
+import { useTranslation } from "i18next-ssg";
 import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { AiFillWarning } from "react-icons/ai";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
@@ -142,7 +142,7 @@ export default function AddLiquidity({
           newInputValueB.id === el.denom ||
           newInputValueB.id === (el as IBCAsset).juno_denom ||
           newInputValueB.id === (el as CW20Asset).token_address,
-      )?.decimals || 6;
+      )?.decimals || 6;
 
     const ratioA =
       Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
@@ -321,7 +321,7 @@ export default function AddLiquidity({
   };
 
   const assets = getAssetList().tokens;
-
+  const { t } = useTranslation("common");
   return (
     <>
       <Stack spacing={2} mb={6}>
@@ -448,12 +448,12 @@ export default function AddLiquidity({
                     >
                       {assetABalanceState === "hasValue" && assetBBalanceState === "hasValue" ? (
                         <Text fontWeight="medium" textAlign="center">
-                          Available {maxInput}
+                          {t("general.available")} {maxInput}
                           <Text as="span" color={"wynd.cyan.500"}></Text> {name}
                         </Text>
                       ) : (
                         <Text fontWeight="medium" textAlign="center">
-                          Loading balance
+                          {t("pool.loadingBalance")}
                         </Text>
                       )}
                       <Button
@@ -494,10 +494,7 @@ export default function AddLiquidity({
             color="black"
           >
             <AiFillWarning size={64} />
-            <Text>
-              If you spend all your {junoSymbol}, you won&apos;t be able to pay for the fees of future
-              transactions.
-            </Text>
+            <Text>{t("warning.ifYouSpendAllYourJunoWarning")}</Text>
           </Box>
         ) : null}
       </Stack>
@@ -540,7 +537,7 @@ export default function AddLiquidity({
             cursor: "initial",
           }}
         >
-          Add Liquidity
+          {t("pool.actions.addLiquidity")}
         </Button>
       </Box>
     </>

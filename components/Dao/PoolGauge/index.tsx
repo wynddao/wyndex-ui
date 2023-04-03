@@ -35,6 +35,7 @@ import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeHeader } from "./GaugeHeader";
 import PoolSelector from "./VoteSelector";
+import { useTranslation } from "i18next-ssg";
 
 export interface PoolWithAddresses {
   assets: AssetInfoValidated[];
@@ -64,6 +65,7 @@ export const PoolGauge = ({
   const { vote: userVotes } = useUserVotes(gauge.id, walletAddress || "");
   const { txToast } = useToast();
   const currency = useRecoilValue(currencyAtom);
+  const { t } = useTranslation("common");
 
   const [selectedVotes, setSelectedVotes] = useState<BallotEntry[]>([]);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
@@ -111,8 +113,10 @@ export const PoolGauge = ({
     if (sumVotes > 100) {
       setError(
         <>
-          <Text>{"You can't vote with more then 100% of your total voting power!"}</Text>
-          <Text fontSize="sm">(Tried to vote with {sumVotes}%)</Text>
+          <Text>{t("gauges.cantVoteWithMoreThenUserPower")}</Text>
+          <Text fontSize="sm">
+            ({t("gauges.triedToVoteWith")} {sumVotes}%)
+          </Text>
         </>,
       );
       return;
@@ -224,7 +228,7 @@ export const PoolGauge = ({
       <Grid gap={6} mt={8} templateColumns={{ base: "repeat(1, 1fr)", lg: "1fr 1fr" }}>
         <BorderedBox mb={10}>
           <Text mb={4} fontSize="2xl">
-            Place Your Vote
+            {t("gauges.placeYourVote")}
           </Text>
           <Grid gap={4} templateColumns={{ base: "repeat(1, 1fr)", lg: "4fr 3fr" }}>
             <Box
@@ -327,10 +331,10 @@ export const PoolGauge = ({
               </BorderedBox>
             </Box>
             <Box>
-              <Text fontSize="xl">Add to your votes</Text>
+              <Text fontSize="xl">{t("gauges.addToYourVotes")}</Text>
               <Divider mt={2} />
               <Flex mt={2} justifyContent="space-between" alignItems="center">
-                Choose a pool
+                {t("gauges.chooseYourPools")}
                 <PoolSelector
                   selectedPool={selectedPool}
                   setSelectedPool={setSelectedPool}
@@ -338,7 +342,7 @@ export const PoolGauge = ({
                 />
               </Flex>
               <Flex mt={2} justifyContent="space-between" alignItems="center">
-                Voting Weight
+                {t("gauges.votingWeight")}
                 <InputGroup w={"50%"}>
                   <Input
                     type="number"
@@ -357,7 +361,7 @@ export const PoolGauge = ({
               )}
               <Flex justifyContent="end">
                 <Button onClick={() => addToBallot()} mt={2}>
-                  Add
+                  {t("general.add")}
                 </Button>
               </Flex>
             </Box>
@@ -375,7 +379,7 @@ export const PoolGauge = ({
                   isLoading={loadingReset}
                   onClick={() => resetAllVotes()}
                 >
-                  Delete previous votes
+                  {t("gauges.deletePreviousVotes")}
                 </Button>
                 <Button
                   bgGradient="linear(to-l, wynd.green.200, wynd.cyan.200)"
@@ -388,7 +392,7 @@ export const PoolGauge = ({
                   }}
                   onClick={() => executeVote()}
                 >
-                  Submit Vote
+                  {t("gauges.submitVote")}
                 </Button>
               </Flex>
             ) : (
@@ -397,9 +401,9 @@ export const PoolGauge = ({
           </Grid>
         </BorderedBox>
         <BorderedBox mb={10}>
-          <Text fontSize="2xl">Current Votes For Next Epoch</Text>
+          <Text fontSize="2xl"> {t("gauges.currentVotesForNextEpoch")}</Text>
           <Text mb={4} fontSize="sm">
-            (Starting {new Date(gauge.next_epoch * 1000).toLocaleDateString()})
+            ({t("general.starting")} {new Date(gauge.next_epoch * 1000).toLocaleDateString()})
           </Text>
           <Grid
             display="grid"
@@ -412,11 +416,11 @@ export const PoolGauge = ({
             bg="wynd.gray.alpha.20"
             borderTopRadius="lg"
           >
-            <GridItem textAlign="start">Pool</GridItem>
-            <GridItem textAlign="start">Reward next epoch</GridItem>
+            <GridItem textAlign="start">{t("pool.pool")}</GridItem>
+            <GridItem textAlign="start">{t("gauges.rewardsNextEpoch")}</GridItem>
             <GridItem textAlign="start">TVL</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
-              Votes
+              {t("gauges.votes")}
             </GridItem>
           </Grid>
           <Box

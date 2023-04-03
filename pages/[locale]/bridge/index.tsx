@@ -1,8 +1,9 @@
 import { SquidWidget } from "@0xsquid/widget";
 import { Box, Flex } from "@chakra-ui/react";
 import Head from "next/head";
-import SquidWidgetStylesOverride from "../../components/Dex/SquidWidgetStylesOverride";
-import { squidWidgetConfig } from "../../utils/squidWidget";
+import SquidWidgetStylesOverride from "../../../components/Dex/SquidWidgetStylesOverride";
+import { squidWidgetConfig } from "../../../utils/squidWidget";
+import { makeStaticProps, getStaticPaths } from "i18next-ssg/server";
 
 export default function Page() {
   return (
@@ -38,3 +39,6 @@ export default function Page() {
     </>
   );
 }
+
+const getStaticProps = makeStaticProps(["common"]);
+export { getStaticPaths, getStaticProps };

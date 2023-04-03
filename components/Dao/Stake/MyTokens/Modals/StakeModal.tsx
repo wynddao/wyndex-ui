@@ -20,11 +20,10 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { UseTokenNameResponse } from "../../../../../state";
-import { BondingPeriodInfo } from "../../../../../state/clients/types/WyndexStake.types";
 import { secondsToDays } from "../../../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../../../utils/tokens";
 import RadioCard from "../../../../General/RadioCard";
-
+import { useTranslation } from "i18next-ssg";
 interface StakeModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -46,14 +45,14 @@ export default function StakeModal(props: StakeModalProps) {
     },
     defaultValue: "1",
   });
-
+  const { t } = useTranslation("common");
   const group = getRootProps();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent bgColor="wynd.base.subBg">
-        <ModalHeader>Stake your WYND!</ModalHeader>
+        <ModalHeader>{t("general.stakeYourWynd")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex
@@ -85,7 +84,7 @@ export default function StakeModal(props: StakeModalProps) {
                 mb={2}
               >
                 <Text fontWeight="medium" textAlign="center">
-                  Available&nbsp;
+                  {t("general.available")}&nbsp;
                   <Text as="span" color={"wynd.cyan.600"}></Text>
                   <strong>{microamountToAmount(balance, tokenInfo.tokenDecimals)}</strong>
                 </Text>
@@ -112,11 +111,11 @@ export default function StakeModal(props: StakeModalProps) {
           </Flex>
           <Divider marginTop={5} />
           <Text fontWeight="bold" fontSize={{ base: "xl" }} marginY={5}>
-            Unbonding Period
+            {t("stake.unbondingPeriod")}
           </Text>
           {bondingInfos && bondingInfos.length > 0 && (
             <VStack {...group}>
-              {bondingInfos.map(({ unbonding_period, apy }: {unbonding_period: number, apy: number}) => {
+              {bondingInfos.map(({ unbonding_period, apy }: { unbonding_period: number; apy: number }) => {
                 const radio = getRadioProps({ value: unbonding_period });
                 return (
                   <RadioCard
@@ -126,10 +125,10 @@ export default function StakeModal(props: StakeModalProps) {
                   >
                     <Flex>
                       <Text as="p" flex="0.7">
-                        {secondsToDays(unbonding_period)} Days
+                        {secondsToDays(unbonding_period)} {t("time.days")}
                       </Text>
                       <Text as="p">
-                        APR: {(apy * 100).toFixed(2)} %
+                        {"APR: "} {(apy * 100).toFixed(2)} %
                       </Text>
                     </Flex>
                   </RadioCard>
@@ -139,7 +138,7 @@ export default function StakeModal(props: StakeModalProps) {
           )}
           <Alert marginTop={5} status="warning">
             <AlertIcon />
-            The unbonding period starts with the unstaking of the tokens.
+            {t("stake.warning.periodStartsWithUnbonding")}
           </Alert>
           <Box px={{ sm: 12 }} marginY={5}>
             <Button
@@ -156,7 +155,7 @@ export default function StakeModal(props: StakeModalProps) {
               size="lg"
               h={{ base: 12, sm: 14 }}
             >
-              Stake
+              {t("stake.actions.stake")}
             </Button>
           </Box>
         </ModalBody>

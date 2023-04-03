@@ -16,9 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import Head from "next/head";
-import { BorderedBox } from "../../components/Dao/Stake/MyTokens/BorderedBox";
-import ConnectWalletButton from "../../components/General/Sidebar/ConnectWalletButton";
-import OnRampModal from "../../components/General/Sidebar/OnRamp/OnRampModal";
+import { BorderedBox } from "../../../components/Dao/Stake/MyTokens/BorderedBox";
+import ConnectWalletButton from "../../../components/General/Sidebar/ConnectWalletButton";
+import OnRampModal from "../../../components/General/Sidebar/OnRamp/OnRampModal";
 
 const linkSx = {
   bgGradient: "linear(to-l, wynd.green.500, wynd.cyan.500)",

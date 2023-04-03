@@ -18,7 +18,7 @@ import { PairInfo, PoolResponse } from "../../../../state/clients/types/WyndexPa
 import { getAssetByInfo, getNativeIbcTokenDenom } from "../../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import TokenName from "../../TokenName";
-
+import { useTranslation } from "i18next-ssg";
 const gaps = [25, 50, 75, 100];
 
 export default function RemoveLiquidity({
@@ -39,7 +39,7 @@ export default function RemoveLiquidity({
   const [loading, setLoading] = useState<boolean>(false);
   const { address: walletAddress } = useWallet();
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-
+  const { t } = useTranslation("common");
   const assetASelector = getBalanceByAsset({
     address: walletAddress || "",
     asset: getAssetByInfo(pairData.asset_infos[0]),
@@ -131,7 +131,7 @@ export default function RemoveLiquidity({
         {poolData.assets.map((asset, i) => (
           <Box key={i}>
             <Text>
-              ≈
+              {"≈"}
               {microamountToAmount(
                 (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
                   Number(asset.amount),
@@ -182,7 +182,7 @@ export default function RemoveLiquidity({
           isLoading={loading}
           loadingText={"Executing"}
         >
-          Remove Liquidity
+          {t("pool.actions.removeLiquidity")}
         </Button>
       </Box>
     </Box>

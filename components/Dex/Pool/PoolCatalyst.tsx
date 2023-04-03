@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { Box, Button, Collapse, Flex, Icon, SimpleGrid, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
 import { getAssetInfoDetails } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 import AssetImage from "../AssetImage";
-
+import { useTranslation } from "i18next-ssg";
 interface PoolCatalystProps {
   readonly chainData: PoolResponse;
   readonly pairData: PairInfo;
@@ -19,7 +19,7 @@ interface PoolCatalystProps {
 export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps) {
   const { address: walletAddress } = useWallet();
   const wyndexStake = pairData.staking_addr;
-
+  const { t } = useTranslation("common");
   const [show, setShow] = useState<boolean>(true);
 
   //@ts-ignore
@@ -54,7 +54,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
               m="0 0 4px 0"
             />
             {show ? "Hide " : "Show "}
-            liquidity pool assets
+            {t("pool.liquidityPoolAssets")}
           </Text>
         </Button>
       </Flex>
@@ -102,13 +102,13 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
                     </Flex>
                     <Box>
                       <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                        Total amount
+                        {t("pool.totalAmount")}
                       </Text>
                       <Text fontSize="xl" fontWeight="bold" mb={2}>
                         {microamountToAmount(asset.amount, tokenInfo.decimals)}
                       </Text>
                       <Text fontWeight="bold" color={"wynd.neutral.600"}>
-                        My amount
+                        {t("pool.myAmount")}
                       </Text>
                       <Text fontSize="xl" fontWeight="bold">
                         {"≈ "}

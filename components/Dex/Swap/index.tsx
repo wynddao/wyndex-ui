@@ -22,7 +22,7 @@ import ToToken from "./FromToComponent/ToToken";
 import { LineChart } from "./LineChart";
 import Rate from "./RateComponent/Rate";
 import Setting from "./Setting/Setting";
-
+import { useTranslation } from "i18next-ssg";
 const spin = keyframes`
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -32,7 +32,7 @@ const Swap: React.FC = () => {
   const { address: walletAddress, connect, isWalletConnected } = useWallet();
   const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
   const { txToast, isTxLoading } = useToast();
-
+  const { t } = useTranslation("common");
   const [slippage, setSlippage] = useState<number>(1);
   const [showHistorical, setShowHistorical] = useState<boolean>(false);
 
@@ -136,9 +136,9 @@ const Swap: React.FC = () => {
 
   const buttonText = useMemo(() => {
     if (isTxLoading) return "";
-    if (!walletAddress) return "Connect Wallet";
+    if (!walletAddress) return t("general.connectWallet");
     if (Number(fromTokenAmount) > Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
-      return "Insufficient Amount";
+      return t("swap.insufficientAmount");
     if (walletAddress) return "Swap";
   }, [fromBalance.amount, fromToken.decimals, fromTokenAmount, isTxLoading, walletAddress]);
 
@@ -194,8 +194,7 @@ const Swap: React.FC = () => {
                 transform={!showHistorical ? "rotate(0deg)" : "rotate(180deg)"}
                 transition="all linear 0.2s"
               />
-              {showHistorical ? "Hide " : "Show "}
-              historical prices
+              {showHistorical ? t("swap.hide") : t("swap.show")} {t("swap.historicalPrices")}
             </Text>
           </Button>
         </Flex>
@@ -215,10 +214,7 @@ const Swap: React.FC = () => {
           color="black"
         >
           <AiFillWarning size={32} />
-          <Text>
-            If you spend all your {fromToken.symbol}, you won&apos;t be able to pay for the fees of future
-            transactions.
-          </Text>
+          <Text>{t("warning.ifYouSpendAllYourJunoWarning")}</Text>
         </Box>
       ) : null}
       <Button

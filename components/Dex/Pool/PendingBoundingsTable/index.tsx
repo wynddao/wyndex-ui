@@ -18,6 +18,7 @@ import { useStakeInfos } from "../../../../state/hooks/useStakeInfos";
 import { secondsToDays } from "../../../../utils/time";
 import { microamountToAmount } from "../../../../utils/tokens";
 import { getPendingRebonding } from "./util";
+import { useTranslation } from "i18next-ssg";
 
 interface PendingBoundingsTableOptions {
   wyndexStake: string;
@@ -31,7 +32,7 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
 
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
   const [hasAnyRebondings, setHasAnyRebondings] = useState<boolean>(false);
-
+  const { t } = useTranslation("common");
   useEffect(() => {
     const pendingRebonding = infos.map(async (info) => {
       return await getPendingRebonding(walletAddress || "", info.unbonding_period, wyndexStake);
@@ -49,20 +50,20 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
   return (
     <Box p={4}>
       <Text fontSize="xl" fontWeight="bold" mb={4} color="wynd.green.500" display="inline-block">
-        My Pending Rebondings
+        {t("pool.myPendingRebondings")}
       </Text>
       <TableContainer>
         <Table borderRadius="1rem 1rem 0 0" overflow="hidden">
           <Thead bg={"wynd.base.sidebar"}>
             <Tr>
               <Td fontSize="md" fontWeight="semibold" letterSpacing="normal">
-                Amount
+                {t("general.amount")}
               </Td>
               <Td fontSize="md" fontWeight="semibold" letterSpacing="normal">
-                Available
+                {t("general.available")}
               </Td>
               <Td fontSize="md" fontWeight="semibold" letterSpacing="normal">
-                Description
+                {t("pool.description")}
               </Td>
             </Tr>
           </Thead>
@@ -82,7 +83,8 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
                             {new Date(Number(amount[0]) / 1000000).toLocaleTimeString()}
                           </Td>
                           <Td fontWeight="semibold">
-                            Rebonded down to {secondsToDays(infos[x].unbonding_period)} days
+                            {t("pool.rebondedDownTo")} {secondsToDays(infos[x].unbonding_period)}{" "}
+                            {t("time.days")}
                           </Td>
                         </Tr>
                       );
@@ -95,7 +97,7 @@ export default function PendingBoundingsTable(props: PendingBoundingsTableOption
             {!hasAnyRebondings && (
               <Tr>
                 <Td fontWeight="semibold" colSpan={4}>
-                  You currently have no pending rebondings.
+                  {t("pool.currentlyNoRebondings")}
                 </Td>
               </Tr>
             )}

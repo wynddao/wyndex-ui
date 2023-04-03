@@ -26,7 +26,7 @@ import { renderUnboundingText } from "../../../../../utils/text";
 import { secondsToDays } from "../../../../../utils/time";
 import { amountToMicroamount, microamountToAmount } from "../../../../../utils/tokens";
 import RadioCard from "../../../../General/RadioCard";
-
+import { useTranslation } from "i18next-ssg";
 interface ManageBoundingsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -52,6 +52,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
     },
     defaultValue: selectedMode,
   });
+  const { t } = useTranslation("common");
   const { nextStep, prevStep, setStep, reset, activeStep } = useSteps({
     initialStep: 0,
   });
@@ -75,7 +76,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
     return (
       <Flex flexDirection="column" justifyContent="center" alignItems="center">
         <Text align="center" marginTop={5} marginBottom={2} fontSize="xl">
-          What do you want to do?
+          {t("stake.whatDoYouWantToDo")}
         </Text>
         <VStack marginBottom={5} {...group}>
           {mode.map((value) => {
@@ -132,7 +133,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
             mb={2}
           >
             <Text fontWeight="medium" textAlign="center">
-              Available&nbsp;
+              {t("general.available")} &nbsp;
               <Text as="span" color={"wynd.cyan.700"}></Text>
               <strong>{maxAmount}</strong>
             </Text>
@@ -165,16 +166,19 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
       case "unstake":
         return (
           <Text fontSize="large">
-            You{"'"}re about to unbond {amount || "0"} {tokenInfo.tokenSymbol}!
+            {t("stake.youreAboutToUnstake")} {amount || "0"} {tokenInfo.tokenSymbol}!
           </Text>
         );
       case "bondDown":
         return (
           <Stack>
             <p>
-              You{"'"}re about to rebond {amount || "0"} {tokenInfo.tokenSymbol} from a duration of{" "}
-              {secondsToDays(stake.unbonding_period)} days to a lower duration of{" "}
-              {secondsToDays(lowerDuration?.unbonding_period ?? 0)} days!
+              {t("aboutToRebondFromLowerToHigher", {
+                amount: amount || "0",
+                tokenSymbol: tokenInfo.tokenSymbol,
+                fromDuration: secondsToDays(stake.unbonding_period),
+                toDuration: secondsToDays(lowerDuration?.unbonding_period ?? 0),
+              })}
             </p>
             <p>
               If executed, this means that your liquidity will take a minimum of{" "}
@@ -187,9 +191,11 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
         return (
           <Stack>
             <p>
-              You{"'"}re about to rebond {amount || "0"} {tokenInfo.tokenSymbol} from a duration of{" "}
-              {secondsToDays(stake.unbonding_period)} days to a higher duration of {/* @ts-ignore */}
-              {secondsToDays(higherDuration?.unbonding_period)} days!
+              {t("aboutToRebondFromHigherToLower", {
+                tokenSymbol: tokenInfo.tokenSymbol,
+                fromDuration: secondsToDays(stake.unbonding_period),
+                toDuration: secondsToDays(lowerDuration?.unbonding_period ?? 0),
+              })}
             </p>
             <p>
               If executed, this means that your liquidity will take a minimum of{" "}
@@ -287,7 +293,7 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
     >
       <ModalOverlay />
       <ModalContent h={450} bgColor="wynd.base.subBg">
-        <ModalHeader>Manage Bonding</ModalHeader>
+        <ModalHeader>{t("stake.manageBonding")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Suspense fallback={<p>Loading...</p>}>
@@ -302,13 +308,13 @@ export default function ManageStakeModal(props: ManageBoundingsModalProps) {
               {activeStep === steps.length ? (
                 <Flex p={4}>
                   <Button mx="auto" size="sm" onClick={reset}>
-                    Reset
+                    {t("stake.reset")}
                   </Button>
                 </Flex>
               ) : (
                 <Flex width="100%" position={"absolute"} right={6} bottom={5} justify="flex-end">
                   <Button isDisabled={activeStep === 0} mr={4} onClick={prevStep} size="sm" variant="ghost">
-                    Prev
+                    {t("stake.prev")}
                   </Button>
                   <Button
                     size="sm"

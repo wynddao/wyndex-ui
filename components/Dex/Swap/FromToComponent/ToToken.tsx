@@ -8,7 +8,7 @@ import { getAmountByPrice } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
 import { lsdEntries } from "../../../Lsd/Overview";
 import AssetSelector from "./AssetSelector";
-
+import { useTranslation } from "i18next-ssg";
 interface IProps {
   fromToken: Asset;
   toToken: Asset;
@@ -52,7 +52,7 @@ const ToToken: React.FC<IProps> = ({
   console.log(priceTo, priceFrom);
 
   const impact = 100 - (priceFrom / priceTo) * 100;
-
+  const { t } = useTranslation("common");
   return (
     <Box flex="1">
       <Box
@@ -66,7 +66,7 @@ const ToToken: React.FC<IProps> = ({
         justifyContent="end"
       >
         <Text fontWeight="bold" fontSize={{ base: "lg", lg: "xl" }} textAlign="left">
-          To
+          {t("swap.to")}
         </Text>
         <Flex justifyContent="space-between" alignItems="center">
           <AssetSelector selectedAsset={toToken} setAsset={setToToken} hiddenTokens={[fromToken, toToken]} />

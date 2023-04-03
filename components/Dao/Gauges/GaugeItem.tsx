@@ -5,20 +5,21 @@ import { useRecoilState } from "recoil";
 import { useGaugeConfigs } from "../../../state";
 import { GaugeResponse } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { DailyReward, gaugesDailyRewardsAtom } from "../../../state/recoil/atoms/gauges";
-import { expirationAtTimeToSecondsFromNow, secondsToDays, secondsToWdhms } from "../../../utils/time";
+import { secondsToDays, secondsToWdhms } from "../../../utils/time";
 import { microamountToAmount } from "../../../utils/tokens";
 import TokenName from "../../Dex/TokenName";
+import { useTranslation } from "i18next-ssg";
 
 export const GaugeItem = ({ gauge }: { gauge: GaugeResponse }) => {
   const router = useRouter();
   const { config } = useGaugeConfigs(gauge.adapter);
   const isRewardGauge = config.hasOwnProperty("rewards_asset");
-  
+
   const handleRowClick = (gaugeId: number) => {
     router.push(`/gauges/${gaugeId}`);
   };
 
-
+  const { t } = useTranslation("common");
 
   const [gaugesDailyRewards, setGaugesDailyRewards] = useRecoilState(gaugesDailyRewardsAtom);
 
@@ -87,13 +88,15 @@ export const GaugeItem = ({ gauge }: { gauge: GaugeResponse }) => {
           </Text>
         </GridItem>
         <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
-          <Text fontSize="lg">{secondsToDays(gauge.epoch_size)} Days</Text>
+          <Text fontSize="lg">
+            {secondsToDays(gauge.epoch_size)} {t("time.days")}
+          </Text>
         </GridItem>
         <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
           <Text fontSize="lg">{gauge.title}</Text>
         </GridItem>
         <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
-          in {secondsToWdhms(gauge.next_epoch - Date.now() / 1000)}
+          {"in"} {secondsToWdhms(gauge.next_epoch - Date.now() / 1000)}
           <br />
         </GridItem>
       </Grid>
@@ -124,13 +127,15 @@ export const GaugeItem = ({ gauge }: { gauge: GaugeResponse }) => {
           <Text fontSize="lg">-</Text>
         </GridItem>
         <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
-          <Text fontSize="lg">{secondsToDays(gauge.epoch_size)} Days</Text>
+          <Text fontSize="lg">
+            {secondsToDays(gauge.epoch_size)} {t("time.days")}
+          </Text>
         </GridItem>
         <GridItem textAlign="start" gap={{ base: "2", lg: "4" }}>
           <Text fontSize="lg">{gauge.title}</Text>
         </GridItem>
         <GridItem textAlign="end" gap={{ base: "2", lg: "4" }}>
-          in {secondsToWdhms(gauge.next_epoch - Date.now() / 1000)}
+          {"in"} {secondsToWdhms(gauge.next_epoch - Date.now() / 1000)}
           <br />
         </GridItem>
       </Grid>
