@@ -69,11 +69,7 @@ const ToToken: React.FC<IProps> = ({
           To
         </Text>
         <Flex justifyContent="space-between" alignItems="center">
-          <AssetSelector
-            selectedAsset={toToken}
-            setAsset={setToToken}
-            hiddenTokens={[fromToken.name.toLowerCase(), toToken.name.toLowerCase()]}
-          />
+          <AssetSelector selectedAsset={toToken} setAsset={setToToken} hiddenTokens={[fromToken, toToken]} />
           <Flex flexFlow="column">
             <Flex alignItems="center" gap="0.5rem">
               <Flex position="relative">
