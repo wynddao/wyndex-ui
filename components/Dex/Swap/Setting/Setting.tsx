@@ -67,7 +67,7 @@ const Settings: React.FC<IProps> = ({ slippage, setSlippage }) => {
               Transaction Setting
             </Text>
             <Box fontWeight="semibold" color={"wynd.alpha.700"} mb={4} display="flex" alignItems="center">
-              Slippage tolerance&ensp;
+              Spread tolerance&ensp;
               <Icon as={BsExclamationCircleFill} color="wynd.cyan.600" />
             </Box>
             <Flex width="100%" justifyContent="space-between" gap={2}>
