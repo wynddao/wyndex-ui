@@ -9,7 +9,15 @@ import WithdrawIbcModal from "../components/Dex/WithdrawIbcModal";
 export default function Page() {
   return (
     <>
-      foo
+      <Head>
+        <title>WYND DEX</title>
+      </Head>
+
+      <Box p="4">
+        <AssetBalances />
+        <DepositIbcModal />
+        <WithdrawIbcModal />
+      </Box>
     </>
   );
 }
