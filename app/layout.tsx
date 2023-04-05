@@ -1,4 +1,3 @@
-import { AppProps } from "next/app";
 import Head from "next/head";
 import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
@@ -14,21 +13,17 @@ import Providers from "../providers/providers";
 import { STATUS_BAR, STATUS_TEXT, WYND_MAINTANANCE_MODE } from "../utils";
 import { Alert, AlertIcon } from "@chakra-ui/react";
 
-export default function RootLayout({ Component, pageProps }: AppProps) {
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
+export default function RootLayout({ children }: {children: React.ReactNode}) {
   if (WYND_MAINTANANCE_MODE) {
     return <Maintanance />;
   }
 
-  return isLoaded ? (
+  return (
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Frontend for WynDex" />
+        <link rel="icon" type="image/svg" href="/logo-gradient.svg"></link>
       </Head>
       <ErrorBoundary>
         <Providers>
@@ -40,15 +35,11 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
             </Alert>
           )}
           <Sidebar>
-            <Suspense fallback={<Loader />}>
-              <Component {...pageProps} />
-            </Suspense>
+            {children}
           </Sidebar>
           <ToSModal />
         </Providers>
       </ErrorBoundary>
     </>
-  ) : (
-    <Loader />
   );
 }
