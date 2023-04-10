@@ -275,7 +275,7 @@ export default function Pools() {
         >
           My Pools
         </Text>
-        {isWalletConnected ? (
+ {/*     {false ? (
           <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
         ) : (
           <Flex
@@ -304,6 +304,7 @@ export default function Pools() {
             </Button>
           </Flex>
         )}
+             */}
       </Box>
       {allAprs.length > 0 ? (
         <DataTable
