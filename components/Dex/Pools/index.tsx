@@ -68,6 +68,8 @@ export default function Pools() {
   const disabledPools = [
     "juno16xrz7kd26j0qmdg706qyesqs56g2f6dulplsajtl0t9z8frd8tfqsx2lkj",
     "juno1jtendlawm8rv96hnfuwn04y8uhwzp9epcxy5f0ms973pspueqcgsy3qzt0",
+    "juno10hw5a052a9jcmcgzx27ssyddf2unrk35ltfz3a7hl63hfd8e7dsqvfue4d",
+    "juno1z62rxfn9gh4wzndk48hfnfkmjca0f85j2cy77q68n2hyz7qdqcwq2jzjga",
   ];
 
   const [allAprs, setAllAprs] = useState<any[]>([]);
@@ -275,7 +277,7 @@ export default function Pools() {
         >
           My Pools
         </Text>
-        {isWalletConnected ? (
+ {/*     {false ? (
           <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
         ) : (
           <Flex
@@ -304,6 +306,7 @@ export default function Pools() {
             </Button>
           </Flex>
         )}
+             */}
       </Box>
       {allAprs.length > 0 ? (
         <DataTable

@@ -1,5 +1,5 @@
 export interface MsgType {
-  type: "execute" | "migrate" | unknown;
+  type: "create-pool" | "execute" | "migrate" | unknown;
   msg: string;
   msgBeautified: string;
   contract_addr: string;

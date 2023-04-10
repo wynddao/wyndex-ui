@@ -96,7 +96,7 @@ const FromToken: React.FC<IProps> = ({
           <AssetSelector
             selectedAsset={fromToken}
             setAsset={setFromToken}
-            hiddenTokens={[toToken.name.toLowerCase(), fromToken.name.toLowerCase()]}
+            hiddenTokens={[fromToken, toToken]}
           />
           <Flex flexFlow="column">
             <Flex alignItems="center" gap="0.5rem">
