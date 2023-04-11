@@ -14,7 +14,7 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValueLoadable } from "recoil";
@@ -28,16 +28,17 @@ import { amountToMicroamount } from "../../../utils/tokens";
 export default function DepositIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { txToast } = useToast();
-  const { address, currentWalletName } = useWallet();
+  const { address } = useChain("juno");
   const [depositIbcModalOpen, setDepositIbcModalOpen] = useRecoilState(depositIbcModalAtom);
   const { refreshIbcBalances } = useIndexerInfos({ fetchIbcBalances: true });
 
-  const ibcSigningDataSelector = getIbcSigningDataSelector(
-    depositIbcModalOpen.chainId ?? "",
-    currentWalletName,
-  );
+
+
+
+  const ibcSigningDataSelector = getIbcSigningDataSelector(depositIbcModalOpen.chainId ?? "", address);
   const loadableIbcSigningData = useRecoilValueLoadable(ibcSigningDataSelector);
   const refreshIbcSigningData = useRecoilRefresher_UNSTABLE(ibcSigningDataSelector);
+
   const loadableTransferIbcData = useRecoilValueLoadable(
     getTransferIbcData({
       chainId: depositIbcModalOpen.chainId,
@@ -48,12 +49,8 @@ export default function DepositIbcModal() {
   );
 
   useEffect(() => {
-    if (currentWalletName === walletNames.keplr) {
-      window.addEventListener(keplrAccountChangeKey, refreshIbcSigningData);
-    } else {
-      window.removeEventListener(keplrAccountChangeKey, refreshIbcSigningData);
-    }
-  }, [currentWalletName, refreshIbcSigningData]);
+    window.addEventListener(keplrAccountChangeKey, refreshIbcSigningData);
+  }, [address, refreshIbcSigningData]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");

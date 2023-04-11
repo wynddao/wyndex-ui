@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useStakeInfos } from "../../../../state/hooks/useStakeInfos";
 import UnbondingsItem from "./UnbondingsItem";
 
@@ -15,7 +15,7 @@ interface UnboundingsGridProps {
 
 export default function UnboundingsGrid({ stakeAddress, apr }: UnboundingsGridProps) {
   const { infos } = useStakeInfos(stakeAddress);
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
 
   return (
     <>

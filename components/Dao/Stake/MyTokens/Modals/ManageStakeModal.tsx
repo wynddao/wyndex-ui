@@ -15,7 +15,7 @@ import {
   useRadioGroup,
   VStack,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { WyndexStakeHooks } from "../../../../../state";
@@ -39,7 +39,7 @@ interface ManageBoundingsModalProps {
 
 export default function ManageStakeModal(props: ManageBoundingsModalProps) {
   const { isOpen, onClose, tokenInfo, stake, higherDuration, lowerDuration, wyndexStakeAddress } = props;
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

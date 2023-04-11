@@ -1,9 +1,9 @@
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { WyndLsdHubSelectors } from "../../recoil";
 
 export const useLsdInfos = (lsdAddress: string) => {
-  const { address } = useWallet();
+  const { address } = useChain("juno");
   const config = useRecoilValue(
     WyndLsdHubSelectors.configSelector({
       contractAddress: lsdAddress,

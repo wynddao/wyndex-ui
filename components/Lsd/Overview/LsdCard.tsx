@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Divider, Flex, Grid, GridItem, Progress, Spinner, Text, Tooltip } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IoIosHelp } from "react-icons/io";

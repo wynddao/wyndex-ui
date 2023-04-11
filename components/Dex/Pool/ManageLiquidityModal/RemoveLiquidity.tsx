@@ -9,7 +9,7 @@ import {
   SliderTrack,
   Text,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
 import { startTransition, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
@@ -37,7 +37,7 @@ export default function RemoveLiquidity({
   const [removeValue, setRemoveValue] = useState(35);
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
 
   const assetASelector = getBalanceByAsset({

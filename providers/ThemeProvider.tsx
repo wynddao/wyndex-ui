@@ -33,12 +33,9 @@ const ThemeProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, switchTheme }}>
-      <ColorModeProvider>
-        <ChakraProvider cssVarsRoot="body" theme={themeConfig}>
-          <CSSReset />
-          <WrapperChackraUI>{children}</WrapperChackraUI>
-        </ChakraProvider>
-      </ColorModeProvider>
+      <ChakraProvider cssVarsRoot="body" theme={themeConfig}>
+        <WrapperChackraUI>{children}</WrapperChackraUI>
+      </ChakraProvider>
     </ThemeContext.Provider>
   );
 };

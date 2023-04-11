@@ -1,5 +1,5 @@
 import { Box, Divider, Flex, Grid, GridItem, Text, useBreakpointValue } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import Link from "next/link";
 import { useRecoilValue } from "recoil";
 import { useCw20UserInfos, usePairInfos, usePoolInfos } from "../../../state";
@@ -60,7 +60,7 @@ function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
   const assetInfo = [chainData.assets[0].info, chainData.assets[1].info];
   const { pair: pairData } = usePairInfos(assetInfo);
   const wyndexStake = pairData.staking_addr;
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress || "");
 
   // Calculate total share in USD

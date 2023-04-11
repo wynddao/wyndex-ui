@@ -13,7 +13,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { Coin } from "cosmwasm";
 import { startTransition, useCallback, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
@@ -80,7 +80,7 @@ export default function AddLiquidity({
     };
   });
 
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
 

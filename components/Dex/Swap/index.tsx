@@ -1,5 +1,5 @@
 import { Box, Button, Collapse, Flex, Icon, Image, keyframes, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain, useWallet } from "@cosmos-kit/react";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
 import React, { startTransition, useMemo, useState } from "react";
@@ -29,7 +29,7 @@ const spin = keyframes`
 `;
 
 const Swap: React.FC = () => {
-  const { address: walletAddress, connect, isWalletConnected } = useWallet();
+  const { address: walletAddress, connect, isWalletConnected } = useChain("juno");
   const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
   const { txToast, isTxLoading } = useToast();
 

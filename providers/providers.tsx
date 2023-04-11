@@ -4,7 +4,7 @@ import { MainWalletBase, SignerOptions } from "@cosmos-kit/core";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr";
 import { wallets as leapwallets } from "@cosmos-kit/leap-extension";
-import { WalletProvider } from "@cosmos-kit/react";
+import { ChainProvider } from "@cosmos-kit/react";
 import { assets, chains } from "chain-registry";
 import { GasPrice } from "cosmwasm";
 import { RecoilRoot } from "recoil";
@@ -56,31 +56,21 @@ const signerOptions = {
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CacheProvider>
-      <ThemeProvider>
-        <ColorModeScript initialColorMode={darkTheme.config.initialColorMode} />
-        <RecoilRoot>
-          <WalletProvider
-            chains={[...chains, junoTestnet]}
-            assetLists={[...assets, junoAssets]}
-            //! FIXME type missmatch, try fixing after updating all @cosmos-kit
-            // @ts-ignore
-            wallets={[
-              ...keplrWallets,
-              ...(leapwallets as unknown as MainWalletBase[]),
-              ...cosmostationWallets,
-            ]}
-            signerOptions={signerOptions}
-            endpointOptions={{
-              junotestnet1: {
-                rpc: ["https://rpc.uni.juno.deuslabs.fi/"],
-                rest: ["https://juno-testnet-api.polkachu.com/"],
-              },
-            }}
-          >
-            <InnerWalletProvider>{children}</InnerWalletProvider>
-          </WalletProvider>
-        </RecoilRoot>
-      </ThemeProvider>
+      <RecoilRoot>
+        <ChainProvider
+          walletConnectOptions={undefined}
+          chains={[...chains, junoTestnet]}
+          assetLists={[...assets, junoAssets]}
+          //! FIXME type missmatch, try fixing after updating all @cosmos-kit
+          // @ts-ignore
+          wallets={[...keplrWallets, ...(leapwallets as unknown as MainWalletBase[]), ...cosmostationWallets]}
+          signerOptions={signerOptions}
+        >
+          <InnerWalletProvider>
+            <ThemeProvider>{children} </ThemeProvider>
+          </InnerWalletProvider>
+        </ChainProvider>
+      </RecoilRoot>
     </CacheProvider>
   );
 }

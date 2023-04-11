@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ export interface AssetsRecap {
 }
 
 export default function AssetsRecapGallery() {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const [totalAvailableRewardValue, setTotalAvailableRewardValue] = useState<{
     priceInJuno: number;
     priceInUsd: number;
