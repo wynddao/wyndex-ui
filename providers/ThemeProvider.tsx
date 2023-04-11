@@ -50,12 +50,8 @@ export const useTheme = () => {
 export default ThemeProvider;
 
 const WrapperChackraUI: React.FC<PropsWithChildren> = ({ children }) => {
-  const { theme } = useTheme();
-  const { setColorMode } = useColorMode();
 
-  useEffect(() => {
-    setColorMode(theme);
-  }, [theme, setColorMode]);
+
 
   return <>{children}</>;
 };

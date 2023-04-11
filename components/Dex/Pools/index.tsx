@@ -1,3 +1,4 @@
+"use client";
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { createColumnHelper, FilterFn, SortingFn } from "@tanstack/react-table";

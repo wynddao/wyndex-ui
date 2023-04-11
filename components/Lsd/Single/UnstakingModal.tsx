@@ -1,3 +1,4 @@
+"use client";;
 import {
   Box,
   Button,
@@ -29,9 +30,8 @@ import {
 import { Coin } from "@cosmjs/stargate";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult, StdFee } from "cosmwasm";
-import { startTransition, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { BsPatchCheckFill } from "react-icons/bs";
-import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { useToast } from "../../../state";
 import { Claim } from "../../../state/clients/types/WyndLsdHub.types";
 import { microamountToAmount } from "../../../utils/tokens";

@@ -1,12 +1,13 @@
-import { Box, Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+"use client";
+
+import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { ExecuteResult } from "cosmwasm";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
-import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../../utils";
 import { getAssetInfoDetails, RequestAssetPrice } from "../../../utils/assets";
@@ -123,7 +124,12 @@ export default function AssetsRecapGallery() {
         <Grid
           gap={8}
           p={3}
-          templateColumns={{ base: "repeat(1, 1fr)", sm:"repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
         >
           <Flex
             bg="rgba(0, 0, 0, 0.7)"

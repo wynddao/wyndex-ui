@@ -10,6 +10,13 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.css$/i,
+      use: ["style-loader", "css-loader"],
+    });
+    return config;
+  },
 };
 
 module.exports = withTM(nextConfig);

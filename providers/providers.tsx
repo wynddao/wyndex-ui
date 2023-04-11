@@ -1,3 +1,4 @@
+"use client";
 import { Chain } from "@chain-registry/types";
 import { MainWalletBase, SignerOptions } from "@cosmos-kit/core";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";

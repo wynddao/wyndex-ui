@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Divider, Flex, Grid, GridItem, Progress, Spinner, Text, Tooltip } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import Link from "next/link";
@@ -35,11 +37,11 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
 
   const [apy, setAPY] = useState<number | undefined>(undefined);
 
-  const totalJunoSupply = Number(exchange_rate) * Number(totalSupply)
+  const totalJunoSupply = Number(exchange_rate) * Number(totalSupply);
 
   const unstakedRatio =
     Number(supply.total_bonded) > 0 && Number(exchange_rate) * Number(totalSupply) > 0
-      ? 100 / totalJunoSupply * Number(supply.total_bonded)
+      ? (100 / totalJunoSupply) * Number(supply.total_bonded)
       : 1;
 
   // Calculate JUNO APR

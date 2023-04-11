@@ -1,3 +1,4 @@
+"use client";
 import { Box, Button, Divider, Flex, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Suspense, useEffect } from "react";

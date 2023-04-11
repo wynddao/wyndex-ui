@@ -1,3 +1,4 @@
+"use client";
 import { Box, Button, Flex, Grid, GridItem, Input, Text, Textarea } from "@chakra-ui/react";
 import { useState } from "react";
 import { AiOutlinePlusSquare } from "react-icons/ai";

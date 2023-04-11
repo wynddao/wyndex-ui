@@ -1,3 +1,4 @@
+"use client";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
 export const CreateProposalHeader = () => {

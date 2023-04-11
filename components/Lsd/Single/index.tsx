@@ -1,4 +1,5 @@
-import { Text, Flex, Heading, Box, Grid, GridItem, Button, Input } from "@chakra-ui/react";
+"use client";
+import { Text, Flex, Box, Grid, GridItem, Button, Input } from "@chakra-ui/react";
 import { useWallet } from "@cosmos-kit/react";
 import { Coin, ExecuteResult } from "cosmwasm";
 import { useState } from "react";
@@ -15,7 +16,6 @@ import {
   Cw20Hooks,
 } from "../../../state";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
-import { FEE_DENOM } from "../../../utils";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getAssetList } from "../../../utils/getAssetList";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";

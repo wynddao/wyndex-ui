@@ -1,3 +1,4 @@
+"use client";
 import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
 import { assetList } from "@wynddao/asset-list";
 import { useEffect, useState } from "react";

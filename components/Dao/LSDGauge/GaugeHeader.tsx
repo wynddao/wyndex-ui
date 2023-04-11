@@ -1,11 +1,10 @@
+"use client";
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { BsChevronLeft } from "react-icons/bs";
 import { useGaugeConfigs } from "../../../state";
 import { GaugeResponse } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { secondsToDays, secondsToWdhms } from "../../../utils/time";
-import { microamountToAmount } from "../../../utils/tokens";
-import TokenName from "../../Dex/TokenName";
 
 export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
   const router = useRouter();
