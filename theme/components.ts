@@ -11,4 +11,14 @@ export const components = {
       },
     },
   },
+  Button: {
+    variants: {
+      solid: {
+        bgColor: "wynd.base.sidebar",
+        _hover: {
+          bgColor: "wynd.base.sidebar",
+        },
+      },
+    },
+  },
 };

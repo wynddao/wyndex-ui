@@ -1,6 +1,5 @@
-"use client";
+"use client";;
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useSingleProposalInfo } from "../../../state/hooks/proposal/useSingleProposalInfo";
 import { ProposalComponent } from "../../../components/Dao/Proposal";
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";

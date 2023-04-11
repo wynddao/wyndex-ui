@@ -1,7 +1,5 @@
-"use client";
+"use client";;
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { GetStaticPaths, GetStaticPropsContext } from "next";
 import { Box } from "@chakra-ui/react";
 import { LsdSingle } from "../../../components/Lsd/Single";
 

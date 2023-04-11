@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Loader from "../components/General/Loader";

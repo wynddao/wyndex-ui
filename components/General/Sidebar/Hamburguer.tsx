@@ -3,7 +3,6 @@
 import { Box, CloseButton, Flex, FlexProps, IconButton, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import { FiMenu } from "react-icons/fi";
-import { ThemeModes, useTheme } from "../../../providers/ThemeProvider";
 import wyndLogoBlack from "../../../public/logo-black.svg";
 import wyndLogoWhite from "../../../public/logo-white.svg";
 
@@ -14,8 +13,6 @@ interface MobileProps extends FlexProps {
 }
 
 export default function Hamburguer({ onOpen, onClose, isOpen, ...restProps }: MobileProps) {
-  const { theme } = useTheme();
-
   const toggle = () => {
     isOpen ? onClose() : onOpen();
   };
@@ -37,7 +34,7 @@ export default function Hamburguer({ onOpen, onClose, isOpen, ...restProps }: Mo
       <Flex justifyItems="start" alignItems="center" gap="4">
         <Image
           alt="Wynd logo"
-          src={theme === ThemeModes.dark ? wyndLogoWhite : wyndLogoBlack}
+          src={wyndLogoWhite}
           sizes="100vw"
           style={{ width: "100%", height: "auto", maxWidth: 128, maxHeight: 38 }}
         />
