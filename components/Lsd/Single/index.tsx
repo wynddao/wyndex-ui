@@ -16,6 +16,7 @@ import {
 } from "../../../state";
 
 import { useBond } from "../../../state/hooks/clients/WyndexBondRouter";
+import { BOND_ROUTER_ADDRESS } from "../../../utils";
 
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { FEE_DENOM } from "../../../utils";
@@ -68,7 +69,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
 
   // Bond, Claim & Withdraw hooks
   const doBond = useBond({
-    contractAddress: lsdContract,
+    contractAddress: BOND_ROUTER_ADDRESS,
     sender: walletAddress || "",
   });
   const doWithdraw = Cw20Hooks.useSend({
