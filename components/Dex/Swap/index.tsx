@@ -109,7 +109,15 @@ const Swap: React.FC = () => {
     }
 
     if(fromToken.denom === "ujuno" && toToken.denom === "uwyjuno") {
-      //return bond()
+      return bond("auto", undefined, [
+        {
+          amount: fromTokenAmount
+            ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+            : fromTokenSimulated.amount,
+          // @ts-ignore
+          denom: fromToken.denom,
+        }
+      ])
     }
 
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
