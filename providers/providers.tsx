@@ -13,6 +13,7 @@ import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/c
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
 import { darkTheme } from "../theme";
+import ThemeProvider from "./ThemeProvider";
 
 // construct signer options
 const signerOptions = {
@@ -56,7 +57,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   console.log(darkTheme.config.initialColorMode);
   return (
     <CacheProvider>
-      <ChakraProvider theme={darkTheme}>
+      <ThemeProvider>
         <ColorModeScript initialColorMode={darkTheme.config.initialColorMode} />
         <RecoilRoot>
           <WalletProvider
@@ -80,7 +81,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             <InnerWalletProvider>{children}</InnerWalletProvider>
           </WalletProvider>
         </RecoilRoot>
-      </ChakraProvider>
+      </ThemeProvider>
     </CacheProvider>
   );
 }
