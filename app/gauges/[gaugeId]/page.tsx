@@ -6,9 +6,14 @@ import { LSDGauge } from "../../../components/Dao/LSDGauge";
 import { PoolGauge } from "../../../components/Dao/PoolGauge";
 import { useGaugeAdapter, useGaugeConfigs } from "../../../state";
 
-export default function Page() {
-  const router = useRouter();
-  const { gaugeId } = router.query;
+interface GaugePageProps {
+  readonly params: {
+    readonly gaugeId: string;
+  };
+}
+
+export default function Page({ params }: GaugePageProps) {
+  const { gaugeId } = params;
   const { options, gauge, refresh_votes } = useGaugeAdapter(Number(gaugeId));
   const { config } = useGaugeConfigs(gauge.adapter);
   const isRewardGauge = config.hasOwnProperty("rewards_asset");
