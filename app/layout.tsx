@@ -8,23 +8,32 @@ import Providers from "../providers/providers";
 import "@splidejs/splide/css/sea-green";
 import { usePathname } from "next/navigation";
 
-const pageTitle = {
-  "/": "WYND DAO",
-  "/eth": "WYND DAO",
-  "/lsd": "WYND | Liquid Staking Derivatives",
-  "/pools": "WYND | DEX - Pool Overview",
-  "/swap": "WYND | DEX - Swap",
-  "/gauges": "WYND | DAO - Gauges",
-  "/stake": "WYND | DAO - Stakes",
-  "/vote": "WYND | DAO - Votes",
-  "/bridge": "WYND | DEX - Bridge",
+const getPageTitle = (path: string): string => {
+  const pathPart: string = path.match(/^\/[^\/]*/)?.[0] ?? "/";
+
+  switch (pathPart) {
+    case "/lsd":
+      return "WYND | Liquid Staking Derivatives - JUNO";
+    case "/pools":
+      return "WYND | DEX - Pool Overview";
+    case "/swap":
+      return "WYND | DEX - Swap";
+    case "/gauges":
+      return "WYND | DAO - Gauges";
+    case "/stake":
+      return "WYND | DAO - Stakes";
+    case "/vote":
+      return "WYND | DAO - Votes";
+    case "/bridge":
+      return "WYND | DEX - Bridge";
+    default:
+      return "WYND DAO";
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const path = usePathname();
-  const pathPart: string = path.match(/^\/[^\/]*/)?.[0] ?? "/";
-  console.log(pathPart);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -36,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>WYND DAO</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="utf-8" />
-        <meta name="description" content={pageTitle[pathPart]} />
+        <meta name="description" content={getPageTitle(path)} />
         <link rel="icon" type="image/svg" href="/logo-gradient.svg"></link>
       </head>
       <body>
