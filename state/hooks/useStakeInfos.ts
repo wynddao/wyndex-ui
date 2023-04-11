@@ -1,4 +1,4 @@
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import {
   AnnualizedReward,
@@ -21,7 +21,7 @@ export const useStakeInfos = (
   stakeContract: string,
   fetchPersonal: boolean = false,
 ): UseStakeInfosResponse => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
 
   const infos = useRecoilValue(
     WyndexStakeSelectors.bondingInfoSelector({

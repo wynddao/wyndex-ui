@@ -1,5 +1,5 @@
 import { Flex, Grid, GridItem, Progress, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useRouter } from "next/navigation";
 import { BsCheck2Circle, BsQuestionCircle, BsXCircle } from "react-icons/bs";
 import { useIndexerInfos } from "../../../state";
@@ -53,7 +53,7 @@ export const PropList = ({ limit }: { limit: number }) => {
     prefix: "B",
   };
 
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
 
   const propCount = useProposalCount(voteModule);
   const allProps = useListAllProposalInfos(voteModule, propCount - limit * 10, limit * 10).sort(

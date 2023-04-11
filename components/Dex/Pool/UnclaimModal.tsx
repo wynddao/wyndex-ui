@@ -9,7 +9,7 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { startTransition } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
 import {
@@ -42,7 +42,7 @@ export default function UnclaimModal({
   tokenInfo,
   pairData,
 }: UnclaimModalProps) {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
 
   const assetASelector = getBalanceByAsset({

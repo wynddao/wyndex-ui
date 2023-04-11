@@ -1,4 +1,4 @@
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { INDEXER_API_ENDPOINT } from "../../utils";
 import { RequestSwap } from "../clients/Indexer.client";
@@ -15,7 +15,7 @@ export const useIndexerInfos = ({
   fetchIbcBalances = false,
   fetchCw20Balances = false,
 }: UseIndexerInfosProps) => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
 
   const pools = useRecoilValue(
     fetchPoolData

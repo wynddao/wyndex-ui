@@ -1,4 +1,4 @@
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useRecoilValue } from "recoil";
 
 import { useAprInfos, useIndexerInfos, usePairInfos, useTokenInfo } from "../../../state";
@@ -23,7 +23,7 @@ interface PoolWrapperOptions {
 
 export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
   const assetInfo = [poolData.assets[0].info, poolData.assets[1].info];
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { pair } = usePairInfos(assetInfo);
   const ltokenInfo = useTokenInfo(pair.liquidity_token);
   const currency = useRecoilValue(currencyAtom);

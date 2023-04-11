@@ -1,5 +1,5 @@
 "use client";
-import { ChakraProvider, localStorageManager, useColorMode } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeProvider, useColorMode, CSSReset } from "@chakra-ui/react";
 import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from "react";
 import { darkTheme } from "../theme";
 import { useLocalStorage } from "react-use";

@@ -16,7 +16,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
 import { useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
@@ -59,7 +59,7 @@ export const PoolGauge = ({
   gauge: GaugeResponse;
   refreshVotes: () => void;
 }) => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { config } = useGaugeConfigs(gauge.adapter);
   const { pools, pairs, assetPrices } = useIndexerInfos({ fetchPoolData: true });
   const { vote: userVotes } = useUserVotes(gauge.id, walletAddress || "");

@@ -1,7 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import React, { Children, PropsWithChildren, useMemo, useRef, useState } from "react";
 import { Splide, SplideSlide, SplideTrack } from "@splidejs/react-splide";
-import "@splidejs/splide/css/sea-green";
 
 interface IProps {
   numOfSlides: number;

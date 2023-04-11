@@ -12,7 +12,7 @@ import {
   useClipboard,
   useRadioGroup,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { ExecuteResult } from "cosmwasm";
 import { useRouter } from "next/navigation";
@@ -68,7 +68,7 @@ export const ProposalComponent = ({
   refreshData: () => void;
   walletStakedPowerAtHeight: number;
 }) => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const totalVoted =
     Number(proposalResponse.votes.yes) +
     Number(proposalResponse.votes.no) +

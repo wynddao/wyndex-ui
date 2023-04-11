@@ -1,11 +1,11 @@
 import { Badge, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useIndexerInfos, useListAllProposalInfos } from "../../../state";
 import { useProposalCount } from "../../../state/hooks/proposal/useProposalCount";
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 
 export const UnvotedPropCount = ({ dashboard = false }: { dashboard?: boolean }) => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { userVotes } = useIndexerInfos({});
   const voteModule = {
     contractName: "CwProposalSingle",

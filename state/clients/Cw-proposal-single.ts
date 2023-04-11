@@ -582,13 +582,6 @@ export class CwProposalSingleClient extends CwProposalSingleQueryClient implemen
     memo?: string,
     funds?: readonly Coin[],
   ): Promise<ExecuteResult> => {
-    console.log({
-      propose: {
-        description,
-        msgs,
-        title,
-      },
-    });
     return await this.client.execute(
       this.sender,
       this.contractAddress,

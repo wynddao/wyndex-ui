@@ -21,7 +21,7 @@ import { MsgType } from "../Actions/types";
 import { Message } from "../Proposal/Message";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { CwProposalSingleHooks, useToast } from "../../../state";
 import { ExecuteResult } from "cosmwasm";
 
@@ -42,7 +42,7 @@ export const Preview = ({ msgs, title, description }: PreviewProps) => {
   const [testResults, setTestResults] = useState<any>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingTest, setLoadingTest] = useState<boolean>(false);
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { txToast } = useToast();
 
   const testMsgsInProp = async () => {
