@@ -1,14 +1,19 @@
-"use client";;
+"use client";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSingleProposalInfo } from "../../../state/hooks/proposal/useSingleProposalInfo";
 import { ProposalComponent } from "../../../components/Dao/Proposal";
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 
-const ProposalSingle = () => {
-  const router = useRouter();
+interface ProposalPageProps {
+  readonly params: {
+    readonly propId: string;
+  };
+}
+
+const ProposalSingle = ({ params }: ProposalPageProps) => {
   const votingModuleAddress = WYND_VOTE_MODULE_ADDRESS;
-  const { propId } = router.query;
+  const { propId } = params;
   const { proposalResponse, walletVote, refreshData, walletStakedPowerAtHeight } = useSingleProposalInfo(
     Number(propId),
     votingModuleAddress,
