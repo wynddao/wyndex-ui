@@ -1,5 +1,5 @@
 "use client";
-import { ChakraProvider, localStorageManager, useColorMode } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeProvider, useColorMode, CSSReset } from "@chakra-ui/react";
 import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from "react";
 import { darkTheme } from "../theme";
 import { useLocalStorage } from "react-use";
@@ -33,9 +33,12 @@ const ThemeProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, switchTheme }}>
-      <ChakraProvider cssVarsRoot="body" theme={themeConfig}>
-        <WrapperChackraUI>{children}</WrapperChackraUI>
-      </ChakraProvider>
+      <ColorModeProvider>
+        <ChakraProvider cssVarsRoot="body" theme={themeConfig}>
+          <CSSReset />
+          <WrapperChackraUI>{children}</WrapperChackraUI>
+        </ChakraProvider>
+      </ColorModeProvider>
     </ThemeContext.Provider>
   );
 };

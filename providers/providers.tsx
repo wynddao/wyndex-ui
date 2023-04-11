@@ -54,7 +54,6 @@ const signerOptions = {
 } as SignerOptions;
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  console.log(darkTheme.config.initialColorMode);
   return (
     <CacheProvider>
       <ThemeProvider>

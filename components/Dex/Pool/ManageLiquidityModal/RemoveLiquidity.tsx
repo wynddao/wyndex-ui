@@ -61,22 +61,6 @@ export default function RemoveLiquidity({
   const recieve = async () => {
     setLoading(true);
     await txToast(async (): Promise<ExecuteResult> => {
-      console.log(
-        `{"withdraw_liquidity": { "assets": ${JSON.stringify([
-          {
-            info: poolData.assets[0].info,
-            amount:
-              (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
-              Number(poolData.assets[0].amount),
-          },
-          {
-            info: poolData.assets[1].info,
-            amount:
-              (((removeValue / 100) * availableTokens) / Number(poolData.total_share)) *
-              Number(poolData.assets[1].amount),
-          },
-        ])} } }`,
-      );
       const result = await doSend({
         amount: ((removeValue / 100) * availableTokens).toFixed(0).toString(),
         msg: btoa(

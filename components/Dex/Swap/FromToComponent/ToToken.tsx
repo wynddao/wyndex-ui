@@ -49,8 +49,6 @@ const ToToken: React.FC<IProps> = ({
     ? Number(junoAssetPrice) * Number(wyJunoJunoExchangeRate) * Number(inputAmount)
     : priceTo;
 
-  console.log(priceTo, priceFrom);
-
   const impact = 100 - (priceFrom / priceTo) * 100;
 
   return (
