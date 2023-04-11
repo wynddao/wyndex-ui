@@ -9,9 +9,11 @@ import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../../state";
 import { useSend } from "../../../state/hooks/clients/Cw20";
 import { useExecuteSwapOperations } from "../../../state/hooks/clients/WyndexMultiHop";
+import { useBond } from "../../../state/hooks/clients/WyndexBondRouter";
 import { useReverseSimulateSwap } from "../../../state/hooks/useReverseSimulateSwap";
 import { useSimulateSwap } from "../../../state/hooks/useSimulateSwap";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../../utils";
+import { BOND_ROUTER_ADDRESS } from "../../../utils";
 import { getAssetInfo } from "../../../utils/assets";
 import { getAssetList } from "../../../utils/getAssetList";
 import { getRouteByOperations } from "../../../utils/getRouteByOperations";
@@ -81,6 +83,11 @@ const Swap: React.FC = () => {
     sender: walletAddress || "",
   });
 
+  const bond = useBond({
+    contractAddress: BOND_ROUTER_ADDRESS,
+    sender: walletAddress || "",
+  });
+
   const sendCW20 = useSend({
     contractAddress: (fromToken as CW20Asset).token_address || "",
     sender: walletAddress || "",
@@ -100,6 +107,11 @@ const Swap: React.FC = () => {
         ),
       });
     }
+
+    if(fromToken.denom === "ujuno" && toToken.denom === "uwyjuno") {
+      //return bond()
+    }
+
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
       {
         amount: fromTokenAmount
