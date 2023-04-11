@@ -89,7 +89,7 @@ const Rate: React.FC<IProps> = ({
         <Text>{formatCurrency(currency, totalFee.toString())}</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
+        <Text color={"wynd.neutral.500"}>Spread</Text>
         <Text>{minSlippage} %</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>

@@ -10,7 +10,6 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import { toBase64 } from "cosmwasm";
 import { useState } from "react";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { MsgType } from "../Actions/types";
@@ -62,6 +61,7 @@ export const CreateProposal = () => {
 
   const craftMsgRaw = (msg: MsgType) => {
     switch (msg.type) {
+      case "create-pool":
       case "execute": {
         return {
           wasm: {
@@ -108,7 +108,7 @@ export const CreateProposal = () => {
               <Alert status="warning">
                 <AlertIcon />
                 <Text fontWeight="bold">Warning: </Text>
-                <Text>{" "}You need to stake $WYND to create a proposal!</Text>
+                <Text> You need to stake $WYND to create a proposal!</Text>
               </Alert>
             </GridItem>
           )}

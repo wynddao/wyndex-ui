@@ -3,6 +3,7 @@ import { Box, Button, Flex } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useState } from "react";
 import { Custom, Execute, Migrate } from "../Actions";
+import { CreatePool } from "../Actions/CreatePool";
 import { MsgType } from "../Actions/types";
 
 export const ActionItem = ({
@@ -19,8 +20,9 @@ export const ActionItem = ({
   const [selected, setSelected] = useState<string | undefined>(undefined);
 
   const options = [
+    { value: "create-pool", label: "Create Pool" },
     { value: "execute", label: "Execute Contract" },
-    { value: "migrate", label: "Migrate Contract" }
+    { value: "migrate", label: "Migrate Contract" },
   ];
 
   const setMsg = (newMsg: MsgType) => {
@@ -31,6 +33,7 @@ export const ActionItem = ({
   };
 
   const ShowSelected = () => {
+    if (selected === "create-pool") return <CreatePool setMsg={setMsg} msg={msg} edit={true} />;
     if (selected === "execute") return <Execute setMsg={setMsg} msg={msg} edit={true} />;
     if (selected === "migrate") return <Migrate setMsg={setMsg} msg={msg} edit={true} />;
     if (selected === "custom") return <Custom msg={msg} edit={true} />;
