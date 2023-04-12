@@ -235,7 +235,6 @@ const Swap: React.FC = () => {
             Number(fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)) >
               Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
         }
-        bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
         margin={{ lg: "0 auto" }}
         _hover={{

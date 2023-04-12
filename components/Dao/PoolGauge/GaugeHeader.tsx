@@ -1,6 +1,6 @@
 "use client";
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { BsChevronLeft } from "react-icons/bs";
 import { useGaugeConfigs } from "../../../state";
 import { GaugeResponse } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";

@@ -12,8 +12,7 @@ import { InnerWalletProvider } from "../providers";
 import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/chaindata";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
-import { darkTheme } from "../theme";
-import ThemeProvider from "./ThemeProvider";
+import { baseTheme } from "../theme";
 
 // construct signer options
 const signerOptions = {
@@ -57,19 +56,24 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CacheProvider>
       <RecoilRoot>
-        <ChainProvider
-          walletConnectOptions={{ signClient: { projectId: "6ca336cce1340e77a03f54ccd2556067" } }}
-          chains={[...chains, junoTestnet]}
-          assetLists={[...assets, junoAssets]}
-          //! FIXME type missmatch, try fixing after updating all @cosmos-kit
-          // @ts-ignore
-          wallets={[...keplrWallets, ...(leapwallets as unknown as MainWalletBase[]), ...cosmostationWallets]}
-          signerOptions={signerOptions}
-        >
-          <InnerWalletProvider>
-            <ThemeProvider>{children} </ThemeProvider>
-          </InnerWalletProvider>
-        </ChainProvider>
+        <ChakraProvider theme={baseTheme}>
+          <ChainProvider
+            wrappedWithChakra={true}
+            walletConnectOptions={{ signClient: { projectId: "6ca336cce1340e77a03f54ccd2556067" } }}
+            chains={[...chains, junoTestnet]}
+            assetLists={[...assets, junoAssets]}
+            //! FIXME type missmatch, try fixing after updating all @cosmos-kit
+            // @ts-ignore
+            wallets={[
+              ...keplrWallets,
+              ...(leapwallets as unknown as MainWalletBase[]),
+              ...cosmostationWallets,
+            ]}
+            signerOptions={signerOptions}
+          >
+            <InnerWalletProvider>{children}</InnerWalletProvider>
+          </ChainProvider>
+        </ChakraProvider>
       </RecoilRoot>
     </CacheProvider>
   );

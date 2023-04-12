@@ -10,5 +10,5 @@ const config = {
   useSystemColorMode: false,
 };
 
-export const baseTheme = extendTheme({ breakpoints, styles, ...typography, components, config });
+export const baseTheme = extendTheme({ breakpoints, styles, ...typography, components, colors: darkColors });
 export const darkTheme = extendTheme({ ...baseTheme, colors: darkColors });
