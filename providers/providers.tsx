@@ -55,6 +55,7 @@ const signerOptions = {
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CacheProvider>
+      <ColorModeScript initialColorMode={"dark"} />
       <RecoilRoot>
         <ChakraProvider theme={baseTheme}>
           <ChainProvider
