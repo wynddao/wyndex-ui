@@ -1,7 +1,6 @@
 "use client";
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { LSDGauge } from "../../../components/Dao/LSDGauge";
 import { PoolGauge } from "../../../components/Dao/PoolGauge";
 import { useGaugeAdapter, useGaugeConfigs } from "../../../state";
