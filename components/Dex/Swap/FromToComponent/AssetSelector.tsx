@@ -10,93 +10,71 @@ import {
   List,
   ListItem,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Asset } from "@wynddao/asset-list";
-import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
-import { IoSearch } from "react-icons/io5";
+import React, { startTransition, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { getAssetList } from "../../../../utils/getAssetList";
+import { IoSearch } from "react-icons/io5";
+import { useClickAway } from "react-use";
 import { useIndexerInfos } from "../../../../state";
+import { getAssetList } from "../../../../utils/getAssetList";
 import { microamountToAmount } from "../../../../utils/tokens";
 
-interface IProps {
-  selectedAsset: Asset;
-  setAsset: (asset: Asset) => void;
-  hiddenTokens?: string[];
+interface AssetSelectorProps {
+  readonly selectedAsset: Asset;
+  readonly setAsset: (asset: Asset) => void;
+  readonly hiddenTokens: readonly Asset[];
 }
 
-const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens = [] }) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const filterRef = useRef<HTMLInputElement>(null);
-  const [filter, setFilter] = useState<string>("");
-  const dropdownRef = useRef(null);
-  const [isPending, startTransition] = useTransition();
+const AssetSelector: React.FC<AssetSelectorProps> = ({ selectedAsset, setAsset, hiddenTokens }) => {
+  const { isOpen, onToggle, onClose } = useDisclosure();
   const { ibcBalances, cw20Balances } = useIndexerInfos({ fetchIbcBalances: true, fetchCw20Balances: true });
-  const [assetsWithBalances, setAssetsWithBalances] = useState<(Asset & { balance: number })[]>([]);
 
-  useClickAway(dropdownRef, () => setOpen(false));
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLInputElement>(null);
+  const [filter, setFilter] = useState("");
 
-  const assets = useMemo(
-    () =>
-      getAssetList().tokens.filter(({ name }) => {
-        if (hiddenTokens.includes(name.toLowerCase())) return false;
-        return name.toLowerCase().includes(filter.toLowerCase());
-      }),
-    [filter, hiddenTokens],
-  );
-
-  const handlerAssetSelector = useCallback(() => {
-    if (!open) filterRef.current?.focus();
-    setOpen(!open);
-  }, [open, filterRef]);
+  useClickAway(dropdownRef, onClose);
 
   const changeAsset = (asset: Asset) => {
     startTransition(() => {
       setAsset(asset);
-      setOpen(false);
+      onClose();
     });
   };
 
-  useEffect(() => {
-    const assetWithBalances = assets.map((asset) => {
-      const balance =
-        asset.tags === "cw20"
-          ? cw20Balances.find((el) => el.address === asset.token_address)?.balance ?? 0
-          : ibcBalances.find((el) => el.denom === asset.juno_denom || el.denom === asset.denom)?.amount ?? 0;
+  const handlerAssetSelector = () => {
+    if (!isOpen) filterRef.current?.focus();
+    onToggle();
+  };
 
-      return { ...asset, balance: Number(balance) };
-    });
+  const assets = getAssetList().tokens;
+  const filteredAssets = assets.filter(({ name, symbol }) => {
+    if (
+      hiddenTokens.find(
+        (el) =>
+          el.name.toLowerCase().includes(name.toLowerCase()) ||
+          el.symbol.toLowerCase().includes(symbol.toLowerCase()),
+      )
+    ) {
+      return false;
+    }
 
-    assetWithBalances.sort((a, b) => (a.balance > b.balance ? -1 : 1));
-    setAssetsWithBalances(assetWithBalances);
-  }, [assets, cw20Balances, ibcBalances]);
-
-  const AssetsLi = assetsWithBalances.map((asset) => {
     return (
-      <ListItem
-        key={asset.name}
-        onClick={() => changeAsset(asset)}
-        p="0.5rem"
-        pr="1rem"
-        _hover={{ background: "whiteAlpha.200", cursor: "pointer" }}
-        borderRadius="lg"
-      >
-        <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
-          <Flex alignItems="center">
-            <Image alt={asset.name} src={asset.logoURI} w="2rem" h="2rem" />
-            <Text ml={2} fontWeight="bold" fontSize="md" textTransform="capitalize">
-              {asset.name.toLowerCase()}
-            </Text>
-          </Flex>
-          <Text ml={4} fontSize="xs" color="wynd.neutral.500">
-            {microamountToAmount(asset.balance, asset.decimals)}
-          </Text>
-        </Flex>
-      </ListItem>
+      name.toLowerCase().includes(filter.toLowerCase()) || symbol.toLowerCase().includes(filter.toLowerCase())
     );
   });
+  const assetsWithBalances = filteredAssets.map((asset) => {
+    const balance =
+      asset.tags === "cw20"
+        ? cw20Balances.find((el) => el.address === asset.token_address)?.balance || "0"
+        : ibcBalances.find((el) => el.denom === asset.juno_denom || el.denom === asset.denom)?.amount || "0";
+
+    return { ...asset, balance: microamountToAmount(balance, asset.decimals) };
+  });
+  const sortedAssets = assetsWithBalances.sort((a, b) => Number(b.balance) - Number(a.balance));
 
   return (
     <Box position="relative" ref={dropdownRef}>
@@ -110,7 +88,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
         variant="ghost"
         minH="4rem"
         minW="13rem"
-        bg={open ? "whiteAlpha.200" : "transparent"}
+        bg={isOpen ? "whiteAlpha.200" : "transparent"}
       >
         <Flex alignItems="center" justifyContent="center" gap="1rem">
           <Image alt={selectedAsset.name} src={selectedAsset.logoURI} w="2.5rem" h="2.5rem" />
@@ -123,7 +101,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
           w="1rem"
           h="1rem"
           color={"wynd.neutral.900"}
-          transform={open ? "rotate(180deg)" : ""}
+          transform={isOpen ? "rotate(180deg)" : ""}
           transition="all linear 0.2s"
         />
       </Button>
@@ -140,7 +118,7 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
         mt="0.5rem"
         width="150%"
         borderRadius="lg"
-        transform={open ? "scale(1)" : "scale(0)"}
+        transform={isOpen ? "scale(1)" : "scale(0)"}
         transition="all linear 0.2s"
         maxH="15rem"
         display="flex"
@@ -181,7 +159,28 @@ const AssetSelector: React.FC<IProps> = ({ selectedAsset, setAsset, hiddenTokens
           }}
           listStyleType="none"
         >
-          {AssetsLi}
+          {sortedAssets.map((asset) => (
+            <ListItem
+              key={asset.name}
+              onClick={() => changeAsset(asset)}
+              p="0.5rem"
+              pr="1rem"
+              _hover={{ background: "whiteAlpha.200", cursor: "pointer" }}
+              borderRadius="lg"
+            >
+              <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
+                <Flex alignItems="center">
+                  <Image alt={asset.name} src={asset.logoURI} w="2rem" h="2rem" />
+                  <Text ml={2} fontWeight="bold" fontSize="md" textTransform="capitalize">
+                    {asset.name.toLowerCase()}
+                  </Text>
+                </Flex>
+                <Text ml={4} fontSize="xs" color="wynd.neutral.500">
+                  {asset.balance}
+                </Text>
+              </Flex>
+            </ListItem>
+          ))}
         </List>
       </Box>
     </Box>

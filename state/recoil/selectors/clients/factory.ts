@@ -71,8 +71,14 @@ export const pairSelector = selectorFamily<
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
-      const client = get(queryClient(queryClientParams));
-      return await client.pair(...params);
+      try {
+        const client = get(queryClient(queryClientParams));
+        return await client.pair(...params);
+      } catch (e) {
+        console.log(params);
+        return {} as PairInfo;
+      }
+      return {} as PairInfo;
     },
 });
 export const pairsSelector = selectorFamily<

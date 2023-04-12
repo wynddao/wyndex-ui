@@ -1,22 +1,20 @@
-import React, { useRef, useState } from "react";
 import {
-  Button,
+  Box,
+  Flex,
   Icon,
   Popover,
   PopoverBody,
+  PopoverCloseButton,
   PopoverContent,
+  PopoverHeader,
   PopoverTrigger,
   Text,
   useDisclosure,
-  Box,
-  Flex,
-  PopoverHeader,
-  PopoverArrow,
-  PopoverCloseButton,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { useRef } from "react";
 import { AiFillSetting } from "react-icons/ai";
 import CurrencySwitcher from "./CurrencySwitcher";
-import { motion, useAnimation } from "framer-motion";
 
 const Settings: React.FC = () => {
   const { onToggle, onClose, isOpen } = useDisclosure();
@@ -28,7 +26,13 @@ const Settings: React.FC = () => {
 
   return (
     <>
-      <Popover isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef} placement="auto">
+      <Popover
+        isOpen={isOpen}
+        onClose={onClose}
+        initialFocusRef={initialFocusRef}
+        placement="auto"
+        matchWidth
+      >
         <PopoverTrigger>
           <Box
             as={motion.button}
@@ -53,10 +57,12 @@ const Settings: React.FC = () => {
             </Text>
           </Box>
         </PopoverTrigger>
-
         <PopoverContent
+          w="full"
+          maxW="200px"
           bg={"wynd.base.sidebar"}
           boxShadow="md"
+          marginInline="auto"
           className="swap-popover"
           border={{ base: "1px solid" }}
           borderColor={{ base: "whiteAlpha.300" }}
