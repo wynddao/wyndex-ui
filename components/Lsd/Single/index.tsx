@@ -15,6 +15,10 @@ import {
   useIndexerInfos,
   Cw20Hooks,
 } from "../../../state";
+
+import { useBond } from "../../../state/hooks/clients/WyndexBondRouter";
+import { BOND_ROUTER_ADDRESS } from "../../../utils";
+
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getAssetList } from "../../../utils/getAssetList";
@@ -64,8 +68,8 @@ export const LsdSingle = ({ id }: { id: string }) => {
   const [amount, setAmount] = useState<string | undefined>(undefined);
 
   // Bond, Claim & Withdraw hooks
-  const doBond = LsdHooks.useBond({
-    contractAddress: lsdContract,
+  const doBond = useBond({
+    contractAddress: BOND_ROUTER_ADDRESS,
     sender: walletAddress || "",
   });
   const doWithdraw = Cw20Hooks.useSend({
