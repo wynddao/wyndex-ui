@@ -10,7 +10,6 @@ export interface AprCalculated {
 }
 
 export const getAprForPool = async (poolAddress: string, assetPrices: any): Promise<AprCalculated[]> => {
-  console.log(assetPrices)
   const client = await CosmWasmClient.connect(CHAIN_RPC_ENDPOINT);
   const poolData  = await client.queryContractSmart(poolAddress, {
     pool: {},

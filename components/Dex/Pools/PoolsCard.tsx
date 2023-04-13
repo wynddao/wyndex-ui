@@ -23,7 +23,6 @@ interface PoolsCardProps {
 
 export default function PoolsCard({ poolsData, allPools, assetPrices, disabledPools }: PoolsCardProps) {
   const slides = useBreakpointValue({ base: 1, lg: 2, xl: 3, "2xl": 4, "4xl": 6 }) || 1;
-  console.log(2, poolsData)
   return (
     <Carousel numOfSlides={slides}>
       {[...poolsData].filter((el) => !disabledPools.includes(el.address)).map((pool, index) => (
@@ -61,7 +60,6 @@ function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
   const assetInfo = [chainData.assets[0].info, chainData.assets[1].info];
   const { pair: pairData } = usePairInfos(assetInfo);
   const wyndexStake = pairData.staking_addr;
-  console.log(pairData, pool)
   const { address: walletAddress } = useChain("juno");
   
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress || "");
