@@ -68,7 +68,7 @@ export default function AssetBalanceItem({ asset, toggleFav }: AssetBalanceItemP
         />
         <Text fontSize="lg">{asset.name}</Text>
         <Tooltip label={tooltipLabel} hasArrow={true} closeDelay={1000}>
-          <Badge as={Button} onClick={onCopy} rounded="md" fontSize="x-small" height="auto" p={2}>
+          <Badge bgColor={"wynd.gray.300"} color="white" as={Button} onClick={onCopy}  rounded="md" fontSize="x-small" height="auto" p={2}>
             <Flex alignItems="center" justifyContent="space-between">
               <Icon fontSize="xs" as={FiCopy} />
               <Text marginLeft={1}>{asset.tags}</Text>

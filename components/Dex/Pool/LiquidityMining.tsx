@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { Cw20Hooks } from "../../../state";
@@ -33,7 +33,7 @@ export default function LiquidityMining({ pairData, apr, pairNames }: LiquidityM
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { infos } = useStakeInfos(wyndexStake);
   const { refreshBondings } = useUserStakeInfos(wyndexStake, walletAddress || "");
   const stake = Cw20Hooks.useSend({

@@ -1,3 +1,4 @@
+"use client";
 import { Box, useRadio } from "@chakra-ui/react";
 import { capitalizeFirstLetter } from "../../../utils/text";
 

@@ -108,6 +108,23 @@ export const lightColors = {
 };
 
 export const darkColors = {
+  gray: {
+    cultured: "#EEEEEE",
+    900: "#F8F5FB",
+    800: "#F1ECF7",
+    700: "#DFD8E7",
+    600: "#C6BFD0",
+    500: "#A59EB1",
+    400: "#7F7398",
+    300: "#5D4F7F",
+    200: "#2A1E54",
+    100: "#0F0930",
+    alpha: {
+      10: "rgba(127, 115, 152, 0.1)",
+      20: "rgba(127, 115, 152, 0.2)",
+    },
+  },
+
   wynd: {
     green: {
       900: "#E5FCE6",

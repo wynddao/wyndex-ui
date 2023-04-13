@@ -1,5 +1,4 @@
 import { useTokenInfo } from "../../state";
-import { microdenomToDenom } from "../../utils/tokens";
 
 interface TokenNameProps {
   address: string;

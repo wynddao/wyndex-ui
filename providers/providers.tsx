@@ -1,14 +1,18 @@
+"use client";
 import { Chain } from "@chain-registry/types";
 import { MainWalletBase, SignerOptions } from "@cosmos-kit/core";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr";
 import { wallets as leapwallets } from "@cosmos-kit/leap-extension";
-import { WalletProvider } from "@cosmos-kit/react";
+import { ChainProvider } from "@cosmos-kit/react";
 import { assets, chains } from "chain-registry";
 import { GasPrice } from "cosmwasm";
 import { RecoilRoot } from "recoil";
-import { InnerWalletProvider, ThemeProvider } from "../providers";
+import { InnerWalletProvider } from "../providers";
 import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/chaindata";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import { CacheProvider } from "@chakra-ui/next-js";
+import { baseTheme } from "../theme";
 
 // construct signer options
 const signerOptions = {
@@ -50,25 +54,28 @@ const signerOptions = {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider>
+    <CacheProvider>
+      <ColorModeScript initialColorMode={"dark"} />
       <RecoilRoot>
-        <WalletProvider
-          chains={[...chains, junoTestnet]}
-          assetLists={[...assets, junoAssets]}
-          //! FIXME type missmatch, try fixing after updating all @cosmos-kit
-          // @ts-ignore
-          wallets={[...keplrWallets, ...(leapwallets as unknown as MainWalletBase[]), ...cosmostationWallets]}
-          signerOptions={signerOptions}
-          endpointOptions={{
-            junotestnet1: {
-              rpc: ["https://rpc.uni.juno.deuslabs.fi/"],
-              rest: ["https://juno-testnet-api.polkachu.com/"],
-            },
-          }}
-        >
-          <InnerWalletProvider>{children}</InnerWalletProvider>
-        </WalletProvider>
+        <ChakraProvider theme={baseTheme}>
+          <ChainProvider
+            wrappedWithChakra={true}
+            walletConnectOptions={{ signClient: { projectId: "6ca336cce1340e77a03f54ccd2556067" } }}
+            chains={[...chains, junoTestnet]}
+            assetLists={[...assets, junoAssets]}
+            //! FIXME type missmatch, try fixing after updating all @cosmos-kit
+            // @ts-ignore
+            wallets={[
+              ...keplrWallets,
+              ...(leapwallets as unknown as MainWalletBase[]),
+              ...cosmostationWallets,
+            ]}
+            signerOptions={signerOptions}
+          >
+            <InnerWalletProvider>{children}</InnerWalletProvider>
+          </ChainProvider>
+        </ChakraProvider>
       </RecoilRoot>
-    </ThemeProvider>
+    </CacheProvider>
   );
 }

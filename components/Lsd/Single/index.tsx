@@ -1,5 +1,6 @@
-import { Text, Flex, Heading, Box, Grid, GridItem, Button, Input } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+"use client";
+import { Text, Flex, Box, Grid, GridItem, Button, Input } from "@chakra-ui/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { Coin, ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { useLsdInfos } from "../../../state/hooks/lsd/useLsdInfos";
@@ -15,7 +16,6 @@ import {
   Cw20Hooks,
 } from "../../../state";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
-import { FEE_DENOM } from "../../../utils";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getAssetList } from "../../../utils/getAssetList";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
@@ -30,7 +30,7 @@ export const LsdSingle = ({ id }: { id: string }) => {
   const lsdContract = lsdEntry.contractAddr;
 
   // Wallet & LSD Infos
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { config, exchange_rate, supply, validatorSet, claims, refreshClaims } = useLsdInfos(lsdContract);
   const { balance: _balance, refreshBalance } = useCw20UserInfos(config.token_contract);
 

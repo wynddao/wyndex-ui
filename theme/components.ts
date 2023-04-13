@@ -8,6 +8,9 @@ export const components = {
     baseStyle: {
       dialog: {
         bgColor: "wynd.base.subBg",
+        _dark: {
+          bgColor: "wynd.base.subBg",
+        },
       },
     },
   },

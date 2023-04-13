@@ -1,4 +1,5 @@
-import { Box, Flex, Image } from "@chakra-ui/react";
+"use client";
+import { Box, Flex } from "@chakra-ui/react";
 
 export default function Loader() {
   return (

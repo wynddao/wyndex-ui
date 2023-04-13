@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Text, Tooltip } from "@chakra-ui/react";
-import { IoIosHelp, IoIosHelpCircleOutline } from "react-icons/io";
+import { IoIosHelp } from "react-icons/io";
 import { useRecoilValue } from "recoil";
 import { useIndexerInfos, useTokenInfo } from "../../../state";
 import { Supply } from "../../../state/clients/types/WyndLsdHub.types";

@@ -1,6 +1,6 @@
 "use client";;
 import { Box, Button, Collapse, Flex, Icon, SimpleGrid, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { useCw20UserInfos } from "../../../state";
@@ -17,7 +17,7 @@ interface PoolCatalystProps {
 }
 
 export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps) {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const wyndexStake = pairData.staking_addr;
 
   const [show, setShow] = useState<boolean>(true);

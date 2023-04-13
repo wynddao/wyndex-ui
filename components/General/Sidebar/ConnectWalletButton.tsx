@@ -1,5 +1,6 @@
+"use client";
 import { Box, Button, Divider, Flex, Icon, Text, Tooltip, useClipboard } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain, useModalTheme, useWallet } from "@cosmos-kit/react";
 import { Suspense, useEffect } from "react";
 import { FiCopy, FiCreditCard } from "react-icons/fi";
 import { VscDebugDisconnect } from "react-icons/vsc";
@@ -11,11 +12,9 @@ import { microamountToAmount } from "../../../utils/tokens";
 
 export default function ConnectWalletButton() {
   const { onCopy, hasCopied, setValue } = useClipboard("");
-  const { address, openView, isWalletConnected, username, disconnect, currentChainRecord } = useWallet();
-
-  const loadableBalance = useRecoilValueLoadable(
-    coinByDenomSelector({ address, serializedChainRecord: JSON.stringify(currentChainRecord) }),
-  );
+  const { address, openView, isWalletConnected, username, disconnect } = useChain("juno");
+  const { setModalTheme } = useModalTheme();
+  setModalTheme("dark");
 
   const loadableCw20Balance = useRecoilValueLoadable(
     cw20BalancesSelector({ apiUrl: INDEXER_API_ENDPOINT, params: [address] }),
@@ -27,7 +26,7 @@ export default function ConnectWalletButton() {
 
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
-      {isWalletConnected && loadableBalance && loadableCw20Balance ? (
+      {isWalletConnected && loadableCw20Balance ? (
         <Button
           bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
           _hover={{
@@ -54,14 +53,8 @@ export default function ConnectWalletButton() {
                   <Text fontSize="lg" textAlign="left">
                     {username}
                   </Text>
-                  <Divider borderBottomWidth="3px" />
-                  <Text fontSize="sm">
-                    {loadableBalance.state === "hasValue"
-                      ? `${Number(loadableBalance.contents.amount).toFixed(2)} ${
-                          loadableBalance.contents.denom
-                        }`
-                      : "0"}{" "}
-                  </Text>
+                  <Divider borderBottomWidth="1px" />
+                  <Text fontSize="sm"></Text>
                   <Text fontSize="sm">
                     {" "}
                     {loadableCw20Balance.state === "hasValue"

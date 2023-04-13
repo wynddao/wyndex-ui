@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { constSelector, useRecoilValue, useSetRecoilState } from "recoil";
 
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { DAO_ADDRESS, DAO_DIST_ADDRESS, DAO_STAKING_ADDRESS, WYND_TOKEN_ADDRESS } from "../../utils";
 import { Claim, StakedResponse } from "../clients/types/WyndexStake.types";
 import {
@@ -72,7 +72,7 @@ export const useDaoStakingInfos = ({
   fetchTotalStakedValue = false,
   fetchWalletStakedValue = false,
 }: UseStakingInfoOptions = {}): WyndUseStakingInfoResponse => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const stakingContractAddress = DAO_STAKING_ADDRESS;
   const distributionContractAddress = DAO_DIST_ADDRESS;
   const governanceTokenAddress = WYND_TOKEN_ADDRESS;

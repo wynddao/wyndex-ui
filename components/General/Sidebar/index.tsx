@@ -1,5 +1,6 @@
+"use client";
 import { Box, Drawer, DrawerContent, Flex, useDisclosure, useMediaQuery } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain, useWallet } from "@cosmos-kit/react";
 import { useEffect } from "react";
 import { CHAIN_NAME } from "../../../utils";
 import Hamburguer from "./Hamburguer";
@@ -11,12 +12,8 @@ interface SidebarProps {
 
 export default function Sidebar({ children }: SidebarProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { setCurrentChain } = useWallet();
-  const [isMd] = useMediaQuery("(min-width: 48em)");
 
-  useEffect(() => {
-    setCurrentChain(CHAIN_NAME);
-  }, [setCurrentChain]);
+  const [isMd] = useMediaQuery("(min-width: 48em)");
 
   return (
     <Flex minH="100vh" bg={"wynd.base.subBg"} flexFlow={{ base: "column", md: "row" }}>

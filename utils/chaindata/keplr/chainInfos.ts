@@ -1,4 +1,4 @@
-import { KeplrClient } from "@cosmos-kit/keplr";
+import { KeplrClient } from "@cosmos-kit/keplr-extension";
 
 export type ChainInfo = Parameters<KeplrClient["client"]["experimentalSuggestChain"]>[0];
 

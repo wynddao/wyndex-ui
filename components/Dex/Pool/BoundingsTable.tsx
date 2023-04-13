@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useState } from "react";
 import { UseTokenNameResponse } from "../../../state";
 import { PairInfo } from "../../../state/clients/types/WyndexFactory.types";
@@ -27,7 +27,7 @@ export default function BoundingsTable({
   pairData,
 }: BoundingsTableProps) {
   const tableHeaders = ["Bonded Tier", "Current APR", "Amount", "Action"];
-  const { address } = useWallet();
+  const { address } = useChain("juno");
   const { infos } = useStakeInfos(stakeContract);
 
   //@ts-ignore

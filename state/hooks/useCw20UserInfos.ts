@@ -1,4 +1,4 @@
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { constSelector, useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { Cw20Selectors } from "../recoil";
 interface useCw20UserInfosResponse {
@@ -7,7 +7,7 @@ interface useCw20UserInfosResponse {
 }
 
 export const useCw20UserInfos = (cw20Address: string): useCw20UserInfosResponse => {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const balance = useRecoilValue(
     walletAddress
       ? Cw20Selectors.balanceSelector({

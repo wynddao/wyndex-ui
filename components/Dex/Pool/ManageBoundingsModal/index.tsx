@@ -15,7 +15,7 @@ import {
   useRadioGroup,
   VStack,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { startTransition, useEffect, useRef, useState } from "react";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
@@ -44,7 +44,7 @@ interface ManageBoundingsModalProps {
 export default function ManageBoundingsModal(props: ManageBoundingsModalProps) {
   const { isOpen, onClose, tokenInfo, stake, higherDuration, lowerDuration, wyndexStakeAddress, pairData } =
     props;
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const [selectedMode, setSelectedMode] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

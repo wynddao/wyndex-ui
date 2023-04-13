@@ -1,3 +1,4 @@
+"use client";
 import {
   Box,
   Button,
@@ -14,7 +15,7 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { Asset, IBCAsset } from "@wynddao/asset-list";
 import { useEffect, useState } from "react";
 import { RiArrowDownFill, RiArrowRightFill } from "react-icons/ri";
@@ -30,14 +31,11 @@ import { amountToMicroamount } from "../../../utils/tokens";
 export default function WithdrawIbcModal() {
   const icon = useBreakpointValue({ base: RiArrowDownFill, md: RiArrowRightFill });
   const { txToast } = useToast();
-  const { address, currentWalletName, getSigningStargateClient } = useWallet();
+  const { address, getSigningStargateClient } = useChain("juno");
   const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalAtom);
   const { refreshIbcBalances } = useIndexerInfos({});
 
-  const ibcSigningDataSelector = getIbcSigningDataSelector(
-    withdrawIbcModalOpen.chainId ?? "",
-    currentWalletName,
-  );
+  const ibcSigningDataSelector = getIbcSigningDataSelector(withdrawIbcModalOpen.chainId ?? "");
   const loadableIbcSigningData = useRecoilValueLoadable(ibcSigningDataSelector);
   const refreshIbcSigningData = useRecoilRefresher_UNSTABLE(ibcSigningDataSelector);
   const loadableTransferIbcData = useRecoilValueLoadable(
@@ -50,12 +48,8 @@ export default function WithdrawIbcModal() {
   );
 
   useEffect(() => {
-    if (currentWalletName === walletNames.keplr) {
-      window.addEventListener(keplrAccountChangeKey, refreshIbcSigningData);
-    } else {
-      window.removeEventListener(keplrAccountChangeKey, refreshIbcSigningData);
-    }
-  }, [currentWalletName, refreshIbcSigningData]);
+    window.addEventListener(keplrAccountChangeKey, refreshIbcSigningData);
+  }, [refreshIbcSigningData]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");

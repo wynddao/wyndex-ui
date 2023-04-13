@@ -1,3 +1,4 @@
+"use client";
 import {
   Accordion,
   AccordionButton,
@@ -14,7 +15,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import Head from "next/head";
 import { BorderedBox } from "../../components/Dao/Stake/MyTokens/BorderedBox";
 import ConnectWalletButton from "../../components/General/Sidebar/ConnectWalletButton";
@@ -27,7 +28,7 @@ const linkSx = {
 };
 
 export default function Page() {
-  const { address, currentWalletName } = useWallet();
+  const { address } = useChain("juno");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -112,7 +113,7 @@ export default function Page() {
                   </UnorderedList>
                   <Box mt={4}>
                     {address ? (
-                      <Text fontSize="xl">Connected to {currentWalletName}!</Text>
+                      <Text fontSize="xl">Connected!</Text>
                     ) : (
                       <Text fontSize="xl">Connect your wallet with the chosen extension</Text>
                     )}

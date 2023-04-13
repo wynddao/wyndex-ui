@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil";
 import { useIndexerInfos } from "../../../../state";
 import { SimulateSwapOperationsResponse } from "../../../../state/clients/types/WyndexMultiHop.types";
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
-import { getAssertPriceByAsset, getAssetPriceByCurrency, getDenom } from "../../../../utils/assets";
+import { getAssetPriceByCurrency, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
 import { getAssetList } from "../../../../utils/getAssetList";
 import { microamountToAmount } from "../../../../utils/tokens";
@@ -51,27 +51,7 @@ const Rate: React.FC<IProps> = ({
     return acc + price * Number(microamountToAmount(amount, decimals));
   }, 0);
 
-  const inputAssetAmount = inputFrom ?? microamountToAmount(simulatedOperation.amount, fromToken.decimals, 6);
-  const outputAssetAmount = inputTo ?? microamountToAmount(minimumReceived, toToken.decimals, 6);
-
-  const inputAssetPrice = getAssertPriceByAsset(currency, fromToken, assetPrices);
-  const outputAssetPrice = getAssertPriceByAsset(currency, toToken, assetPrices);
-
-  const inputAssetValue = inputAssetPrice * Number(inputAssetAmount);
-  const outputAssetValue = outputAssetPrice * Number(outputAssetAmount);
-
-  const slip = 1 - inputAssetValue / (outputAssetValue + totalFee);
-
-  const minSlippage =
-    slip > 0 ? (
-      <Text color="green">+{(slip * 100).toFixed(2)}%</Text>
-    ) : (
-      <Text color="red">{(slip * 100).toFixed(2)}%</Text>
-    );
-
-  //console.log(slip);
-
-  //const minSlippage = (Number(Number(simulatedOperation.spread).toFixed(4)) * 100).toFixed(2);
+  const minSlippage = (Number(Number(simulatedOperation.spread).toFixed(4)) * 100).toFixed(2);
 
   return (
     <Flex
@@ -109,8 +89,8 @@ const Rate: React.FC<IProps> = ({
         <Text>{formatCurrency(currency, totalFee.toString())}</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
-        <Text color={"wynd.neutral.500"}>Estimated Slippage</Text>
-        <Text>{minSlippage}</Text>
+        <Text color={"wynd.neutral.500"}>Spread</Text>
+        <Text>{minSlippage} %</Text>
       </Flex>
       <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
         <Text color={"wynd.neutral.500"}>Minimum Received Amount</Text>
