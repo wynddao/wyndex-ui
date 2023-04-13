@@ -275,7 +275,7 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
           My Pools
         </Text>
         {isWalletConnected ? (
-          <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
+          <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} disabledPools={disabledPools} />
         ) : (
           <Flex
             borderRadius="md"
