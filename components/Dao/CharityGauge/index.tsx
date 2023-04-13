@@ -24,7 +24,6 @@ import { GaugesHooks, useGaugeConfigs, useToast } from "../../../state";
 import { GaugeResponse, Vote } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { useUserVotes } from "../../../state/hooks/gauge/useUserVotes";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
-import { getAllValidators } from "../../../utils/chain";
 import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeHeader } from "./GaugeHeader";
@@ -41,7 +40,7 @@ export const CharityGauge = ({
   refreshVotes: () => void;
 }) => {
   const { address: walletAddress } = useWallet();
-  const { config } = useGaugeConfigs(gauge.adapter);
+  //const { config } = useGaugeConfigs(gauge.adapter);
 
   const { vote: userVotes } = useUserVotes(gauge.id, walletAddress || "");
   const { txToast } = useToast();
@@ -152,70 +151,22 @@ export const CharityGauge = ({
   };
 
   const getData = async () => {
-    const _allValidators =  [{
-      id: 1,
-      description: "Help kids in africa",
-      title: "UNICEF EU",
-    }, {
-      id: 2,
-      description: "Help kids in india",
-      title: "UNICEF EU",
-    }];
+    
+    setSumVotes(1337);
+    setAllValidators([{
+      description: 'africa kids',
+      votes: 15, 
+      commission: 0.5
+    }]);
 
-    const _allValidValidatorsWithOptionsSorted = options.map((option) => {
-      const validator = _allValidators.find((el: any) => el.operator_address === option[0])!;
-      return {
-        ...validator,
-        votes: option[1],
-      };
-    });
-    const _sumVotes = _allValidValidatorsWithOptionsSorted.reduce(
-      (accumulator, currentValue) => accumulator + Number(currentValue.votes),
-      0,
-    );
+    setAvailableValidators([{
+      description: 'africa kids',
+      votes: 15, 
+      commission: 0.5
+    }]);
 
-    const _allValidValidatorsWithOptions = _.shuffle(_allValidValidatorsWithOptionsSorted);
-
-    setSumVotes(_sumVotes);
-    setAllValidators(_allValidValidatorsWithOptions);
-    setSelectedValidator(_allValidValidatorsWithOptions[0]);
-
-    try {
-      if (userVotes) {
-        // Set current votes of user
-        const _predefinedVotes: any[] = userVotes.votes.map((vote) => {
-          return {
-            option: _allValidValidatorsWithOptions.find((el) => el.operator_address === vote.option)!,
-            votingWeight: (Number(vote.weight) * 100).toString(),
-          };
-        });
-        setSelectedVotes(_predefinedVotes);
-
-        // Remove those from available ones
-        const _availableValidators = [..._allValidValidatorsWithOptions].filter((el) => {
-          let check = true;
-
-          _predefinedVotes.map((ele) => {
-            if (ele.option.operator_address === el.operator_address) {
-              check = false;
-            }
-          });
-          return check;
-        });
-
-        setAvailableValidators(_availableValidators);
-
-        // Set chosen pool to something realistic
-        setSelectedValidator(_availableValidators[0]);
-      } else {
-        setAvailableValidators(_allValidValidatorsWithOptions);
-        setSelectedVotes([]);
-      }
-    } catch (e) {
-      // Nothing but
-      return;
-    }
-  };
+    setSelectedValidator(options[0]);
+  }
 
   useEffect(() => {
     getData();
@@ -254,7 +205,7 @@ export const CharityGauge = ({
                     vote.option && (
                       <Box key={i} mb={i === selectedVotes.length - 1 ? 0 : 3}>
                         <Flex justifyContent="space-between">
-                          <Flex align="center">{vote.option.description?.moniker}</Flex>
+                          <Flex align="center">{vote.option.description}</Flex>
                           <Flex alignItems="center">
                             <Text mr={3}>{vote.votingWeight} %</Text>
                             <Tooltip title="Remove from votes">
@@ -276,9 +227,9 @@ export const CharityGauge = ({
             <Box>
               <Text fontSize="xl">Add to your votes</Text>
               <Divider my={2} />
-              <Text>Choose a validator</Text>{" "}
+              <Text>Choose a charity</Text>{" "}
               <Flex justifyContent="space-between" alignItems="center">
-                {allValidators.length > 0 && (
+                {options.length > 0 && (
                   <ValidatorSelector
                     selectedValidator={selectedValidator}
                     setSelectedValidator={setSelectedValidator}
@@ -361,7 +312,7 @@ export const CharityGauge = ({
             bg="wynd.gray.alpha.20"
             borderTopRadius="lg"
           >
-            <GridItem textAlign="start">Validator</GridItem>
+            <GridItem textAlign="start">Charity</GridItem>
             <GridItem>Commision</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
@@ -398,10 +349,10 @@ export const CharityGauge = ({
                 >
                   <Flex align="center">
                     <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                      {validator.description?.moniker || ""}
+                      {validator.description || ""}
                     </Flex>
                   </Flex>
-                  <Flex>{(Number(validator.commission?.commission_rates.rate) * 100).toFixed(0)}%</Flex>
+                  <Flex>{(Number(validator.commission) * 100).toFixed(0)}%</Flex>
                   <Flex align="center">
                     <Tooltip label={validator.votes}>
                       <Text>{((100 / Number(sumVotes)) * Number(validator.votes)).toFixed(2)}%</Text>

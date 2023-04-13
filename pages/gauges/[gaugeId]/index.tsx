@@ -4,14 +4,36 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { LSDGauge } from "../../../components/Dao/LSDGauge";
 import { PoolGauge } from "../../../components/Dao/PoolGauge";
+import { CharityGauge } from "../../../components/Dao/CharityGauge";
 import { useGaugeAdapter, useGaugeConfigs } from "../../../state";
 
 export default function Page() {
   const router = useRouter();
   const { gaugeId } = router.query;
+  
+  /*
   const { options, gauge, refresh_votes } = useGaugeAdapter(Number(gaugeId));
   const { config } = useGaugeConfigs(gauge.adapter);
-  const isRewardGauge = config.hasOwnProperty("rewards_asset");
+  */
+
+  
+  const options = [
+    ["1", "232323"],
+    ["2", "342343"],
+  ];
+
+  const gauge = {
+    id: 2,
+    adapter: "juno1test",
+    epoch_size: 2419200,
+    next_epoch: 1683654614,
+    max_options_selected: 20,
+    is_stopped: false,
+    title: "WYND | DAO",
+    description: "WYND | DAO",
+  };
+
+  const refresh_votes = () => {};
 
   return (
     <>
@@ -19,11 +41,9 @@ export default function Page() {
         <title>WYND | DAO - Gauge #{gauge.id}</title>
       </Head>
       <Box p="4">
-        {/* Pools Incentives Gauge */}
-        {isRewardGauge && <PoolGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />}
-
-        {/* LSD Gauge */}
-        {!isRewardGauge && <LSDGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />}
+   
+        {/* Charity Gauge */}
+        <CharityGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />
       </Box>
     </>
   );
@@ -47,6 +67,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   const { params } = context;
+
   return {
     props: {
       gaugeId: params?.gaugeId,

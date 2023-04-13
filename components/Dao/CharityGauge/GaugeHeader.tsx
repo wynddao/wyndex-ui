@@ -9,7 +9,7 @@ import TokenName from "../../Dex/TokenName";
 
 export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
   const router = useRouter();
-  const { config } = useGaugeConfigs(gauge.adapter);
+  //const { config } = useGaugeConfigs(gauge.adapter);
   return (
     <Box bg="url(/castle.jpeg)" position="relative" rounded="lg" bgPosition="bottom" bgSize="cover">
       <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">

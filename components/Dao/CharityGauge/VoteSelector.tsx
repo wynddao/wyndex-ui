@@ -43,7 +43,7 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
   useClickAway(dropdownRef, () => setOpen(false));
 
   const _options = options.filter((option) => {
-    return option.description?.moniker.toLowerCase().includes(filter.toLowerCase().trim());
+    return option.description.includes(filter.toLowerCase().trim());
   });
 
   const AssetsLi = _options.map((validator) => {
@@ -59,7 +59,7 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-              {validator.description?.moniker || ""}
+              {validator.description || ""}
             </Flex>
           </Flex>
         </Flex>
@@ -82,7 +82,7 @@ const ValidatorSelector: React.FC<IProps> = ({ options, selectedValidator, setSe
         bg={open ? "whiteAlpha.200" : "transparent"}
       >
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
-          <Flex alignItems="center">{selectedValidator && selectedValidator.description?.moniker}</Flex>
+          <Flex alignItems="center">{selectedValidator && selectedValidator.description}</Flex>
         </Flex>
         <Icon
           as={IoIosArrowDown}
