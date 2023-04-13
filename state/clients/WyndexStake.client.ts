@@ -104,16 +104,11 @@ export class WyndexStakeQueryClient implements WyndexStakeReadOnlyInterface {
     });
   };
   allStaked = async ({ address }: { address: string }): Promise<AllStakedResponse> => {
-    try {
-      return this.client.queryContractSmart(this.contractAddress, {
-        all_staked: {
-          address,
-        },
-      });
-    } catch (e) {
-      console.log(this.contractAddress);
-    }
-    return {} as AllStakedResponse;
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_staked: {
+        address,
+      },
+    });
   };
   totalStaked = async (): Promise<TotalStakedResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
