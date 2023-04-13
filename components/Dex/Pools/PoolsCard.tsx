@@ -181,7 +181,7 @@ function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
               APR
             </Text>
             <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold" wordBreak="break-word">
-              <MaxApr poolAddress={pool.address} />
+              <MaxApr poolAddress={pool.address} assetPrices={assetPrices} />
             </Text>
           </GridItem>
           <GridItem>

@@ -35,14 +35,8 @@ export interface AllAprEntry {
   maxApr: string;
 }
 
-export default function Pools() {
+export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20Balances }: any) {
   const { connect, isWalletConnected } = useChain("juno");
-
-  const { pools, userPools, assetPrices, ibcBalances, cw20Balances } = useIndexerInfos({
-    fetchPoolData: true,
-    fetchIbcBalances: true,
-    fetchCw20Balances: true,
-  });
 
   const currency = useRecoilValue(currencyAtom);
 
@@ -80,7 +74,7 @@ export default function Pools() {
     const _allAprs = Object.keys(pools)
       .filter((poolAddress) => !disabledPools.includes(poolAddress))
       .map(async (poolAddress) => {
-        const res = await getAprForPool(poolAddress);
+        const res = await getAprForPool(poolAddress, assetPrices);
         return {
           apr: res[res.length - 1].apr,
           pool: poolAddress,
@@ -227,7 +221,7 @@ export default function Pools() {
       header: "APR",
       sortingFn: "customAPRSorting",
       cell: (props) => {
-        return <MaxApr poolAddress={props.getValue()} />;
+        return <MaxApr poolAddress={props.getValue()} assetPrices={assetPrices} />;
       },
     }),
     columnHelper.accessor(
@@ -280,7 +274,7 @@ export default function Pools() {
         >
           My Pools
         </Text>
- {/*     {false ? (
+        {isWalletConnected ? (
           <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
         ) : (
           <Flex
@@ -309,7 +303,6 @@ export default function Pools() {
             </Button>
           </Flex>
         )}
-             */}
       </Box>
       {allAprs.length > 0 ? (
         <DataTable
