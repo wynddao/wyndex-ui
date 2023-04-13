@@ -9,13 +9,12 @@ export interface AprCalculated {
   apr: number;
 }
 
-export const getAprForPool = async (poolAddress: string): Promise<AprCalculated[]> => {
+export const getAprForPool = async (poolAddress: string, assetPrices: any): Promise<AprCalculated[]> => {
+  console.log(assetPrices)
   const client = await CosmWasmClient.connect(CHAIN_RPC_ENDPOINT);
   const poolData  = await client.queryContractSmart(poolAddress, {
     pool: {},
   });
-
-  const assetPrices = await (await fetch(`${INDEXER_API_ENDPOINT}/assets/prices`)).json();
 
   const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
   const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);

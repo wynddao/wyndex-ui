@@ -1,3 +1,4 @@
+"use client";
 import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
