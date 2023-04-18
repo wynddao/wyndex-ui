@@ -1,5 +1,5 @@
 import { Modal, ModalCloseButton, ModalContent, ModalOverlay } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 
 interface OnRampModalOptions {
   onClose: () => void;
@@ -7,7 +7,7 @@ interface OnRampModalOptions {
 }
 
 export default function OnRampModal({ onClose, isOpen }: OnRampModalOptions) {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />

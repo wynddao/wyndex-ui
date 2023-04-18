@@ -1,3 +1,4 @@
+"use client";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";

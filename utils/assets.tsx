@@ -95,11 +95,6 @@ export const getAssetPriceByCurrency = (
   return 0;
 };
 
-export const getAssertPriceByAsset = (currency: Currency, asset: Asset, assetPrices: RequestAssetPrice[]) => {
-  const assetInfo = getAssetInfo(asset);
-  return getAssetPriceByCurrency(currency, assetInfo, assetPrices);
-};
-
 export const getAmountByPrice = (
   amount: string,
   currency: Currency,

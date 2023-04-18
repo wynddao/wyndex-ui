@@ -1,3 +1,4 @@
+"use client";
 import { Grid, GridItem, Text } from "@chakra-ui/react";
 import { useGaugeOrchestrator } from "../../../state";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";

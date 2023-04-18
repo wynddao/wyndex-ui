@@ -1,3 +1,4 @@
+"use client";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { FocusEvent, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";

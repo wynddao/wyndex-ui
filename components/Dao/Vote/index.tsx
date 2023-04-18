@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { Suspense, useState } from "react";
 import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { NotVotedAlert } from "./NotVotedAlert";
@@ -13,7 +13,7 @@ export const Vote = () => {
     address: WYND_VOTE_MODULE_ADDRESS,
     prefix: "B",
   };
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const [limit, setLimit] = useState<number>(1);
   return (
     <Flex gap="8" flexFlow="column">

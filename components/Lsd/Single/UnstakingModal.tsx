@@ -1,3 +1,4 @@
+"use client";;
 import {
   Box,
   Button,
@@ -27,11 +28,10 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { Coin } from "@cosmjs/stargate";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult, StdFee } from "cosmwasm";
-import { startTransition, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { BsPatchCheckFill } from "react-icons/bs";
-import { useRecoilRefresher_UNSTABLE } from "recoil";
 import { useToast } from "../../../state";
 import { Claim } from "../../../state/clients/types/WyndLsdHub.types";
 import { microamountToAmount } from "../../../utils/tokens";
@@ -75,7 +75,7 @@ const UnstakingModalContent = ({
 }) => {
   const [removeValue, setRemoveValue] = useState(35);
   const [loading, setLoading] = useState<boolean>(false);
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const { txToast } = useToast();
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [claimable, setClaimable] = useState<boolean>(false);

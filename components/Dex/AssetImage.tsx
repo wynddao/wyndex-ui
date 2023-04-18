@@ -1,3 +1,4 @@
+"use client";
 import { Image, ImageProps } from "@chakra-ui/react";
 import { assetList as assetListTestnet } from "@wynddao/asset-list";
 import { AssetInfo } from "../../state/clients/types/WyndexPair.types";

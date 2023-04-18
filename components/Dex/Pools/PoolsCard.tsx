@@ -1,5 +1,5 @@
 import { Box, Divider, Flex, Grid, GridItem, Text, useBreakpointValue } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import Link from "next/link";
 import { useRecoilValue } from "recoil";
 import { useCw20UserInfos, usePairInfos, usePoolInfos } from "../../../state";
@@ -18,14 +18,14 @@ interface PoolsCardProps {
   readonly poolsData: readonly any[];
   readonly allPools: any[];
   readonly assetPrices: any[];
+  readonly disabledPools: string[];
 }
 
-export default function PoolsCard({ poolsData, allPools, assetPrices }: PoolsCardProps) {
+export default function PoolsCard({ poolsData, allPools, assetPrices, disabledPools }: PoolsCardProps) {
   const slides = useBreakpointValue({ base: 1, lg: 2, xl: 3, "2xl": 4, "4xl": 6 }) || 1;
-
   return (
     <Carousel numOfSlides={slides}>
-      {poolsData.map((pool, index) => (
+      {[...poolsData].filter((el) => !disabledPools.includes(el.address)).map((pool, index) => (
         <PoolCard key={index} allPools={allPools} assetPrices={assetPrices} pool={pool} />
       ))}
     </Carousel>
@@ -60,7 +60,8 @@ function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
   const assetInfo = [chainData.assets[0].info, chainData.assets[1].info];
   const { pair: pairData } = usePairInfos(assetInfo);
   const wyndexStake = pairData.staking_addr;
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
+  
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress || "");
 
   // Calculate total share in USD
@@ -181,7 +182,7 @@ function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
               APR
             </Text>
             <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold" wordBreak="break-word">
-              <MaxApr poolAddress={pool.address} />
+              <MaxApr poolAddress={pool.address} assetPrices={assetPrices} />
             </Text>
           </GridItem>
           <GridItem>

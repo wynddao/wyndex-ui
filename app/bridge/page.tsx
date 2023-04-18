@@ -1,3 +1,4 @@
+"use client";
 import { SquidWidget } from "@0xsquid/widget";
 import { Box, Flex } from "@chakra-ui/react";
 import Head from "next/head";

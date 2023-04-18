@@ -1,3 +1,4 @@
+"use client";
 /**
  * This component calculates the APY and shows it in a dropdown styled menu
  */

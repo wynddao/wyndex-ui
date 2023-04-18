@@ -1,3 +1,4 @@
+"use client";
 import { ExecuteResult } from "cosmwasm";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -32,7 +33,7 @@ export const useToast = () => {
             duration: Infinity,
             id: "tx.error",
             style: {
-              background: "var(--chakra-colors-chakra-body-bg)",
+              background: "var(--chakra-colors-wynd-base-subBg)",
               color: "var(--chakra-colors-chakra-body-text)",
               marginTop: "80px",
             },
@@ -41,7 +42,7 @@ export const useToast = () => {
             duration: Infinity,
             id: "tx.success",
             style: {
-              background: "var(--chakra-colors-chakra-body-bg)",
+              background: "var(--chakra-colors-wynd-base-subBg)",
               color: "var(--chakra-colors-chakra-body-text)",
               marginTop: "80px",
             },
@@ -49,7 +50,7 @@ export const useToast = () => {
           loading: {
             id: "tx.loading",
             style: {
-              background: "var(--chakra-colors-chakra-body-bg)",
+              background: "var(--chakra-colors-wynd-base-subBg)",
               color: "var(--chakra-colors-chakra-body-text)",
               marginTop: "80px",
             },
@@ -61,7 +62,7 @@ export const useToast = () => {
       toast.error(`${err}`, {
         id: "tx.error",
         style: {
-          background: "var(--chakra-colors-chakra-body-bg)",
+          background: "var(--chakra-colors-wynd-base-subBg)",
           color: "var(--chakra-colors-chakra-body-text)",
           marginTop: "80px",
         },

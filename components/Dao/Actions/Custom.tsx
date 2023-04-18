@@ -1,8 +1,8 @@
-import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
+"use client";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { MsgType } from "./types";
-import { Input, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { useState } from "react";
 
 export const Custom = ({ msg, edit = false }: { msg?: MsgType; edit?: boolean }) => {

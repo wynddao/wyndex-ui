@@ -4,13 +4,13 @@ import Head from "next/head";
 import { StakeHeader } from "../../components/Dao/Stake/StakeHeader";
 import { MyTokens } from "../../components/Dao/Stake/MyTokens";
 import { Rewards } from "../../components/Dao/Stake/Rewards";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useDaoStakingInfos } from "../../state/hooks/useDaoStakingInfos";
 import { BorderedBox } from "../../components/Dao/Stake/MyTokens/BorderedBox";
 import ConnectWalletButton from "../../components/General/Sidebar/ConnectWalletButton";
 
 export default function Page() {
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
   const {
     walletStakedPower,
     walletStakedTokens,

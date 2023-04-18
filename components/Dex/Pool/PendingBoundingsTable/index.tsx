@@ -10,7 +10,7 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { useEffect } from "react";
 import { useState } from "react";
 import { UseTokenNameResponse } from "../../../../state";
@@ -27,7 +27,7 @@ interface PendingBoundingsTableOptions {
 export default function PendingBoundingsTable(props: PendingBoundingsTableOptions) {
   const { wyndexStake, tokenInfo } = props;
   const { infos } = useStakeInfos(wyndexStake);
-  const { address: walletAddress } = useWallet();
+  const { address: walletAddress } = useChain("juno");
 
   const [rebondings, setRebondings] = useState<any[] | undefined>(undefined);
   const [hasAnyRebondings, setHasAnyRebondings] = useState<boolean>(false);

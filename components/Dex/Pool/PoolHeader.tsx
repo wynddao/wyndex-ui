@@ -10,7 +10,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
 import Head from "next/head";
 import Image from "next/image";
@@ -85,7 +85,7 @@ export default function PoolHeader({
   const { onOpen: onOpenBondings, isOpen: isBondingsOpen, onClose: onCloseBondings } = useDisclosure();
   const currency = useRecoilValue(currencyAtom);
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
-  const { connect, isWalletConnected } = useWallet();
+  const { connect, isWalletConnected } = useChain("juno");
   const ltokenInfo = useTokenInfo(pairData.liquidity_token);
   const [loading, setLoading] = useState<boolean>(false);
   const wyndexStake = pairData.staking_addr;

@@ -1,5 +1,5 @@
 import { Box, Button, Collapse, Flex, Icon, Image, keyframes, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain, useWallet } from "@cosmos-kit/react";
 import { Asset, CW20Asset } from "@wynddao/asset-list";
 import { toBase64, toUtf8 } from "cosmwasm";
 import React, { startTransition, useMemo, useState } from "react";
@@ -9,9 +9,11 @@ import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { getBalanceByAsset, useIndexerInfos, useToast } from "../../../state";
 import { useSend } from "../../../state/hooks/clients/Cw20";
 import { useExecuteSwapOperations } from "../../../state/hooks/clients/WyndexMultiHop";
+import { useBond } from "../../../state/hooks/clients/WyndexBondRouter";
 import { useReverseSimulateSwap } from "../../../state/hooks/useReverseSimulateSwap";
 import { useSimulateSwap } from "../../../state/hooks/useSimulateSwap";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../../utils";
+import { BOND_ROUTER_ADDRESS } from "../../../utils";
 import { getAssetInfo } from "../../../utils/assets";
 import { getAssetList } from "../../../utils/getAssetList";
 import { getRouteByOperations } from "../../../utils/getRouteByOperations";
@@ -29,7 +31,7 @@ const spin = keyframes`
 `;
 
 const Swap: React.FC = () => {
-  const { address: walletAddress, connect, isWalletConnected } = useWallet();
+  const { address: walletAddress, connect, isWalletConnected } = useChain("juno");
   const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
   const { txToast, isTxLoading } = useToast();
 
@@ -81,6 +83,11 @@ const Swap: React.FC = () => {
     sender: walletAddress || "",
   });
 
+  const bond = useBond({
+    contractAddress: BOND_ROUTER_ADDRESS,
+    sender: walletAddress || "",
+  });
+
   const sendCW20 = useSend({
     contractAddress: (fromToken as CW20Asset).token_address || "",
     sender: walletAddress || "",
@@ -100,6 +107,19 @@ const Swap: React.FC = () => {
         ),
       });
     }
+
+    if(fromToken.denom === "ujuno" && toToken.denom === "uwyjuno") {
+      return bond("auto", undefined, [
+        {
+          amount: fromTokenAmount
+            ? amountToMicroamount(fromTokenAmount, fromToken.decimals)
+            : fromTokenSimulated.amount,
+          // @ts-ignore
+          denom: fromToken.denom,
+        }
+      ])
+    }
+
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
       {
         amount: fromTokenAmount
@@ -235,7 +255,6 @@ const Swap: React.FC = () => {
             Number(fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)) >
               Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
         }
-        bg="wynd.gray.200"
         maxW={{ lg: "560px" }}
         margin={{ lg: "0 auto" }}
         _hover={{

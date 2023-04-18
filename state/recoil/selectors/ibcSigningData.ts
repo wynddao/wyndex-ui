@@ -1,7 +1,8 @@
 import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
-import { CosmostationExtensionWallet } from "@cosmos-kit/cosmostation";
-import { KeplrExtensionWallet } from "@cosmos-kit/keplr";
+import { CosmostationExtensionWallet } from "@cosmos-kit/cosmostation-extension";
+import { KeplrExtensionWallet } from "@cosmos-kit/keplr-extension";
 import { LeapExtensionWallet } from "@cosmos-kit/leap-extension";
+import { useWalletClient } from "@cosmos-kit/react";
 import { Asset, IBCAsset } from "@wynddao/asset-list";
 import { RecoilValueReadOnly, selectorFamily } from "recoil";
 import { chainInfos } from "../../../utils/chaindata/keplr/chainInfos";
@@ -43,6 +44,7 @@ export const getKeplrIbcSigningData = selectorFamily<
   get:
     ({ chainId }) =>
     async () => {
+
       if (!chainId) return {};
 
       try {
@@ -62,16 +64,17 @@ export const getKeplrIbcSigningData = selectorFamily<
           { name: walletNames.keplr, prettyName: "Keplr", mode: "extension", mobileDisabled: true },
           { [chainInfo.chainName]: { rpc: [feeAsset.rpc] } },
         );
-        const keplrClient = await keplrWallet.fetchClient();
-        await keplrClient.client.experimentalSuggestChain(chainInfo);
+        const { status, client } = useWalletClient("keplr-extension");
 
-        const keplrSigner = await keplrClient.getOfflineSigner(chainInfo.chainId);
+        // @ts-ignore
+        const keplrSigner = await client.getOfflineSigner(chainInfo.chainId);
         const gasPrice = GasPrice.fromString(
           String(
             chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === feeAsset.denom)
               ?.gasPriceStep?.average,
           ) + feeAsset.denom,
         );
+
         let ibcSigningClientAny: any = await SigningStargateClient.connectWithSigner(
           feeAsset.rpc,
           keplrSigner,
@@ -82,7 +85,9 @@ export const getKeplrIbcSigningData = selectorFamily<
         // NOTE ibc deposit fails without manually adding this field
         ibcSigningClientAny.chainId = chainInfo.chainId;
         const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
-        const { address: nativeAddress } = await keplrClient.getAccount(chainInfo.chainId);
+
+        // @ts-ignore
+        const { address: nativeAddress } = await client.getAccount(chainInfo.chainId);
 
         return { feeAsset, ibcSigningClient, nativeAddress };
       } catch (e) {
@@ -119,9 +124,10 @@ export const getLeapIbcSigningData = selectorFamily<
           mode: "extension",
           mobileDisabled: true,
         });
-        const leapClient = await leapWallet.fetchClient();
+        const { status, client } = useWalletClient("leap-extension");
 
-        const leapSigner = await leapClient.getOfflineSigner(chainInfo.chainId);
+        // @ts-ignore
+        const leapSigner = await client.getOfflineSigner(chainInfo.chainId);
         const gasPrice = GasPrice.fromString(
           String(
             chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === feeAsset.denom)
@@ -139,7 +145,8 @@ export const getLeapIbcSigningData = selectorFamily<
         ibcSigningClientAny.chainId = chainInfo.chainId;
         const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
 
-        const { address: nativeAddress } = await leapClient.getAccount(chainInfo.chainId);
+        // @ts-ignore
+        const { address: nativeAddress } = await client.getAccount(chainInfo.chainId);
 
         return { feeAsset, ibcSigningClient, nativeAddress };
       } catch {
@@ -175,9 +182,10 @@ export const getCosmostationIbcSigningData = selectorFamily<
           mode: "extension",
           mobileDisabled: true,
         });
-        const cosmostationClient = await cosmostationWallet.fetchClient();
+        const { status, client } = useWalletClient("cosmostation-extension");
 
-        const cosmostationSigner = await cosmostationClient.getOfflineSigner(chainInfo.chainId);
+        // @ts-ignore
+        const cosmostationSigner = await client.getOfflineSigner(chainInfo.chainId);
         const gasPrice = GasPrice.fromString(
           String(
             chainInfo.feeCurrencies.find((currency) => currency.coinMinimalDenom === feeAsset.denom)
@@ -195,7 +203,8 @@ export const getCosmostationIbcSigningData = selectorFamily<
         ibcSigningClientAny.chainId = chainInfo.chainId;
         const ibcSigningClient: SigningStargateClient = ibcSigningClientAny;
 
-        const { address: nativeAddress } = await cosmostationClient.getAccount(chainInfo.chainId);
+        // @ts-ignore
+        const { address: nativeAddress } = await client.getAccount(chainInfo.chainId);
 
         return { feeAsset, ibcSigningClient, nativeAddress };
       } catch {

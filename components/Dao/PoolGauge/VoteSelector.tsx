@@ -1,18 +1,16 @@
+"use client";;
 import {
   Box,
   Button,
   Flex,
   Icon,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
   List,
   ListItem,
-  Text,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Asset } from "@wynddao/asset-list";
+import React, { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";

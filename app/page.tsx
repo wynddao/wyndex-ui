@@ -1,4 +1,5 @@
 "use client";
+
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
 import AssetBalances from "../components/Dex/AssetBalances";

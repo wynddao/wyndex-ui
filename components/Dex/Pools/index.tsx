@@ -1,5 +1,6 @@
+"use client";
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { createColumnHelper, FilterFn, SortingFn } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 import { FiCreditCard } from "react-icons/fi";
@@ -34,14 +35,8 @@ export interface AllAprEntry {
   maxApr: string;
 }
 
-export default function Pools() {
-  const { connect, isWalletConnected } = useWallet();
-
-  const { pools, userPools, assetPrices, ibcBalances, cw20Balances } = useIndexerInfos({
-    fetchPoolData: true,
-    fetchIbcBalances: true,
-    fetchCw20Balances: true,
-  });
+export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20Balances }: any) {
+  const { connect, isWalletConnected } = useChain("juno");
 
   const currency = useRecoilValue(currencyAtom);
 
@@ -68,6 +63,8 @@ export default function Pools() {
   const disabledPools = [
     "juno16xrz7kd26j0qmdg706qyesqs56g2f6dulplsajtl0t9z8frd8tfqsx2lkj",
     "juno1jtendlawm8rv96hnfuwn04y8uhwzp9epcxy5f0ms973pspueqcgsy3qzt0",
+    "juno1x9r54vejw4hnxe7xm4haaf0ymf825frm30xqf9cud6cmnrgkx9lsxpj475",
+    "juno14ke9xn3qfmnjsrh9lh6rfu7zmm90duvj4lpkcrrnzemh0tjpwarqfk97n6",
     "juno10hw5a052a9jcmcgzx27ssyddf2unrk35ltfz3a7hl63hfd8e7dsqvfue4d",
     "juno1z62rxfn9gh4wzndk48hfnfkmjca0f85j2cy77q68n2hyz7qdqcwq2jzjga",
   ];
@@ -77,7 +74,7 @@ export default function Pools() {
     const _allAprs = Object.keys(pools)
       .filter((poolAddress) => !disabledPools.includes(poolAddress))
       .map(async (poolAddress) => {
-        const res = await getAprForPool(poolAddress);
+        const res = await getAprForPool(poolAddress, assetPrices);
         return {
           apr: res[res.length - 1].apr,
           pool: poolAddress,
@@ -224,7 +221,7 @@ export default function Pools() {
       header: "APR",
       sortingFn: "customAPRSorting",
       cell: (props) => {
-        return <MaxApr poolAddress={props.getValue()} />;
+        return <MaxApr poolAddress={props.getValue()} assetPrices={assetPrices} />;
       },
     }),
     columnHelper.accessor(
@@ -277,8 +274,8 @@ export default function Pools() {
         >
           My Pools
         </Text>
- {/*     {false ? (
-          <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} />
+        {isWalletConnected ? (
+          <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} disabledPools={disabledPools} />
         ) : (
           <Flex
             borderRadius="md"
@@ -306,7 +303,6 @@ export default function Pools() {
             </Button>
           </Flex>
         )}
-             */}
       </Box>
       {allAprs.length > 0 ? (
         <DataTable
