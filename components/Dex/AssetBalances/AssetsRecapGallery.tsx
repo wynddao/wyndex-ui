@@ -6,10 +6,10 @@ import { ExecuteResult } from "cosmwasm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { CustomHooks, useIndexerInfos, useToast } from "../../../state";
+import { CustomHooks, useIndexerInfos, useToast, WyndexStakeHooks } from "../../../state";
 import { useDaoStakingInfos } from "../../../state/hooks/useDaoStakingInfos";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
-import { FEE_DENOM, WYND_TOKEN_ADDRESS } from "../../../utils";
+import { FEE_DENOM, WYND_TOKEN_ADDRESS, DAO_STAKING_ADDRESS } from "../../../utils";
 import { getAssetInfoDetails, RequestAssetPrice } from "../../../utils/assets";
 import { formatCryptoCurrency, formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
@@ -61,6 +61,11 @@ export default function AssetsRecapGallery() {
     sender: walletAddress || "",
   });
 
+  const doWithdraw = WyndexStakeHooks.useWithdraw({
+    contractAddress: DAO_STAKING_ADDRESS,
+    sender: walletAddress || "",
+  });
+
   const withdrawAll = async () => {
     await txToast(async (): Promise<ExecuteResult> => {
       const result = await doWithdrawAll({
@@ -72,6 +77,14 @@ export default function AssetsRecapGallery() {
       getData();
       refreshIbcBalances();
       refreshCw20Balances();
+      return result;
+    });
+
+    await txToast(async (): Promise<ExecuteResult> => {
+      const result = await doWithdraw({});
+
+      // New balances will not appear until the next block.
+      await new Promise((resolve) => setTimeout(resolve, 6500));
       return result;
     });
   };
