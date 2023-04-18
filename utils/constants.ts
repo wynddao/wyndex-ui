@@ -8,6 +8,7 @@ export const INDEXER_API_ENDPOINT = process.env.NEXT_PUBLIC_INDEXER_API_ENDPOINT
 export const WYND_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_WYND_TOKEN_ADDRESS || "";
 export const FEE_DENOM = process.env.NEXT_PUBLIC_FEE_DENOM || "";
 export const DAO_GAUGE_ADDRESS = process.env.NEXT_PUBLIC_GAUGE_ADDRESS || "";
+export const DAO_MARKETING_GAUGE_ADDRESS = process.env.NEXT_PUBLIC_MARKETING_GAUGE_ADDRESS || "";
 export const DAO_DIST_ADDRESS = process.env.NEXT_PUBLIC_DIST_ADDRESS || "";
 export const DAO_STAKING_ADDRESS = process.env.NEXT_PUBLIC_STAKING_ADDRESS || "";
 export const DAO_ADDRESS = process.env.NEXT_PUBLIC_DAO_ADDRESS || "";
