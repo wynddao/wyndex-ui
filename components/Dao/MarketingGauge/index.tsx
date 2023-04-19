@@ -88,7 +88,7 @@ export const MarketingGauge = ({
   console.log(totalValidVotes);
 
   const [selectedOption, setSelectedOption] = useState<OptionsWithInfos>(optionsWithInfos[0]);
-  const [availablePools, setAvailablePools] = useState<OptionsWithInfos[]>(optionsWithInfos);
+  const [availableOptions, setAvailableOptions] = useState<OptionsWithInfos[]>(optionsWithInfos);
 
   const addToBallot = () => {
     setError(undefined);
@@ -127,9 +127,9 @@ export const MarketingGauge = ({
     setSelectedVotes(_selectedVotes);
 
     // Remove chosen Pool from the available ones
-    const _availablePools = [...availablePools].filter((el) => el !== selectedOption);
-    setSelectedOption(_availablePools[0]);
-    setAvailablePools(_availablePools);
+    const _availableOptions = [...availableOptions].filter((el) => el !== selectedOption);
+    setSelectedOption(_availableOptions[0]);
+    setAvailableOptions(_availableOptions);
   };
 
   const removeFromBallot = (item: BallotEntry) => {
@@ -138,8 +138,8 @@ export const MarketingGauge = ({
     setSelectedVotes(_selectedVotes);
 
     // Add chosen Pool to the available ones
-    const _availablePools = [...availablePools, item.option];
-    setAvailablePools(_availablePools);
+    const _availableOptions = [...availableOptions, item.option];
+    setAvailableOptions(_availableOptions);
   };
 
   const doVote = GaugesHooks.useVote({
@@ -183,14 +183,14 @@ export const MarketingGauge = ({
         // Set current votes of user
         const _predefinedVotes: BallotEntry[] = userVotes.votes.map((vote) => {
           return {
-            option: availablePools.find((el) => el.address === vote.option)!,
+            option: availableOptions.find((el) => el.address === vote.option)!,
             votingWeight: (Number(vote.weight) * 100).toString(),
           };
         });
         setSelectedVotes(_predefinedVotes);
 
         // Remove those from available ones
-        const _availablePools = [...availablePools].filter((el) => {
+        const _availableOptions = [...availableOptions].filter((el) => {
           let check = true;
           _predefinedVotes.map((ele) => {
             if (ele.option.address === el.address) {
@@ -200,12 +200,12 @@ export const MarketingGauge = ({
           return check;
         });
 
-        setAvailablePools(_availablePools);
+        setAvailableOptions(_availableOptions);
 
         // Set chosen pool to something realistic
-        setSelectedOption(_availablePools[0]);
+        setSelectedOption(_availableOptions[0]);
       } else {
-        setAvailablePools(optionsWithInfos);
+        setAvailableOptions(optionsWithInfos);
         setSelectedVotes([]);
       }
     } catch (e) {
@@ -277,7 +277,7 @@ export const MarketingGauge = ({
                 <VoteSelector
                   selectedOption={selectedOption}
                   setSelectedOption={setSelectedOption}
-                  options={availablePools}
+                  options={availableOptions}
                 />
               </Flex>
               <Flex mt={2} justifyContent="space-between" alignItems="center">
