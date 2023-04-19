@@ -3,6 +3,7 @@ import { Box } from "@chakra-ui/react";
 import Head from "next/head";
 import { LSDGauge } from "../../../components/Dao/LSDGauge";
 import { PoolGauge } from "../../../components/Dao/PoolGauge";
+import { MarketingGauge } from "../../../components/Dao/MarketingGauge";
 import { useGaugeAdapter, useGaugeConfigs } from "../../../state";
 
 interface GaugePageProps {
@@ -23,7 +24,7 @@ export default function Page({ params }: GaugePageProps) {
         <title>WYND | DAO - Gauge #{gauge.id}</title>
       </Head>
       <Box p="4">
-        <CharityGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />
+        <MarketingGauge options={options} gauge={gauge} refreshVotes={refresh_votes} />
       </Box>
     </>
   );

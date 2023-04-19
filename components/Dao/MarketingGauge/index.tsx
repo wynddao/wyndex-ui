@@ -1,3 +1,4 @@
+"use client";
 import {
   Alert,
   AlertIcon,
@@ -15,22 +16,40 @@ import {
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
 import { useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { useRecoilValue } from "recoil";
-import { GaugesHooks, useGaugeConfigs, useToast } from "../../../state";
+import { GaugesHooks, useGaugeConfigs, useIndexerInfos, useToast } from "../../../state";
+import { AssetInfoValidated } from "../../../state/clients/types/WyndexFactory.types";
 import { GaugeResponse, Vote } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { useUserVotes } from "../../../state/hooks/gauge/useUserVotes";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
+import { PairsResponse } from "../../../state/recoil/selectors/clients/indexer";
+import { getAssetByDenom, getAssetInfoDetails, getAssetPriceByCurrency } from "../../../utils/assets";
+import { formatCurrency } from "../../../utils/currency";
+import { microdenomToDenom } from "../../../utils/tokens";
+import AssetImage from "../../Dex/AssetImage";
 import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeHeader } from "./GaugeHeader";
-import ValidatorSelector from "./VoteSelector";
-import _ from "lodash";
+import PoolSelector from "./VoteSelector";
 
-export const CharityGauge = ({
+export interface PoolWithAddresses {
+  assets: AssetInfoValidated[];
+  lp: string;
+  pair: string;
+  staking: string;
+  currentVotePower: number;
+}
+
+interface BallotEntry {
+  option: PoolWithAddresses;
+  votingWeight: string;
+}
+
+export const MarketingGauge = ({
   options,
   gauge,
   refreshVotes,
@@ -39,16 +58,15 @@ export const CharityGauge = ({
   gauge: GaugeResponse;
   refreshVotes: () => void;
 }) => {
-  const { address: walletAddress } = useWallet();
-  //const { config } = useGaugeConfigs(gauge.adapter);
+  const { address: walletAddress } = useChain("juno");
+  const { config } = useGaugeConfigs(gauge.adapter);
+  const { pools, pairs, assetPrices } = useIndexerInfos({ fetchPoolData: true });
 
   const { vote: userVotes } = useUserVotes(gauge.id, walletAddress || "");
   const { txToast } = useToast();
   const currency = useRecoilValue(currencyAtom);
 
-  const [selectedVotes, setSelectedVotes] = useState<any[]>([]);
-  const [allValidators, setAllValidators] = useState<any[]>([]);
-  const [sumVotes, setSumVotes] = useState<number>(0);
+  const [selectedVotes, setSelectedVotes] = useState<BallotEntry[]>([]);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
   const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
   const [error, setError] = useState<any>(undefined);
@@ -56,21 +74,35 @@ export const CharityGauge = ({
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
   let totalVotes = 0;
+  const poolsWithStakingAddress: PoolWithAddresses[] = pairs.map((pair: PairsResponse) => {
+    const optionDetails = options.find((el) => el[0] === pair.staking);
+    const optionPower = optionDetails ? Number(optionDetails[1]) : 0;
 
-  const [selectedValidator, setSelectedValidator] = useState<any>(allValidators[0]);
-  const [availableValidators, setAvailableValidators] = useState<any[]>([]);
+    totalVotes += optionPower;
+
+    return {
+      ...pair,
+      assets: [...pools[pair.pair]],
+      currentVotePower: optionPower,
+    };
+  });
+  const totalValidVotes: number = poolsWithStakingAddress.reduce((acc, red) => {
+    return acc + (0.1 < (red.currentVotePower / totalVotes) * 100 ? red.currentVotePower : 0);
+  }, 0);
+
+  const [selectedPool, setSelectedPool] = useState<PoolWithAddresses>(poolsWithStakingAddress[0]);
+  const [availablePools, setAvailablePools] = useState<PoolWithAddresses[]>(poolsWithStakingAddress);
 
   const addToBallot = () => {
     setError(undefined);
-    // Add chosen Validator to chosen ones
-    const _selectedVotes: any[] = [
+    // Add chosen Pool to chosen ones
+    const _selectedVotes: BallotEntry[] = [
       ...selectedVotes,
       {
-        option: selectedValidator,
+        option: selectedPool,
         votingWeight: weightInput || "0",
       },
     ];
-
     // Check if valid
     const sumVotes = _selectedVotes.reduce(
       (accumulator, currentValue) => accumulator + Number(currentValue.votingWeight),
@@ -97,22 +129,20 @@ export const CharityGauge = ({
 
     setSelectedVotes(_selectedVotes);
 
-    // Remove chosen Validator from the available ones
-    const _availableValidators = [...availableValidators].filter(
-      (el) => el.operator_address !== selectedValidator.operator_address,
-    );
-    setSelectedValidator(_availableValidators[0]);
-    setAvailableValidators(_availableValidators);
+    // Remove chosen Pool from the available ones
+    const _availablePools = [...availablePools].filter((el) => el !== selectedPool);
+    setSelectedPool(_availablePools[0]);
+    setAvailablePools(_availablePools);
   };
 
-  const removeFromBallot = (item: any) => {
-    // Remove chosen Validator from chosen ones
+  const removeFromBallot = (item: BallotEntry) => {
+    // Remove chosen Pool from chosen ones
     const _selectedVotes = [...selectedVotes].filter((el) => el !== item);
     setSelectedVotes(_selectedVotes);
 
-    // Add chosen Validator to the available ones
-    const _availableValidators = [...availableValidators, item.option];
-    setAvailableValidators(_availableValidators);
+    // Add chosen Pool to the available ones
+    const _availablePools = [...availablePools, item.option];
+    setAvailablePools(_availablePools);
   };
 
   const doVote = GaugesHooks.useVote({
@@ -124,7 +154,7 @@ export const CharityGauge = ({
     setLoadingSubmit(true);
     const voteOptions: Vote[] = selectedVotes.map((vote) => {
       return {
-        option: vote.option.operator_address,
+        option: vote.option.staking,
         weight: (Number(vote.votingWeight) / 100).toString(),
       };
     });
@@ -150,29 +180,43 @@ export const CharityGauge = ({
     setLoadingReset(false);
   };
 
-  const getData = async () => {
-    
-    setSumVotes(1337);
-    setAllValidators([{
-      description: 'africa kids',
-      votes: 15, 
-      commission: 0.5
-    }]);
-
-    setAvailableValidators([{
-      description: 'africa kids',
-      votes: 15, 
-      commission: 0.5
-    }]);
-
-    setSelectedValidator(options[0]);
-  }
-
   useEffect(() => {
-    getData();
+    try {
+      if (userVotes) {
+        // Set current votes of user
+        const _predefinedVotes: BallotEntry[] = userVotes.votes.map((vote) => {
+          return {
+            option: availablePools.find((el) => el.staking === vote.option)!,
+            votingWeight: (Number(vote.weight) * 100).toString(),
+          };
+        });
+        setSelectedVotes(_predefinedVotes);
 
+        // Remove those from available ones
+        const _availablePools = [...availablePools].filter((el) => {
+          let check = true;
+          _predefinedVotes.map((ele) => {
+            if (ele.option.staking === el.staking) {
+              check = false;
+            }
+          });
+          return check;
+        });
+
+        setAvailablePools(_availablePools);
+
+        // Set chosen pool to something realistic
+        setSelectedPool(_availablePools[0]);
+      } else {
+        setAvailablePools(poolsWithStakingAddress);
+        setSelectedVotes([]);
+      }
+    } catch (e) {
+      // Nothing but
+      return;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress, userVotes, options]);
+  }, [walletAddress, userVotes]);
 
   return (
     <>
@@ -205,7 +249,46 @@ export const CharityGauge = ({
                     vote.option && (
                       <Box key={i} mb={i === selectedVotes.length - 1 ? 0 : 3}>
                         <Flex justifyContent="space-between">
-                          <Flex align="center">{vote.option.description}</Flex>
+                          <Flex align="center">
+                            <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
+                              <Box
+                                w={{ base: 6, md: 7, lg: 8 }}
+                                h={{ base: 6, md: 7, lg: 8 }}
+                                bg="whiteAlpha.900"
+                                borderRadius="full"
+                                border="1px solid"
+                                borderColor={"wynd.cyan.100"}
+                                overflow="hidden"
+                                p={0.5}
+                              >
+                                <AssetImage
+                                  asset={
+                                    // @ts-ignore
+                                    (vote.option.assets[0].token || vote.option.assets[0].native) as string
+                                  }
+                                />
+                              </Box>
+                              <Box
+                                position="absolute"
+                                left={{ base: 4, sm: 5 }}
+                                w={{ base: 6, md: 7, lg: 8 }}
+                                h={{ base: 6, md: 7, lg: 8 }}
+                                bg="whiteAlpha.900"
+                                borderRadius="full"
+                                border="1px solid"
+                                borderColor={"wynd.cyan.100"}
+                                overflow="hidden"
+                                p={0.5}
+                              >
+                                <AssetImage
+                                  asset={
+                                    // @ts-ignore
+                                    (vote.option.assets[1].token || vote.option.assets[1].native) as string
+                                  }
+                                />
+                              </Box>
+                            </Flex>
+                          </Flex>
                           <Flex alignItems="center">
                             <Text mr={3}>{vote.votingWeight} %</Text>
                             <Tooltip title="Remove from votes">
@@ -226,16 +309,14 @@ export const CharityGauge = ({
             </Box>
             <Box>
               <Text fontSize="xl">Add to your votes</Text>
-              <Divider my={2} />
-              <Text>Choose a charity</Text>{" "}
-              <Flex justifyContent="space-between" alignItems="center">
-                {options.length > 0 && (
-                  <ValidatorSelector
-                    selectedValidator={selectedValidator}
-                    setSelectedValidator={setSelectedValidator}
-                    options={availableValidators}
-                  />
-                )}
+              <Divider mt={2} />
+              <Flex mt={2} justifyContent="space-between" alignItems="center">
+                Choose a pool
+                <PoolSelector
+                  selectedPool={selectedPool}
+                  setSelectedPool={setSelectedPool}
+                  options={availablePools}
+                />
               </Flex>
               <Flex mt={2} justifyContent="space-between" alignItems="center">
                 Voting Weight
@@ -303,7 +384,7 @@ export const CharityGauge = ({
           </Text>
           <Grid
             display="grid"
-            templateColumns={"5fr 1fr 1fr"}
+            templateColumns={"3fr 2fr 2fr 1fr"}
             fontSize="xs"
             fontWeight="semibold"
             color={"wynd.neutral.900"}
@@ -312,8 +393,9 @@ export const CharityGauge = ({
             bg="wynd.gray.alpha.20"
             borderTopRadius="lg"
           >
-            <GridItem textAlign="start">Charity</GridItem>
-            <GridItem>Commision</GridItem>
+            <GridItem textAlign="start">Pool</GridItem>
+            <GridItem textAlign="start">Reward next epoch</GridItem>
+            <GridItem textAlign="start">TVL</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
             </GridItem>
@@ -336,11 +418,11 @@ export const CharityGauge = ({
               },
             }}
           >
-            {[...allValidators]
-              .sort((a, b) => b.votes - a.votes)
-              .map((validator, i) => (
+            {[...poolsWithStakingAddress]
+              .sort((a, b) => b.currentVotePower - a.currentVotePower)
+              .map((pool, i) => (
                 <Grid
-                  templateColumns={"5fr 1fr 1fr"}
+                  templateColumns={"3fr 2fr 2fr 1fr"}
                   py={2}
                   key={i}
                   borderBottom="solid 1px white"
@@ -349,15 +431,51 @@ export const CharityGauge = ({
                 >
                   <Flex align="center">
                     <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                      {validator.description || ""}
+                      <Box
+                        w={{ base: 6, md: 7, lg: 8 }}
+                        h={{ base: 6, md: 7, lg: 8 }}
+                        bg="whiteAlpha.900"
+                        borderRadius="full"
+                        border="1px solid"
+                        borderColor={"wynd.cyan.100"}
+                        overflow="hidden"
+                        p={0.5}
+                      >
+                        {/* @ts-ignore */}
+                        <AssetImage asset={(pool.assets[0].token || pool.assets[0].native) as string} />
+                      </Box>
+                      <Box
+                        position="absolute"
+                        left={{ base: 4, sm: 5 }}
+                        w={{ base: 6, md: 7, lg: 8 }}
+                        h={{ base: 6, md: 7, lg: 8 }}
+                        bg="whiteAlpha.900"
+                        borderRadius="full"
+                        border="1px solid"
+                        borderColor={"wynd.cyan.100"}
+                        overflow="hidden"
+                        p={0.5}
+                      >
+                        {/* @ts-ignore */}
+                        <AssetImage asset={(pool.assets[1].token || pool.assets[1].native) as string} />
+                      </Box>
                     </Flex>
+                    {" / "}
                   </Flex>
-                  <Flex>{(Number(validator.commission) * 100).toFixed(0)}%</Flex>
                   <Flex align="center">
-                    <Tooltip label={validator.votes}>
-                      <Text>{((100 / Number(sumVotes)) * Number(validator.votes)).toFixed(2)}%</Text>
-                    </Tooltip>
+                    {formatCurrency(
+                      currency,
+                      (
+                        getAssetPriceByCurrency(currency, pool.assets[0], assetPrices) *
+                        // @ts-ignore
+                        Number(pool.assets[0].amount / 10 ** getAssetInfoDetails(pool.assets[0]).decimals) *
+                        2
+                      ).toString(),
+                    )}
                   </Flex>
+                  <Tooltip placement="left" label={`Voting Power: ${pool.currentVotePower} / ${totalVotes}`}>
+                    <Flex align="center">{((pool.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
+                  </Tooltip>
                 </Grid>
               ))}
           </Box>
