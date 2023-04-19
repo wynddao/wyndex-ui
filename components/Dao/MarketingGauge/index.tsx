@@ -14,38 +14,34 @@ import {
   InputRightAddon,
   Text,
   Tooltip,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { useChain } from "@cosmos-kit/react-lite";
 import { ExecuteResult } from "cosmwasm";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { useRecoilValue } from "recoil";
-import { GaugesHooks, useGaugeConfigs, useIndexerInfos, useToast } from "../../../state";
-import { AssetInfoValidated } from "../../../state/clients/types/WyndexFactory.types";
+import { GaugesHooks, useToast } from "../../../state";
 import { GaugeResponse, Vote } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { useUserVotes } from "../../../state/hooks/gauge/useUserVotes";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
-import { PairsResponse } from "../../../state/recoil/selectors/clients/indexer";
-import { getAssetByDenom, getAssetInfoDetails, getAssetPriceByCurrency } from "../../../utils/assets";
-import { formatCurrency } from "../../../utils/currency";
-import { microdenomToDenom } from "../../../utils/tokens";
 import AssetImage from "../../Dex/AssetImage";
 import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
 import { GaugeHeader } from "./GaugeHeader";
-import PoolSelector from "./VoteSelector";
+import { mock, MarketingGaugeMock } from "./mock.json";
+import VoteSelector from "./VoteSelector";
 
-export interface PoolWithAddresses {
-  assets: AssetInfoValidated[];
-  lp: string;
-  pair: string;
-  staking: string;
+export interface OptionsWithInfos {
+  address: string;
   currentVotePower: number;
+  title: string;
+  description: string;
+  imageUrl: string;
 }
 
 interface BallotEntry {
-  option: PoolWithAddresses;
+  option: OptionsWithInfos;
   votingWeight: string;
 }
 
@@ -59,8 +55,6 @@ export const MarketingGauge = ({
   refreshVotes: () => void;
 }) => {
   const { address: walletAddress } = useChain("juno");
-  const { config } = useGaugeConfigs(gauge.adapter);
-  const { pools, pairs, assetPrices } = useIndexerInfos({ fetchPoolData: true });
 
   const { vote: userVotes } = useUserVotes(gauge.id, walletAddress || "");
   const { txToast } = useToast();
@@ -68,30 +62,33 @@ export const MarketingGauge = ({
 
   const [selectedVotes, setSelectedVotes] = useState<BallotEntry[]>([]);
   const [weightInput, setWeightInput] = useState<string | undefined>(undefined);
-  const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
+
   const [error, setError] = useState<any>(undefined);
   const [loadingReset, setLoadingReset] = useState<boolean>(false);
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
   let totalVotes = 0;
-  const poolsWithStakingAddress: PoolWithAddresses[] = pairs.map((pair: PairsResponse) => {
-    const optionDetails = options.find((el) => el[0] === pair.staking);
+  const optionsWithInfos: OptionsWithInfos[] = mock.map((mock: MarketingGaugeMock) => {
+    const optionDetails = options.find((el) => el[0] === mock.address);
     const optionPower = optionDetails ? Number(optionDetails[1]) : 0;
+
+    console.log(options);
 
     totalVotes += optionPower;
 
     return {
-      ...pair,
-      assets: [...pools[pair.pair]],
+      ...mock,
       currentVotePower: optionPower,
     };
   });
-  const totalValidVotes: number = poolsWithStakingAddress.reduce((acc, red) => {
+  const totalValidVotes: number = optionsWithInfos.reduce((acc, red) => {
     return acc + (0.1 < (red.currentVotePower / totalVotes) * 100 ? red.currentVotePower : 0);
   }, 0);
 
-  const [selectedPool, setSelectedPool] = useState<PoolWithAddresses>(poolsWithStakingAddress[0]);
-  const [availablePools, setAvailablePools] = useState<PoolWithAddresses[]>(poolsWithStakingAddress);
+  console.log(totalValidVotes);
+
+  const [selectedOption, setSelectedOption] = useState<OptionsWithInfos>(optionsWithInfos[0]);
+  const [availablePools, setAvailablePools] = useState<OptionsWithInfos[]>(optionsWithInfos);
 
   const addToBallot = () => {
     setError(undefined);
@@ -99,7 +96,7 @@ export const MarketingGauge = ({
     const _selectedVotes: BallotEntry[] = [
       ...selectedVotes,
       {
-        option: selectedPool,
+        option: selectedOption,
         votingWeight: weightInput || "0",
       },
     ];
@@ -130,8 +127,8 @@ export const MarketingGauge = ({
     setSelectedVotes(_selectedVotes);
 
     // Remove chosen Pool from the available ones
-    const _availablePools = [...availablePools].filter((el) => el !== selectedPool);
-    setSelectedPool(_availablePools[0]);
+    const _availablePools = [...availablePools].filter((el) => el !== selectedOption);
+    setSelectedOption(_availablePools[0]);
     setAvailablePools(_availablePools);
   };
 
@@ -154,7 +151,7 @@ export const MarketingGauge = ({
     setLoadingSubmit(true);
     const voteOptions: Vote[] = selectedVotes.map((vote) => {
       return {
-        option: vote.option.staking,
+        option: vote.option.address,
         weight: (Number(vote.votingWeight) / 100).toString(),
       };
     });
@@ -186,7 +183,7 @@ export const MarketingGauge = ({
         // Set current votes of user
         const _predefinedVotes: BallotEntry[] = userVotes.votes.map((vote) => {
           return {
-            option: availablePools.find((el) => el.staking === vote.option)!,
+            option: availablePools.find((el) => el.address === vote.option)!,
             votingWeight: (Number(vote.weight) * 100).toString(),
           };
         });
@@ -196,7 +193,7 @@ export const MarketingGauge = ({
         const _availablePools = [...availablePools].filter((el) => {
           let check = true;
           _predefinedVotes.map((ele) => {
-            if (ele.option.staking === el.staking) {
+            if (ele.option.address === el.address) {
               check = false;
             }
           });
@@ -206,9 +203,9 @@ export const MarketingGauge = ({
         setAvailablePools(_availablePools);
 
         // Set chosen pool to something realistic
-        setSelectedPool(_availablePools[0]);
+        setSelectedOption(_availablePools[0]);
       } else {
-        setAvailablePools(poolsWithStakingAddress);
+        setAvailablePools(optionsWithInfos);
         setSelectedVotes([]);
       }
     } catch (e) {
@@ -251,42 +248,7 @@ export const MarketingGauge = ({
                         <Flex justifyContent="space-between">
                           <Flex align="center">
                             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                              <Box
-                                w={{ base: 6, md: 7, lg: 8 }}
-                                h={{ base: 6, md: 7, lg: 8 }}
-                                bg="whiteAlpha.900"
-                                borderRadius="full"
-                                border="1px solid"
-                                borderColor={"wynd.cyan.100"}
-                                overflow="hidden"
-                                p={0.5}
-                              >
-                                <AssetImage
-                                  asset={
-                                    // @ts-ignore
-                                    (vote.option.assets[0].token || vote.option.assets[0].native) as string
-                                  }
-                                />
-                              </Box>
-                              <Box
-                                position="absolute"
-                                left={{ base: 4, sm: 5 }}
-                                w={{ base: 6, md: 7, lg: 8 }}
-                                h={{ base: 6, md: 7, lg: 8 }}
-                                bg="whiteAlpha.900"
-                                borderRadius="full"
-                                border="1px solid"
-                                borderColor={"wynd.cyan.100"}
-                                overflow="hidden"
-                                p={0.5}
-                              >
-                                <AssetImage
-                                  asset={
-                                    // @ts-ignore
-                                    (vote.option.assets[1].token || vote.option.assets[1].native) as string
-                                  }
-                                />
-                              </Box>
+                              <Text>{vote.option.title}</Text>
                             </Flex>
                           </Flex>
                           <Flex alignItems="center">
@@ -311,10 +273,10 @@ export const MarketingGauge = ({
               <Text fontSize="xl">Add to your votes</Text>
               <Divider mt={2} />
               <Flex mt={2} justifyContent="space-between" alignItems="center">
-                Choose a pool
-                <PoolSelector
-                  selectedPool={selectedPool}
-                  setSelectedPool={setSelectedPool}
+                Choose a charity
+                <VoteSelector
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
                   options={availablePools}
                 />
               </Flex>
@@ -384,7 +346,7 @@ export const MarketingGauge = ({
           </Text>
           <Grid
             display="grid"
-            templateColumns={"3fr 2fr 2fr 1fr"}
+            templateColumns={"3fr 4fr 1fr"}
             fontSize="xs"
             fontWeight="semibold"
             color={"wynd.neutral.900"}
@@ -393,9 +355,8 @@ export const MarketingGauge = ({
             bg="wynd.gray.alpha.20"
             borderTopRadius="lg"
           >
-            <GridItem textAlign="start">Pool</GridItem>
-            <GridItem textAlign="start">Reward next epoch</GridItem>
-            <GridItem textAlign="start">TVL</GridItem>
+            <GridItem textAlign="start">Project</GridItem>
+            <GridItem textAlign="start">Description</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
             </GridItem>
@@ -418,64 +379,40 @@ export const MarketingGauge = ({
               },
             }}
           >
-            {[...poolsWithStakingAddress]
+            {[...optionsWithInfos]
               .sort((a, b) => b.currentVotePower - a.currentVotePower)
-              .map((pool, i) => (
+              .map((option, i) => (
                 <Grid
-                  templateColumns={"3fr 2fr 2fr 1fr"}
+                  templateColumns={"3fr 4fr 1fr"}
                   py={2}
                   key={i}
                   borderBottom="solid 1px white"
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Flex align="center">
-                    <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                      <Box
-                        w={{ base: 6, md: 7, lg: 8 }}
-                        h={{ base: 6, md: 7, lg: 8 }}
-                        bg="whiteAlpha.900"
-                        borderRadius="full"
-                        border="1px solid"
-                        borderColor={"wynd.cyan.100"}
-                        overflow="hidden"
-                        p={0.5}
-                      >
-                        {/* @ts-ignore */}
-                        <AssetImage asset={(pool.assets[0].token || pool.assets[0].native) as string} />
-                      </Box>
-                      <Box
-                        position="absolute"
-                        left={{ base: 4, sm: 5 }}
-                        w={{ base: 6, md: 7, lg: 8 }}
-                        h={{ base: 6, md: 7, lg: 8 }}
-                        bg="whiteAlpha.900"
-                        borderRadius="full"
-                        border="1px solid"
-                        borderColor={"wynd.cyan.100"}
-                        overflow="hidden"
-                        p={0.5}
-                      >
-                        {/* @ts-ignore */}
-                        <AssetImage asset={(pool.assets[1].token || pool.assets[1].native) as string} />
-                      </Box>
+                  <Box>
+                    <Flex alignItems="center">
+                      <Image
+                        alt="Project Logo"
+                        src={option.imageUrl}
+                        width={70}
+                        height={70}
+                        style={{ marginRight: "6px" }}
+                      />
+                      <Text>{option.title}</Text>
                     </Flex>
-                    {" / "}
+                  </Box>
+                  <Flex>
+                    <Text>{option.description}</Text>
                   </Flex>
-                  <Flex align="center">
-                    {formatCurrency(
-                      currency,
-                      (
-                        getAssetPriceByCurrency(currency, pool.assets[0], assetPrices) *
-                        // @ts-ignore
-                        Number(pool.assets[0].amount / 10 ** getAssetInfoDetails(pool.assets[0]).decimals) *
-                        2
-                      ).toString(),
-                    )}
+                  <Flex>
+                    <Tooltip
+                      placement="left"
+                      label={`Voting Power: ${option.currentVotePower} / ${totalVotes}`}
+                    >
+                      <Flex align="center">{((option.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
+                    </Tooltip>
                   </Flex>
-                  <Tooltip placement="left" label={`Voting Power: ${pool.currentVotePower} / ${totalVotes}`}>
-                    <Flex align="center">{((pool.currentVotePower / totalVotes) * 100).toFixed(2)}%</Flex>
-                  </Tooltip>
                 </Grid>
               ))}
           </Box>

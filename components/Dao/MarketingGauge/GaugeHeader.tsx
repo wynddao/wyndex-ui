@@ -1,15 +1,13 @@
-"use client";
+"use client";;
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BsChevronLeft } from "react-icons/bs";
-import { useGaugeConfigs } from "../../../state";
 import { GaugeResponse } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { secondsToDays, secondsToWdhms } from "../../../utils/time";
-import { microamountToAmount } from "../../../utils/tokens";
 
 export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
   const router = useRouter();
-  const { config } = useGaugeConfigs(gauge.adapter)
+
   return (
     <Box bg="url(/castle.jpeg)" position="relative" rounded="lg" bgPosition="bottom" bgSize="cover">
       <Box bg="rgba(16, 11, 22,0.8)" w="full" h="full">
@@ -38,17 +36,6 @@ export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
           borderBottomRadius="lg"
           flexWrap="wrap"
         >
-          <Box>
-            <Text
-              fontWeight="semibold"
-              color="wynd.gray.500"
-              fontSize="xs"
-              textTransform="uppercase"
-              textAlign="center"
-            >
-              Reward per epoch
-            </Text>
-          </Box>
           <Box>
             <Text
               fontWeight="semibold"

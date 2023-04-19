@@ -9,24 +9,23 @@ import {
   InputLeftElement,
   List,
   ListItem,
+  Text,
 } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useRef, useState, useTransition } from "react";
+import React, { useCallback, useRef, useState, useTransition } from "react";
 import { useClickAway } from "react-use";
 import { motion } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
-import { PoolWithAddresses } from ".";
-import { getAssetByDenom, getAssetInfoDetails } from "../../../utils/assets";
+import { OptionsWithInfos } from ".";
 import AssetImage from "../../Dex/AssetImage";
-import { microdenomToDenom } from "../../../utils/tokens";
 
 interface IProps {
-  options: PoolWithAddresses[];
-  selectedPool: PoolWithAddresses;
-  setSelectedPool: (pool: PoolWithAddresses) => void;
+  options: OptionsWithInfos[];
+  selectedOption: OptionsWithInfos;
+  setSelectedOption: (option: OptionsWithInfos) => void;
 }
 
-const PoolSelector: React.FC<IProps> = ({ options, selectedPool, setSelectedPool }) => {
+const VoteSelector: React.FC<IProps> = ({ options, selectedOption, setSelectedOption }) => {
   const [open, setOpen] = useState<boolean>(false);
   const filterRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useState<string>("");
@@ -38,40 +37,24 @@ const PoolSelector: React.FC<IProps> = ({ options, selectedPool, setSelectedPool
     setOpen(!open);
   }, [open, filterRef]);
 
-  const changePool = (pool: PoolWithAddresses) => {
+  const changeOption = (option: OptionsWithInfos) => {
     startTransition(() => {
-      setSelectedPool(pool);
+      setSelectedOption(option);
       setOpen(false);
     });
   };
 
-  const _options = useMemo(
-    () =>
-      options.filter((option) => {
-        const assetDetails1 = getAssetInfoDetails(option.assets[0]);
-        const assetDetails2 = getAssetInfoDetails(option.assets[1]);
-        if (!assetDetails1 || !assetDetails2) {
-          return false;
-        }
-        return (
-          `${microdenomToDenom(assetDetails1.denom)}/${microdenomToDenom(assetDetails2.denom)}`
-            .toLowerCase()
-            .includes(filter.toLowerCase().trim()) ||
-          `${microdenomToDenom(assetDetails2.denom)}/${microdenomToDenom(assetDetails1.denom)}`
-            .toLowerCase()
-            .includes(filter.toLowerCase().trim())
-        );
-      }),
-    [filter, options],
-  );
+  const _options = options.filter((option) => {
+    return option.title.toLowerCase().includes(filter.toLowerCase().trim());
+  });
 
   useClickAway(dropdownRef, () => setOpen(false));
 
-  const AssetsLi = _options.map((pool) => {
+  const AssetsLi = _options.map((option) => {
     return (
       <ListItem
-        key={pool.staking}
-        onClick={() => changePool(pool)}
+        key={option.address}
+        onClick={() => changeOption(option)}
         p="0.5rem"
         pr="1rem"
         _hover={{ background: "whiteAlpha.200", cursor: "pointer" }}
@@ -80,34 +63,7 @@ const PoolSelector: React.FC<IProps> = ({ options, selectedPool, setSelectedPool
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-              <Box
-                w={{ base: 6, md: 7, lg: 8 }}
-                h={{ base: 6, md: 7, lg: 8 }}
-                bg="whiteAlpha.900"
-                borderRadius="full"
-                border="1px solid"
-                borderColor={"wynd.cyan.100"}
-                overflow="hidden"
-                p={0.5}
-              >
-                {/* @ts-ignore */}
-                <AssetImage asset={(pool.assets[0].token || pool.assets[0].native) as string} />
-              </Box>
-              <Box
-                position="absolute"
-                left={{ base: 4, sm: 5 }}
-                w={{ base: 6, md: 7, lg: 8 }}
-                h={{ base: 6, md: 7, lg: 8 }}
-                bg="whiteAlpha.900"
-                borderRadius="full"
-                border="1px solid"
-                borderColor={"wynd.cyan.100"}
-                overflow="hidden"
-                p={0.5}
-              >
-                {/* @ts-ignore */}
-                <AssetImage asset={(pool.assets[1].token || pool.assets[1].native) as string} />
-              </Box>
+              <Text>{option.title}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -132,38 +88,7 @@ const PoolSelector: React.FC<IProps> = ({ options, selectedPool, setSelectedPool
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-              <Box
-                w={{ base: 6, md: 7, lg: 8 }}
-                h={{ base: 6, md: 7, lg: 8 }}
-                bg="whiteAlpha.900"
-                borderRadius="full"
-                border="1px solid"
-                borderColor={"wynd.cyan.100"}
-                overflow="hidden"
-                p={0.5}
-              >
-                <AssetImage
-                  // @ts-ignore
-                  asset={(selectedPool.assets[0].token || selectedPool.assets[0].native) as string}
-                />
-              </Box>
-              <Box
-                position="absolute"
-                left={{ base: 4, sm: 5 }}
-                w={{ base: 6, md: 7, lg: 8 }}
-                h={{ base: 6, md: 7, lg: 8 }}
-                bg="whiteAlpha.900"
-                borderRadius="full"
-                border="1px solid"
-                borderColor={"wynd.cyan.100"}
-                overflow="hidden"
-                p={0.5}
-              >
-                <AssetImage
-                  // @ts-ignore
-                  asset={(selectedPool.assets[1].token || selectedPool.assets[1].native) as string}
-                />
-              </Box>
+              <Text>{selectedOption.title}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -236,4 +161,4 @@ const PoolSelector: React.FC<IProps> = ({ options, selectedPool, setSelectedPool
   );
 };
 
-export default PoolSelector;
+export default VoteSelector;
