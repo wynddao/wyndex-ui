@@ -244,7 +244,7 @@ const Swap: React.FC = () => {
       <Button
         h={{ base: 12, lg: 16 }}
         w="full"
-        bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+        bgGradient="linear-gradient(45deg, #3b6e3d, #73a86d)"
         onClick={handlerSwap}
         disabled={
           !isTxLoading &&
@@ -258,14 +258,14 @@ const Swap: React.FC = () => {
         maxW={{ lg: "560px" }}
         margin={{ lg: "0 auto" }}
         _hover={{
-          bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+          bgGradient: "linear-gradient(45deg, #4c8e48, #7ca66e)",
           ":disabled": {
-            bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+            bgGradient: "linear-gradient(45deg, #626262, #8a8a8a)",
             cursor: "initial",
           },
         }}
         _disabled={{
-          bgGradient: "linear(to-b, wynd.gray.300, wynd.gray.400)",
+          bgGradient: "linear-gradient(45deg, #626262, #8a8a8a)",
           cursor: "initial",
         }}
       >

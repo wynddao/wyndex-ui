@@ -196,9 +196,9 @@ export default function PoolHeader({
                 justifyContent="center"
                 gap="0.5rem"
                 display="flex"
-                bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
+                bgGradient="linear-gradient(45deg, #3b6e3d, #73a86d)"
                 _hover={{
-                  bgGradient: "linear(to-l, wynd.green.300, wynd.cyan.300)",
+                  bgGradient: "linear-gradient(45deg, #4c8e48, #7ca66e)",
                 }}
               >
                 <Icon as={FiCreditCard} />
