@@ -132,7 +132,7 @@ export default function AssetsRecapGallery() {
           }}
         >
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -157,7 +157,7 @@ export default function AssetsRecapGallery() {
             </Text>
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -180,7 +180,7 @@ export default function AssetsRecapGallery() {
             </Text>
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -200,7 +200,7 @@ export default function AssetsRecapGallery() {
             </Text>
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -217,7 +217,7 @@ export default function AssetsRecapGallery() {
             </Text>
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -253,7 +253,7 @@ export default function AssetsRecapGallery() {
             </Flex>
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -276,7 +276,7 @@ export default function AssetsRecapGallery() {
             )}
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"
@@ -296,7 +296,7 @@ export default function AssetsRecapGallery() {
             </Text>
           </Flex>
           <Flex
-            bg="rgba(0, 0, 0, 0.7)"
+            bg="rgba(5, 25, 30, 0.8)"
             flexDir="column"
             padding={3}
             borderRadius="xl"

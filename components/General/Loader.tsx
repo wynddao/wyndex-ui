@@ -10,7 +10,7 @@ export default function Loader() {
             }`}
       </style>
       <Flex
-        bgColor={"#131222"}
+        bgColor={"#0b2b26"}
         p={0}
         width={"100%"}
         height={"100vh"}
@@ -19,7 +19,7 @@ export default function Loader() {
       >
         <Box
           position="relative"
-          background="linear-gradient(to bottom, transparent 0%, rgba(19,18,34,1) 95%, rgba(19,18,34,1) 100%), url('/druid.gif')"
+          background="linear-gradient(to bottom, transparent 0%, #0b2b26 95%, #0b2b26 100%), url('/druid.gif')"
           h="512px"
           w="512px"
         />
