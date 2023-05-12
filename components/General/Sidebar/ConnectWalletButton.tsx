@@ -95,7 +95,7 @@ export default function ConnectWalletButton() {
           justifyContent="center"
           gap="0.5rem"
           display="flex"
-          bgGradient="linear-gradient(45deg, #3b6e3d, #73a86d)"
+          bgGradient="linear(45deg, wynd.green.400, wynd.cyan.400)"
           _hover={{
             bgGradient: "linear-gradient(45deg, #4c8e48, #7ca66e)",
           }}
