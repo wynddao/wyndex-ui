@@ -173,7 +173,7 @@ export const LsdCard = ({ lsdEntry }: { lsdEntry: LsdEntry }) => {
                 MY STAKED TOKENS
               </Text>
               <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="extrabold">
-                {microamountToAmount(Number(_balance) / Number(exchange_rate), 6)}{" "}
+                {microamountToAmount(Number(_balance) * Number(exchange_rate), 6)}{" "}
                 {microdenomToDenom(supply.bond_denom)}
               </Text>
             </GridItem>
