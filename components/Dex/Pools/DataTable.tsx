@@ -8,6 +8,7 @@ import {
   InputGroup,
   InputLeftElement,
   Select,
+  Button,
   Stack,
   Table,
   Tbody,
@@ -16,6 +17,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   ColumnDef,
@@ -43,6 +45,7 @@ import {
 } from "../../../utils/assets";
 import { microamountToAmount } from "../../../utils/tokens";
 import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
+import CreatePoolModal from "./CreatePoolModal";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
@@ -61,6 +64,7 @@ export function DataTable<Data extends object>({
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
   const handleRowClick = (row: any) => {
@@ -140,7 +144,8 @@ export function DataTable<Data extends object>({
 
   return (
     <>
-      <Box my={4}>
+      <CreatePoolModal isOpen={isOpen} onClose={onClose} />
+      <Box my={4} >
         <Text
           fontSize="2xl"
           fontWeight="bold"
@@ -169,6 +174,9 @@ export function DataTable<Data extends object>({
               onChange={({ target }) => setGlobalFilter(target.value)}
             />
           </InputGroup>
+          <Button onClick={onOpen}>
+            Create Pool
+          </Button>
           <Select
             value={table.getState().pagination.pageSize}
             onChange={(e) => {

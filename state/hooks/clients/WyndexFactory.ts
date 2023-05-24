@@ -28,3 +28,4 @@ const wrapExecuteHook =
   };
 
 export const useCreatePair = wrapExecuteHook("createPair");
+export const createPairAndDistributionFlows = wrapExecuteHook("createPairAndDistributionFlows"); 
