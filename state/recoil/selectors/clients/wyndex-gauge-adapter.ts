@@ -9,6 +9,7 @@ import { selectorFamily } from "recoil";
 import { WyndexGaugeAdapterQueryClient } from "../../../clients/WyndexGaugeAdapter.client";
 import {
   AllOptionsResponse,
+  AllSubmissionsResponse,
   CheckOptionResponse,
   Config,
   SampleGaugeMsgsResponse,
@@ -54,6 +55,22 @@ export const allOptionsSelector = selectorFamily<
       return await client.allOptions(...params);
     },
 });
+
+export const allSubmissionsSelector = selectorFamily<
+  AllSubmissionsResponse,
+  QueryClientParams & {
+    params: Parameters<WyndexGaugeAdapterQueryClient["submission"]>;
+  }
+>({
+  key: "wyndexGaugeAdapterAllSubmissions",
+  get:
+    ({ params, ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.submission(...params);
+    },
+});
+
 export const checkOptionSelector = selectorFamily<
   CheckOptionResponse,
   QueryClientParams & {

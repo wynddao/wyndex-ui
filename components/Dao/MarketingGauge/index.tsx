@@ -22,8 +22,10 @@ import { useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { useRecoilValue } from "recoil";
 import { GaugesHooks, useToast } from "../../../state";
+import { SubmissionResponse } from "../../../state/clients/types/WyndexGaugeAdapter.types";
 import { GaugeResponse, Vote } from "../../../state/clients/types/WyndexGaugeOrchestrator.types";
 import { useUserVotes } from "../../../state/hooks/gauge/useUserVotes";
+import { useMarketingGaugeSubmissions } from "../../../state/hooks/useMarketingGaugeSubmissions";
 import { currencyAtom } from "../../../state/recoil/atoms/settings";
 import AssetImage from "../../Dex/AssetImage";
 import ConnectWalletButton from "../../General/Sidebar/ConnectWalletButton";
@@ -35,9 +37,8 @@ import VoteSelector from "./VoteSelector";
 export interface OptionsWithInfos {
   address: string;
   currentVotePower: number;
-  title: string;
-  description: string;
-  imageUrl: string;
+  name: string;
+  url: string;
 }
 
 interface BallotEntry {
@@ -68,24 +69,23 @@ export const MarketingGauge = ({
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
   let totalVotes = 0;
-  const optionsWithInfos: OptionsWithInfos[] = mock.map((mock: MarketingGaugeMock) => {
-    const optionDetails = options.find((el) => el[0] === mock.address);
-    const optionPower = optionDetails ? Number(optionDetails[1]) : 0;
 
-    console.log(options);
+  const { submissions: subs } = useMarketingGaugeSubmissions(gauge);
+  const submissions = subs.submissions;
+  const optionsWithInfos: OptionsWithInfos[] = submissions.map((sub: SubmissionResponse) => {
+    const optionDetails = options.find((el) => el[0] === sub.address);
+    const optionPower = optionDetails ? Number(optionDetails[1]) : 0;
 
     totalVotes += optionPower;
 
     return {
-      ...mock,
+      ...sub,
       currentVotePower: optionPower,
     };
   });
   const totalValidVotes: number = optionsWithInfos.reduce((acc, red) => {
     return acc + (0.1 < (red.currentVotePower / totalVotes) * 100 ? red.currentVotePower : 0);
   }, 0);
-
-  console.log(totalValidVotes);
 
   const [selectedOption, setSelectedOption] = useState<OptionsWithInfos>(optionsWithInfos[0]);
   const [availableOptions, setAvailableOptions] = useState<OptionsWithInfos[]>(optionsWithInfos);
@@ -248,7 +248,7 @@ export const MarketingGauge = ({
                         <Flex justifyContent="space-between">
                           <Flex align="center">
                             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-                              <Text>{vote.option.title}</Text>
+                              <Text>{vote.option.name}</Text>
                             </Flex>
                           </Flex>
                           <Flex alignItems="center">
@@ -273,7 +273,7 @@ export const MarketingGauge = ({
               <Text fontSize="xl">Add to your votes</Text>
               <Divider mt={2} />
               <Flex mt={2} justifyContent="space-between" alignItems="center">
-                Choose a charity
+                Choose an option
                 <VoteSelector
                   selectedOption={selectedOption}
                   setSelectedOption={setSelectedOption}
@@ -356,7 +356,7 @@ export const MarketingGauge = ({
             borderTopRadius="lg"
           >
             <GridItem textAlign="start">Project</GridItem>
-            <GridItem textAlign="start">Description</GridItem>
+            <GridItem textAlign="start">Description / Project URL</GridItem>
             <GridItem textAlign="start" display={{ base: "none", lg: "block" }}>
               Votes
             </GridItem>
@@ -392,18 +392,11 @@ export const MarketingGauge = ({
                 >
                   <Box>
                     <Flex alignItems="center">
-                      <Image
-                        alt="Project Logo"
-                        src={option.imageUrl}
-                        width={70}
-                        height={70}
-                        style={{ marginRight: "6px" }}
-                      />
-                      <Text>{option.title}</Text>
+                      <Text>{option.name}</Text>
                     </Flex>
                   </Box>
                   <Flex>
-                    <Text>{option.description}</Text>
+                    <Text>{option.url}</Text>
                   </Flex>
                   <Flex>
                     <Tooltip

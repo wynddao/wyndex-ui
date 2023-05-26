@@ -51,9 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/svg" href="/logo-gradient.svg"></link>
       </head>
       <body>
-        {WYND_MAINTANANCE_MODE ? (
-          <Maintanance />
-        ) : isLoaded ? (
+        {isLoaded ? (
           <Providers>
             <Toaster />
             <Sidebar>{children}</Sidebar>

@@ -45,7 +45,7 @@ const VoteSelector: React.FC<IProps> = ({ options, selectedOption, setSelectedOp
   };
 
   const _options = options.filter((option) => {
-    return option.title.toLowerCase().includes(filter.toLowerCase().trim());
+    return option.name.toLowerCase().includes(filter.toLowerCase().trim());
   });
 
   useClickAway(dropdownRef, () => setOpen(false));
@@ -63,7 +63,7 @@ const VoteSelector: React.FC<IProps> = ({ options, selectedOption, setSelectedOp
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-              <Text>{option.title}</Text>
+              <Text>{option.name}</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -88,7 +88,7 @@ const VoteSelector: React.FC<IProps> = ({ options, selectedOption, setSelectedOp
         <Flex alignItems="center" justifyContent="space-between" gap="0.5rem">
           <Flex alignItems="center">
             <Flex position="relative" align="center" pr={{ base: 5, sm: 7 }}>
-              <Text>{selectedOption.title}</Text>
+              <Text>{selectedOption?.name}</Text>
             </Flex>
           </Flex>
         </Flex>
