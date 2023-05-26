@@ -19,3 +19,5 @@ You can start the local dev environment with `yarn dev`.
 
 `docker-compose up -d` 
 -> App will run on localhost:8080
+
+   
