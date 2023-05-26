@@ -88,7 +88,7 @@ export default function AddOptionModal(props: AddOptionModalProps) {
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent bgColor="wynd.base.subBg">
-        <ModalHeader>Add Option</ModalHeader>
+        <ModalHeader>Add your project</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Grid templateColumns="1fr 1fr" gap={2}>

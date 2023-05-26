@@ -84,7 +84,7 @@ export const GaugeHeader = ({ gauge }: { gauge: GaugeResponse }) => {
                 isDisabled={!walletAddress || walletAddress.length === 0 ? true : false}
                 onClick={() => setOpen(true)}
               >
-                Add Option
+                Add your project
               </Button>
             </Box>
           </Flex>
