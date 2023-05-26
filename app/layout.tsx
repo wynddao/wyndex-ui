@@ -7,6 +7,8 @@ import ToSModal from "../components/General/ToSModal";
 import Providers from "../providers/providers";
 import "@splidejs/splide/css/sea-green";
 import { usePathname } from "next/navigation";
+import { WYND_MAINTANANCE_MODE } from "../utils";
+import Maintanance from "../components/General/Maintanance";
 
 const getPageTitle = (path: string): string => {
   const pathPart: string = path.match(/^\/[^\/]*/)?.[0] ?? "/";
@@ -49,7 +51,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/svg" href="/logo-gradient.svg"></link>
       </head>
       <body>
-        {isLoaded ? (
+        {WYND_MAINTANANCE_MODE ? (
+          <Maintanance />
+        ) : isLoaded ? (
           <Providers>
             <Toaster />
             <Sidebar>{children}</Sidebar>
