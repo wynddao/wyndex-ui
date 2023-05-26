@@ -1,5 +1,6 @@
 import {
   Alert,
+  Box,
   Button,
   Divider,
   Flex,
@@ -93,7 +94,12 @@ export default function AddOptionModal(props: AddOptionModalProps) {
           <Grid templateColumns="1fr 1fr" gap={2}>
             <Text>Title*</Text>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Title" />
-            <Text>Link*</Text>
+            <Box my={2}>
+              <Text>Link*</Text>
+              <Text fontSize="sm">
+                Valid URLs must look like <strong>https://yourUrl.com/</strong>
+              </Text>
+            </Box>
             <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Link" />
             <Text>Juno Address*</Text>
             <Input
@@ -112,7 +118,9 @@ export default function AddOptionModal(props: AddOptionModalProps) {
             <Text fontSize="sm">Please note that you have to deposit 10 WYND for a submission.</Text>
           </Alert>
           <Flex justifyContent="flex-end" my={4}>
-            <Button isLoading={isLoading} onClick={() => onSubmit()}>Submit</Button>
+            <Button isLoading={isLoading} onClick={() => onSubmit()}>
+              Submit
+            </Button>
           </Flex>
         </ModalBody>
       </ModalContent>
