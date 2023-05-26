@@ -3,6 +3,7 @@ import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from "@cosmjs/co
 
 import {
   AllOptionsResponse,
+  AllSubmissionsResponse,
   CheckOptionResponse,
   Coin,
   Config,
@@ -44,6 +45,11 @@ export class WyndexGaugeAdapterQueryClient implements WyndexGaugeAdapterReadOnly
       check_option: {
         option,
       },
+    });
+  };
+  submission = async (): Promise<AllSubmissionsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_submissions: {},
     });
   };
   sampleGaugeMsgs = async ({ selected }: { selected: string[][] }): Promise<SampleGaugeMsgsResponse> => {
