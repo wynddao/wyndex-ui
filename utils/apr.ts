@@ -6,7 +6,7 @@ import { microamountToAmount } from "./tokens";
 
 export interface AprCalculated {
   unbonding_period: number;
-  apr: number;
+  apr: string;
 }
 
 export const getAprForPool = async (poolAddress: string, assetPrices: any): Promise<AprCalculated[]> => {
@@ -14,6 +14,8 @@ export const getAprForPool = async (poolAddress: string, assetPrices: any): Prom
   const poolData  = await client.queryContractSmart(poolAddress, {
     pool: {},
   });
+
+  console.log(poolData)
 
   const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
   const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);
@@ -46,7 +48,7 @@ export const getAprForPool = async (poolAddress: string, assetPrices: any): Prom
     return {
       unbonding_period: bucket[0],
       // Calculate APR by that
-      apr: value > 0 ? value / lpTokenValue : 0,
+      apr: poolData.assets[0].amount + "/" + poolData.assets[1].amount
     };
   });
 

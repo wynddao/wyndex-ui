@@ -1,7 +1,7 @@
 export const getApr = (
   apr: {
     unbonding_period: number;
-    apr: number;
+    apr: string;
   }[],
   unbonding_duration: number,
 ): string => {
@@ -9,7 +9,7 @@ export const getApr = (
   let res = "-";
 
   if (thisApr) {
-    res = (thisApr * 100).toFixed(2) + " %";
+    res = thisApr;
   } else {
     res = "-";
   }

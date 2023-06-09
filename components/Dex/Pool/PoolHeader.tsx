@@ -26,6 +26,7 @@ import { formatCurrency } from "../../../utils/currency";
 import druid from "./assets/druid.png";
 import ManageLiquidityModal from "./ManageLiquidityModal";
 import StartEarningModal from "./StartEarningModal";
+import EditDistributionFlowModal from "./EditDistributionFlowModal";
 
 interface PoolHeaderProps {
   readonly chainData: PoolResponse;
@@ -83,6 +84,7 @@ export default function PoolHeader({
   const { txToast } = useToast();
   const { onOpen: onOpenLiquidity, isOpen: isLiquidityOpen, onClose: onCloseLiquidity } = useDisclosure();
   const { onOpen: onOpenBondings, isOpen: isBondingsOpen, onClose: onCloseBondings } = useDisclosure();
+  const df = useDisclosure();
   const currency = useRecoilValue(currencyAtom);
   const { balance: lpBalance, refreshBalance } = useCw20UserInfos(pairData.liquidity_token);
   const { connect, isWalletConnected } = useChain("juno");
@@ -187,6 +189,9 @@ export default function PoolHeader({
                 >
                   Add/Remove Liquidity
                 </Button>
+                <Button onClick={df.onOpen}>
+                  Edit Pool
+                </Button>
               </Flex>
             ) : (
               <Button
@@ -236,6 +241,7 @@ export default function PoolHeader({
         apr={apr}
         loading={loading}
       />
+      <EditDistributionFlowModal isOpen={df.isOpen} onClose={df.onClose} />
     </>
   );
 }
