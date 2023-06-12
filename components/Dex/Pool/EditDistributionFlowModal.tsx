@@ -26,7 +26,9 @@ const EditDistributionFlowModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const assets = getAssetList().tokens;
+    const assets = getAssetList().tokens.filter((asset) => {
+        if(asset.tags === "ibc") return asset;
+    });
 
     const [elements, setElements] = React.useState([
         { isCW20: false, cw20Address: '', nativeToken: '', rewardDuration: '' }
@@ -70,13 +72,6 @@ const EditDistributionFlowModal = ({
                       mb='8px'
                     ></Input>
                 }
-                    <Input
-                      placeholder='Reward Duration'
-                      type="number"
-                      onChange={(event) => handleDurationInputChange(index, event)}
-                      value={elements[index].rewardDuration}
-                      mb='24px'
-                    ></Input>
             </>
         )
     };
@@ -96,12 +91,6 @@ const EditDistributionFlowModal = ({
     const handleInputChange = (index: number, event: any) => {
         const updatedElements = [...elements];
         updatedElements[index].cw20Address = event.target.value;
-        setElements(updatedElements);
-    };
-
-    const handleDurationInputChange = (index: number, event: any) => {
-        const updatedElements = [...elements];
-        updatedElements[index].rewardDuration = event.target.value;
         setElements(updatedElements);
     };
 
@@ -129,12 +118,12 @@ const EditDistributionFlowModal = ({
     const handleApply = async () => {
         const distributionFlows: DistributionFlow[] =  elements.map((element) => ({
             asset: createAsset(element),
-            reward_duration: element.rewardDuration,
+            reward_duration: 604800,
             rewards: [
-                [element.rewardDuration, "1.0"],
-                [element.rewardDuration, "2.0"],
-                [element.rewardDuration, "4.0"],
-                [element.rewardDuration, "6.0"],
+                [604800, "1.0"],
+                [1209600, "2.0"],
+                [2419200, "4.0"],
+                [3628800, "6.0"],
             ]
         }));
     };

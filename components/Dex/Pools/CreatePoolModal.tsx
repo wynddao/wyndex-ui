@@ -9,6 +9,9 @@ import {
     Button,
     Input,
     Text,
+    Checkbox,
+    Flex,
+    Select,
 } from '@chakra-ui/react'
 import { useChain } from "@cosmos-kit/react-lite";
 
@@ -18,8 +21,7 @@ import { AssetInfo, DistributionFlow } from '../../../state/clients/types/Wyndex
 import React from "react";
 import { useToast } from '../../../state';
 import { ExecuteResult } from "cosmwasm";
-import { create } from 'domain';
-import { string } from 'zod';
+import { getAssetList } from '../../../utils/getAssetList';
 
 const CreatePoolModal = ({
     isOpen,
@@ -30,25 +32,27 @@ const CreatePoolModal = ({
   }) => {
     const { address: walletAddress, connect, isWalletConnected } = useChain("juno");
     const { txToast } = useToast();
+    const assets = getAssetList().tokens.filter((asset) => {
+        if(asset.tags === "ibc") return asset;
+    });
 
-    const [firstAddress, setFirstAddress] = React.useState('');
-    const [secondAddress, setSecondAddress] = React.useState('');
-
-    const handleFirstAddress = (event: any) => setFirstAddress(event.target.value);
-    const handleSecondAddress = (event: any) => setSecondAddress(event.target.value);
+    const [tokens, setTokens] = React.useState([
+        { isCW20: false, cw20Address: '', nativeToken: '' },
+        { isCW20: false, cw20Address: '', nativeToken: '' },
+    ]);
 
     const createPair = createPairAndDistributionFlows({
         contractAddress: '',
         sender: walletAddress || "",
     });
 
-    const createAssetInfo = (address: string) => {
+    const createAssetInfo = (token: any) => {
         let obj: any = {};
 
-        if(address.startsWith("ujuno") || address.startsWith("ibc")) {
-            obj.native = address;
-        } else if(address.startsWith("juno")) {
-            obj.token = address;
+        if(token.isCW20) {
+            obj.token = token.cw20Address;
+        } else {
+            obj.native = token.nativeToken;
         }
 
         return obj;
@@ -56,8 +60,8 @@ const CreatePoolModal = ({
 
     const handleCreatePool = async () => {
         const assetInfos: AssetInfo[] = [
-            createAssetInfo(firstAddress),
-            createAssetInfo(secondAddress),
+            createAssetInfo(tokens[0]),
+            createAssetInfo(tokens[1]),
         ];
 
         const distributionFlows: DistributionFlow[] = [{
@@ -67,9 +71,9 @@ const CreatePoolModal = ({
             reward_duration: 604800,
             rewards: [
                 [604800, "1.0"],
-                [604800, "2.0"],
-                [604800, "4.0"],
-                [604800, "6.0"],
+                [1209600, "2.0"],
+                [2419200, "4.0"],
+                [3628800, "6.0"],
             ]
         }];
         
@@ -87,6 +91,57 @@ const CreatePoolModal = ({
         });
     };
 
+    const handleCheckboxChange = (index: number) => {
+        const updatedElements = [...tokens];
+        updatedElements[index].isCW20 = !tokens[index].isCW20;
+        setTokens(updatedElements);
+    };
+
+    const handleDropdownChange = (index: number, event: any) => {
+        const updatedElements = [...tokens];
+        updatedElements[index].nativeToken = event.target.value;
+        setTokens(updatedElements);
+    };
+
+    const handleInputChange = (index: number, event: any) => {
+        const updatedElements = [...tokens];
+        updatedElements[index].cw20Address = event.target.value;
+        setTokens(updatedElements);
+    };
+
+    const formGroup = (element: any, index: number) => {
+        return (
+            <>
+                <Checkbox
+                  mb='8px'
+                  isChecked={element.isCW20}
+                  onChange={() => handleCheckboxChange(index)}
+                >
+                    CW20
+                </Checkbox>
+                {!element.isCW20 ?
+                    <Select 
+                      placeholder='Select Native'
+                      onChange={(event) => handleDropdownChange(index, event)}
+                      value={tokens[index].nativeToken}
+                      mb='8px'
+                    >
+                        {assets.map((asset, i) => {
+                            return <option key={i} value={asset.denom}>{asset.symbol}</option>
+                        })}
+                    </Select>
+                    :
+                    <Input
+                      placeholder='CW20 Address'
+                      onChange={(event) => handleInputChange(index, event)}
+                      value={tokens[index].cw20Address}
+                      mb='8px'
+                    ></Input>
+                }
+            </>
+        )
+    };
+
     return (
         <>
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -95,19 +150,9 @@ const CreatePoolModal = ({
                 <ModalHeader>Create new Pool</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Text>First Address</Text>
-                    <Input
-                        mb='8px'
-                        value={firstAddress}
-                        onChange={handleFirstAddress}
-                    />
-
-                    <Text>Second Address</Text>
-                    <Input
-                        mb='8px'
-                        value={secondAddress}
-                        onChange={handleSecondAddress}
-                    />
+                    {tokens.map((token, index) => (
+                        formGroup(token, index)
+                    ))}
                 </ModalBody>
 
                 <ModalFooter>
