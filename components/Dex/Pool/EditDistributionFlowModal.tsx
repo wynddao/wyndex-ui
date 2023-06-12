@@ -129,12 +129,12 @@ const EditDistributionFlowModal = ({
     const handleApply = async () => {
         const distributionFlows: DistributionFlow[] =  elements.map((element) => ({
             asset: createAsset(element),
-            reward_duration: 604800,
+            reward_duration: element.rewardDuration,
             rewards: [
-                [604800, "1.0"],
-                [604800, "2.0"],
-                [604800, "4.0"],
-                [604800, "6.0"],
+                [element.rewardDuration, "1.0"],
+                [element.rewardDuration, "2.0"],
+                [element.rewardDuration, "4.0"],
+                [element.rewardDuration, "6.0"],
             ]
         }));
     };
