@@ -20,6 +20,7 @@ import { useToast } from '../../../state';
 import { ExecuteResult } from "cosmwasm";
 import { create } from 'domain';
 import { string } from 'zod';
+import { FACTORY_CONTRACT_ADDRESS } from '../../../utils';
 
 const CreatePoolModal = ({
     isOpen,
@@ -38,7 +39,7 @@ const CreatePoolModal = ({
     const handleSecondAddress = (event: any) => setSecondAddress(event.target.value);
 
     const createPair = createPairAndDistributionFlows({
-        contractAddress: '',
+        contractAddress: FACTORY_CONTRACT_ADDRESS,
         sender: walletAddress || "",
     });
 

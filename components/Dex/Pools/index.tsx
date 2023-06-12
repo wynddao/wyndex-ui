@@ -14,6 +14,7 @@ import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
 
 import AssetImage from "../AssetImage";
+import CreatePoolModal from "./CreatePoolModal";
 import TokenName from "../TokenName";
 import { DataTable } from "./DataTable";
 import MaxApr from "./MaxApr";
@@ -263,6 +264,7 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
 
   return (
     <Box p="4">
+      <CreatePoolModal isOpen={true} onClose={() => {}} />;{" "}
       <Box mb={6}>
         <Text
           fontSize="2xl"
@@ -275,7 +277,12 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
           My Pools
         </Text>
         {isWalletConnected ? (
-          <PoolsCard poolsData={userPools} allPools={pools} assetPrices={assetPrices} disabledPools={disabledPools} />
+          <PoolsCard
+            poolsData={userPools}
+            allPools={pools}
+            assetPrices={assetPrices}
+            disabledPools={disabledPools}
+          />
         ) : (
           <Flex
             borderRadius="md"

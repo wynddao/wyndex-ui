@@ -5,7 +5,6 @@ import AssetsRecapGallery from "./AssetsRecapGallery";
 export default function AssetBalances() {
   return (
     <Stack spacing={8}>
-      <AssetsRecapGallery />
       <AssetBalancesList />
     </Stack>
   );

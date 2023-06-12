@@ -58,37 +58,40 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
   }
 
   pools = async (): Promise<any> => {
-    const res = await fetch(`${this.apiUrl}/pools`);
+    const res = await fetch(`${this.apiUrl}/pools?permless=1`);
     return await res.json();
   };
 
   pairs = async (): Promise<any> => {
-    const res = await fetch(`${this.apiUrl}/pairs`);
+    const res = await fetch(`${this.apiUrl}/pairs?permless=1`);
     return await res.json();
   };
 
   userPools = async (walletAddress: string): Promise<any> => {
-    const res = await fetch(`${this.apiUrl}/pools/user/${walletAddress}`);
+    const res = await fetch(`${this.apiUrl}/pools/user/${walletAddress}?permless=1`);
     return await res.json();
   };
 
   userFiat = async (walletAddress: string): Promise<any> => {
-    const res = await fetch(`${this.apiUrl}/assets/prices/${walletAddress}`);
-    return await res.json();
+    // const res = await fetch(`${this.apiUrl}/assets/prices/${walletAddress}?permless=1`);
+    //return await res.json();
+
+    return [];
   };
 
   assetPrices = async (): Promise<RequestAssetPrice[]> => {
-    const res = await fetch(`${this.apiUrl}/assets/prices`);
-    return await res.json();
+    // const res = await fetch(`${this.apiUrl}/assets/prices?permless=1`);
+    //return await res.json();
+    return [];
   };
 
   userVotes = async (walletAddress: string): Promise<UserVote[]> => {
-    const res = await fetch(`${this.apiUrl}/votes/${walletAddress}`);
+    const res = await fetch(`${this.apiUrl}/votes/${walletAddress}?permless=1`);
     return await res.json();
   };
 
   swapOperation = async (reqOperation: RequestSwap): Promise<SwapOperation[]> => {
-    const res = await fetch(`${this.apiUrl}/swap`, {
+    const res = await fetch(`${this.apiUrl}/swap?permless=1`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -103,7 +106,7 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     try {
       if (!walletAddress) throw new Error("walletAddress needs to be set");
 
-      const res = await fetch(`${this.apiUrl}/assets/bank/${walletAddress}`);
+      const res = await fetch(`${this.apiUrl}/assets/bank/${walletAddress}?permless=1`);
       const ibcBalancesResponses: readonly IbcBalanceResponse[] = await res.json();
 
       const fetchError = (ibcBalancesResponses as any).error;
@@ -150,7 +153,7 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
   };
 
   rewards = async (poolAddress: string): Promise<AnnualizedRewardsResponse> => {
-    const res = await fetch(`${this.apiUrl}/pools/apr/${poolAddress}`);
+    const res = await fetch(`${this.apiUrl}/pools/apr/${poolAddress}?permless=1`);
     const annualizedRewardsResponse: AnnualizedRewardsResponse = await res.json();
     return annualizedRewardsResponse;
   };
