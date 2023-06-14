@@ -13,12 +13,6 @@ import { microamountToAmount } from "../../../utils/tokens";
 export default function ConnectWalletButton() {
   const { onCopy, hasCopied, setValue } = useClipboard("");
   const { address, openView, isWalletConnected, username, disconnect } = useChain("juno");
-  const { setModalTheme } = useModalTheme();
-  setModalTheme("dark");
-
-  const loadableCw20Balance = useRecoilValueLoadable(
-    cw20BalancesSelector({ apiUrl: INDEXER_API_ENDPOINT, params: [address] }),
-  );
 
   useEffect(() => {
     setValue(address || "");
@@ -26,7 +20,7 @@ export default function ConnectWalletButton() {
 
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
-      {isWalletConnected && loadableCw20Balance ? (
+      {isWalletConnected ? (
         <Button
           bgGradient="linear(to-l, wynd.green.400, wynd.cyan.400)"
           _hover={{
@@ -55,21 +49,7 @@ export default function ConnectWalletButton() {
                   </Text>
                   <Divider borderBottomWidth="1px" />
                   <Text fontSize="sm"></Text>
-                  <Text fontSize="sm">
-                    {" "}
-                    {loadableCw20Balance.state === "hasValue"
-                      ? `${Number(
-                          microamountToAmount(
-                            Number(
-                              loadableCw20Balance.contents.find(
-                                (asset) => asset.address === WYND_TOKEN_ADDRESS,
-                              )?.balance,
-                            ),
-                            6,
-                          ),
-                        ).toFixed(2)} $WYND`
-                      : "0"}{" "}
-                  </Text>
+                  <Text fontSize="sm"></Text>
                 </Box>
                 <Flex direction="column" gap={2}>
                   <Tooltip label={hasCopied ? "Copied!" : "Copy wallet address"}>

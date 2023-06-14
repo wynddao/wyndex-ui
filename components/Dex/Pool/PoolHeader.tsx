@@ -178,7 +178,7 @@ export default function PoolHeader({
           </GridItem>
           <GridItem display="flex" justifyItems={{ base: "start", md: "center" }} alignItems="center">
             {isWalletConnected ? (
-              <Flex align="center" wrap="wrap">
+              <Flex align="center" wrap="nowrap">
                 <Button
                   fontSize="sm"
                   onClick={onOpenLiquidity}
@@ -189,9 +189,7 @@ export default function PoolHeader({
                 >
                   Add/Remove Liquidity
                 </Button>
-                <Button onClick={df.onOpen}>
-                  Edit Pool
-                </Button>
+                <Button ml={3} onClick={df.onOpen}>Add Reward Distribution Flow</Button>
               </Flex>
             ) : (
               <Button

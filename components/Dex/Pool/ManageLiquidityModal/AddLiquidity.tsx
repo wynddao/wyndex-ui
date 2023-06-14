@@ -26,7 +26,6 @@ import { AiFillWarning } from "react-icons/ai";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { useUserStakeInfos } from "../../../../state/hooks/useUserStakeInfos";
 import { getAssetByInfo, getAssetInfoDetails, getNativeIbcTokenDenom } from "../../../../utils/assets";
-import { getAssetList } from "../../../../utils/getAssetList";
 import { amountToMicroamount, microamountToAmount, microdenomToDenom } from "../../../../utils/tokens";
 import AssetImage from "../../AssetImage";
 interface inputType {
@@ -83,7 +82,7 @@ export default function AddLiquidity({
   const { address: walletAddress } = useChain("juno");
   const { refreshBondings } = useUserStakeInfos(pairData.staking_addr, walletAddress || "");
   const { refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
-
+  const { permlessAssets } = useIndexerInfos({});
   const [loading, setLoading] = useState<boolean>(false);
 
   const defaultInput = poolData.map(({ denomOrAddr: label, contractAddress }) => ({
@@ -128,7 +127,7 @@ export default function AddLiquidity({
         : asset.info.native === newInputValueB.id,
     );
 
-    const assets = getAssetList().tokens;
+    const assets = permlessAssets;
     const decimalsA =
       assets.find(
         (el) =>
@@ -142,7 +141,7 @@ export default function AddLiquidity({
           newInputValueB.id === el.denom ||
           newInputValueB.id === (el as IBCAsset).juno_denom ||
           newInputValueB.id === (el as CW20Asset).token_address,
-      )?.decimals || 6;
+      )?.decimals || 6;
 
     const ratioA =
       Number(assetB?.amount || "0") / 10 ** decimalsB / (Number(assetA?.amount || "0") / 10 ** decimalsA);
@@ -156,7 +155,7 @@ export default function AddLiquidity({
       if (assetABalanceState !== "hasValue" || assetBBalanceState !== "hasValue") return;
       const [newInputValueA, newInputValueB] = tokenInputValue;
       const [ratioA, ratioB] = calculateRatios();
-      const assets = getAssetList().tokens;
+      const assets = permlessAssets;
       const decimalsA =
         assets.find(
           (el) => newInputValueA.id === el.denom || newInputValueA.id === (el as CW20Asset).token_address,
@@ -215,19 +214,19 @@ export default function AddLiquidity({
     const [newInputValueA, newInputValueB] = tokenInputValue;
     const [ratioA, ratioB] = calculateRatios();
 
-    const assets = getAssetList().tokens;
+    const assets = permlessAssets;
     const decimalsA =
       assets.find(
         (el) =>
           newInputValueA.id === el.denom ||
-          newInputValueA.id === el.juno_denom ||
+          newInputValueA.id === (el as IBCAsset).juno_denom ||
           newInputValueA.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
     const decimalsB =
       assets.find(
         (el) =>
           newInputValueB.id === el.denom ||
-          newInputValueA.id === el.juno_denom ||
+          newInputValueA.id === (el as IBCAsset).juno_denom ||
           newInputValueB.id === (el as CW20Asset).token_address,
       )?.decimals || 6;
 
@@ -320,7 +319,7 @@ export default function AddLiquidity({
     });
   };
 
-  const assets = getAssetList().tokens;
+  const assets = permlessAssets;
 
   return (
     <>
@@ -329,8 +328,8 @@ export default function AddLiquidity({
           const asset = assets.find(
             (asset) =>
               denomOrAddr === asset.denom ||
-              denomOrAddr === asset.token_address ||
-              denomOrAddr === asset.juno_denom,
+              denomOrAddr === (asset as CW20Asset).token_address ||
+              denomOrAddr === (asset as IBCAsset).juno_denom,
           );
 
           let maxInput = "0";
@@ -510,7 +509,7 @@ export default function AddLiquidity({
             !(tokenInputValue.filter(({ value }) => Number(value) > 0).length > 0) ||
             tokenInputValue.filter((input, index) => {
               const asset = assets.find(
-                (asset) => input.id === asset.denom || input.contract === asset.token_address,
+                (asset) => input.id === asset.denom || input.contract === (asset as CW20Asset).token_address,
               );
 
               let maxInput = "0";

@@ -1,3 +1,4 @@
+import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import { selectorFamily } from "recoil";
 import { RequestAssetPrice } from "../../../../utils/assets";
@@ -71,6 +72,16 @@ export const assetPricesSelector = selectorFamily<RequestAssetPrice[], QueryClie
     async ({ get }) => {
       const client = get(queryClient(queryClientParams));
       return await client.assetPrices();
+    },
+});
+
+export const permlessAssetsSelector = selectorFamily<readonly Asset[], QueryClientParams>({
+  key: "permlessAssets",
+  get:
+    ({ ...queryClientParams }) =>
+    async ({ get }) => {
+      const client = get(queryClient(queryClientParams));
+      return await client.permlessAssets();
     },
 });
 

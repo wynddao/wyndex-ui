@@ -264,7 +264,6 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
 
   return (
     <Box p="4">
-      <CreatePoolModal isOpen={true} onClose={() => {}} />;{" "}
       <Box mb={6}>
         <Text
           fontSize="2xl"

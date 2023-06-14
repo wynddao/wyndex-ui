@@ -13,6 +13,7 @@ import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/c
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
 import { baseTheme } from "../theme";
+import { CHAIN_RPC_ENDPOINT } from "../utils";
 
 // construct signer options
 const signerOptions = {
@@ -71,6 +72,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               ...cosmostationWallets,
             ]}
             signerOptions={signerOptions}
+            endpointOptions={{
+              endpoints: {
+                juno: {
+                  rpc: [CHAIN_RPC_ENDPOINT],
+                },
+              },
+            }}
           >
             <InnerWalletProvider>{children}</InnerWalletProvider>
           </ChainProvider>

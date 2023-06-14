@@ -12,14 +12,13 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Asset } from "@wynddao/asset-list";
+import { Asset, CW20Asset, IBCAsset } from "@wynddao/asset-list";
 import { motion } from "framer-motion";
 import React, { startTransition, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 import { useClickAway } from "react-use";
 import { useIndexerInfos } from "../../../../state";
-import { getAssetList } from "../../../../utils/getAssetList";
 import { microamountToAmount } from "../../../../utils/tokens";
 
 interface AssetSelectorProps {
@@ -35,6 +34,7 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({ selectedAsset, setAsset, 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useState("");
+  const { permlessAssets } = useIndexerInfos({});
 
   useClickAway(dropdownRef, onClose);
 
@@ -50,7 +50,7 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({ selectedAsset, setAsset, 
     onToggle();
   };
 
-  const assets = getAssetList().tokens;
+  const assets = permlessAssets;
   const filteredAssets = assets.filter(({ name, symbol }) => {
     if (
       hiddenTokens.find(
@@ -69,8 +69,9 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({ selectedAsset, setAsset, 
   const assetsWithBalances = filteredAssets.map((asset) => {
     const balance =
       asset.tags === "cw20"
-        ? cw20Balances.find((el) => el.address === asset.token_address)?.balance || "0"
-        : ibcBalances.find((el) => el.denom === asset.juno_denom || el.denom === asset.denom)?.amount || "0";
+        ? cw20Balances.find((el) => el.address === (asset as CW20Asset).token_address)?.balance || "0"
+        : ibcBalances.find((el) => el.denom === (asset as IBCAsset).juno_denom || el.denom === asset.denom)
+            ?.amount || "0";
 
     return { ...asset, balance: microamountToAmount(balance, asset.decimals) };
   });

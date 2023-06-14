@@ -1,15 +1,15 @@
 import { Box, Button, Skeleton, Text } from "@chakra-ui/react";
 import { ExecuteResult } from "cosmwasm";
-import { useToast, WyndexStakeHooks } from "../../../state";
+import { useIndexerInfos, useToast, WyndexStakeHooks } from "../../../state";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { getNativeIbcTokenDenom } from "../../../utils/assets";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
-import { assetList } from "@wynddao/asset-list";
 import TokenName from "../TokenName";
 import { Suspense } from "react";
 export const Rewards = ({ address, stakingContract }: { address: string; stakingContract: string }) => {
   const { rewards, refreshPendingUnstaking, refreshRewards } = useStakeInfos(stakingContract, true);
   const { txToast } = useToast();
+  const { permlessAssets } = useIndexerInfos({});
   let hasRewards = false;
   if (rewards) {
     let total = 0;
@@ -70,26 +70,24 @@ export const Rewards = ({ address, stakingContract }: { address: string; staking
                     let decimals = 6;
                     if (reward.info.hasOwnProperty("native")) {
                       decimals =
-                        assetList.tokens.find(
+                        permlessAssets.find(
                           // @ts-ignore
                           (el) => el.denom === reward.info.native || el.juno_denom === reward.info.native,
                         )?.decimals || 6;
                     } else {
                       // @ts-ignore
-                      decimals = assetList.tokens.find((el) => el.denom === reward.info.token)?.decimals || 6;
+                      decimals = permlessAssets.find((el) => el.denom === reward.info.token)?.decimals || 6;
                     }
                     return (
                       <Box key={i}>
                         {reward.info.hasOwnProperty("native") ? (
                           <span>
-                            {microamountToAmount(reward.amount, decimals)}{" "}
-                            {/* @ts-ignore */}
+                            {microamountToAmount(reward.amount, decimals)} {/* @ts-ignore */}
                             {microdenomToDenom(getNativeIbcTokenDenom(reward.info.native))}
                           </span>
                         ) : (
                           <span>
-                            {microamountToAmount(reward.amount, decimals)}{" "}
-                            {/* @ts-ignore */}
+                            {microamountToAmount(reward.amount, decimals)} {/* @ts-ignore */}
                             <TokenName symbol={true} address={reward.info.token} />
                           </span>
                         )}

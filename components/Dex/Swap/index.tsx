@@ -15,7 +15,6 @@ import { useSimulateSwap } from "../../../state/hooks/useSimulateSwap";
 import { MULTI_HOP_CONTRACT_ADDRESS } from "../../../utils";
 import { BOND_ROUTER_ADDRESS } from "../../../utils";
 import { getAssetInfo } from "../../../utils/assets";
-import { getAssetList } from "../../../utils/getAssetList";
 import { getRouteByOperations } from "../../../utils/getRouteByOperations";
 import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens";
 import FromToken from "./FromToComponent/FromToken";
@@ -32,18 +31,20 @@ const spin = keyframes`
 
 const Swap: React.FC = () => {
   const { address: walletAddress, connect, isWalletConnected } = useChain("juno");
-  const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances } = useIndexerInfos({});
+  const { swapOperationRoutes, refreshIbcBalances, refreshCw20Balances, permlessAssets } = useIndexerInfos(
+    {},
+  );
   const { txToast, isTxLoading } = useToast();
 
   const [slippage, setSlippage] = useState<number>(1);
   const [showHistorical, setShowHistorical] = useState<boolean>(false);
 
-  const assetList = getAssetList();
+  const assetList = permlessAssets;
   const [fromToken, setFromToken] = useState<Asset>(
-    assetList.tokens.find((asset) => asset.denom.includes("juno")) ?? assetList.tokens[3],
+    assetList.find((asset) => asset.denom.includes("juno")) ?? assetList[1],
   );
   const [toToken, setToToken] = useState<Asset>(
-    assetList.tokens.find((asset) => asset.denom.includes("wynd")) ?? assetList.tokens[4],
+    assetList.find((asset) => asset.denom.includes("wynd")) ?? assetList[2],
   );
   const operations = useRecoilValue(
     swapOperationRoutes({ offerAsset: getAssetInfo(fromToken), askAsset: getAssetInfo(toToken) }),
@@ -108,7 +109,7 @@ const Swap: React.FC = () => {
       });
     }
 
-    if(fromToken.denom === "ujuno" && toToken.denom === "uwyjuno") {
+    if (fromToken.denom === "ujuno" && toToken.denom === "uwyjuno") {
       return bond("auto", undefined, [
         {
           amount: fromTokenAmount
@@ -116,8 +117,8 @@ const Swap: React.FC = () => {
             : fromTokenSimulated.amount,
           // @ts-ignore
           denom: fromToken.denom,
-        }
-      ])
+        },
+      ]);
     }
 
     return swapNative({ operations, maxSpread: spread }, "auto", undefined, [
@@ -247,13 +248,14 @@ const Swap: React.FC = () => {
         bgGradient="linear-gradient(45deg, #3b6e3d, #73a86d)"
         onClick={handlerSwap}
         disabled={
-          !isTxLoading &&
-          isWalletConnected &&
-          ((!fromTokenAmount && !toTokenAmount) ||
-            fromTokenAmount === "0" ||
-            toTokenAmount === "0" ||
-            Number(fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)) >
-              Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))
+          (!isTxLoading &&
+            isWalletConnected &&
+            ((!fromTokenAmount && !toTokenAmount) ||
+              fromTokenAmount === "0" ||
+              toTokenAmount === "0" ||
+              Number(fromTokenAmount ?? microamountToAmount(fromTokenSimulated.amount, fromToken.decimals)) >
+                Number(microamountToAmount(fromBalance.amount, fromToken.decimals)))) ||
+          operations.length === 0
         }
         maxW={{ lg: "560px" }}
         margin={{ lg: "0 auto" }}
@@ -280,7 +282,7 @@ const Swap: React.FC = () => {
         )}
         {buttonText}
       </Button>
-      {operations.length > 0 && (
+      {operations.length > 0 ? (
         <Rate
           logo-black-no-text
           fromToken={fromToken}
@@ -292,6 +294,24 @@ const Swap: React.FC = () => {
           slippage={slippage}
           route={getRouteByOperations(operations)}
         />
+      ) : (
+        <Flex
+          bg="whiteAlpha.100"
+          backdropFilter="blur(5px)"
+          borderRadius="xl"
+          p={6}
+          maxW={{ lg: "600px" }}
+          minW={{ lg: "600px" }}
+          margin={{ lg: "0 auto" }}
+          border="0"
+          flexFlow="column"
+          gap="1rem"
+          alignItems="center"
+        >
+          <Flex w="full" justify="space-between" fontWeight="bold" fontSize={{ lg: "lg" }}>
+            <p>This is a permissionless version of the DEX. There are no available routes for this swap.</p>
+          </Flex>
+        </Flex>
       )}
     </Flex>
   );

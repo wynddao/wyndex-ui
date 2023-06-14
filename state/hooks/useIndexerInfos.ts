@@ -112,6 +112,12 @@ export const useIndexerInfos = ({
     });
   };
 
+  const permlessAssets = useRecoilValue(
+    IndexerSelectors.permlessAssetsSelector({
+      apiUrl: INDEXER_API_ENDPOINT,
+    }),
+  );
+
   // TODO: type each returned property to avoid errors
   return {
     pools,
@@ -128,5 +134,6 @@ export const useIndexerInfos = ({
     swapOperationRoutes,
     userVotes,
     refreshUserVotes,
+    permlessAssets,
   };
 };

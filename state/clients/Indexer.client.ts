@@ -1,3 +1,4 @@
+import { Asset } from "@wynddao/asset-list";
 import { Coin } from "cosmwasm";
 import async from "react-select/dist/declarations/src/async/index";
 import { RequestAssetPrice } from "../../utils/assets";
@@ -156,5 +157,11 @@ export class IndexerQueryClient implements IndexerQueryClientReadOnlyInterface {
     const res = await fetch(`${this.apiUrl}/pools/apr/${poolAddress}?permless=1`);
     const annualizedRewardsResponse: AnnualizedRewardsResponse = await res.json();
     return annualizedRewardsResponse;
+  };
+
+  permlessAssets = async (): Promise<readonly Asset[]> => {
+    const res = await fetch(`${this.apiUrl}/permless/assets`);
+    const assets: readonly Asset[] = await res.json();
+    return assets;
   };
 }

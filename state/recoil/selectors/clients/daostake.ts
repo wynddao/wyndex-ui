@@ -215,6 +215,7 @@ export const claimsSelector = selectorFamily<
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
+      if (queryClientParams.contractAddress === "") return { claims: [] };
       const client = get(queryClient(queryClientParams));
       return await client.claims(...params);
     },

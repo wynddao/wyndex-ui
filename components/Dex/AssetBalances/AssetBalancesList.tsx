@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { useIndexerInfos } from "../../../state";
 import { favAtom } from "../../../state/recoil/atoms/favouriteAssets";
-import { getAssetList } from "../../../utils/getAssetList";
 import AssetBalanceItem from "./AssetBalanceItem";
 import TokenFilter, { TokenFilterOptions } from "./TokenFilter";
 import { getAssetId, prepareAssets } from "./utils";
@@ -23,8 +22,8 @@ export default function AssetBalancesList() {
 
   const [filterOption, setFilterOption] = useState<TokenFilterOptions>("All");
   const [searchText, setSearchText] = useState("");
-
-  const assets: readonly Asset[] = getAssetList().tokens;
+  const { permlessAssets } = useIndexerInfos({});
+  const assets: readonly Asset[] = permlessAssets;
   const readyAssets = prepareAssets(assets, ibcBalances, cw20Balances, favAssets, filterOption, searchText);
 
   return (

@@ -92,6 +92,7 @@ export const allStakedSelector = selectorFamily<
   get:
     ({ params, ...queryClientParams }) =>
     async ({ get }) => {
+      if (queryClientParams.contractAddress === "") return { stakes: [] };
       const client = get(queryClient(queryClientParams));
       return await client.allStaked(...params);
     },

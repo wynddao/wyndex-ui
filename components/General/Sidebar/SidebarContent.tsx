@@ -5,7 +5,7 @@ import { FiActivity, FiPieChart, FiRefreshCw, FiWind } from "react-icons/fi";
 import { MdBallot } from "react-icons/md";
 import { SiConvertio } from "react-icons/si";
 import { TbPills } from "react-icons/tb";
-import wyndLogoWhite from "../../../public/logo-white.svg";
+import wyndLogoWhite from "../../../public/jungle-logo.png";
 import ConnectWalletButton from "./ConnectWalletButton";
 import NavItem, { LinkItemProps } from "./NavItem";
 import OnRampButton from "./OnRamp/OnRampButton";
@@ -39,7 +39,7 @@ export default function SidebarContent({ onClose, ...restProps }: SidebarContent
               alt="Wynd logo"
               src={wyndLogoWhite}
               sizes="100vw"
-              style={{ height: "auto", maxWidth: 128, maxHeight: 38 }}
+              style={{ height: "auto", maxWidth: 160, maxHeight: 90 }}
             />
           </Box>
         </Flex>

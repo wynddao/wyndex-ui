@@ -25,7 +25,6 @@ import { withdrawIbcModalAtom } from "../../../state/recoil/atoms/modal";
 import { getTransferIbcData } from "../../../state/recoil/selectors/ibc";
 import { getIbcSigningDataSelector, walletNames } from "../../../state/recoil/selectors/ibcSigningData";
 import { keplrAccountChangeKey } from "../../../utils/account";
-import { getAssetList } from "../../../utils/getAssetList";
 import { amountToMicroamount } from "../../../utils/tokens";
 
 export default function WithdrawIbcModal() {
@@ -33,7 +32,7 @@ export default function WithdrawIbcModal() {
   const { txToast } = useToast();
   const { address, getSigningStargateClient } = useChain("juno");
   const [withdrawIbcModalOpen, setWithdrawIbcModalOpen] = useRecoilState(withdrawIbcModalAtom);
-  const { refreshIbcBalances } = useIndexerInfos({});
+  const { refreshIbcBalances, permlessAssets } = useIndexerInfos({});
 
   const ibcSigningDataSelector = getIbcSigningDataSelector(withdrawIbcModalOpen.chainId ?? "");
   const loadableIbcSigningData = useRecoilValueLoadable(ibcSigningDataSelector);
@@ -54,7 +53,7 @@ export default function WithdrawIbcModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
 
-  const assets: readonly Asset[] = getAssetList().tokens;
+  const assets: readonly Asset[] = permlessAssets;
   const ibcAssets: readonly IBCAsset[] = assets.filter((asset): asset is IBCAsset => asset.tags !== "cw20");
   const asset = ibcAssets.find((asset) => asset.chain_id === withdrawIbcModalOpen.chainId);
 

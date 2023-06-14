@@ -1,6 +1,7 @@
 "use client";
 import { Image, ImageProps } from "@chakra-ui/react";
-import { assetList as assetListTestnet } from "@wynddao/asset-list";
+import { CW20Asset, IBCAsset } from "@wynddao/asset-list";
+import { useIndexerInfos } from "../../state";
 import { AssetInfo } from "../../state/clients/types/WyndexPair.types";
 
 interface AssetImageOptions extends Omit<ImageProps, "alt" | "src"> {
@@ -9,6 +10,7 @@ interface AssetImageOptions extends Omit<ImageProps, "alt" | "src"> {
 
 export default function AssetImage(props: AssetImageOptions) {
   const { asset } = props;
+  const { permlessAssets } = useIndexerInfos({});
   let type: string;
   let address: string;
 
@@ -46,14 +48,14 @@ export default function AssetImage(props: AssetImageOptions) {
 
   switch (type) {
     case "ibc":
-      image = assetListTestnet.tokens.find((el) => el.juno_denom === address)?.logoURI;
+      image = permlessAssets.find((el) => (el as IBCAsset).juno_denom === address)?.logoURI;
       break;
     case "native":
-      image = assetListTestnet.tokens.find((el) => el.denom === address)?.logoURI;
+      image = permlessAssets.find((el) => el.denom === address)?.logoURI;
       break;
     case "cw20":
     default:
-      image = assetListTestnet.tokens.find((el) => el.token_address === address)?.logoURI;
+      image = permlessAssets.find((el) => (el as CW20Asset).token_address === address)?.logoURI;
   }
 
   // Fallback image

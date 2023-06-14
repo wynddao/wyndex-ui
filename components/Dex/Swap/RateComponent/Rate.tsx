@@ -6,7 +6,6 @@ import { SimulateSwapOperationsResponse } from "../../../../state/clients/types/
 import { currencyAtom } from "../../../../state/recoil/atoms/settings";
 import { getAssetPriceByCurrency, getDenom } from "../../../../utils/assets";
 import { formatCurrency } from "../../../../utils/currency";
-import { getAssetList } from "../../../../utils/getAssetList";
 import { microamountToAmount } from "../../../../utils/tokens";
 import SwapRoute from "./SwapRoute";
 
@@ -34,8 +33,9 @@ const Rate: React.FC<IProps> = ({
   const simulatedOperation = inputFrom ? simulatedTo : simulatedFrom;
   const minimumReceived = ((100 - slippage) / 100) * Number(simulatedOperation.amount);
   const currency = useRecoilValue(currencyAtom);
+  const { permlessAssets } = useIndexerInfos({});
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
-  const assetList = getAssetList().tokens;
+  const assetList = permlessAssets;
 
   const totalFee = simulatedOperation.commission_amounts.reduce((acc, { amount, info }) => {
     const price = getAssetPriceByCurrency(currency, info, assetPrices);
