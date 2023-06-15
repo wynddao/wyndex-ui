@@ -25,12 +25,13 @@ import { ExecuteResult } from "cosmwasm";
 import { create } from "domain";
 import { string } from "zod";
 import { FACTORY_CONTRACT_ADDRESS } from "../../../utils";
+import { getAssetList } from "../../../utils/getAssetList";
 
 const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { address: walletAddress, connect, isWalletConnected } = useChain("juno");
   const { txToast } = useToast();
-  const { permlessAssets } = useIndexerInfos({});
-  const assets = permlessAssets.filter((asset) => {
+  const assetList = getAssetList().tokens;
+  const assets = assetList.filter((asset) => {
     if (asset.tags === "ibc" || asset.tags === "native") return asset;
   });
 
