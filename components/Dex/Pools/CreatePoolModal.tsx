@@ -12,6 +12,8 @@ import {
   Checkbox,
   Flex,
   Select,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { useChain } from "@cosmos-kit/react-lite";
 
@@ -163,7 +165,13 @@ const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         <ModalContent>
           <ModalHeader>Create new Pool</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>{tokens.map((token, index) => formGroup(token, index))}</ModalBody>
+          <ModalBody>
+            {tokens.map((token, index) => formGroup(token, index))}
+            <Alert status="warning">
+              <AlertIcon />
+              Creating a pool requires a 1000 WYND deposit
+            </Alert>
+          </ModalBody>
 
           <ModalFooter>
             <Button onClick={handleCreatePool}>Create Pool</Button>
