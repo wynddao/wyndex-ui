@@ -20,12 +20,13 @@ import { AssetInfo, DistributionFlow } from "../../../state/clients/types/Wyndex
 
 import React from "react";
 import { useIndexerInfos, useToast } from "../../../state";
-import { ExecuteResult } from "cosmwasm";
+import { ExecuteResult, toBase64, toUtf8 } from "cosmwasm";
 
 import { create } from "domain";
 import { string } from "zod";
-import { FACTORY_CONTRACT_ADDRESS } from "../../../utils";
+import { FACTORY_CONTRACT_ADDRESS, WYND_TOKEN_ADDRESS } from "../../../utils";
 import { getAssetList } from "../../../utils/getAssetList";
+import { useSend } from "../../../state/hooks/clients/Cw20";
 
 const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { address: walletAddress, connect, isWalletConnected } = useChain("juno");
@@ -42,6 +43,11 @@ const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
   const createPair = createPairAndDistributionFlows({
     contractAddress: FACTORY_CONTRACT_ADDRESS,
+    sender: walletAddress || "",
+  });
+
+  const sendCW20 = useSend({
+    contractAddress: WYND_TOKEN_ADDRESS,
     sender: walletAddress || "",
   });
 
@@ -76,12 +82,22 @@ const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     ];
 
     await txToast(async (): Promise<ExecuteResult> => {
-      const result = await createPair({
-        assetInfos: assetInfos,
-        distributionFlows: distributionFlows,
-        pairType: {
-          xyk: {},
-        },
+      const result = await sendCW20({
+        amount: "1000000000",
+        contract: FACTORY_CONTRACT_ADDRESS,
+        msg: toBase64(
+          toUtf8(
+            JSON.stringify({
+              create_pair: {
+                asset_infos: assetInfos,
+                distribution_flows: distributionFlows,
+                pair_type: {
+                  xyk: {},
+                },
+              },
+            }),
+          ),
+        ),
       });
 
       await new Promise((resolve) => setTimeout(resolve, 6500));
