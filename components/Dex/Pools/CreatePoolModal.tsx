@@ -90,7 +90,7 @@ const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         msg: toBase64(
           toUtf8(
             JSON.stringify({
-              create_pair: {
+              create_pair_and_distribution_flows: {
                 asset_infos: assetInfos,
                 distribution_flows: distributionFlows,
                 pair_type: {
