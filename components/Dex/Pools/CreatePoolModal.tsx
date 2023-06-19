@@ -85,7 +85,7 @@ const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
     await txToast(async (): Promise<ExecuteResult> => {
       const result = await sendCW20({
-        amount: "1000000000",
+        amount: "500000000",
         contract: FACTORY_CONTRACT_ADDRESS,
         msg: toBase64(
           toUtf8(
@@ -169,7 +169,7 @@ const CreatePoolModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             {tokens.map((token, index) => formGroup(token, index))}
             <Alert status="warning">
               <AlertIcon />
-              Creating a pool requires a 1000 WYND deposit
+              Creating a pool requires a 500 WYND deposit
             </Alert>
           </ModalBody>
 
