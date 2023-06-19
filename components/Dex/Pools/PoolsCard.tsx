@@ -25,9 +25,12 @@ export default function PoolsCard({ poolsData, allPools, assetPrices, disabledPo
   const slides = useBreakpointValue({ base: 1, lg: 2, xl: 3, "2xl": 4, "4xl": 6 }) || 1;
   return (
     <Carousel numOfSlides={slides}>
-      {[...poolsData].filter((el) => !disabledPools.includes(el.address)).map((pool, index) => (
-        <PoolCard key={index} allPools={allPools} assetPrices={assetPrices} pool={pool} />
-      ))}
+      {[...poolsData]
+        .filter((el) => !disabledPools.includes(el.address))
+        .filter((el) => allPools[el.address])
+        .map((pool, index) => (
+          <PoolCard key={index} allPools={allPools} assetPrices={assetPrices} pool={pool} />
+        ))}
     </Carousel>
   );
 }
@@ -40,9 +43,6 @@ interface PoolCardProps {
 
 function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
   const currency = useRecoilValue(currencyAtom);
-  if (!allPools[pool.address]) {
-    return null;
-  }
   const [token1, token2] = allPools[pool.address];
   const tokenPrice1 = getAssetPrice(token1, assetPrices);
   const tokenPrice2 = getAssetPrice(token2, assetPrices);
@@ -64,7 +64,7 @@ function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
   const { pair: pairData } = usePairInfos(assetInfo);
   const wyndexStake = pairData.staking_addr;
   const { address: walletAddress } = useChain("juno");
-  
+
   const { allStakes } = useUserStakeInfos(wyndexStake, walletAddress || "");
 
   // Calculate total share in USD
