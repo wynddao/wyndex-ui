@@ -40,6 +40,9 @@ interface PoolCardProps {
 
 function PoolCard({ allPools, assetPrices, pool }: PoolCardProps) {
   const currency = useRecoilValue(currencyAtom);
+  if (!allPools[pool.address]) {
+    return null;
+  }
   const [token1, token2] = allPools[pool.address];
   const tokenPrice1 = getAssetPrice(token1, assetPrices);
   const tokenPrice2 = getAssetPrice(token2, assetPrices);
