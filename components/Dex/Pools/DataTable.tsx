@@ -46,6 +46,7 @@ import {
 import { microamountToAmount } from "../../../utils/tokens";
 import { DataTableSkeleton } from "./Skeletons/DataTableSkeleton";
 import CreatePoolModal from "./CreatePoolModal";
+import { useIndexerInfos } from "../../../state";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
@@ -53,6 +54,7 @@ export type DataTableProps<Data extends object> = {
   columns: ColumnDef<Data, any>[];
   assetPrices: any;
   allAprs: any;
+  permlessAssets: any;
 };
 
 export function DataTable<Data extends object>({
@@ -61,6 +63,7 @@ export function DataTable<Data extends object>({
   userAssets,
   assetPrices,
   allAprs,
+  permlessAssets
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -106,14 +109,14 @@ export function DataTable<Data extends object>({
         const [{ value: token1 }, { value: token2 }] = rowA.getValue(columnId);
         const tokenPrice1A = getAssetPrice(token1, assetPrices);
         const tokenPrice2A = getAssetPrice(token2, assetPrices);
-        const tokenInfo1A = getAssetInfoDetails(token1);
-        const tokenInfo2A = getAssetInfoDetails(token2);
+        const tokenInfo1A = getAssetInfoDetails(token1, permlessAssets);
+        const tokenInfo2A = getAssetInfoDetails(token2, permlessAssets);
 
         const [{ value: token1B }, { value: token2B }] = rowB.getValue(columnId);
         const tokenPrice1B = getAssetPrice(token1B, assetPrices);
         const tokenPrice2B = getAssetPrice(token2B, assetPrices);
-        const tokenInfo1B = getAssetInfoDetails(token1B);
-        const tokenInfo2B = getAssetInfoDetails(token2B);
+        const tokenInfo1B = getAssetInfoDetails(token1B, permlessAssets);
+        const tokenInfo2B = getAssetInfoDetails(token2B, permlessAssets);
 
         return Number(
           tokenPrice1A.priceInUsd * Number(microamountToAmount(token1.amount, tokenInfo1A.decimals)) +
@@ -145,7 +148,7 @@ export function DataTable<Data extends object>({
   return (
     <>
       <CreatePoolModal isOpen={isOpen} onClose={onClose} />
-      <Box my={4} >
+      <Box my={4}>
         <Text
           fontSize="2xl"
           fontWeight="bold"
@@ -174,9 +177,7 @@ export function DataTable<Data extends object>({
               onChange={({ target }) => setGlobalFilter(target.value)}
             />
           </InputGroup>
-          <Button onClick={onOpen}>
-            Create Pool
-          </Button>
+          <Button onClick={onOpen}>Create Pool</Button>
           <Select
             value={table.getState().pagination.pageSize}
             onChange={(e) => {

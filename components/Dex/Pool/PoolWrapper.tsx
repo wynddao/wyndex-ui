@@ -9,7 +9,6 @@ import { getAssetInfoDetails, getAssetPrice, getNativeIbcTokenDenom } from "../.
 import { getMultiplier } from "../../../utils/hotfix";
 import { microamountToAmount, microdenomToDenom } from "../../../utils/tokens";
 
-
 import TokenName from "../TokenName";
 import LiquidityMining from "./LiquidityMining";
 import PoolCatalyst from "./PoolCatalyst";
@@ -27,13 +26,14 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
   const { pair } = usePairInfos(assetInfo);
   const ltokenInfo = useTokenInfo(pair.liquidity_token);
   const currency = useRecoilValue(currencyAtom);
+  const { permlessAssets } = useIndexerInfos({});
 
   // Get Token prices
   const { assetPrices } = useIndexerInfos({ fetchPoolData: false });
   const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
   const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);
-  const tokenInfo1 = getAssetInfoDetails(poolData.assets[0].info);
-  const tokenInfo2 = getAssetInfoDetails(poolData.assets[1].info);
+  const tokenInfo1 = getAssetInfoDetails(poolData.assets[0].info, permlessAssets);
+  const tokenInfo2 = getAssetInfoDetails(poolData.assets[1].info, permlessAssets);
 
   const pairNames = pair.asset_infos.map((assetInfo, index) => {
     if (assetInfo.hasOwnProperty("native")) {
@@ -66,7 +66,10 @@ export default function PoolWrapper({ poolData }: PoolWrapperOptions) {
     // Loop for through reward in bucket
     bucket[1].map((reward) => {
       const price = getAssetPrice(reward.info, assetPrices);
-      value += (Number(reward.amount) / 1000000 * (currency === "USD" ? price.priceInUsd : price.priceInEur)) * 10 ** 6; //! TODO!!!! 
+      value +=
+        (Number(reward.amount) / 1000000) *
+        (currency === "USD" ? price.priceInUsd : price.priceInEur) *
+        10 ** 6; //! TODO!!!!
     });
 
     return {

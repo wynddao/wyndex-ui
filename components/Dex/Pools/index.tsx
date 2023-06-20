@@ -38,7 +38,7 @@ export interface AllAprEntry {
 
 export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20Balances }: any) {
   const { connect, isWalletConnected } = useChain("juno");
-
+    const { permlessAssets } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
 
   const userAssets = useMemo(
@@ -75,7 +75,7 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
     const _allAprs = Object.keys(pools)
       .filter((poolAddress) => !disabledPools.includes(poolAddress))
       .map(async (poolAddress) => {
-        const res = await getAprForPool(poolAddress, assetPrices);
+        const res = await getAprForPool(poolAddress, assetPrices, permlessAssets);
         return {
           apr: res[res.length - 1].apr,
           pool: poolAddress,
@@ -199,8 +199,8 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
           const [{ value: token1 }, { value: token2 }] = props.getValue();
           const tokenPrice1 = getAssetPrice(token1, assetPrices);
           const tokenPrice2 = getAssetPrice(token2, assetPrices);
-          const tokenInfo1 = getAssetInfoDetails(token1);
-          const tokenInfo2 = getAssetInfoDetails(token2);
+          const tokenInfo1 = getAssetInfoDetails(token1, permlessAssets);
+          const tokenInfo2 = getAssetInfoDetails(token2, permlessAssets);
           return (
             <>
               {formatCurrency(
@@ -248,8 +248,8 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
         enableSorting: false,
         cell: (props) => {
           const [token1, token2] = props.getValue();
-          const tokenInfo1 = getAssetInfoDetails({ [token1.type]: token1.value });
-          const tokenInfo2 = getAssetInfoDetails({ [token2.type]: token2.value });
+          const tokenInfo1 = getAssetInfoDetails({ [token1.type]: token1.value }, permlessAssets);
+          const tokenInfo2 = getAssetInfoDetails({ [token2.type]: token2.value }, permlessAssets);
           return (
             <>
               {microamountToAmount(token1.amount, tokenInfo1.decimals)} {tokenInfo1.symbol}
@@ -317,6 +317,7 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
           columns={columns}
           data={data}
           userAssets={userAssets}
+          permlessAssets={permlessAssets}
         />
       ) : (
         <DataTableSkeleton />

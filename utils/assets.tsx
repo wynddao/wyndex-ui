@@ -35,17 +35,23 @@ export const getAssetInfo = (item: Asset) => {
       };
 };
 
-export const getAssetInfoDetails = (asset: { token?: string; native?: string }): Asset => {
-  const { tokens } = getAssetList();
+export const getAssetInfoDetails = (asset: { token?: string; native?: string }, tokens?: any): Asset => {
+  tokens = [...tokens, getAssetList().tokens]
+
   if (asset.token) {
-    const res = tokens.find((token) => (token as CW20Asset).token_address === asset.token)!;
+    const res = tokens.find((token: any) => (token as CW20Asset).token_address === asset.token)!;
     return res;
   }
   const isIBC = asset.native?.startsWith("ibc");
-  return tokens.find((token) => {
+  const res = tokens.find((token: any) => {
     const denom = isIBC ? token.juno_denom : token.denom;
     return asset.native === denom;
   })!;
+  if (res.logoURI === "") {
+    res.logoURI = "https://fakeimg.pl/250x250/d4d4d4/1d6607?text=?"
+  }
+  console.log(res)
+  return res;
 };
 
 export const getDenom = (item: Asset): string => {
