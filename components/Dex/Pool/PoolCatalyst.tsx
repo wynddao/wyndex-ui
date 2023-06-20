@@ -3,7 +3,7 @@ import { Box, Button, Collapse, Flex, Icon, SimpleGrid, Text } from "@chakra-ui/
 import { useChain } from "@cosmos-kit/react-lite";
 import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
-import { useCw20UserInfos } from "../../../state";
+import { useCw20UserInfos, useIndexerInfos } from "../../../state";
 import { PairInfo, PoolResponse } from "../../../state/clients/types/WyndexPair.types";
 import { useStakeInfos } from "../../../state/hooks/useStakeInfos";
 import { useUserStakeInfos } from "../../../state/hooks/useUserStakeInfos";
@@ -28,6 +28,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
 
   //  Add currently unstaking amounts
   const { pendingUnstaking } = useStakeInfos(pairData.staking_addr, true);
+  const { permlessAssets } = useIndexerInfos({});
 
   const unstakesSum = pendingUnstaking.reduce((acc, obj) => {
     return acc + Number(obj.amount);
@@ -62,7 +63,7 @@ export default function PoolCatalyst({ chainData, pairData }: PoolCatalystProps)
         <Box pt={6}>
           <SimpleGrid columns={{ md: 2 }} gap={8}>
             {chainData.assets.map((asset, i) => {
-              const tokenInfo = getAssetInfoDetails(asset.info);
+              const tokenInfo = getAssetInfoDetails(asset.info, permlessAssets);
               return (
                 <Box
                   key={i}

@@ -1,4 +1,5 @@
 import { CosmWasmClient } from "cosmwasm";
+import { useIndexerInfos } from "../state";
 import { AnnualizedRewardsResponse } from "../state/clients/types/WyndexStake.types";
 import { getAssetInfoDetails, getAssetPrice } from "./assets";
 import { CHAIN_RPC_ENDPOINT, FACTORY_CONTRACT_ADDRESS, INDEXER_API_ENDPOINT } from "./constants";
@@ -9,18 +10,15 @@ export interface AprCalculated {
   apr: string;
 }
 
-export const getAprForPool = async (poolAddress: string, assetPrices: any): Promise<AprCalculated[]> => {
+export const getAprForPool = async (poolAddress: string, assetPrices: any, permlessAssets?: any): Promise<AprCalculated[]> => {
   const client = await CosmWasmClient.connect(CHAIN_RPC_ENDPOINT);
-  const poolData  = await client.queryContractSmart(poolAddress, {
+  const poolData = await client.queryContractSmart(poolAddress, {
     pool: {},
   });
-
-  console.log(poolData)
-
   const tokenPrice1 = getAssetPrice(poolData.assets[0].info, assetPrices);
   const tokenPrice2 = getAssetPrice(poolData.assets[1].info, assetPrices);
-  const tokenInfo1 = getAssetInfoDetails(poolData.assets[0].info);
-  const tokenInfo2 = getAssetInfoDetails(poolData.assets[1].info);
+  const tokenInfo1 = getAssetInfoDetails(poolData.assets[0].info, permlessAssets);
+  const tokenInfo2 = getAssetInfoDetails(poolData.assets[1].info, permlessAssets);
 
   // Calculate total share in USD
   const totalFiatShares =
@@ -48,7 +46,7 @@ export const getAprForPool = async (poolAddress: string, assetPrices: any): Prom
     return {
       unbonding_period: bucket[0],
       // Calculate APR by that
-      apr: poolData.assets[0].amount + "/" + poolData.assets[1].amount
+      apr: poolData.assets[0].amount + "/" + poolData.assets[1].amount,
     };
   });
 
