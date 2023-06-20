@@ -36,8 +36,7 @@ export const getAssetInfo = (item: Asset) => {
 };
 
 export const getAssetInfoDetails = (asset: { token?: string; native?: string }, tokens?: any): Asset => {
-  console.log(1, tokens)
-  tokens = tokens ? tokens : getAssetList().tokens;
+  tokens = [...tokens, getAssetList().tokens]
 
   if (asset.token) {
     const res = tokens.find((token: any) => (token as CW20Asset).token_address === asset.token)!;
