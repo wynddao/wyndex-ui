@@ -12,6 +12,7 @@ import { getAprForPool } from "../../../utils/apr";
 import { getAssetByDenom, getAssetInfoDetails, getAssetPrice } from "../../../utils/assets";
 import { formatCurrency } from "../../../utils/currency";
 import { microamountToAmount } from "../../../utils/tokens";
+import { useIndexerInfos } from "../../../state";
 
 import AssetImage from "../AssetImage";
 import CreatePoolModal from "./CreatePoolModal";
@@ -38,7 +39,7 @@ export interface AllAprEntry {
 
 export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20Balances }: any) {
   const { connect, isWalletConnected } = useChain("juno");
-
+    const { permlessAssets } = useIndexerInfos({});
   const currency = useRecoilValue(currencyAtom);
 
   const userAssets = useMemo(
@@ -199,8 +200,8 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
           const [{ value: token1 }, { value: token2 }] = props.getValue();
           const tokenPrice1 = getAssetPrice(token1, assetPrices);
           const tokenPrice2 = getAssetPrice(token2, assetPrices);
-          const tokenInfo1 = getAssetInfoDetails(token1);
-          const tokenInfo2 = getAssetInfoDetails(token2);
+          const tokenInfo1 = getAssetInfoDetails(token1, permlessAssets);
+          const tokenInfo2 = getAssetInfoDetails(token2, permlessAssets);
           return (
             <>
               {formatCurrency(
