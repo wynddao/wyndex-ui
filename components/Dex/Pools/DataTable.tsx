@@ -115,7 +115,6 @@ export function DataTable<Data extends object>({
         const [{ value: token1B }, { value: token2B }] = rowB.getValue(columnId);
         const tokenPrice1B = getAssetPrice(token1B, assetPrices);
         const tokenPrice2B = getAssetPrice(token2B, assetPrices);
-        console.log(2);
         const tokenInfo1B = getAssetInfoDetails(token1B, permlessAssets);
         const tokenInfo2B = getAssetInfoDetails(token2B, permlessAssets);
 

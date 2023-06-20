@@ -199,7 +199,6 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
           const [{ value: token1 }, { value: token2 }] = props.getValue();
           const tokenPrice1 = getAssetPrice(token1, assetPrices);
           const tokenPrice2 = getAssetPrice(token2, assetPrices);
-          console.log(3)
           const tokenInfo1 = getAssetInfoDetails(token1, permlessAssets);
           const tokenInfo2 = getAssetInfoDetails(token2, permlessAssets);
           return (
@@ -249,7 +248,6 @@ export default function Pools({ pools, userPools, assetPrices, ibcBalances, cw20
         enableSorting: false,
         cell: (props) => {
           const [token1, token2] = props.getValue();
-          console.log(4)
           const tokenInfo1 = getAssetInfoDetails({ [token1.type]: token1.value }, permlessAssets);
           const tokenInfo2 = getAssetInfoDetails({ [token2.type]: token2.value }, permlessAssets);
           return (
