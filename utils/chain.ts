@@ -89,7 +89,7 @@ export const getApr = async () => {
 };
 
 export const getValidatorAvgCommission = async (validatorSet: [string, string][]) => {
-  const { result: validatorList } = await (await fetch(lcdApi + "/cosmos/staking/v1beta1/validators")).json();
+  const validatorList = await getAllValidators();
   const validatorCom: ValidatorComWithWeight[] = validatorSet.map((_validator) => {
     let validator = validatorList.find((el: any) => el.operator_address === _validator[0])!;
     if (ENVOIRMENT === "dev" && !validator) {
@@ -108,6 +108,8 @@ export const getValidatorAvgCommission = async (validatorSet: [string, string][]
 };
 
 export const getAllValidators = async () => {
-  const { result: validatorList } = await (await fetch(lcdApi + "/cosmos/staking/v1beta1/validators")).json();
-  return validatorList;
+  const { validators } = await (
+    await fetch(lcdApi + "/cosmos/staking/v1beta1/validators?pagination.limit=50000")
+  ).json();
+  return validators;
 };
