@@ -15,7 +15,7 @@
     "@chain-registry/osmosis": "^1.5.0",
     "@chakra-ui/next-js": "^2.1.2",
     "@chakra-ui/react": "^2.3.6",
-    "@cosmjs/cosmwasm-stargate": "^0.29.3",
+    "@cosmjs/cosmwasm-stargate": "^0.31.1",
     "@cosmos-kit/core": "1.3.4",
     "@cosmos-kit/cosmostation": "0.15.17",
     "@cosmos-kit/keplr": "0.33.18",
