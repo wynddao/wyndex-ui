@@ -33,7 +33,6 @@ export const testnet: Chain = {
     recommended_version: "v9.0.0",
     compatible_versions: ["v9.0.0"],
     cosmos_sdk_version: "0.45",
-    tendermint_version: "0.34",
     cosmwasm_version: "0.27",
     cosmwasm_enabled: true,
     genesis: {
