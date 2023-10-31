@@ -11,8 +11,13 @@ const InnerWalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const loadClient = async () => {
       if (address) {
-        const client = await getSigningCosmWasmClient();
-        setSigningCosmWasmClient(client);
+        try {
+          const client = await getSigningCosmWasmClient();
+          setSigningCosmWasmClient(client);
+        } catch (e) {
+          await loadClient();
+          console.log(e);
+        }
       }
     };
     loadClient();
