@@ -13,6 +13,7 @@ import { testnet as junoTestnet, testnet_assets as junoAssets } from "../utils/c
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
 import { baseTheme } from "../theme";
+import { MyModal } from "../components/WalletModal";
 
 // construct signer options
 const signerOptions = {
@@ -59,7 +60,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <RecoilRoot>
         <ChakraProvider theme={baseTheme}>
           <ChainProvider
-            wrappedWithChakra={true}
             walletConnectOptions={{ signClient: { projectId: "6ca336cce1340e77a03f54ccd2556067" } }}
             chains={[...chains, junoTestnet]}
             assetLists={[...assets, junoAssets]}
@@ -71,6 +71,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               ...cosmostationWallets,
             ]}
             signerOptions={signerOptions}
+            walletModal={MyModal}
           >
             <InnerWalletProvider>{children}</InnerWalletProvider>
           </ChainProvider>

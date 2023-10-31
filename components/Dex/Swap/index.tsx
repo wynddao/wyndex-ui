@@ -21,7 +21,6 @@ import { amountToMicroamount, microamountToAmount } from "../../../utils/tokens"
 import FromToken from "./FromToComponent/FromToken";
 import SwapIcon from "./FromToComponent/SwapIcon";
 import ToToken from "./FromToComponent/ToToken";
-import { LineChart } from "./LineChart";
 import Rate from "./RateComponent/Rate";
 import Setting from "./Setting/Setting";
 
@@ -219,9 +218,6 @@ const Swap: React.FC = () => {
             </Text>
           </Button>
         </Flex>
-        <Collapse in={showHistorical} animateOpacity>
-          <LineChart toToken={toToken} fromToken={fromToken} open={showHistorical} />
-        </Collapse>
       </Box>
       {showJunoWarning ? (
         <Box

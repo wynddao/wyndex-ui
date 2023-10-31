@@ -14,7 +14,6 @@ export default function ConnectWalletButton() {
   const { onCopy, hasCopied, setValue } = useClipboard("");
   const { address, openView, isWalletConnected, username, disconnect } = useChain("juno");
   const { setModalTheme } = useModalTheme();
-  setModalTheme("dark");
 
   const loadableCw20Balance = useRecoilValueLoadable(
     cw20BalancesSelector({ apiUrl: INDEXER_API_ENDPOINT, params: [address] }),
