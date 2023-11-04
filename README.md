@@ -8,7 +8,7 @@ Install dependencies with `yarn`.
 Rename `.env.example` to `.env` and change the settings to your needs.
 
 ## Development Environment
-
+ 
 You can start the local dev environment with `yarn dev`.
 
 ## Building and exporting the production static site
@@ -22,3 +22,4 @@ You can start the local dev environment with `yarn dev`.
 
    
   
+ 
