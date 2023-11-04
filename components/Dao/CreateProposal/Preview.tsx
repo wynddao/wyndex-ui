@@ -20,9 +20,9 @@ import { simulateProposal } from "../../../utils/proposals";
 import { MsgType } from "../Actions/types";
 import { Message } from "../Proposal/Message";
 import { BorderedBox } from "../Stake/MyTokens/BorderedBox";
-import { WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
+import { WYND_TOKEN_ADDRESS, WYND_VOTE_MODULE_ADDRESS } from "../../../utils";
 import { useChain } from "@cosmos-kit/react-lite";
-import { CwProposalSingleHooks, useToast } from "../../../state";
+import { Cw20Hooks, CwProposalSingleHooks, useToast } from "../../../state";
 import { ExecuteResult } from "cosmwasm";
 
 interface PreviewProps {
@@ -63,10 +63,19 @@ export const Preview = ({ msgs, title, description }: PreviewProps) => {
     sender: walletAddress ?? "",
   });
 
+  const increaseAllowance = Cw20Hooks.useIncreaseAllowance({
+    contractAddress: WYND_TOKEN_ADDRESS,
+    sender: walletAddress ?? "",
+  });
+
   const doPropose = async (msgs: CosmosMsg_for_Empty[]) => {
     setLoading(true);
 
     await txToast(async (): Promise<ExecuteResult> => {
+      await increaseAllowance({
+        amount: "2000000000",
+        spender: WYND_VOTE_MODULE_ADDRESS,
+      });
       const result = await propose({
         description,
         msgs,
@@ -118,7 +127,9 @@ export const Preview = ({ msgs, title, description }: PreviewProps) => {
           </Alert>
         )}
         <Flex justifyContent="space-between">
-          <Button isLoading={loadingTest} onClick={() => testMsgsInProp()}>Test Proposal</Button>
+          <Button isLoading={loadingTest} onClick={() => testMsgsInProp()}>
+            Test Proposal
+          </Button>
           {!isTested ? (
             <Tooltip label="You need to test your proposal before submitting">
               <Button disabled>Submit Proposal</Button>
