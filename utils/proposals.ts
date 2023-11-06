@@ -29,8 +29,8 @@ export const getMsgType = (msg: Record<string, any>): MsgType => {
   } else {
     return {
       type: type,
-      msg: "",
-      msgBeautified: "",
+      msg: JSON.stringify(msg),
+      msgBeautified: JSON.stringify(msg, null, 4),
       contract_addr: "",
       rawMsg: msg,
     };
