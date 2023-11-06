@@ -8,10 +8,13 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
 export const getMsgType = (msg: Record<string, any>): MsgType => {
   let type = "unknown";
-  if (msg.wasm.hasOwnProperty("execute")) {
-    type = "execute";
-  } else if (msg.wasm.hasOwnProperty("migrate")) {
-    type = "migrate";
+
+  if (msg.hasOwnProperty("wasm")) {
+    if (msg.wasm.hasOwnProperty("execute")) {
+      type = "execute";
+    } else if (msg.wasm.hasOwnProperty("migrate")) {
+      type = "migrate";
+    }
   }
 
   if (type !== "unknown") {
@@ -67,7 +70,7 @@ export const simulateProposal = async (sender: string, proposal: CosmosMsg_for_E
         msgs: proposal,
       },
     };
-  
+
     const msg = {
       typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
       value: MsgExecuteContract.fromPartial({
