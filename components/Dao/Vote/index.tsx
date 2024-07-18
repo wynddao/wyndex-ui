@@ -18,7 +18,6 @@ export const Vote = () => {
   return (
     <Flex gap="8" flexFlow="column">
       <ProposalHeader voteModule={voteModule} />
-      <NotVotedAlert />
       <Box rounded="lg">
         <Grid
           display="grid"

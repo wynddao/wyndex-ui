@@ -77,113 +77,115 @@ export const PropList = ({ limit }: { limit: number }) => {
 
   return (
     <>
-      {allProps.map((prop, i) => (
-        <Grid
-          key={i}
-          templateColumns={{
-            base: "repeat(2, 1fr)",
-            lg: walletAddress ? "50px 70px 100px 5fr 120px 4fr 1fr" : "70px 100px 5fr 120px 4fr 1fr",
-          }}
-          fontWeight="semibold"
-          _hover={{
-            bgColor: "wynd.gray.alpha.10",
-            cursor: "pointer",
-          }}
-          onClick={() => handleRowClick(prop)}
-          alignItems="center"
-          backgroundImage={"url(/images/Vector2Bg.png)"}
-          backgroundSize="300px"
-          borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
-          px="2"
-          py="4"
-          gap="4"
-        >
-          {walletAddress && (
-            <GridItem textAlign={"center"}>
-              <VoteStatus id={prop.id} />
+      {allProps
+        .filter((el) => el.proposalNumber.toString() !== "132")
+        .map((prop, i) => (
+          <Grid
+            key={i}
+            templateColumns={{
+              base: "repeat(2, 1fr)",
+              lg: walletAddress ? "50px 70px 100px 5fr 120px 4fr 1fr" : "70px 100px 5fr 120px 4fr 1fr",
+            }}
+            fontWeight="semibold"
+            _hover={{
+              bgColor: "wynd.gray.alpha.10",
+              cursor: "pointer",
+            }}
+            onClick={() => handleRowClick(prop)}
+            alignItems="center"
+            backgroundImage={"url(/images/Vector2Bg.png)"}
+            backgroundSize="300px"
+            borderBottom="1px solid var(--chakra-colors-chakra-border-color)"
+            px="2"
+            py="4"
+            gap="4"
+          >
+            {walletAddress && (
+              <GridItem textAlign={"center"}>
+                <VoteStatus id={prop.id} />
+              </GridItem>
+            )}
+            <GridItem>
+              <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
+                {prop.id}
+              </Text>
             </GridItem>
-          )}
-          <GridItem>
-            <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
-              {prop.id}
-            </Text>
-          </GridItem>
-          <GridItem textAlign="start" color={colorStatus[prop.status]}>
-            <Text fontSize={{ base: "xs", md: "sm" }}>{capitalizeFirstLetter(prop.status)}</Text>
-          </GridItem>
-          <GridItem textAlign="start">
-            <Text fontSize={{ base: "sm", md: "md" }}>{prop.title}</Text>
-          </GridItem>
-          <GridItem textAlign="center">
-            <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
-              {(expirationAtTimeToSecondsFromNow(prop.expiration || "") || 0 - new Date().getTime()) < 0 ||
-              prop.status === "executed"
-                ? "Completed"
-                : secondsToWdhms(expirationAtTimeToSecondsFromNow(prop.expiration || "") || "")}
-            </Text>
-          </GridItem>
-          <GridItem textAlign="end" colSpan={{ base: 2, lg: "auto" }} py="2">
-            <Grid templateColumns={"1fr 1fr 1fr"} bgColor="wynd.gray.alpha.10" borderTopRadius="lg">
-              <Flex justifyContent="center" alignItems="center">
-                <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
-                  Yes:
-                </Text>
-                <Text color="wynd.green.500" fontWeight="light" fontSize="sm" align="center">
-                  {(
-                    (Number(prop.votes.yes) /
-                      (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
-                    100
-                  ).toFixed(2)}
-                  {"%"}
-                </Text>
-              </Flex>
-              <Flex justifyContent="center" alignItems="center">
-                <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
-                  Abstain:
-                </Text>
-                <Text color="wynd.cyan.500" fontWeight="light" fontSize="sm" align="center">
-                  {(
-                    (Number(prop.votes.abstain) /
-                      (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
-                    100
-                  ).toFixed(2)}
-                  {"%"}
-                </Text>
-              </Flex>
-              <Flex justifyContent="center" alignItems="center">
-                <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
-                  No:
-                </Text>
-                <Text color="wynd.alert.error.500" fontWeight="light" fontSize="sm" align="center">
-                  {(
-                    (Number(prop.votes.no) /
-                      (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
-                    100
-                  ).toFixed(2)}
-                  {"%"}
-                </Text>
-              </Flex>
-            </Grid>
-            <Progress
-              variant="multiSegment"
-              height={4}
-              rounded="sm"
-              min={0}
-              borderBottomRadius="lg"
-              max={Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain)}
-              //@ts-ignore
-              values={{
-                green: Number(prop.votes.yes),
-                blue: Number(prop.votes.abstain),
-                red: Number(prop.votes.no),
-              }}
-            />
-          </GridItem>
-          <GridItem>
-            <Quorum propId={prop.id} />
-          </GridItem>
-        </Grid>
-      ))}
+            <GridItem textAlign="start" color={colorStatus[prop.status]}>
+              <Text fontSize={{ base: "xs", md: "sm" }}>{capitalizeFirstLetter(prop.status)}</Text>
+            </GridItem>
+            <GridItem textAlign="start">
+              <Text fontSize={{ base: "sm", md: "md" }}>{prop.title}</Text>
+            </GridItem>
+            <GridItem textAlign="center">
+              <Text fontSize={{ base: "xs", md: "sm" }} color="wynd.gray.600">
+                {(expirationAtTimeToSecondsFromNow(prop.expiration || "") || 0 - new Date().getTime()) < 0 ||
+                prop.status === "executed"
+                  ? "Completed"
+                  : secondsToWdhms(expirationAtTimeToSecondsFromNow(prop.expiration || "") || "")}
+              </Text>
+            </GridItem>
+            <GridItem textAlign="end" colSpan={{ base: 2, lg: "auto" }} py="2">
+              <Grid templateColumns={"1fr 1fr 1fr"} bgColor="wynd.gray.alpha.10" borderTopRadius="lg">
+                <Flex justifyContent="center" alignItems="center">
+                  <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
+                    Yes:
+                  </Text>
+                  <Text color="wynd.green.500" fontWeight="light" fontSize="sm" align="center">
+                    {(
+                      (Number(prop.votes.yes) /
+                        (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
+                      100
+                    ).toFixed(2)}
+                    {"%"}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignItems="center">
+                  <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
+                    Abstain:
+                  </Text>
+                  <Text color="wynd.cyan.500" fontWeight="light" fontSize="sm" align="center">
+                    {(
+                      (Number(prop.votes.abstain) /
+                        (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
+                      100
+                    ).toFixed(2)}
+                    {"%"}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignItems="center">
+                  <Text color="wynd.gray.600" fontWeight="light" fontSize="xs" align="center" mr={1}>
+                    No:
+                  </Text>
+                  <Text color="wynd.alert.error.500" fontWeight="light" fontSize="sm" align="center">
+                    {(
+                      (Number(prop.votes.no) /
+                        (Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain))) *
+                      100
+                    ).toFixed(2)}
+                    {"%"}
+                  </Text>
+                </Flex>
+              </Grid>
+              <Progress
+                variant="multiSegment"
+                height={4}
+                rounded="sm"
+                min={0}
+                borderBottomRadius="lg"
+                max={Number(prop.votes.yes) + Number(prop.votes.no) + Number(prop.votes.abstain)}
+                //@ts-ignore
+                values={{
+                  green: Number(prop.votes.yes),
+                  blue: Number(prop.votes.abstain),
+                  red: Number(prop.votes.no),
+                }}
+              />
+            </GridItem>
+            <GridItem>
+              <Quorum propId={prop.id} />
+            </GridItem>
+          </Grid>
+        ))}
     </>
   );
 };
